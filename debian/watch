@@ -1,0 +1,4 @@
+version=3
+
+opts="uversionmangle=s/-/+/" \
+http://sf.net/viking/viking-([0-9].*)\.tar\.gz

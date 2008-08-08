@@ -1,0 +1,115 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+include /usr/share/quilt/quilt.make
+
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+
+CFLAGS = -Wall -g
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+
+ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
+  confflags += --build $(DEB_HOST_GNU_TYPE)
+else
+  confflags += --build $(DEB_BUILD_GNU_TYPE) --host $(DEB_HOST_GNU_TYPE)
+endif
+
+configure: config-stamp
+
+config-stamp: patch
+	dh_testdir
+
+	#make building from trunk more easy
+	if [ ! -x configure ]; then \
+		./autogen.sh ;\
+		touch clean-configure ;\
+	fi
+
+	test -r config.sub_orig || test -r config.sub && cp config.sub config.sub_orig || true
+	cp -f /usr/share/misc/config.sub config.sub
+	test -r config.guess_orig ||  test -r config.guess && cp config.guess config.guess_orig || true
+	cp -f /usr/share/misc/config.guess config.guess
+	./configure $(confflags)  --prefix=/usr \
+	                          --mandir=\$${prefix}/share/man \
+	                          --infodir=\$${prefix}/share/info \
+	                          CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
+
+	touch $@
+
+build: build-stamp 
+
+build-stamp: config-stamp
+	dh_testdir
+
+	$(MAKE)
+	touch $@
+
+
+clean: clean-patched unpatch
+
+clean-patched:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp config-stamp
+
+	if [ -r Makefile ]; then $(MAKE) distclean; fi
+
+	test -r config.sub_orig && mv config.sub_orig config.sub || true
+	test -r config.guess_orig && mv config.guess_orig config.guess || true
+	rm -f $(MANPAGES)
+
+	if [ -r clean-configure ]; then \
+		rm -f clean-configure config.guess config.sub src/config.h.in aclocal.m4 \
+		      src/authors.h missing install-sh depcomp configure Makefile.in ;\
+	fi
+
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+
+	$(MAKE) DESTDIR=$(CURDIR)/debian/viking install
+	cp src/icons/viking_icon.png debian/viking/usr/share/icons/viking.png
+
+# Build architecture-independent files here.
+binary-indep: install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs ChangeLog
+	dh_installdocs
+	dh_install
+	dh_installmenu
+	dh_installman
+	dh_desktop
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean configure binary-indep binary-arch binary install clean-patched patch unpatch

@@ -1,0 +1,153 @@
+viking (0.9.6-2) unstable; urgency=low
+
+  * Unfortunately the google maps fix in 0.9.6-1 worked only for a few days,
+    hopefully the now introduced patch is a durable fix (Closes: #491631).
+    - debian/control: Adding quilt to build dependencies.
+    - debian/patches: Adding viking_google_fix.diff and series file.
+      The patch is based on the output of
+      svn diff -r739:740 \
+                     https://viking.svn.sourceforge.net/svnroot/viking/trunk
+    - debian/rules: Adding quilt.make include and dependencies on
+      patch/unpatch targets.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Fri, 08 Aug 2008 12:31:56 +0200
+
+viking (0.9.6-1) unstable; urgency=low
+
+  * New upstream version. The following changes were introduced since
+    0.9.4.20080717 (which was a pre-release of 0.9.5):
+    - Manpages are build and installed by upstream now, the according lines
+      were removed from debian/rules and debian/viking.manpages.
+    - Update of most translations
+    - Google map layers stopped working due to changes by Google, this problem
+      is fixed now (Closes: #491631). As this feature is used by most of our
+      users, it should be fixed for Lenny.
+    - The gcget command line needed to be fixed to accommodate negative coords.
+      This doesn't affect Debian as the geocaching features are not enabled
+      yet.
+    - Removing unecessary (and probably ) Makefile.am directive
+
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 04 Aug 2008 02:17:58 +0200
+
+viking (0.9.4.20080717-1) unstable; urgency=low
+
+  * New upstream version.
+  * debian/viking.desktop:
+    - Dropping file, provided by upstream now.
+  * debian/viking.install:
+    - Updating file accordingly - don't install viking.desktop anymore.
+  * debian/copyright:
+    - Using a shorter identing to make lintian happy.
+  * debian/*.xml:
+    - Removing files, manpages are shipped by upstream now, but unfortunately
+      not being built and installed automatically yet.
+  * debian/rules:
+    - Use doc/%.xml as source for the manpages.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Fri, 18 Jul 2008 23:38:50 +0200
+
+viking (0.9.4.20080614-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 23 Jun 2008 17:20:43 +0200
+
+viking (0.9.4-1) unstable; urgency=low
+
+  * New upstream version.
+  * debian/rules, debian/control, debian/patches:
+    - Removing all traces of dpatch - no patches needed anymore.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 02 Mar 2008 00:30:45 +0100
+
+viking (0.9.3.20080220-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/control:
+    - Moving gpsbabel from Suggests to Recommends.
+    - Updating my email address.
+    - Adding intltool to Build-Depends.
+    - Bumping Standards-Version - no changes needed.
+  * debian/patches:
+    - viktrwlayer.c-implicit-decl-fix.dpatch,
+      use-x-www-browser.dpatch,
+      dems.c-implicit-decl-fix.dpatch:
+      Removing patches, integrated upstream
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 24 Feb 2008 00:20:35 +0100
+
+viking (0.9.3-2) unstable; urgency=low
+
+  * debian/control:
+    - Renaming XS-Vcs-* fields to Vcs-* as they're supported by dpkg now.
+  * debian/patches:
+    - Updating viktrwlayer.c-implicit-decl-fix.dpatch to fix the implicit
+      declaration completely, thanks to Dann Frazier (Closes: #447662)
+
+ -- Bernd Zeimetz <bernd@bzed.de>  Sun, 18 Nov 2007 02:14:59 +0100
+
+viking (0.9.3-1) unstable; urgency=low
+
+  * New upstream version
+  * debian/control:
+    - Adding libgps-dev as Build-Dep
+    - Adding realtime-features to the description
+  * debian/patches:
+    - Removing patches which were integrated in the new release, only keeping
+      use-x-www-browser.dpatch to set the browser to a sane default.
+    - Adding dems.c-implicit-decl-fix and viktrwlayer.c-implicit-decl-fix to
+      fix two implicit declarations.
+
+ -- Bernd Zeimetz <bernd@bzed.de>  Mon, 22 Oct 2007 15:51:29 +0200
+
+viking (0.9.2-2) unstable; urgency=low
+
+  * debian/control:
+    - Adding Homepage field, removing pseudo-field from description
+    - Adding XS-Vcs-Svn and XS-Vcs-Browser fields
+  * debian/patches:
+    - Adding google-download-fix.dpatch which backports commit r436 from svn,
+      fixing Google maps/sat downloads
+    - Adding dem-fix.patch to fix a bug which resulted in a segfault while
+      loading DEM files on 64bit platforms
+
+ -- Bernd Zeimetz <bernd@bzed.de>  Tue, 09 Oct 2007 16:01:25 +0200
+
+viking (0.9.2-1) unstable; urgency=low
+
+  * New upstream version, including a better handling of views
+    (Closes: #439193)
+  * debian/control:
+    - Adding versioned libglib2.0-dev dep. to Build-Depends to make
+      backporter's life more easy
+  * debian/patches:
+    - Removing bugfix-patches from former versions as they're included in
+      upstream's release now
+    - Adding viking-initial-location.dpatch to fix a crash due to an
+      uninitialized mode of the center location
+
+ -- Bernd Zeimetz <bernd@bzed.de>  Mon, 03 Sep 2007 12:56:40 +0200
+
+viking (0.9+fix1-2) unstable; urgency=low
+
+  * debian/viking.menu:
+    - Updating menu entry according to the new menu policy
+  * debian/patches:
+    - Adding clipboard-copy-crash-fix.dpatch to fix a segvault which occurred
+      on 64bit platforms while copying a layer to the clipboard
+  * debian/viking.dirs:
+    - Removing not needed entry /usr/share/viking
+  * debian/control:
+    - Adding automake1.9, autoconf to Build-Deps to fix several warnings on
+      build-time
+  * debian/rules:
+    - Make sure we can build the package even if configure was not created yet
+      to support developers who like to build from trunk/svn snapshots
+
+ -- Bernd Zeimetz <bernd@bzed.de>  Sun, 19 Aug 2007 21:31:55 +0200
+
+viking (0.9+fix1-1) unstable; urgency=low
+
+  * Initial release (Closes: #412436)
+
+ -- Bernd Zeimetz <bernd@bzed.de>  Mon, 16 Jul 2007 14:15:00 +0200
