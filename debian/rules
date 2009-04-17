@@ -1,11 +1,10 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
+include /usr/share/dpatch/dpatch.make
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
-
-include /usr/share/quilt/quilt.make
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
@@ -85,7 +84,6 @@ install: build
 	dh_installdirs
 
 	$(MAKE) DESTDIR=$(CURDIR)/debian/viking install
-	cp src/icons/viking_icon.png debian/viking/usr/share/icons/viking.png
 
 # Build architecture-independent files here.
 binary-indep: install

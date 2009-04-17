@@ -1,3 +1,30 @@
+viking (0.9.8-2) unstable; urgency=low
+
+  * Work around missing gpsd_units() from the gpsd header
+    files by including gpsdclient.h from gpsd (Closes: #524084).
+  * Bumping Standards-Version to 3.8.1, no changes needed. 
+  * Fixing an implcit declaration in src/util.c.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Fri, 17 Apr 2009 22:47:27 +0200
+
+viking (0.9.8-1) unstable; urgency=low
+
+  [ Guilhem Bonnefille ]
+  * New upstream version. The following changes were introduced since 0.9.6:
+    - Update of most translations
+    - Icon is build and installed by upstream now, the according lines
+      were removed from debian/rules.
+    - src/viking.desktop.in: add GenericName and revise Categories
+    - debian/control: Removing quilt to build dependencies.
+    - debian/patches: Removing all (no more patches applied).
+    - debian/rules: Removing quilt.make include.
+
+  [ Bernd Zeimetz ]
+  * debian/control:
+   - Bumping standards-version, no changes needed. 
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 15 Feb 2009 23:57:16 +0100
+
 viking (0.9.6-2) unstable; urgency=low
 
   * Unfortunately the google maps fix in 0.9.6-1 worked only for a few days,
