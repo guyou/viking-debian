@@ -43,9 +43,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = viking$(EXEEXT)
 @GOOGLE_TRUE@am__append_1 = \
-@GOOGLE_TRUE@	khmaps.c khmaps.h \
-@GOOGLE_TRUE@	google.c google.h \
-@GOOGLE_TRUE@	googlemaps.c googlemaps.h
+@GOOGLE_TRUE@	google.c google.h
 
 @TERRASERVER_TRUE@am__append_2 = \
 @TERRASERVER_TRUE@	terraserver.c terraserver.h
@@ -57,7 +55,10 @@ bin_PROGRAMS = viking$(EXEEXT)
 @OPENSTREETMAP_TRUE@	osm.c osm.h \
 @OPENSTREETMAP_TRUE@	osm-traces.c osm-traces.h
 
-@REALTIME_GPS_TRACKING_TRUE@am__append_5 = -lgps
+@GEONAMES_TRUE@am__append_5 = \
+@GEONAMES_TRUE@	geonamessearch.c geonamessearch.h
+
+@REALTIME_GPS_TRACKING_TRUE@am__append_6 = -lgps
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/config.h.in
@@ -83,35 +84,33 @@ am__libviking_a_SOURCES_DIST = modules.h modules.c curl_download.c \
 	gpsmapper.h gpspoint.c gpspoint.h file.c file.h authors.h \
 	dialog.c dialog.h util.c util.h download.c download.h \
 	viktreeview.c viktreeview.h viktrwlayer.c viktrwlayer.h \
-	viktrwlayer_pixmap.h viklayer.c viklayer.h viklayerspanel.c \
-	viklayerspanel.h vikcoordlayer.c vikcoordlayer.h \
-	vikcoordlayer_pixmap.h vikstatus.c vikstatus.h vikwindow.c \
-	vikwindow.h vikviewport.c vikviewport.h vikaggregatelayer.c \
-	vikaggregatelayer.h vikaggregatelayer_pixmap.h vikgpslayer.c \
-	vikgpslayer.h vikgpslayer_pixmap.h vikgeoreflayer.c \
-	vikgeoreflayer.h vikgeoreflayer_pixmap.h vikfileentry.c \
+	viklayer.c viklayer.h viklayerspanel.c viklayerspanel.h \
+	vikcoordlayer.c vikcoordlayer.h vikstatus.c vikstatus.h \
+	vikwindow.c vikwindow.h vikviewport.c vikviewport.h \
+	vikaggregatelayer.c vikaggregatelayer.h vikgpslayer.c \
+	vikgpslayer.h vikgeoreflayer.c vikgeoreflayer.h vikfileentry.c \
 	vikfileentry.h viktrwlayer_tpwin.c viktrwlayer_tpwin.h \
 	viktrwlayer_propwin.c viktrwlayer_propwin.h thumbnails.c \
-	thumbnails.h thumbnails_pixbuf.h background.c background.h \
-	vikradiogroup.c vikradiogroup.h vikcoord.c vikcoord.h \
-	mapcache.c mapcache.h vikmapslayer.c vikmapslayer.h \
-	vikmapslayer_pixmap.h gtkcellrendererprogress.c \
-	gtkcellrendererprogress.h gpx.c gpx.h garminsymbols.c \
+	thumbnails.h background.c background.h vikradiogroup.c \
+	vikradiogroup.h vikcoord.c vikcoord.h mapcache.c mapcache.h \
+	vikmapslayer.c vikmapslayer.h gpx.c gpx.h garminsymbols.c \
 	garminsymbols.h acquire.c acquire.h babel.c babel.h \
 	datasource_gps.c datasource_google.c datasource_gc.c \
 	datasource_bfilter.c datasources.h googlesearch.c \
 	googlesearch.h dem.c dem.h vikdemlayer.h vikdemlayer.c \
-	vikdemlayer_pixmap.h vikfilelist.c vikfilelist.h dems.c dems.h \
+	vikfilelist.c vikfilelist.h vikexttool.c vikexttool.h \
+	vikexttools.c vikexttools.h vikwebtool.c vikwebtool.h \
+	vikwebtoolcenter.c vikwebtoolcenter.h dems.c dems.h \
 	srtm_continent.c uibuilder.c uibuilder.h print-preview.c \
 	print-preview.h print.c print.h preferences.c preferences.h \
-	khmaps.c khmaps.h google.c google.h googlemaps.c googlemaps.h \
-	terraserver.c terraserver.h expedia.c expedia.h osm.c osm.h \
-	osm-traces.c osm-traces.h
-@GOOGLE_TRUE@am__objects_1 = khmaps.$(OBJEXT) google.$(OBJEXT) \
-@GOOGLE_TRUE@	googlemaps.$(OBJEXT)
+	google.c google.h terraserver.c terraserver.h expedia.c \
+	expedia.h osm.c osm.h osm-traces.c osm-traces.h \
+	geonamessearch.c geonamessearch.h
+@GOOGLE_TRUE@am__objects_1 = google.$(OBJEXT)
 @TERRASERVER_TRUE@am__objects_2 = terraserver.$(OBJEXT)
 @EXPEDIA_TRUE@am__objects_3 = expedia.$(OBJEXT)
 @OPENSTREETMAP_TRUE@am__objects_4 = osm.$(OBJEXT) osm-traces.$(OBJEXT)
+@GEONAMES_TRUE@am__objects_5 = geonamessearch.$(OBJEXT)
 am_libviking_a_OBJECTS = modules.$(OBJEXT) curl_download.$(OBJEXT) \
 	degrees_converters.$(OBJEXT) globals.$(OBJEXT) \
 	viktrack.$(OBJEXT) vikwaypoint.$(OBJEXT) clipboard.$(OBJEXT) \
@@ -126,16 +125,17 @@ am_libviking_a_OBJECTS = modules.$(OBJEXT) curl_download.$(OBJEXT) \
 	viktrwlayer_tpwin.$(OBJEXT) viktrwlayer_propwin.$(OBJEXT) \
 	thumbnails.$(OBJEXT) background.$(OBJEXT) \
 	vikradiogroup.$(OBJEXT) vikcoord.$(OBJEXT) mapcache.$(OBJEXT) \
-	vikmapslayer.$(OBJEXT) gtkcellrendererprogress.$(OBJEXT) \
-	gpx.$(OBJEXT) garminsymbols.$(OBJEXT) acquire.$(OBJEXT) \
-	babel.$(OBJEXT) datasource_gps.$(OBJEXT) \
+	vikmapslayer.$(OBJEXT) gpx.$(OBJEXT) garminsymbols.$(OBJEXT) \
+	acquire.$(OBJEXT) babel.$(OBJEXT) datasource_gps.$(OBJEXT) \
 	datasource_google.$(OBJEXT) datasource_gc.$(OBJEXT) \
 	datasource_bfilter.$(OBJEXT) googlesearch.$(OBJEXT) \
 	dem.$(OBJEXT) vikdemlayer.$(OBJEXT) vikfilelist.$(OBJEXT) \
-	dems.$(OBJEXT) srtm_continent.$(OBJEXT) uibuilder.$(OBJEXT) \
+	vikexttool.$(OBJEXT) vikexttools.$(OBJEXT) \
+	vikwebtool.$(OBJEXT) vikwebtoolcenter.$(OBJEXT) dems.$(OBJEXT) \
+	srtm_continent.$(OBJEXT) uibuilder.$(OBJEXT) \
 	print-preview.$(OBJEXT) print.$(OBJEXT) preferences.$(OBJEXT) \
 	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
-	$(am__objects_4)
+	$(am__objects_4) $(am__objects_5)
 libviking_a_OBJECTS = $(am_libviking_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(desktopdir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -183,6 +183,8 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BLUEMARBLE_FALSE = @BLUEMARBLE_FALSE@
+BLUEMARBLE_TRUE = @BLUEMARBLE_TRUE@
 CATALOGS = @CATALOGS@
 CATOBJEXT = @CATOBJEXT@
 CC = @CC@
@@ -214,6 +216,8 @@ GEN_MANPAGES_FALSE = @GEN_MANPAGES_FALSE@
 GEN_MANPAGES_TRUE = @GEN_MANPAGES_TRUE@
 GEOCACHES_FALSE = @GEOCACHES_FALSE@
 GEOCACHES_TRUE = @GEOCACHES_TRUE@
+GEONAMES_FALSE = @GEONAMES_FALSE@
+GEONAMES_TRUE = @GEONAMES_TRUE@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
@@ -263,8 +267,8 @@ MSGFMT = @MSGFMT@
 MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 OBJEXT = @OBJEXT@
-OLDGOOGLE_FALSE = @OLDGOOGLE_FALSE@
-OLDGOOGLE_TRUE = @OLDGOOGLE_TRUE@
+OPENAERIAL_FALSE = @OPENAERIAL_FALSE@
+OPENAERIAL_TRUE = @OPENAERIAL_TRUE@
 OPENSTREETMAP_FALSE = @OPENSTREETMAP_FALSE@
 OPENSTREETMAP_TRUE = @OPENSTREETMAP_TRUE@
 PACKAGE = @PACKAGE@
@@ -347,33 +351,31 @@ libviking_a_SOURCES = modules.h modules.c curl_download.c \
 	gpsmapper.h gpspoint.c gpspoint.h file.c file.h authors.h \
 	dialog.c dialog.h util.c util.h download.c download.h \
 	viktreeview.c viktreeview.h viktrwlayer.c viktrwlayer.h \
-	viktrwlayer_pixmap.h viklayer.c viklayer.h viklayerspanel.c \
-	viklayerspanel.h vikcoordlayer.c vikcoordlayer.h \
-	vikcoordlayer_pixmap.h vikstatus.c vikstatus.h vikwindow.c \
-	vikwindow.h vikviewport.c vikviewport.h vikaggregatelayer.c \
-	vikaggregatelayer.h vikaggregatelayer_pixmap.h vikgpslayer.c \
-	vikgpslayer.h vikgpslayer_pixmap.h vikgeoreflayer.c \
-	vikgeoreflayer.h vikgeoreflayer_pixmap.h vikfileentry.c \
+	viklayer.c viklayer.h viklayerspanel.c viklayerspanel.h \
+	vikcoordlayer.c vikcoordlayer.h vikstatus.c vikstatus.h \
+	vikwindow.c vikwindow.h vikviewport.c vikviewport.h \
+	vikaggregatelayer.c vikaggregatelayer.h vikgpslayer.c \
+	vikgpslayer.h vikgeoreflayer.c vikgeoreflayer.h vikfileentry.c \
 	vikfileentry.h viktrwlayer_tpwin.c viktrwlayer_tpwin.h \
 	viktrwlayer_propwin.c viktrwlayer_propwin.h thumbnails.c \
-	thumbnails.h thumbnails_pixbuf.h background.c background.h \
-	vikradiogroup.c vikradiogroup.h vikcoord.c vikcoord.h \
-	mapcache.c mapcache.h vikmapslayer.c vikmapslayer.h \
-	vikmapslayer_pixmap.h gtkcellrendererprogress.c \
-	gtkcellrendererprogress.h gpx.c gpx.h garminsymbols.c \
+	thumbnails.h background.c background.h vikradiogroup.c \
+	vikradiogroup.h vikcoord.c vikcoord.h mapcache.c mapcache.h \
+	vikmapslayer.c vikmapslayer.h gpx.c gpx.h garminsymbols.c \
 	garminsymbols.h acquire.c acquire.h babel.c babel.h \
 	datasource_gps.c datasource_google.c datasource_gc.c \
 	datasource_bfilter.c datasources.h googlesearch.c \
 	googlesearch.h dem.c dem.h vikdemlayer.h vikdemlayer.c \
-	vikdemlayer_pixmap.h vikfilelist.c vikfilelist.h dems.c dems.h \
+	vikfilelist.c vikfilelist.h vikexttool.c vikexttool.h \
+	vikexttools.c vikexttools.h vikwebtool.c vikwebtool.h \
+	vikwebtoolcenter.c vikwebtoolcenter.h dems.c dems.h \
 	srtm_continent.c uibuilder.c uibuilder.h print-preview.c \
 	print-preview.h print.c print.h preferences.c preferences.h \
 	$(am__append_1) $(am__append_2) $(am__append_3) \
-	$(am__append_4)
+	$(am__append_4) $(am__append_5)
 viking_SOURCES = main.c
 INCLUDES = @GTK_CFLAGS@ @EXPAT_CFLAGS@ @LIBCURL_CPPFLAGS@
 LDADD = libviking.a @GTK_LIBS@ @EXPAT_LIBS@ @LIBCURL@ icons/libicons.a \
-	$(am__append_5)
+	$(am__append_6)
 #LDADD           = -lz @GTK_LIBS@ @EXPAT_LIBS@ @LIBCURL@
 AM_CFLAGS = -Wall -g -D_GNU_SOURCE
 desktopdir = $(datadir)/applications
@@ -490,15 +492,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/expedia.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/garminsymbols.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geonamessearch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/globals.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/google.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/googlemaps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/googlesearch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpsmapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpspoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpx.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkcellrendererprogress.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/khmaps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapcache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/modules.Po@am__quote@
@@ -516,6 +516,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikcoord.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikcoordlayer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikdemlayer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikexttool.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikexttools.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikfileentry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikfilelist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikgeoreflayer.Po@am__quote@
@@ -532,6 +534,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer_tpwin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikviewport.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwaypoint.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwebtool.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwebtoolcenter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwindow.Po@am__quote@
 
 .c.o:
@@ -848,8 +852,11 @@ uninstall-info: uninstall-info-recursive
 authors.h: ../AUTHORS
 	rm -f $@
 	echo "/* Generated file. */" >> $@
-	echo "#define AUTHORS \\" >> $@
-	sed -e "s/ \*\*.*//" -e 's/^/"/' -e 's/$$/\\n"\\/' -e '$$s/\\$$//' $< >> $@
+	echo "const gchar *AUTHORS[] = {\\" >> $@
+	sed -e "s/ \*\*.*//" -e 's/^/"/' -e 's/$$/",\\/' -e '$$s/\\$$//' $< >> $@
+	echo "NULL};" >> $@
+
+$(BUILT_SOURCES): $(srcdir)/Makefile.am
 
 @INTLTOOL_DESKTOP_RULE@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

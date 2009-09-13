@@ -86,6 +86,8 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BLUEMARBLE_FALSE = @BLUEMARBLE_FALSE@
+BLUEMARBLE_TRUE = @BLUEMARBLE_TRUE@
 CATALOGS = @CATALOGS@
 CATOBJEXT = @CATOBJEXT@
 CC = @CC@
@@ -117,6 +119,8 @@ GEN_MANPAGES_FALSE = @GEN_MANPAGES_FALSE@
 GEN_MANPAGES_TRUE = @GEN_MANPAGES_TRUE@
 GEOCACHES_FALSE = @GEOCACHES_FALSE@
 GEOCACHES_TRUE = @GEOCACHES_TRUE@
+GEONAMES_FALSE = @GEONAMES_FALSE@
+GEONAMES_TRUE = @GEONAMES_TRUE@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
@@ -166,8 +170,8 @@ MSGFMT = @MSGFMT@
 MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 OBJEXT = @OBJEXT@
-OLDGOOGLE_FALSE = @OLDGOOGLE_FALSE@
-OLDGOOGLE_TRUE = @OLDGOOGLE_TRUE@
+OPENAERIAL_FALSE = @OPENAERIAL_FALSE@
+OPENAERIAL_TRUE = @OPENAERIAL_TRUE@
 OPENSTREETMAP_FALSE = @OPENSTREETMAP_FALSE@
 OPENSTREETMAP_TRUE = @OPENSTREETMAP_TRUE@
 PACKAGE = @PACKAGE@
@@ -319,10 +323,60 @@ WAYPOINT_ICONS = \
   wp_building.png \
   wp_tunnel.png \
   wp_beach.png \
-  wp_airplane.png
+  wp_airplane.png \
+  wp_ice_skating.png
 
+WAYPOINT_ICONS_LARGE = wp_1st_aid_large.png wp_airplane_large.png \
+	wp_amuse_pk_large.png wp_anchor_large.png wp_ball_large.png \
+	wp_beach_large.png wp_bell_large.png wp_bike_trail_large.png \
+	wp_block_blue_large.png wp_block_green_large.png \
+	wp_block_red_large.png wp_boat_ramp_large.png \
+	wp_bowling_large.png wp_bridge_large.png wp_building_large.png \
+	wp_buoy_ambr_large.png wp_buoy_blck_large.png \
+	wp_buoy_blue_large.png wp_buoy_grn_large.png \
+	wp_buoy_grn_red_large.png wp_buoy_grn_wht_large.png \
+	wp_buoy_orng_large.png wp_buoy_red_grn_large.png \
+	wp_buoy_red_large.png wp_buoy_red_wht_large.png \
+	wp_buoy_violet_large.png wp_buoy_wht_grn_large.png \
+	wp_buoy_wht_large.png wp_buoy_wht_red_large.png \
+	wp_camp_large.png wp_car_large.png wp_car_rental_large.png \
+	wp_car_repair_large.png wp_cemetery_large.png \
+	wp_church_large.png wp_civil_large.png wp_controlled_large.png \
+	wp_conv_store_large.png wp_crossing_large.png wp_dam_large.png \
+	wp_danger_large.png wp_deer_large.png wp_dive1_large.png \
+	wp_dive2_large.png wp_dollar_large.png \
+	wp_drinking_wtr_large.png wp_fastfood_large.png \
+	wp_fhs_facility_large.png wp_fish_large.png \
+	wp_fitness_large.png wp_flag_blue_large.png \
+	wp_flag_green_large.png wp_flag_red_large.png \
+	wp_forest_large.png wp_fuel_large.png \
+	wp_geocache_fnd_large.png wp_geocache_large.png \
+	wp_glider_large.png wp_golf_large.png wp_grnd_trans_large.png \
+	wp_horn_large.png wp_house_large.png wp_ice_skating_large.png \
+	wp_info_large.png wp_knife_large.png wp_light_large.png \
+	wp_lodging_large.png wp_lrg_cty_large.png wp_med_cty_large.png \
+	wp_mine_large.png wp_mob_large.png wp_movie_large.png \
+	wp_mug_large.png wp_museum_large.png wp_oil_field_large.png \
+	wp_parachute_large.png wp_parking_large.png wp_park_large.png \
+	wp_pharmacy_large.png wp_phone_large.png wp_picnic_large.png \
+	wp_pin_blue_large.png wp_pin_green_large.png \
+	wp_pin_red_large.png wp_pizza_large.png wp_police_large.png \
+	wp_post_ofc_large.png wp_rbcn_large.png \
+	wp_restricted_large.png wp_restroom_large.png \
+	wp_rv_park_large.png wp_scenic_large.png wp_school_large.png \
+	wp_shopping_large.png wp_short_tower_large.png \
+	wp_shower_large.png wp_skiing_large.png \
+	wp_ski_resort_large.png wp_skull_large.png \
+	wp_sml_cty_large.png wp_stadium_large.png wp_store_large.png \
+	wp_summit_large.png wp_swimming_large.png \
+	wp_tall_tower_large.png wp_theater_large.png \
+	wp_toll_booth_large.png wp_trail_head_large.png \
+	wp_truck_stop_large.png wp_tunnel_large.png \
+	wp_ultralight_large.png wp_wbuoy_large.png \
+	wp_weigh_station_large.png wp_wrecker_large.png \
+	wp_wreck_large.png wp_zoo_large.png
 ICONS = \
-  viking_icon.png \
+  viking.png \
   addtr_18.png \
   begintr_18.png \
   addwp_18.png \
@@ -336,7 +390,15 @@ ICONS = \
   ruler_18.png \
   showpic_18.png \
   zoom_18.png \
-  iscissors_18.png
+  iscissors_18.png \
+  thumbnails.png \
+  vikaggregatelayer.png \
+  vikcoordlayer.png \
+  vikdemlayer.png \
+  vikgeoreflayer.png \
+  vikgpslayer.png \
+  vikmapslayer.png \
+  viktrwlayer.png
 
 CURSORS = \
   cursor_addtr.png \
@@ -353,22 +415,23 @@ CURSORS = \
   cursor_mapdl.png \
   cursor_zoom.png
 
-ALL_ICONS = $(ICONS) $(WAYPOINT_ICONS) $(CURSORS)
+ALL_ICONS = $(ICONS) $(WAYPOINT_ICONS) $(WAYPOINT_ICONS_LARGE) $(CURSORS)
 EXTRA_DIST = $(ALL_ICONS)
-BUILT_SOURCES = $(EXTRA_DIST:%.png=%.png_h) icons.c icons.h
+ALL_ICONS_HEADER = $(ALL_ICONS:.png=_pixmap.h)
+BUILT_SOURCES = $(ALL_ICONS_HEADER) icons.c icons.h
 CLEANFILES = $(BUILT_SOURCES)
-SUFFIXES = .png_h .png
 noinst_LIBRARIES = libicons.a
 libicons_a_SOURCES = icons.c icons.h
 INCLUDES = @GTK_CFLAGS@
 AM_CFLAGS = -Wall -g -D_GNU_SOURCE
-iconsdir = $(datadir)/icons
-icons_DATA = viking_icon.png
+iconsdir = $(datadir)/icons/hicolor/48x48/apps
+icons_DATA = viking.png
+gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .png_h .png .c .o .obj
+.SUFFIXES: .c .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -577,6 +640,8 @@ info: info-am
 info-am:
 
 install-data-am: install-iconsDATA
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 
 install-exec-am:
 
@@ -609,27 +674,39 @@ uninstall-am: uninstall-iconsDATA uninstall-info-am
 	clean-noinstLIBRARIES ctags distclean distclean-compile \
 	distclean-generic distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-iconsDATA \
-	install-info install-info-am install-man install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-iconsDATA uninstall-info-am
+	install-data-am install-data-hook install-exec install-exec-am \
+	install-iconsDATA install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-iconsDATA \
+	uninstall-info-am
 
 
-icons.h: $(ALL_ICONS:%.png=%.png_h)
+icons.h: $(ALL_ICONS_HEADER)
 	echo "/* Generated file */" > $@
-	sed -n "s/^\(const.*\) = {/extern \1;/p" *_h >> $@
+	sed -n "s/^\(const.*\) = {/extern \1;/p" $(ALL_ICONS_HEADER) >> $@
 
-icons.c: $(ALL_ICONS:%.png=%.png_h)
+icons.c: $(ALL_ICONS_HEADER)
 	echo "/* Generated file */" > $@
 	echo "#include <gdk-pixbuf/gdk-pixdata.h>" >> $@
-	for file in *_h ; do echo "#include \"$$file\"" >> $@ ; done
+	for file in *_pixmap.h ; do echo "#include \"$$file\"" >> $@ ; done
 
-.png.png_h:
-	gdk-pixbuf-csource --name="`basename $< .png`" --struct --extern $< > $@
-	cat $@ | sed -e 's/\(pixel_data: ..\)/\1 (unsigned char \*)/' > temp.h
-	mv temp.h $@
+%_pixmap.h: %.png
+	gdk-pixbuf-csource --name="`basename $< .png`_pixbuf" --struct --extern $< > $@
+	cat $@ | sed -e 's/\(pixel_data: ..\)/\1 (unsigned char \*)/' > temp$@.h
+	mv temp$@.h $@
+
+$(BUILT_SOURCES): $(srcdir)/Makefile.am
+
+install-data-hook:
+	@-if test -z "$(DESTDIR)"; then \
+	        echo "Updating Gtk icon cache."; \
+	        $(gtk_update_icon_cache); \
+	else \
+	        echo "*** Icon cache not updated.  After install, run this:"; \
+	        echo "***   $(gtk_update_icon_cache)"; \
+	fi
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

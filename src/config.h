@@ -141,7 +141,7 @@
 #define LIBCURL_FEATURE_LIBZ 1
 
 /* Defined if libcurl supports NTLM */
-#define LIBCURL_FEATURE_NTLM 1
+/* #undef LIBCURL_FEATURE_NTLM */
 
 /* Defined if libcurl supports SSL */
 #define LIBCURL_FEATURE_SSL 1
@@ -168,7 +168,7 @@
 #define LIBCURL_PROTOCOL_HTTPS 1
 
 /* Defined if libcurl supports LDAP */
-/* #undef LIBCURL_PROTOCOL_LDAP */
+#define LIBCURL_PROTOCOL_LDAP 1
 
 /* Defined if libcurl supports TELNET */
 #define LIBCURL_PROTOCOL_TELNET 1
@@ -193,22 +193,25 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 0.9.6"
+#define PACKAGE_STRING "viking 0.9.8"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.9.6"
+#define PACKAGE_VERSION "0.9.8"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.9.6"
+#define VERSION "0.9.8"
 
 /* NO ALPHABETIZED TRW */
 #define VIK_CONFIG_ALPHABETIZED_TRW 
+
+/* BLUEMARBLE STUFF */
+#define VIK_CONFIG_BLUEMARBLE 
 
 /* DEM24K STUFF */
 /* #undef VIK_CONFIG_DEM24K */
@@ -219,20 +222,32 @@
 /* GEOCACHES STUFF */
 /* #undef VIK_CONFIG_GEOCACHES */
 
+/* GEONAMES STUFF */
+#define VIK_CONFIG_GEONAMES 
+
 /* GOOGLE STUFF */
 #define VIK_CONFIG_GOOGLE 
 
 /* Size of the map cache */
 #define VIK_CONFIG_MAPCACHE_SIZE 50331648
 
-/* OLD GOOGLE STUFF */
-/* #undef VIK_CONFIG_OLD_GOOGLE */
+/* OPENAERIAL STUFF */
+#define VIK_CONFIG_OPENAERIAL 
 
 /* OPENSTREETMAP STUFF */
 #define VIK_CONFIG_OPENSTREETMAP 
 
 /* REALTIME GPS TRACKING STUFF */
 #define VIK_CONFIG_REALTIME_GPS_TRACKING 
+
+/* Method for the search */
+#define VIK_CONFIG_SEARCH VIK_CONFIG_SEARCH_GOOGLE
+
+/* Id. for searching via GEONAMES */
+#define VIK_CONFIG_SEARCH_GEONAMES 2
+
+/* Id. for searching via GOOGLE */
+#define VIK_CONFIG_SEARCH_GOOGLE 1
 
 /* TERRASERVER STUFF */
 #define VIK_CONFIG_TERRASERVER 

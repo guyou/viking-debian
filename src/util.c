@@ -29,6 +29,22 @@
 
 #include "dialog.h"
 
+static gboolean spawn_command_line_async(const gchar * cmd,
+                                         const gchar * arg)
+{
+  gchar *cmdline = NULL;
+  gboolean status;
+
+  cmdline = g_strdup_printf("%s '%s'", cmd, arg);
+  g_debug("Running: %s", cmdline);
+    
+  status = g_spawn_command_line_async(cmdline, NULL);
+
+  g_free(cmdline);
+ 
+  return status;
+}
+
 void open_url(GtkWindow *parent, const gchar * url)
 {
 #ifdef WINDOWS
@@ -42,7 +58,6 @@ void open_url(GtkWindow *parent, const gchar * url)
     NULL
   };
   gint i=0;
-  gchar *cmdline = NULL;
   
   const gchar *browser = g_getenv("BROWSER");
   if (browser == NULL || browser[0] == '\0') {
@@ -50,18 +65,48 @@ void open_url(GtkWindow *parent, const gchar * url)
     browser = browsers[i++];
   }
   do {
-    cmdline = g_strdup_printf("%s '%s'", browser, url);
-    g_debug("Running: %s", cmdline);
-    
-    if (g_spawn_command_line_async(cmdline, NULL)) {
-      g_free(cmdline);
+    if (spawn_command_line_async(browser, url)) {
       return;
     }
 
-    g_free(cmdline);
     browser = browsers[i++];
   } while(browser);
   
   a_dialog_error_msg ( parent, _("Could not launch web browser.") );
 #endif /* WINDOWS */
 }
+
+void new_email(GtkWindow *parent, const gchar * address)
+{
+  gchar *uri = g_strdup_printf("mailto:%s", address);
+#ifdef WINDOWS
+  ShellExecute(NULL, NULL, (char *) uri, NULL, ".\\", 0);
+#else /* WINDOWS */
+  if (!spawn_command_line_async("xdg-email", uri))
+    a_dialog_error_msg ( parent, _("Could not create new email.") );
+#endif /* WINDOWS */
+  g_free(uri);
+  uri = NULL;
+}
+
+gchar *uri_escape(gchar *str)
+{
+  gchar *esc_str = g_malloc(3*strlen(str));
+  gchar *dst = esc_str;
+  gchar *src;
+
+  for (src = str; *src; src++) {
+    if (*src == ' ')
+     *dst++ = '+';
+    else if (g_ascii_isalnum(*src))
+     *dst++ = *src;
+    else {
+      g_sprintf(dst, "%%%02X", *src);
+      dst += 3;
+    }
+  }
+  *dst = '\0';
+
+  return(esc_str);
+}
+

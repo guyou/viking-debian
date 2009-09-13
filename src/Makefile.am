@@ -10,10 +10,13 @@ noinst_LIBRARIES = libviking.a
 authors.h: ../AUTHORS
 	rm -f $@
 	echo "/* Generated file. */" >> $@
-	echo "#define AUTHORS \\" >> $@
-	sed -e "s/ \*\*.*//" -e 's/^/"/' -e 's/$$/\\n"\\/' -e '$$s/\\$$//' $< >> $@
+	echo "const gchar *AUTHORS[] = {\\" >> $@
+	sed -e "s/ \*\*.*//" -e 's/^/"/' -e 's/$$/",\\/' -e '$$s/\\$$//' $< >> $@
+	echo "NULL};" >> $@
 
 BUILT_SOURCES = authors.h
+
+$(BUILT_SOURCES): $(srcdir)/Makefile.am
 
 libviking_a_SOURCES = \
 	modules.h modules.c \
@@ -34,26 +37,25 @@ libviking_a_SOURCES = \
 	util.c util.h \
 	download.c download.h \
 	viktreeview.c viktreeview.h \
-	viktrwlayer.c viktrwlayer.h viktrwlayer_pixmap.h \
+	viktrwlayer.c viktrwlayer.h \
 	viklayer.c viklayer.h \
 	viklayerspanel.c viklayerspanel.h \
-	vikcoordlayer.c vikcoordlayer.h vikcoordlayer_pixmap.h \
+	vikcoordlayer.c vikcoordlayer.h \
 	vikstatus.c vikstatus.h \
 	vikwindow.c vikwindow.h \
 	vikviewport.c vikviewport.h \
-	vikaggregatelayer.c vikaggregatelayer.h vikaggregatelayer_pixmap.h \
-	vikgpslayer.c vikgpslayer.h vikgpslayer_pixmap.h \
-	vikgeoreflayer.c vikgeoreflayer.h vikgeoreflayer_pixmap.h \
+	vikaggregatelayer.c vikaggregatelayer.h \
+	vikgpslayer.c vikgpslayer.h \
+	vikgeoreflayer.c vikgeoreflayer.h \
 	vikfileentry.c vikfileentry.h \
 	viktrwlayer_tpwin.c viktrwlayer_tpwin.h \
 	viktrwlayer_propwin.c viktrwlayer_propwin.h \
-	thumbnails.c thumbnails.h thumbnails_pixbuf.h \
+	thumbnails.c thumbnails.h \
 	background.c background.h \
 	vikradiogroup.c vikradiogroup.h \
 	vikcoord.c vikcoord.h \
 	mapcache.c mapcache.h \
-	vikmapslayer.c vikmapslayer.h vikmapslayer_pixmap.h \
-	gtkcellrendererprogress.c gtkcellrendererprogress.h \
+	vikmapslayer.c vikmapslayer.h \
         gpx.c gpx.h \
 	garminsymbols.c garminsymbols.h \
 	acquire.c acquire.h \
@@ -66,8 +68,11 @@ libviking_a_SOURCES = \
 	googlesearch.c googlesearch.h \
 	dem.c dem.h \
 	vikdemlayer.h vikdemlayer.c \
-	vikdemlayer_pixmap.h \
 	vikfilelist.c vikfilelist.h \
+	vikexttool.c vikexttool.h \
+	vikexttools.c vikexttools.h \
+	vikwebtool.c vikwebtool.h \
+	vikwebtoolcenter.c vikwebtoolcenter.h \
 	dems.c dems.h \
 	srtm_continent.c \
 	uibuilder.c uibuilder.h \
@@ -77,9 +82,7 @@ libviking_a_SOURCES = \
 
 if GOOGLE
 libviking_a_SOURCES += \
-	khmaps.c khmaps.h \
-	google.c google.h \
-	googlemaps.c googlemaps.h
+	google.c google.h
 endif
 
 if TERRASERVER
@@ -96,6 +99,11 @@ if OPENSTREETMAP
 libviking_a_SOURCES += \
 	osm.c osm.h \
 	osm-traces.c osm-traces.h
+endif
+
+if GEONAMES
+libviking_a_SOURCES += \
+	geonamessearch.c geonamessearch.h
 endif
 
 viking_SOURCES = main.c
