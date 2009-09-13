@@ -1,8 +1,6 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-include /usr/share/dpatch/dpatch.make
-
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
@@ -28,7 +26,7 @@ endif
 
 configure: config-stamp
 
-config-stamp: patch
+config-stamp: 
 	dh_testdir
 
 	#make building from trunk more easy
@@ -57,9 +55,7 @@ build-stamp: config-stamp
 	touch $@
 
 
-clean: clean-patched unpatch
-
-clean-patched:
+clean: 
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp config-stamp
