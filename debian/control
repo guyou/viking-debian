@@ -6,8 +6,8 @@ Uploaders: Bernd Zeimetz <bzed@debian.org>, Guilhem BONNEFILLE <guilhem.bonnefil
 Build-Depends: debhelper (>= 5), automake1.9, autoconf, autotools-dev, libcurl4-gnutls-dev, libexpat1-dev, libgtk2.0-dev, libglib2.0-dev (>= 2.12.0), libgps-dev, xsltproc, docbook-xsl, docbook-xml, intltool, dpatch
 Standards-Version: 3.8.1
 Homepage: http://viking.sf.net
-Vcs-Svn: https://viking.svn.sourceforge.net/svnroot/viking/pkg-deb/trunk/
-Vcs-Browser: http://viking.svn.sourceforge.net/viewvc/viking/pkg-deb/trunk/
+Vcs-Git: git://git.debian.org/collab-maint/viking.git
+Vcs-Browser: http://git.debian.org/?p=collab-maint/viking.git
 
 Package: viking
 Architecture: any
