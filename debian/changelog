@@ -1,3 +1,14 @@
+viking (0.9.9-1) unstable; urgency=low
+
+  * [0948eaa9] Imported Upstream version 0.9.9
+    - Supports OSM API 0.6 (Closes: 526995)
+  * [edeebbdc] Add default gbp options.
+  * [1c90c035] Updating Vcs information.
+  * [12a68a60] Dropping patches, applied upstream.
+  * [09a546aa] Migrate to debhelper 7
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 13 Sep 2009 19:14:45 +0200
+
 viking (0.9.8-2) unstable; urgency=low
 
   * Work around missing gpsd_units() from the gpsd header
