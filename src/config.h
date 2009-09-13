@@ -141,7 +141,7 @@
 #define LIBCURL_FEATURE_LIBZ 1
 
 /* Defined if libcurl supports NTLM */
-/* #undef LIBCURL_FEATURE_NTLM */
+#define LIBCURL_FEATURE_NTLM 1
 
 /* Defined if libcurl supports SSL */
 #define LIBCURL_FEATURE_SSL 1
@@ -193,25 +193,28 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 0.9.8"
+#define PACKAGE_STRING "viking 0.9.9"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
 
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
+
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.9.8"
+#define PACKAGE_VERSION "0.9.9"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.9.8"
+#define VERSION "0.9.9"
 
 /* NO ALPHABETIZED TRW */
-#define VIK_CONFIG_ALPHABETIZED_TRW 
+#define VIK_CONFIG_ALPHABETIZED_TRW /**/
 
 /* BLUEMARBLE STUFF */
-#define VIK_CONFIG_BLUEMARBLE 
+#define VIK_CONFIG_BLUEMARBLE /**/
 
 /* DEM24K STUFF */
 /* #undef VIK_CONFIG_DEM24K */
@@ -223,22 +226,22 @@
 /* #undef VIK_CONFIG_GEOCACHES */
 
 /* GEONAMES STUFF */
-#define VIK_CONFIG_GEONAMES 
+#define VIK_CONFIG_GEONAMES /**/
 
 /* GOOGLE STUFF */
-#define VIK_CONFIG_GOOGLE 
+#define VIK_CONFIG_GOOGLE /**/
 
 /* Size of the map cache */
 #define VIK_CONFIG_MAPCACHE_SIZE 50331648
 
 /* OPENAERIAL STUFF */
-#define VIK_CONFIG_OPENAERIAL 
+#define VIK_CONFIG_OPENAERIAL /**/
 
 /* OPENSTREETMAP STUFF */
-#define VIK_CONFIG_OPENSTREETMAP 
+#define VIK_CONFIG_OPENSTREETMAP /**/
 
 /* REALTIME GPS TRACKING STUFF */
-#define VIK_CONFIG_REALTIME_GPS_TRACKING 
+#define VIK_CONFIG_REALTIME_GPS_TRACKING /**/
 
 /* Method for the search */
 #define VIK_CONFIG_SEARCH VIK_CONFIG_SEARCH_GOOGLE
@@ -250,7 +253,7 @@
 #define VIK_CONFIG_SEARCH_GOOGLE 1
 
 /* TERRASERVER STUFF */
-#define VIK_CONFIG_TERRASERVER 
+#define VIK_CONFIG_TERRASERVER /**/
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
