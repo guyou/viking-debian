@@ -1,3 +1,10 @@
+viking (0.9.9-2) unstable; urgency=low
+
+  * [f254a656] Fix bashism in test script. (Closes: #548449) - thanks to
+    Kurt Roeckx
+
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 28 Sep 2009 21:53:44 +0200
+
 viking (0.9.9-1) unstable; urgency=low
 
   * [0948eaa9] Imported Upstream version 0.9.9
