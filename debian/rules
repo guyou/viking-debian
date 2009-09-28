@@ -5,7 +5,7 @@
 #export DH_VERBOSE=1
 
 %:
-	dh $@
+	dh --with quilt $@
 
 override_dh_auto_configure:
 	#make building from upstream sources more easy
@@ -16,7 +16,7 @@ override_dh_auto_configure:
 	fi
 	[ -r /usr/share/misc/config.guess ] && cp -f /usr/share/misc/config.guess config.guess
 	[ -r /usr/share/misc/config.sub ] && cp -f /usr/share/misc/config.sub config.sub
-	dh_auto_configure -- LDFLAGS="-Wl,-z,defs"
+	dh_auto_configure --with quilt -- LDFLAGS="-Wl,-z,defs"
 
 
 clean: 
@@ -24,7 +24,7 @@ clean:
 		rm -f clean-configure config.guess config.sub src/config.h.in aclocal.m4 \
 		      src/authors.h missing install-sh depcomp configure Makefile.in ;\
 	fi
-	dh $@
+	dh --with quilt $@
 
 .PHONY: override_dh_auto_configure clean
 
