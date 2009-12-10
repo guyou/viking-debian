@@ -1,3 +1,17 @@
+viking (0.9.9-3) unstable; urgency=low
+
+  * [90eee421] Remove the sf.net list, set myself as Maintainer.
+  * [420be49e] Remove Ralf Meyer from Uploaders.
+  * [5af131f5] Make Viking compatible with libgps >= 2.90 (Closes:
+    #560243) - thanks to Cyril Brulebois
+  * [565d3820] Require libgps-dev 2.90.
+  * [e29fabb9] Add bc to build-deps - used by
+    check_degrees_conversions.sh.
+  * [56d18b6a] Disable make check for the po folder. intltool-update
+    gets confused by quilt's pc folder and the .c files in there.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Thu, 10 Dec 2009 01:43:35 +0100
+
 viking (0.9.9-2) unstable; urgency=low
 
   * [f254a656] Fix bashism in test script. (Closes: #548449) - thanks to
