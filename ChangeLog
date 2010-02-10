@@ -1,9 +1,250 @@
 
+2010-02-06
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Realising viking 0.9.91
+
+2010-02-05
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Update POTFILES
+	* Merge branch 'master' into i18n-launchpad
+	* Declare new languages
+	* Document previous import
+	* Import translation from launchpad
+
+2010-02-05
+Mike Ryan <mikeryan@lacklustre.net>:
+	* Fix #2946287: open a recent file
+
+2010-02-03
+Mike Ryan <mikeryan@lacklustre.net>:
+	* cache the scaled pixbuf in the vikgeoreflayer struct if the newly-scaled width and height are the same, do not waste CPU rescaling the pixbuf
+	* scale the georef layer based on current viewport rescales the image for every repaint, even if the mpp hasn't changed
+	* fix some confusing indentation and bracing
+
+2010-02-02
+Robert Norris <rw_norris@hotmail.com>:
+	* Fix #2881916: rename a track with c&p
+
+2010-02-01
+Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
+	* Add missing ) in string
+
+2010-02-01
+Mike Ryan <mikeryan@lacklustre.net>:
+	* add GIO dependency and header for GFile
+
+2010-02-01
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Portability: use GLib function g_utime if possible
+
+2010-01-24
+Sven Wegener <sven.wegener@stealer.net>:
+	* Update mtime of up-to-date tiles
+	* Allow reuse of curl connection objects
+
+2010-01-24
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Use combobox to select map type
+
+2010-01-14
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add compatibility to previous GPS device setting
+	* Fix #2766373: Use a string as device path
+
+2010-01-13
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge branch 'new-maps'
+
+2010-01-12
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Recode DownloadOptions as properties to VikSlippyMapSource
+
+2010-01-11
+Sven Wegener <sven.wegener@stealer.net>:
+	* Change default map type to OSM
+	* Fix "Moving Map Method" cannot be disabled
+
+2010-01-11
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix #2880741: replace gps_open with gps_open_r
+	* Fix #2921899: uses conditional macro to support two versions of libgps
+
+2010-01-11
+Bernd Zeimetz <bernd@bzed.de>:
+	* Make Viking compatible with libgps >= 2.90
+
+2010-01-02
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Include configuration examples in distribution
+	* Add configuration file for go-to search engines
+
+2010-01-01
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Refactor goto feature to allow multiple search engines
+	* Add Name finder search engine
+	* Add Nominatim search engine
+	* Add XPATH related attribute support
+
+2009-12-17
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add a unit test for VikGotoXmlTool
+	* Add support for XML attribute based lat/lon values
+	* Refactoring: move download code to vikgototool
+	* Fix warnings
+
+2009-12-16
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Use a configure option to set the age of tiles before checking them online
+
+2009-12-14
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Replace "search" substring by "goto"
+	* Fix URL formatting issue
+	* Remove unused code
+	* Fix URL formatting issue
+	* Use only the first result
+	* Fix error messages
+
+2009-12-09
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix typo
+	* Remove old code
+	* Create the geonames search as an VikXmlSearchTool
+
+2009-12-08
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Parse XML for XPath like path
+	* Add copyright
+
+2009-12-06
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add generic XML earch code
+	* Move common last search code to viksearch.c
+	* Use a more expressive icon for "Go to" features
+
+2009-12-03
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix typo
+	* Move GoogleSearch to new framework
+
+2009-11-26
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* GObjectify search dialog
+
+2009-11-05
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix #2801874: keep second part of a splitted track visible
+	* Unecessary code
+	* Fix #2838556: emit warning when gpsbabel is not found in PATH
+
+2009-11-05
+Stanislav Brabec <sbrabec@suse.cz>:
+	* Use motion hints to make map motion more responsive in slow environment.
+
+2009-10-24
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Tiles must be older than a specified age before checking server
+	* Use an internal thread concurrency model
+	* Try to download newer tiles when autodownload is set and server supports such check
+	* The "Download new" option must be available via download tool
+	* Add support for recently used files
+
+2009-10-20
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Distribute old version of ChangeLog
+	* Add HACKING info
+
+2009-10-19
+Gleb Smirnoff <glebius@glebius.int.ru>:
+	* suppress gtk warning
+
+2009-10-18
+Gleb Smirnoff <glebius@glebius.int.ru>:
+	* remove declaration of non-existent function
+
+2009-10-17
+Gleb Smirnoff <glebius@glebius.int.ru>:
+	* keeping OSM password safe
+
+2009-10-12
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Declare new translations
+
+2009-10-02
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Mark translatable strings
+
+2009-09-30
+Bernd Zeimetz <bernd@bzed.de>:
+	* Fix bashism in test script.
+
+2009-09-30
+David Rasmus Piegdon <viking@p23q.org>:
+	* Add DEM Gradient
+
+2009-09-29
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge branch 'fix-osm-api-0.6'
+	* Update translatable strings
+
+2009-09-29
+Gleb Smirnoff <glebius@glebius.int.ru>:
+	* finish OSM 0.6 API support
+
+2009-09-29
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add configure option to track deprecated feature
+
+2009-09-27
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Refactoring: use a GObject model to implement MapSource hierarchy tree
+	* Refactoring: keep a single definition for keys of global preferences
+	* Add info for GeoRef Map's parameters
+	* Add DOAP file
+	* Move src/.gitignore to main .gitignore
+
+2009-09-22
+Stanislav Brabec <sbrabec@suse.cz>:
+	* Get rid deprecated GtkTooltips API.
+
+2009-09-22
+Stanislav Brabec <utx@penguin.cz>:
+	* Added tooltips for layer panel buttons.
+
+2009-09-21
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge commit 'viking-0.9.9' into gobjectify-map-type
+
+2009-09-20
+Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
+	* ftp response code for success is 226
+	* Add option to download only maps that are more recent on server
+	* Remove defines used for preferences
+	* Move defines for preference to globals.h
+
+2009-09-19
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge branch 'interpolation'
+
+2009-09-18
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Refactoring: merge a_check_html_file and a_check_kml_file
+
+2009-09-18
+Harry G McGavran Jr <w5pny@arrl.net>:
+	* Fix magic scissors
+
 2009-09-09
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Releasing viking 0.9.9
 	* Add maintainer script to help releasing process
 	* Document previous import
 	* Import translations from launchpad
+
+2009-08-28
+Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
+	* Change interpolation to a faster one
+	* Use less precise images when wanted image is not present
 
 2009-08-20
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
@@ -45,6 +286,14 @@ Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 Herm <hermk@users.sourceforge.net>:
 	* Fix SRTM Server change
 
+2009-07-24
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add configuration file for map sources
+	* Merge branch 'gobjectify-map-type' into gobject-builder
+	* Manage memory of private fields
+	* Fill in the interface
+	* Move label
+
 2009-07-22
 Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
 	* Fix memory leaks found with cppcheck
@@ -54,8 +303,47 @@ Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
 	* Fix warning in call to MD5Update() in function md5_hash()
 
 2009-07-19
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add configuration file for external tools
+	* Remove dead code
+	* Create the GObject builder
+
+2009-07-19
 Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
 	* Add .gitignore
+
+2009-07-19
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Value of property is the content of the property XML element
+
+2009-07-18
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Expose VikSlippyMapSource's private fields as properties
+	* Expose TerraserverMapSource's type as property
+	* Expose VikMapSourceDefault's private fields as properties
+	* GObjectify VikViewportDrawMode enum
+	* Store test example for GValue
+	* Use GtkBuilder to convert string to expected value's GType
+
+2009-07-16
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Proof of concept
+
+2009-07-15
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Style fix
+	* Merge 'viking-0.9.8'
+
+2009-07-14
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge 'viking-0.9.7'
+	* Set VikMapSourceDefault properties
+	* Remove dependencies to gob2
+	* Replace terraserver-map-type.gob by raw implementation
+	* Merge vikslippymapsourceabstract and slippy-map-type
+	* Finish to remove Google
+	* Remove Google's map tiles
+	* Remove old Google stuff
 
 2009-06-19
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
@@ -172,6 +460,47 @@ Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 2009-04-04
 Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
 	* Include full libcurl version in user agent
+
+2009-03-27
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add vik prefix
+	* Rename slippy-map-type-abstract as slippymapsourceabstract
+	* Replace old-vik-map-type by vikmaptype
+	* Replace vik-map-type-default by vikmapsourcedefault
+	* Replace vik-map-type by vikmapsource
+	* Document new hierarchie
+	* Add compatibility facilities
+	* Declare built sources
+	* Insert a level of abstraction in map type hierarchie
+	* Remove Google
+	* Update design
+
+2009-03-27
+(null) <(null)>:
+	* Add UML design
+	* Typo
+	* Inherit GoogleMapType from SlippyMapTypeAbstract
+	* Insert slippy map type
+	* Add Google Kh map type
+	* QA: cleanning unused stuff
+	* Cleanning code
+	* Finalize Terraserver migration
+	* Extract BlueMarble and OpenAerial form OSM module
+	* Make osm-map-type running
+	* Make google-map-type running
+	* Start using GoogleMapType GObject
+	* Replace VikMapsLayer_MapType by VikMapType
+	* Correct google gobject
+	* Declare built sources
+	* Add Terraserver
+	* Add OSM
+	* Create Google map type
+	* Initial GoogleMaps implementation based on gob2
+	* Allow compilation
+	* Initial VikMapType class
+	* QA: un-needed external reference
+	* Portability
+	* QA: homogeneous way of doing stuff
 
 2009-02-13
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:

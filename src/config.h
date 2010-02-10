@@ -25,6 +25,12 @@
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #define HAVE_GETTEXT 1
 
+/* Define to 1 if you have the `gps_open_r' function. */
+/* #undef HAVE_GPS_OPEN_R */
+
+/* Define to 1 if you have the `gps_stream' function. */
+/* #undef HAVE_GPS_STREAM */
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
@@ -35,7 +41,7 @@
 #define HAVE_LIBCURL 1
 
 /* Define to 1 if you have the `gps' library (-lgps). */
-#define HAVE_LIBGPS 1
+/* #undef HAVE_LIBGPS */
 
 /* Define to 1 if you have the <locale.h> header file. */
 #define HAVE_LOCALE_H 1
@@ -125,6 +131,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
+/* Define to 1 if you have the <utime.h> header file. */
+#define HAVE_UTIME_H 1
+
 /* Defined if libcurl supports AsynchDNS */
 /* #undef LIBCURL_FEATURE_ASYNCHDNS */
 
@@ -193,7 +202,7 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 0.9.9"
+#define PACKAGE_STRING "viking 0.9.91"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
@@ -202,19 +211,22 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.9.9"
+#define PACKAGE_VERSION "0.9.91"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.9.9"
+#define VERSION "0.9.91"
 
 /* NO ALPHABETIZED TRW */
 #define VIK_CONFIG_ALPHABETIZED_TRW /**/
 
 /* BLUEMARBLE STUFF */
 #define VIK_CONFIG_BLUEMARBLE /**/
+
+/* Age of tiles before cheking it (in seconds) */
+#define VIK_CONFIG_DEFAULT_TILE_AGE 30
 
 /* DEM24K STUFF */
 /* #undef VIK_CONFIG_DEM24K */
@@ -241,7 +253,7 @@
 #define VIK_CONFIG_OPENSTREETMAP /**/
 
 /* REALTIME GPS TRACKING STUFF */
-#define VIK_CONFIG_REALTIME_GPS_TRACKING /**/
+/* #undef VIK_CONFIG_REALTIME_GPS_TRACKING */
 
 /* Method for the search */
 #define VIK_CONFIG_SEARCH VIK_CONFIG_SEARCH_GOOGLE
