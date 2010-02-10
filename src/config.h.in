@@ -24,6 +24,12 @@
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #undef HAVE_GETTEXT
 
+/* Define to 1 if you have the `gps_open_r' function. */
+#undef HAVE_GPS_OPEN_R
+
+/* Define to 1 if you have the `gps_stream' function. */
+#undef HAVE_GPS_STREAM
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -124,6 +130,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the <utime.h> header file. */
+#undef HAVE_UTIME_H
+
 /* Defined if libcurl supports AsynchDNS */
 #undef LIBCURL_FEATURE_ASYNCHDNS
 
@@ -214,6 +223,9 @@
 
 /* BLUEMARBLE STUFF */
 #undef VIK_CONFIG_BLUEMARBLE
+
+/* Age of tiles before cheking it (in seconds) */
+#undef VIK_CONFIG_DEFAULT_TILE_AGE
 
 /* DEM24K STUFF */
 #undef VIK_CONFIG_DEM24K
