@@ -1,3 +1,12 @@
+viking (0.9.91-1) unstable; urgency=low
+
+  * [41442055] Imported Upstream version 0.9.91
+  * [55d95585] Dropping libgps-2.90-fix patch, applied upstream.
+  * [95bdb707] Bumping Standards-Version to 3.8.4. No changes needed.
+  * [73f2c3b1] Drop bashism-fix patch, applied upstream.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Thu, 11 Feb 2010 12:07:19 +0100
+
 viking (0.9.9-3) unstable; urgency=low
 
   * [90eee421] Remove the sf.net list, set myself as Maintainer.
