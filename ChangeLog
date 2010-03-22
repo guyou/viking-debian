@@ -1,4 +1,55 @@
 
+2010-03-15
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Rleasing viking 0.9.92
+	* Merge branch 'i18n-launchpad'
+	* Document previous import
+	* Import translations from launchpad
+
+2010-03-13
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge remote branch 'rnorris/unitPref'
+
+2010-03-13
+Gerhard Killesreiter <gerhard@killesreiter.de>:
+	* Fix: Correctly rotate thumbnail images
+
+2010-03-10
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Memorize previously selected go-to service
+
+2010-03-09
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix #2958601: Support for non ascii characters in "Go-to" search
+
+2010-03-07
+Rob Norris <rw_norris@hotmail.com>:
+	* Minor tidy up.
+	* Better scale when zoomed close in and in miles distance mode.
+	* Add and use preference for height units.
+	* Add and use preference for speed units.
+	* Add and use preference for distance units.
+
+2010-02-16
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Use a preference to set the tiles age
+
+2010-02-15
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix error handling in go-to feature
+
+2010-02-14
+Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
+	* New preference for default maplayer cache
+
+2010-02-08
+David Rasmus Piegdon <viking@p23q.org>:
+	* Improve DEM-Layer
+
+2010-02-08
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Remove OpenAerial
+
 2010-02-06
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 	* Realising viking 0.9.91
