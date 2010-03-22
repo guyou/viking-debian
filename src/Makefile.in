@@ -57,14 +57,11 @@ bin_PROGRAMS = viking$(EXEEXT)
 @BLUEMARBLE_TRUE@am__append_5 = \
 @BLUEMARBLE_TRUE@	bluemarble.c bluemarble.h
 
-@OPENAERIAL_TRUE@am__append_6 = \
-@OPENAERIAL_TRUE@	openaerial.c openaerial.h
-
-@GEONAMES_TRUE@am__append_7 = \
+@GEONAMES_TRUE@am__append_6 = \
 @GEONAMES_TRUE@	geonames.c geonames.h \
 @GEONAMES_TRUE@	geonamessearch.c geonamessearch.h
 
-@REALTIME_GPS_TRACKING_TRUE@am__append_8 = -lgps
+@REALTIME_GPS_TRACKING_TRUE@am__append_7 = -lgps
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/config.h.in
@@ -119,16 +116,15 @@ am__libviking_a_SOURCES_DIST = modules.h modules.c curl_download.c \
 	google.c google.h terraservermapsource.c \
 	terraservermapsource.h terraserver.c terraserver.h expedia.c \
 	expedia.h osm.c osm.h osm-traces.c osm-traces.h bluemarble.c \
-	bluemarble.h openaerial.c openaerial.h geonames.c geonames.h \
-	geonamessearch.c geonamessearch.h
+	bluemarble.h geonames.c geonames.h geonamessearch.c \
+	geonamessearch.h
 @GOOGLE_TRUE@am__objects_1 = google.$(OBJEXT)
 @TERRASERVER_TRUE@am__objects_2 = terraservermapsource.$(OBJEXT) \
 @TERRASERVER_TRUE@	terraserver.$(OBJEXT)
 @EXPEDIA_TRUE@am__objects_3 = expedia.$(OBJEXT)
 @OPENSTREETMAP_TRUE@am__objects_4 = osm.$(OBJEXT) osm-traces.$(OBJEXT)
 @BLUEMARBLE_TRUE@am__objects_5 = bluemarble.$(OBJEXT)
-@OPENAERIAL_TRUE@am__objects_6 = openaerial.$(OBJEXT)
-@GEONAMES_TRUE@am__objects_7 = geonames.$(OBJEXT) \
+@GEONAMES_TRUE@am__objects_6 = geonames.$(OBJEXT) \
 @GEONAMES_TRUE@	geonamessearch.$(OBJEXT)
 am_libviking_a_OBJECTS = modules.$(OBJEXT) curl_download.$(OBJEXT) \
 	degrees_converters.$(OBJEXT) globals.$(OBJEXT) \
@@ -159,8 +155,7 @@ am_libviking_a_OBJECTS = modules.$(OBJEXT) curl_download.$(OBJEXT) \
 	srtm_continent.$(OBJEXT) uibuilder.$(OBJEXT) \
 	print-preview.$(OBJEXT) print.$(OBJEXT) preferences.$(OBJEXT) \
 	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
-	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
-	$(am__objects_7)
+	$(am__objects_4) $(am__objects_5) $(am__objects_6)
 libviking_a_OBJECTS = $(am_libviking_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(desktopdir)"
 PROGRAMS = $(bin_PROGRAMS)
@@ -419,11 +414,10 @@ libviking_a_SOURCES = modules.h modules.c curl_download.c \
 	srtm_continent.c uibuilder.c uibuilder.h print-preview.c \
 	print-preview.h print.c print.h preferences.c preferences.h \
 	$(am__append_1) $(am__append_2) $(am__append_3) \
-	$(am__append_4) $(am__append_5) $(am__append_6) \
-	$(am__append_7)
+	$(am__append_4) $(am__append_5) $(am__append_6)
 viking_SOURCES = main.c
 LDADD = libviking.a $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ \
-	icons/libicons.a $(am__append_8)
+	icons/libicons.a $(am__append_7)
 AM_CFLAGS = -Wall -g -D_GNU_SOURCE \
 	$(DISABLE_DEPRECATED_CFLAGS) \
 	$(PACKAGE_CFLAGS) \
@@ -569,7 +563,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapcache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/modules.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openaerial.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/osm-traces.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/osm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/preferences.Po@am__quote@
