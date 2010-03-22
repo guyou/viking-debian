@@ -1,3 +1,10 @@
+viking (0.9.92-1) unstable; urgency=low
+
+  * [5d0ca3d7] Imported Upstream version 0.9.92
+  * [8b4c8c78] Include example files in the packaging. (Closes: #575034)
+
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 22 Mar 2010 23:44:56 +0100
+
 viking (0.9.91-1) unstable; urgency=low
 
   * [41442055] Imported Upstream version 0.9.91
