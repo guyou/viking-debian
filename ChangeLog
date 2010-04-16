@@ -1,4 +1,53 @@
 
+2010-04-11
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Releasing viking 0.9.93
+	* Merge branch 'i18n-launchpad'
+	* Fix old po/Changelog entry
+	* Document previous translation updates
+	* Fix the way to extract Translators
+	* Import Launchpad updates
+	* Fix: set a default filename while exporting
+
+2010-04-03
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Allow overriding map source
+
+2010-04-02
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* [DOC] Fix: Viking's sources are hosted by Git now
+
+2010-03-27
+Robert Norris <rw_norris@hotmail.com>:
+	* Clean git status
+
+2010-03-23
+Rob Norris <rw_norris@hotmail.com>:
+	* Further variable type corrections.
+	* Make GPS layer cut/copy available from popup menu.
+	* Minor Improvements.
+	* Fix GPS layer copy.
+	* Fix Track/Waypoint Layer Paste on 64bit systems.
+
+2010-03-21
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix FILES section of manpage.
+
+2010-03-20
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Document new files in viking's manpage
+
+2010-03-18
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix: First Track not Black in Draw All Tracks Black Mode.
+
+2010-03-15
+Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
+	* Add a debug printf for map display
+	* Increase possible smaller zoom
+	* Add negative scales so that we can have bigger zoom on maps
+	* Allow images from bigger and smaller zoom to be selected if current zoom has no image Merge logic for smaller zoom with current zoom
+
 2010-03-15
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 	* Rleasing viking 0.9.92
