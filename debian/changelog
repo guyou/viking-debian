@@ -1,3 +1,12 @@
+viking (0.9.93-1) unstable; urgency=low
+
+  * [f12bb468] Remove Google from the long descriptio.
+  * [4922d64e] Imported Upstream version 0.9.93
+  * [86139278] Add debian/source/format.
+  * [d03d0138] Add debian/README.source file.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 21 Apr 2010 11:21:48 +0200
+
 viking (0.9.92-1) unstable; urgency=low
 
   * [5d0ca3d7] Imported Upstream version 0.9.92
