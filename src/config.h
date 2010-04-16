@@ -202,7 +202,7 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 0.9.92"
+#define PACKAGE_STRING "viking 0.9.93"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
@@ -211,13 +211,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.9.92"
+#define PACKAGE_VERSION "0.9.93"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.9.92"
+#define VERSION "0.9.93"
 
 /* NO ALPHABETIZED TRW */
 #define VIK_CONFIG_ALPHABETIZED_TRW /**/
