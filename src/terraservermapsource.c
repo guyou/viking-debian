@@ -34,7 +34,7 @@ static void * _download_handle_init ( VikMapSource *self );
 static void _download_handle_cleanup ( VikMapSource *self, void *handle );
 
 /* FIXME Huge gruik */
-static DownloadOptions terraserver_options = { NULL, 0, a_check_map_file };
+static DownloadOptions terraserver_options = { 0, NULL, 0, a_check_map_file };
 
 typedef struct _TerraserverMapSourcePrivate TerraserverMapSourcePrivate;
 struct _TerraserverMapSourcePrivate
@@ -148,7 +148,7 @@ terraserver_map_source_class_init (TerraserverMapSourceClass *klass)
 	object_class->finalize = terraserver_map_source_finalize;
 }
 
-#define TERRASERVER_SITE "terraserver-usa.com"
+#define TERRASERVER_SITE "msrmaps.com"
 #define MARGIN_OF_ERROR 0.001
 
 static int mpp_to_scale ( gdouble mpp, guint8 type )

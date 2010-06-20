@@ -31,10 +31,13 @@
 #include "icons/icons.h"
 #include "babel.h"
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
-#include <glib.h>
+#include <glib/gstdio.h>
 #include <glib/gprintf.h>
 #include <glib/gi18n.h>
 #ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
@@ -82,7 +85,8 @@ static gchar * params_ports[] = {"com1", "usb:", NULL};
 #else
 static gchar * params_ports[] = {"/dev/ttyS0", "/dev/ttyS1", "/dev/ttyUSB0", "/dev/ttyUSB1", "usb:", NULL};
 #endif
-#define NUM_PORTS (sizeof(params_ports)/sizeof(params_ports[0]) - 1)
+/* NUM_PORTS not actually used */
+/* #define NUM_PORTS (sizeof(params_ports)/sizeof(params_ports[0]) - 1) */
 /* Compatibility with previous versions */
 #ifdef WINDOWS
 static gchar * old_params_ports[] = {"com1", "usb:", NULL};
@@ -502,6 +506,21 @@ VikGpsLayer *vik_gps_layer_new (VikViewport *vp)
   vgl->protocol_id = 0;
   vgl->serial_port = NULL;
 
+#ifndef WINDOWS
+  /* Attempt to auto set default USB serial port entry */
+  /* Ordered to make lowest device favourite if available */
+  if (g_access ("/dev/ttyUSB1", R_OK) == 0) {
+    if (vgl->serial_port != NULL)
+      g_free (vgl->serial_port);
+    vgl->serial_port = g_strdup ("/dev/ttyUSB1");
+  }
+  if (g_access ("/dev/ttyUSB0", R_OK) == 0) {
+    if (vgl->serial_port != NULL)
+      g_free (vgl->serial_port);
+    vgl->serial_port = g_strdup ("/dev/ttyUSB0");
+  }
+#endif
+
   return vgl;
 }
 
@@ -856,6 +875,18 @@ static void gps_download_progress_func(BabelProgressCode c, gpointer data, GpsSe
         }
         info[ilen++] = 0;
         set_gps_info(info, sess);
+      }
+      g_strfreev(tokens);
+    }
+    /* eg: "Unit:\teTrex Legend HCx Software Version 2.90\n" */
+    if (strstr(line, "Unit:")) {
+      gchar **tokens = g_strsplit(line, "\t", 0);
+      int n_tokens = 0;
+      while (tokens[n_tokens])
+        n_tokens++;
+
+      if (n_tokens > 1) {
+        set_gps_info(tokens[1], sess);
       }
       g_strfreev(tokens);
     }

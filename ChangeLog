@@ -1,4 +1,114 @@
 
+2010-06-11
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Releasing viking 0.9.94
+
+2010-06-08
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix POTFILES with new source file
+	* Merge branch 'i18n-launchpad'
+	* Document previous translation updates
+	* Import Launchpad updates
+
+2010-06-06
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix OMF category
+
+2010-06-06
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix Filter->Simplify All Tracks default.
+	* Add knots as a speed unit option.
+
+2010-05-27
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* [DOC] Fix Gnome's menu entry category for viking
+
+2010-05-26
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Minor improves on gitchangelog script
+	* [DOC] Update README and INSTALL files
+	* [DOC] Fix erroneous warning
+
+2010-05-25
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix compiler warning.
+
+2010-05-25
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge branch 'help'
+	* [DOC] Correct tagging
+	* Merge commit 'viking-0.9.93' into help
+	* [DOC] Document Default maplayer directory property
+	* [DOC] Document tile's age property
+	* [DOC] Introduce properties related to units
+
+2010-05-20
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add Robert Norris as active contributor
+	* Add Viking's contributors as copyright holders
+
+2010-05-19
+Rob Norris <rw_norris@hotmail.com>:
+	* Detect USB Garmin eTrex HCx Legend devices (and maybe others).
+	* On GPS data acquire, only create a layer if it contains something.
+	* Auto use of /dev/ttyUSB type device if available on Unix systems.
+	* Add ability to turn off Garmin GPS after transfer.
+
+2010-05-19
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add a 'home' default location preference.
+
+2010-05-19
+Rob Norris <rw_norris@hotmail.com>:
+	* Add ability to changes preferences outside of the preferences.c file.
+
+2010-05-19
+Mathieu Albinet <mathieu17@gmail.com>:
+	* Fix #2977752 : win-gtk: osm tiles don't show up
+
+2010-05-19
+Robert Norris <rw_norris@hotmail.com>:
+	* Fix Track -> View Google Directions URL
+
+2010-05-18
+Robert Norris <rw_norris@hotmail.com>:
+	* NLS Maps API: Historic map of Great Britain
+
+2010-05-18
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix function's return value
+	* Fix compilation warnings
+
+2010-05-02
+Robert Norris <rw_norris@hotmail.com>:
+	* Better Preferences Dialog Title
+
+2010-05-02
+Simon Munton <nomis@users.sourceforge.net>:
+	* Fix #2988574: Can't save files opened via recent file menu
+
+2010-05-02
+Rob Norris <rw_norris@hotmail.com>:
+	* Change GUI related command line parameter for Waypoint symbol size into run time preference.
+
+2010-04-29
+Robert Norris <rw_norris@hotmail.com>:
+	* Support All Zoom Levels in Zoom Menu
+
+2010-04-27
+Robert Norris <rw_norris@hotmail.com>:
+	* More Menu Improvements
+	* More Menu Improvements
+	* Remove unecessary '\' from the View Menu
+
+2010-04-27
+Mark Coulter <i_offroad@yahoo.com>:
+	* Fix #2991657: Terraserver downloads fail
+
+2010-04-21
+Mark Coulter <i_offroad@yahoo.com>:
+	* Fix geocaching
+
 2010-04-11
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 	* Releasing viking 0.9.93
@@ -20,6 +130,12 @@ Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 2010-03-27
 Robert Norris <rw_norris@hotmail.com>:
 	* Clean git status
+
+2010-03-24
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge commit 'viking-0.9.92' into help
+	* Documenting extension files
+	* Document external tools
 
 2010-03-23
 Rob Norris <rw_norris@hotmail.com>:
@@ -57,6 +173,7 @@ Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 
 2010-03-13
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge commit 'viking-0.9.91' into help
 	* Merge remote branch 'rnorris/unitPref'
 
 2010-03-13
@@ -300,8 +417,12 @@ Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 	* Refactoring: use a GObject model to implement MapSource hierarchy tree
 	* Refactoring: keep a single definition for keys of global preferences
 	* Add info for GeoRef Map's parameters
+	* Import User Manual from wiki
 	* Add DOAP file
 	* Move src/.gitignore to main .gitignore
+	* Add menu item for help contents
+	* Setup build rules for help system
+	* Replace autogen.sh
 
 2009-09-22
 Stanislav Brabec <sbrabec@suse.cz>:

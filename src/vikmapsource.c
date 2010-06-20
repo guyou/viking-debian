@@ -30,7 +30,7 @@ static void vik_map_source_init (VikMapSource *object);
 static void vik_map_source_finalize (GObject *object);
 static void vik_map_source_class_init (VikMapSourceClass *klass);
 
-static void _supports_if_modified_since (VikMapSource *object);
+static gboolean _supports_if_modified_since (VikMapSource *object);
 
 G_DEFINE_TYPE_EXTENDED (VikMapSource, vik_map_source, G_TYPE_OBJECT, (GTypeFlags)G_TYPE_FLAG_ABSTRACT,);
 
@@ -68,7 +68,7 @@ vik_map_source_class_init (VikMapSourceClass *klass)
 	object_class->finalize = vik_map_source_finalize;
 }
 
-void
+gboolean
 _supports_if_modified_since (VikMapSource *self)
 {
 	// Default feature: does not support
@@ -209,11 +209,11 @@ void
 vik_map_source_download_handle_cleanup (VikMapSource * self, void * handle)
 {
 	VikMapSourceClass *klass;
-	g_return_val_if_fail (self != NULL, 0);
-	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), 0);
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (VIK_IS_MAP_SOURCE (self));
 	klass = VIK_MAP_SOURCE_GET_CLASS(self);
 
-	g_return_val_if_fail (klass->download_handle_cleanup != NULL, 0);
+	g_return_if_fail (klass->download_handle_cleanup != NULL);
 
-	return (*klass->download_handle_cleanup)(self, handle);
+	(*klass->download_handle_cleanup)(self, handle);
 }
