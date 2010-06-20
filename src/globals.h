@@ -46,7 +46,6 @@
 #define DEMERCLAT(x) (RAD2DEG * atan(sinh(DEG2RAD * (x))))
 
 /* Some command line options */
-extern gboolean vik_use_small_wp_icons;
 extern gboolean vik_debug;
 extern gboolean vik_verbose;
 extern gboolean vik_version;
@@ -76,6 +75,7 @@ typedef enum {
   VIK_UNITS_SPEED_KILOMETRES_PER_HOUR,
   VIK_UNITS_SPEED_MILES_PER_HOUR,
   VIK_UNITS_SPEED_METRES_PER_SECOND,
+  VIK_UNITS_SPEED_KNOTS,
 } vik_units_speed_t;
 
 vik_units_speed_t a_vik_get_units_speed ( );
@@ -87,6 +87,17 @@ typedef enum {
 } vik_units_height_t;
 
 vik_units_height_t a_vik_get_units_height ( );
+
+gboolean a_vik_get_use_large_waypoint_icons ( );
+
+/* Location preferences */
+typedef enum {
+  VIK_LOCATION_LAT,
+  VIK_LOCATION_LONG,
+} vik_location_t;
+
+gdouble a_vik_get_default_lat ( );
+gdouble a_vik_get_default_long ( );
 
 /* Group for global preferences */
 #define VIKING_PREFERENCES_GROUP_KEY "viking.globals"

@@ -11,6 +11,7 @@ const gchar *AUTHORS[] = {\
 "Mark Coulter <i_offroad@yahoo.com>",\
 "Mathieu Albinet <mathieu17@gmail.com>",\
 "Quy Tonthat <qtonthat@gmail.com>",\
+"Robert Norris <rw_norris@hotmail.com>",\
 "",\
 "Few other bugfixes/minor patches from various contributors. See ChangeLog for details.",
 NULL};

@@ -30,13 +30,14 @@
 gboolean vik_debug = FALSE;
 gboolean vik_verbose = FALSE;
 gboolean vik_version = FALSE;
-gboolean vik_use_small_wp_icons = FALSE;
 
 static gchar * params_degree_formats[] = {"DDD", "DMM", "DMS", NULL};
 static gchar * params_units_distance[] = {"Kilometres", "Miles", NULL};
-static gchar * params_units_speed[] = {"km/h", "mph", "m/s", NULL};
+static gchar * params_units_speed[] = {"km/h", "mph", "m/s", "knots", NULL};
 static gchar * params_units_height[] = {"Metres", "Feet", NULL};
-
+static VikLayerParamScale params_scales_lat[] = { {-90.0, 90.0, 0.05, 2} };
+static VikLayerParamScale params_scales_long[] = { {-180.0, 180.0, 0.05, 2} };
+ 
 static VikLayerParam prefs1[] = {
   { VIKING_PREFERENCES_NAMESPACE "degree_format", VIK_LAYER_PARAM_UINT, VIK_DEGREE_FORMAT_DMS, N_("Degree format:"), VIK_LAYER_WIDGET_COMBOBOX, params_degree_formats, NULL },
 };
@@ -51,6 +52,17 @@ static VikLayerParam prefs3[] = {
 
 static VikLayerParam prefs4[] = {
   { VIKING_PREFERENCES_NAMESPACE "units_height", VIK_LAYER_PARAM_UINT, VIK_UNITS_HEIGHT_METRES, N_("Height units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_height, NULL },
+};
+
+static VikLayerParam prefs5[] = {
+  { VIKING_PREFERENCES_NAMESPACE "use_large_waypoint_icons", VIK_LAYER_PARAM_BOOLEAN, TRUE, N_("Use large waypoint icons:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL },
+};
+
+static VikLayerParam prefs6[] = {
+  { VIKING_PREFERENCES_NAMESPACE "default_latitude", VIK_LAYER_PARAM_DOUBLE, VIK_LOCATION_LAT, N_("Default latitude:"),  VIK_LAYER_WIDGET_SPINBUTTON, params_scales_lat, NULL },
+};
+static VikLayerParam prefs7[] = {
+  { VIKING_PREFERENCES_NAMESPACE "default_longitude", VIK_LAYER_PARAM_DOUBLE, VIK_LOCATION_LONG, N_("Default longitude:"),  VIK_LAYER_WIDGET_SPINBUTTON, params_scales_long, NULL },
 };
 
 void a_vik_preferences_init ()
@@ -69,6 +81,15 @@ void a_vik_preferences_init ()
 
   tmp.u = VIK_UNITS_HEIGHT_METRES;
   a_preferences_register(prefs4, tmp, VIKING_PREFERENCES_GROUP_KEY);
+
+  tmp.b = TRUE;
+  a_preferences_register(prefs5, tmp, VIKING_PREFERENCES_GROUP_KEY);
+
+  /* Maintain the default location to New York */
+  tmp.d = 40.714490;
+  a_preferences_register(prefs6, tmp, VIKING_PREFERENCES_GROUP_KEY);
+  tmp.d = -74.007130;
+  a_preferences_register(prefs7, tmp, VIKING_PREFERENCES_GROUP_KEY);
 }
 
 vik_degree_format_t a_vik_get_degree_format ( )
@@ -97,4 +118,25 @@ vik_units_height_t a_vik_get_units_height ( )
   vik_units_height_t units;
   units = a_preferences_get(VIKING_PREFERENCES_NAMESPACE "units_height")->u;
   return units;
+}
+
+gboolean a_vik_get_use_large_waypoint_icons ( )
+{
+  gboolean use_large_waypoint_icons;
+  use_large_waypoint_icons = a_preferences_get(VIKING_PREFERENCES_NAMESPACE "use_large_waypoint_icons")->b;
+  return use_large_waypoint_icons;
+}
+
+gdouble a_vik_get_default_lat ( )
+{
+  gdouble data;
+  data = a_preferences_get(VIKING_PREFERENCES_NAMESPACE "default_latitude")->d;
+  return data;
+}
+
+gdouble a_vik_get_default_long ( )
+{
+  gdouble data;
+  data = a_preferences_get(VIKING_PREFERENCES_NAMESPACE "default_longitude")->d;
+  return data;
 }

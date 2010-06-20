@@ -147,8 +147,14 @@ static void get_from_anything ( w_and_interface_t *wi )
     gdk_threads_enter();
     if (w->ok) {
       gtk_label_set_text ( GTK_LABEL(w->status), _("Done.") );
-      if ( creating_new_layer )
-	vik_aggregate_layer_add_layer( vik_layers_panel_get_top_layer(w->vlp), VIK_LAYER(vtl));
+      if ( creating_new_layer ) {
+	/* Only create the layer if it actually contains anything useful */
+	if ( g_hash_table_size (vik_trw_layer_get_tracks(vtl)) ||
+	     g_hash_table_size (vik_trw_layer_get_waypoints(vtl)) )
+	  vik_aggregate_layer_add_layer( vik_layers_panel_get_top_layer(w->vlp), VIK_LAYER(vtl));
+	else
+	  gtk_label_set_text ( GTK_LABEL(w->status), _("No data.") );
+      }
       if ( source_interface->keep_dialog_open ) {
         gtk_dialog_set_response_sensitive ( GTK_DIALOG(w->dialog), GTK_RESPONSE_ACCEPT, TRUE );
         gtk_dialog_set_response_sensitive ( GTK_DIALOG(w->dialog), GTK_RESPONSE_REJECT, FALSE );
@@ -214,6 +220,7 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   GtkWidget *dialog = NULL;
   GtkWidget *status;
   gchar *cmd, *extra;
+  gchar *cmd_off, *extra_off;
   acq_dialog_widgets_t *w;
   gpointer user_data;
 
@@ -257,7 +264,7 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   }
   /* POSSIBILITY 2: UI BUILDER */
   else if ( source_interface->params ) {
-    paramdatas = a_uibuilder_run_dialog ( GTK_WINDOW(vw),
+    paramdatas = a_uibuilder_run_dialog ( source_interface->window_title, GTK_WINDOW(vw),
 			source_interface->params, source_interface->params_count,
 			source_interface->params_groups, source_interface->params_groups_count,
 			source_interface->params_defaults );
@@ -295,6 +302,11 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
     g_free ( name_src_track );
   } else
     source_interface->get_cmd_string_func ( pass_along_data, &cmd, &extra );
+
+  /* Get data for Off command */
+  if ( source_interface->off_func ) {
+    source_interface->off_func ( pass_along_data, &cmd_off, &extra_off );
+  }
 
   /* cleanup for option dialogs */
   if ( source_interface->add_setup_widgets_func ) {
@@ -343,6 +355,10 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   if ( w->ok )
     w->ok = FALSE; /* tell thread to stop. TODO: add mutex */
   else {
+    if ( cmd_off ) {
+      /* Turn off */
+      a_babel_convert_from (NULL, cmd_off, NULL, extra_off, NULL);
+    }
     g_free ( w ); /* thread has finished; free w */
   }
   gtk_widget_destroy ( dialog );

@@ -43,11 +43,17 @@ VikLayerParamScale simplify_params_scales[] = {
 };
 
 VikLayerParam bfilter_simplify_params[] = {
-  { "numberofpoints", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Max number of points:"), VIK_LAYER_WIDGET_SPINBUTTON, simplify_params_scales + 0 },
+  { "numberofpoints", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Max number of points:"), VIK_LAYER_WIDGET_SPINBUTTON, simplify_params_scales, NULL },
 };
 
 VikLayerParamData bfilter_simplify_params_defaults[] = {
+  /* Annoyingly 'C' cannot initialize unions properly */
+  /* It's dependent on the standard used or the compiler support... */
+#if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L || __GNUC__
+  { .i = 100 },
+#else
   { 100 },
+#endif
 };
 
 VikDataSourceInterface vik_datasource_bfilter_simplify_interface = {
@@ -60,6 +66,7 @@ VikDataSourceInterface vik_datasource_bfilter_simplify_interface = {
   NULL, NULL, NULL,
   (VikDataSourceGetCmdStringFunc)	datasource_bfilter_simplify_get_cmd_string,
   NULL, NULL, NULL,
+  (VikDataSourceOffFunc) NULL,
 
   bfilter_simplify_params,
   sizeof(bfilter_simplify_params)/sizeof(bfilter_simplify_params[0]),
@@ -93,6 +100,7 @@ VikDataSourceInterface vik_datasource_bfilter_dup_interface = {
   NULL, NULL, NULL,
   (VikDataSourceGetCmdStringFunc)	datasource_bfilter_dup_get_cmd_string,
   NULL, NULL, NULL,
+  (VikDataSourceOffFunc) NULL,
 
   NULL, 0, NULL, NULL, 0
 };
@@ -123,6 +131,7 @@ VikDataSourceInterface vik_datasource_bfilter_polygon_interface = {
   NULL, NULL, NULL,
   (VikDataSourceGetCmdStringFunc)	datasource_bfilter_polygon_get_cmd_string,
   NULL, NULL, NULL,
+  (VikDataSourceOffFunc) NULL,
 
   NULL,
   0,
@@ -156,6 +165,7 @@ VikDataSourceInterface vik_datasource_bfilter_exclude_polygon_interface = {
   NULL, NULL, NULL,
   (VikDataSourceGetCmdStringFunc)	datasource_bfilter_exclude_polygon_get_cmd_string,
   NULL, NULL, NULL,
+  (VikDataSourceOffFunc) NULL,
 
   NULL,
   0,

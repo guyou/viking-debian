@@ -26,10 +26,10 @@
 #define HAVE_GETTEXT 1
 
 /* Define to 1 if you have the `gps_open_r' function. */
-/* #undef HAVE_GPS_OPEN_R */
+#define HAVE_GPS_OPEN_R 1
 
 /* Define to 1 if you have the `gps_stream' function. */
-/* #undef HAVE_GPS_STREAM */
+#define HAVE_GPS_STREAM 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -41,7 +41,7 @@
 #define HAVE_LIBCURL 1
 
 /* Define to 1 if you have the `gps' library (-lgps). */
-/* #undef HAVE_LIBGPS */
+#define HAVE_LIBGPS 1
 
 /* Define to 1 if you have the <locale.h> header file. */
 #define HAVE_LOCALE_H 1
@@ -186,7 +186,7 @@
 #define LIBCURL_PROTOCOL_TFTP 1
 
 /* Define the location where the catalogs will be installed */
-#define LOCALEDIR "/usr/local/share/locale"
+#define LOCALEDIR "/tmp/viking/share/locale"
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -202,7 +202,7 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 0.9.93"
+#define PACKAGE_STRING "viking 0.9.94"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
@@ -211,13 +211,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.9.93"
+#define PACKAGE_VERSION "0.9.94"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.9.93"
+#define VERSION "0.9.94"
 
 /* NO ALPHABETIZED TRW */
 #define VIK_CONFIG_ALPHABETIZED_TRW /**/
@@ -250,7 +250,7 @@
 #define VIK_CONFIG_OPENSTREETMAP /**/
 
 /* REALTIME GPS TRACKING STUFF */
-/* #undef VIK_CONFIG_REALTIME_GPS_TRACKING */
+#define VIK_CONFIG_REALTIME_GPS_TRACKING /**/
 
 /* Method for the search */
 #define VIK_CONFIG_SEARCH VIK_CONFIG_SEARCH_GOOGLE

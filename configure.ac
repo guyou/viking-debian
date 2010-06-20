@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(viking, 0.9.93)
+AC_INIT(viking, 0.9.94)
 AM_INIT_AUTOMAKE()
 dnl AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
@@ -69,6 +69,11 @@ PKG_CHECK_MODULES(PACKAGE, [
 
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
+
+dnl  -------------
+dnl | User Manual |---------------------------------------
+dnl  -------------
+GNOME_DOC_INIT
 
 ###############
 # Depecations #
@@ -298,6 +303,7 @@ AC_CONFIG_FILES([Makefile
                  src/icons/Makefile
 		 po/Makefile.in
                  test/Makefile
+                 help/Makefile
                  doc/Makefile
                  doc/examples/Makefile
                  doc/dev/Makefile])

@@ -114,7 +114,6 @@ static void open_window ( VikWindow *vw, const gchar **files )
 /* Options */
 static GOptionEntry entries[] = 
 {
-  { "small_waypoint", 's', 0, G_OPTION_ARG_NONE, &vik_use_small_wp_icons, N_("Use smaller symbols for waypoints"), NULL },
   { "debug", 'd', 0, G_OPTION_ARG_NONE, &vik_debug, N_("Enable debug output"), NULL },
   { "verbose", 'V', 0, G_OPTION_ARG_NONE, &vik_verbose, N_("Enable verbose output"), NULL },
   { "version", 'v', 0, G_OPTION_ARG_NONE, &vik_version, N_("Show version"), NULL },
@@ -159,7 +158,7 @@ int main( int argc, char *argv[] )
    
   if (vik_version)
   {
-    g_printf ("%s %s, Copyright (c) 2003-2008 Evan Battaglia\n", PACKAGE_NAME, PACKAGE_VERSION);
+    g_printf ("%s %s\nCopyright (c) 2003-2008 Evan Battaglia\nCopyright (c) 2008-2010 Viking's contributors\n", PACKAGE_NAME, PACKAGE_VERSION);
     return EXIT_SUCCESS;
   }
 

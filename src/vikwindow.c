@@ -34,6 +34,7 @@
 #include "preferences.h"
 #include "icons/icons.h"
 #include "vikexttools.h"
+#include "garminsymbols.h"
 
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
@@ -1154,6 +1155,16 @@ static void menu_properties_cb ( GtkAction *a, VikWindow *vw )
     a_dialog_info_msg ( GTK_WINDOW(vw), _("You must select a layer to show its properties.") );
 }
 
+static void help_help_cb ( GtkAction *a, VikWindow *vw )
+{
+#if GTK_CHECK_VERSION (2, 14, 0)
+  gchar *uri;
+  uri = g_strdup_printf("ghelp:%s", PACKAGE);
+  gtk_show_uri(NULL, uri, GDK_CURRENT_TIME, NULL);
+  g_free(uri);
+#endif
+}
+
 static void help_about_cb ( GtkAction *a, VikWindow *vw )
 {
   a_dialog_about(GTK_WINDOW(vw));
@@ -1617,6 +1628,16 @@ static void acquire_from_gc ( GtkAction *a, VikWindow *vw )
 }
 #endif
 
+static void goto_default_location( GtkAction *a, VikWindow *vw)
+{
+  struct LatLon ll;
+  ll.lat = a_vik_get_default_lat();
+  ll.lon = a_vik_get_default_long();
+  vik_viewport_set_center_latlon(vw->viking_vvp, &ll);
+  vik_layers_panel_emit_update(vw->viking_vlp);
+}
+
+
 static void goto_address( GtkAction *a, VikWindow *vw)
 {
   a_vik_goto(vw, vw->viking_vlp, vw->viking_vvp);
@@ -1629,8 +1650,52 @@ static void mapcache_flush_cb ( GtkAction *a, VikWindow *vw )
 
 static void preferences_cb ( GtkAction *a, VikWindow *vw )
 {
+  gboolean wp_icon_size = a_vik_get_use_large_waypoint_icons();
+
   a_preferences_show_window ( GTK_WINDOW(vw) );
+
+  // Delete icon indexing 'cache' and so automatically regenerates with the new setting when changed
+  if (wp_icon_size != a_vik_get_use_large_waypoint_icons())
+    clear_garmin_icon_syms ();
+
   draw_update ( vw );
+}
+
+static void default_location_cb ( GtkAction *a, VikWindow *vw )
+{
+  /* Simplistic repeat of preference setting
+     Only the name & type are important for setting the preference via this 'external' way */
+  VikLayerParam pref_lat[] = {
+    { VIKING_PREFERENCES_NAMESPACE "default_latitude",
+      VIK_LAYER_PARAM_DOUBLE,
+      VIK_LOCATION_LAT,
+      NULL,
+      VIK_LAYER_WIDGET_SPINBUTTON,
+      NULL,
+      NULL },
+  };
+  VikLayerParam pref_lon[] = {
+    { VIKING_PREFERENCES_NAMESPACE "default_longitude",
+      VIK_LAYER_PARAM_DOUBLE,
+      VIK_LOCATION_LONG,
+      NULL,
+      VIK_LAYER_WIDGET_SPINBUTTON,
+      NULL,
+      NULL },
+  };
+
+  /* Get current center */
+  struct LatLon ll;
+  vik_coord_to_latlon ( vik_viewport_get_center ( vw->viking_vvp ), &ll );
+
+  /* Apply to preferences */
+  VikLayerParamData vlp_data;
+  vlp_data.d = ll.lat;
+  a_preferences_run_setparam (vlp_data, pref_lat);
+  vlp_data.d = ll.lon;
+  a_preferences_run_setparam (vlp_data, pref_lon);
+  /* Remember to save */
+  a_preferences_save_to_file();
 }
 
 static void clear_cb ( GtkAction *a, VikWindow *vw )
@@ -2084,19 +2149,19 @@ static GtkActionEntry entries[] = {
   { "Help", NULL, N_("_Help"), 0, 0, 0 },
 
   { "New",       GTK_STOCK_NEW,          N_("_New"),                          "<control>N", N_("New file"),                                     (GCallback)newwindow_cb          },
-  { "Open",      GTK_STOCK_OPEN,         N_("_Open"),                         "<control>O", N_("Open a file"),                                  (GCallback)load_file             },
-  { "OpenRecentFile", NULL,         N_("Open _Recent file"),                         NULL, NULL,                                  (GCallback)NULL             },
-  { "Append",    GTK_STOCK_ADD,          N_("A_ppend File"),                  NULL,         N_("Append data from a different file"),            (GCallback)load_file             },
+  { "Open",      GTK_STOCK_OPEN,         N_("_Open..."),                         "<control>O", N_("Open a file"),                                  (GCallback)load_file             },
+  { "OpenRecentFile", NULL,              N_("Open _Recent File"),         NULL,         NULL,                                               (GCallback)NULL },
+  { "Append",    GTK_STOCK_ADD,          N_("Append _File..."),           NULL,         N_("Append data from a different file"),            (GCallback)load_file             },
   { "Acquire", NULL, N_("A_cquire"), 0, 0, 0 },
-  { "AcquireGPS",   NULL,                N_("From _GPS"),            	  NULL,         N_("Transfer data from a GPS device"),              (GCallback)acquire_from_gps      },
-  { "AcquireGoogle",   NULL,             N_("Google _Directions"),    	  NULL,         N_("Get driving directions from Google"),           (GCallback)acquire_from_google   },
+  { "AcquireGPS",   NULL,                N_("From _GPS..."),           	  NULL,         N_("Transfer data from a GPS device"),              (GCallback)acquire_from_gps      },
+  { "AcquireGoogle",   NULL,             N_("Google _Directions..."),     NULL,         N_("Get driving directions from Google"),           (GCallback)acquire_from_google   },
 #ifdef VIK_CONFIG_GEOCACHES
-  { "AcquireGC",   NULL,                 N_("Geo_caches"),    	  	  NULL,         N_("Get Geocaches from geocaching.com"),            (GCallback)acquire_from_gc       },
+  { "AcquireGC",   NULL,                 N_("Geo_caches..."),    	  NULL,         N_("Get Geocaches from geocaching.com"),            (GCallback)acquire_from_gc       },
 #endif
   { "Save",      GTK_STOCK_SAVE,         N_("_Save"),                         "<control>S", N_("Save the file"),                                (GCallback)save_file             },
-  { "SaveAs",    GTK_STOCK_SAVE_AS,      N_("Save _As"),                      NULL,         N_("Save the file under different name"),           (GCallback)save_file_as          },
-  { "GenImg",    GTK_STOCK_CLEAR,        N_("_Generate Image File"),          NULL,         N_("Save a snapshot of the workspace into a file"), (GCallback)draw_to_image_file_cb },
-  { "GenImgDir", GTK_STOCK_DND_MULTIPLE, N_("Generate _Directory of Images"), NULL,         N_("FIXME:IMGDIR"),                                 (GCallback)draw_to_image_dir_cb  },
+  { "SaveAs",    GTK_STOCK_SAVE_AS,      N_("Save _As..."),                      NULL,  N_("Save the file under different name"),           (GCallback)save_file_as          },
+  { "GenImg",    GTK_STOCK_CLEAR,        N_("_Generate Image File..."),          NULL,  N_("Save a snapshot of the workspace into a file"), (GCallback)draw_to_image_file_cb },
+  { "GenImgDir", GTK_STOCK_DND_MULTIPLE, N_("Generate _Directory of Images..."), NULL,  N_("FIXME:IMGDIR"),                                 (GCallback)draw_to_image_dir_cb  },
 
 #if GTK_CHECK_VERSION(2,10,0)
   { "Print",    GTK_STOCK_PRINT,        N_("_Print..."),          NULL,         N_("Print maps"), (GCallback)print_cb },
@@ -2105,13 +2170,14 @@ static GtkActionEntry entries[] = {
   { "Exit",      GTK_STOCK_QUIT,         N_("E_xit"),                         "<control>W", N_("Exit the program"),                             (GCallback)window_close          },
   { "SaveExit",  GTK_STOCK_QUIT,         N_("Save and Exit"),                 NULL, N_("Save and Exit the program"),                             (GCallback)save_file_and_exit          },
 
-  { "GotoSearch",   GTK_STOCK_JUMP_TO,   N_("Go To location"),    	  	      NULL,         N_("Go to address/place using text search"),            (GCallback)goto_address       },
-  { "GotoLL",    GTK_STOCK_JUMP_TO,      N_("_Go to Lat\\/Lon..."),           NULL,         N_("Go to arbitrary lat\\/lon coordinate"),         (GCallback)draw_goto_cb          },
+  { "GotoDefaultLocation", GTK_STOCK_HOME, N_("Go to the _Default Location"),  NULL,         N_("Go to the default location"),                     (GCallback)goto_default_location },
+  { "GotoSearch", GTK_STOCK_JUMP_TO,     N_("Go to Location..."),    	      NULL,         N_("Go to address/place using text search"),        (GCallback)goto_address       },
+  { "GotoLL",    GTK_STOCK_JUMP_TO,      N_("_Go to Lat/Lon..."),           NULL,         N_("Go to arbitrary lat/lon coordinate"),         (GCallback)draw_goto_cb          },
   { "GotoUTM",   GTK_STOCK_JUMP_TO,      N_("Go to UTM..."),                  NULL,         N_("Go to arbitrary UTM coordinate"),               (GCallback)draw_goto_cb          },
   { "SetBGColor",GTK_STOCK_SELECT_COLOR, N_("Set Background Color..."),       NULL,         NULL,                                           (GCallback)set_bg_color          },
   { "ZoomIn",    GTK_STOCK_ZOOM_IN,      N_("Zoom _In"),                   "<control>plus", NULL,                                           (GCallback)draw_zoom_cb          },
   { "ZoomOut",   GTK_STOCK_ZOOM_OUT,     N_("Zoom _Out"),                 "<control>minus", NULL,                                           (GCallback)draw_zoom_cb          },
-  { "ZoomTo",    GTK_STOCK_ZOOM_FIT,     N_("Zoom _To"),               "<control>Z", NULL,                                           (GCallback)zoom_to_cb            },
+  { "ZoomTo",    GTK_STOCK_ZOOM_FIT,     N_("Zoom _To..."),               "<control>Z", NULL,                                           (GCallback)zoom_to_cb            },
   { "Zoom0.25",  NULL,                   N_("0.25"),                          NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
   { "Zoom0.5",   NULL,                   N_("0.5"),                           NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
   { "Zoom1",     NULL,                   N_("1"),                             NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
@@ -2122,6 +2188,14 @@ static GtkActionEntry entries[] = {
   { "Zoom32",    NULL,                   N_("32"),                            NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
   { "Zoom64",    NULL,                   N_("64"),                            NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
   { "Zoom128",   NULL,                   N_("128"),                           NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
+  { "Zoom256",   NULL,                   N_("256"),                           NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
+  { "Zoom512",   NULL,                   N_("512"),                           NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
+  { "Zoom1024",  NULL,                   N_("1024"),                          NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
+  { "Zoom2048",  NULL,                   N_("2048"),                          NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
+  { "Zoom4096",  NULL,                   N_("4096"),                          NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
+  { "Zoom8192",  NULL,                   N_("8192"),                          NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
+  { "Zoom16384", NULL,                   N_("16384"),                         NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
+  { "Zoom32768", NULL,                   N_("32768"),                         NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
   { "PanNorth",  NULL,                   N_("Pan North"),                  "<control>Up", NULL,                                           (GCallback)draw_pan_cb },
   { "PanEast",  NULL,                    N_("Pan East"),                   "<control>Right", NULL,                                           (GCallback)draw_pan_cb },
   { "PanSouth",  NULL,                   N_("Pan South"),                  "<control>Down", NULL,                                           (GCallback)draw_pan_cb },
@@ -2133,10 +2207,12 @@ static GtkActionEntry entries[] = {
   { "Paste",     GTK_STOCK_PASTE,        N_("_Paste"),                        NULL,         NULL,                                           (GCallback)menu_paste_layer_cb   },
   { "Delete",    GTK_STOCK_DELETE,       N_("_Delete"),                       NULL,         NULL,                                           (GCallback)menu_delete_layer_cb  },
   { "DeleteAll", NULL,                   N_("Delete All"),                    NULL,         NULL,                                           (GCallback)clear_cb              },
-  { "MapCacheFlush",NULL, N_("Flush Map cache"),                              NULL,         NULL,                                           (GCallback)mapcache_flush_cb     },
-  { "Preferences",GTK_STOCK_PREFERENCES, N_("_Preferences..."),               NULL,         NULL,                                           (GCallback)preferences_cb              },
+  { "MapCacheFlush",NULL,                N_("_Flush Map Cache"),              NULL,         NULL,                                           (GCallback)mapcache_flush_cb     },
+  { "SetDefaultLocation", GTK_STOCK_GO_FORWARD, N_("_Set the Default Location"), NULL, N_("Set the Default Location to the current position"),(GCallback)default_location_cb },
+  { "Preferences",GTK_STOCK_PREFERENCES, N_("_Preferences"),                  NULL,         NULL,                                           (GCallback)preferences_cb              },
   { "Properties",GTK_STOCK_PROPERTIES,   N_("_Properties"),                   NULL,         NULL,                                           (GCallback)menu_properties_cb    },
 
+  { "HelpEntry", GTK_STOCK_HELP,         N_("_Help"),                         "F1",         NULL,                                           (GCallback)help_help_cb     },
   { "About",     GTK_STOCK_ABOUT,        N_("_About"),                        NULL,         NULL,                                           (GCallback)help_about_cb    },
 };
 
@@ -2154,10 +2230,10 @@ static GtkRadioActionEntry tool_entries[] = {
 };
 
 static GtkToggleActionEntry toggle_entries[] = {
-  { "ShowScale", NULL,                   N_("Show Scale"),                    NULL,         N_("Show Scale"),                                           (GCallback)set_draw_scale, TRUE   },
-  { "ShowCenterMark", NULL,                   N_("Show Center Mark"),                    NULL,         N_("Show Center Mark"),                                           (GCallback)set_draw_centermark, TRUE   },
-  { "FullScreen",    GTK_STOCK_FULLSCREEN,      N_("Full Screen"),                   "F11", N_("Activate full screen mode"),                                           (GCallback)full_screen_cb, FALSE },
-  { "ViewSidePanel", GTK_STOCK_INDEX,   N_("Show Side Panel"),                   "F9",         N_("Show Side Panel"),                                           (GCallback)view_side_panel_cb, TRUE    },
+  { "ShowScale", NULL,                        N_("_Show Scale"),               NULL,         N_("Show Scale"),                                           (GCallback)set_draw_scale, TRUE   },
+  { "ShowCenterMark", NULL,                   N_("Show _Center Mark"),         NULL,         N_("Show Center Mark"),                                           (GCallback)set_draw_centermark, TRUE   },
+  { "FullScreen",    GTK_STOCK_FULLSCREEN,    N_("_Full Screen"),              "F11",        N_("Activate full screen mode"),                                           (GCallback)full_screen_cb, FALSE },
+  { "ViewSidePanel", GTK_STOCK_INDEX,   N_("Show Side Panel"),                 "F9",         N_("Show Side Panel"),                                           (GCallback)view_side_panel_cb, TRUE    },
 };
 
 #include "menu.xml.h"
