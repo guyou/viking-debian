@@ -5,10 +5,10 @@
 #export DH_VERBOSE=1
 
 %:
-	dh --with quilt --with autotools_dev $@
+	dh --with quilt,autotools_dev $@
 
 override_dh_auto_test:
 	# The test suite is buggy.
-	-dh_auto_test --with quilt --with autotools_dev
+	-dh_auto_test
 
 .PHONY: override_dh_auto_test
