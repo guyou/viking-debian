@@ -1,3 +1,16 @@
+viking (0.9.94-1) unstable; urgency=low
+
+  * [96e56c75] Imported Upstream version 0.9.94
+  * [477b715c] Add new build-dependency: gnome-doc-utils >= 0.3.2
+  * [597b155a] Add rarian-compat | scrollkeeper as build dependency.
+  * [a0aa7553] Tidy up debian/rules using dh features only.
+  * [1f144180] Ignore errors in the test suite for now.
+  * [5069b36f] Order with options for dh properly, remove where not
+    necessary.
+  * [02e43ae0] No need to clean config.sub and config.guess anymore.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 25 Jul 2010 13:09:14 +0200
+
 viking (0.9.93-1) unstable; urgency=low
 
   * [f12bb468] Remove Google from the long descriptio.
