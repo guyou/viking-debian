@@ -1,3 +1,10 @@
+viking (0.9.94-2) unstable; urgency=low
+
+  * [6c407676] Add patch to fix segfault when using gpsbabel. (Closes:
+    #599048) - thanks to Rob Norris and Alexander Fell.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sat, 16 Oct 2010 18:59:08 +0200
+
 viking (0.9.94-1) unstable; urgency=low
 
   * [96e56c75] Imported Upstream version 0.9.94
