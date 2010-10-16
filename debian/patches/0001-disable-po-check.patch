@@ -1,3 +1,13 @@
+From: Bernd Zeimetz <bzed@debian.org>
+Date: Sat, 16 Oct 2010 18:57:01 +0200
+Subject: [PATCH] disable-po-check
+
+---
+ po/Makefile.in.in |    8 ++------
+ 1 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/po/Makefile.in.in b/po/Makefile.in.in
+index 402a25f..be8996d 100644
 --- a/po/Makefile.in.in
 +++ b/po/Makefile.in.in
 @@ -141,12 +141,8 @@ uninstall:
@@ -15,3 +25,4 @@
  
  mostlyclean:
  	rm -f *.pox $(GETTEXT_PACKAGE).pot *.old.po cat-id-tbl.tmp
+-- 
