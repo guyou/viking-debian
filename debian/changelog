@@ -1,3 +1,12 @@
+viking (0.9.94-3) unstable; urgency=low
+
+  * [f5016ac4] Fix spelling error in the long description. (Closes:
+    #601438) - thanks to Ralf Treinen
+  * [2adbd71c] Add patch to include a missing -lz in src/Makefile.am
+  * [e69887c6] Use dh_autoreconf as src/Makefile.am was patched.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 03 Nov 2010 21:17:23 +0100
+
 viking (0.9.94-2) unstable; urgency=low
 
   * [6c407676] Add patch to fix segfault when using gpsbabel. (Closes:
