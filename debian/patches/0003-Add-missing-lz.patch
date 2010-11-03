@@ -1,0 +1,22 @@
+From: Bernd Zeimetz <bernd@bzed.de>
+Date: Wed, 3 Nov 2010 21:10:03 +0100
+Subject: [PATCH] Add missing -lz.
+
+---
+ src/Makefile.am |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index e598210..7500bf4 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -140,7 +140,7 @@ endif
+ 
+ viking_SOURCES = main.c
+ 
+-LDADD           = libviking.a $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ icons/libicons.a
++LDADD           = libviking.a $(PACKAGE_LIBS) -lz @EXPAT_LIBS@ @LIBCURL@ icons/libicons.a
+ if REALTIME_GPS_TRACKING
+ LDADD           += -lgps
+ endif
+-- 
