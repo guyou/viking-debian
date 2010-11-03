@@ -5,7 +5,7 @@
 #export DH_VERBOSE=1
 
 %:
-	dh --with quilt,autotools_dev $@
+	dh --with quilt,autotools_dev,autoreconf $@
 
 override_dh_auto_test:
 	# The test suite is buggy.
