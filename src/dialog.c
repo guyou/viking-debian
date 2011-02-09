@@ -2,6 +2,8 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2008, Hein Ragas <viking@ragas.nl>
+ * Copyright (C) 2010, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,7 @@
 #include "garminsymbols.h"
 #include "degrees_converters.h"
 #include "authors.h"
+#include "documenters.h"
 #include "vikgoto.h"
 #include "util.h"
 
@@ -80,6 +83,8 @@ gboolean a_dialog_goto_latlon ( GtkWindow *parent, struct LatLon *ll, const stru
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), lonlabel,  FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), lon,  FALSE, FALSE, 0);
 
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+
   if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT )
   {
     ll->lat = convert_dms_to_dec ( gtk_entry_get_text ( GTK_ENTRY(lat) ) );
@@ -94,7 +99,7 @@ gboolean a_dialog_goto_latlon ( GtkWindow *parent, struct LatLon *ll, const stru
 
 gboolean a_dialog_goto_utm ( GtkWindow *parent, struct UTM *utm, const struct UTM *old )
 {
-  GtkWidget *dialog = gtk_dialog_new_with_buttons (_("Go to Lat/Lon"),
+  GtkWidget *dialog = gtk_dialog_new_with_buttons (_("Go to UTM"),
                                                   parent,
                                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                                   GTK_STOCK_CANCEL,
@@ -121,7 +126,7 @@ gboolean a_dialog_goto_utm ( GtkWindow *parent, struct UTM *utm, const struct UT
 
   zonehbox = gtk_hbox_new ( FALSE, 0 );
   gtk_box_pack_start ( GTK_BOX(zonehbox), gtk_label_new ( _("Zone:") ), FALSE, FALSE, 5 );
-  zonespin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( old->zone, 1, 60, 1, 5, 5 ), 1, 0 );
+  zonespin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( old->zone, 1, 60, 1, 5, 0 ), 1, 0 );
   gtk_box_pack_start ( GTK_BOX(zonehbox), zonespin, TRUE, TRUE, 5 );
   gtk_box_pack_start ( GTK_BOX(zonehbox), gtk_label_new ( _("Letter:") ), FALSE, FALSE, 5 );
   letterentry = gtk_entry_new ();
@@ -144,6 +149,8 @@ gboolean a_dialog_goto_utm ( GtkWindow *parent, struct UTM *utm, const struct UT
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), easlabel,  FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), eas,  FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), zonehbox,  FALSE, FALSE, 0);
+
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
 
   if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT )
   {
@@ -212,7 +219,7 @@ gboolean a_dialog_new_waypoint ( GtkWindow *parent, gchar **dest, VikWaypoint *w
     alt = g_strdup_printf ( "%f", wp->altitude );
     break;
   case VIK_UNITS_HEIGHT_FEET:
-    alt = g_strdup_printf ( "%f", wp->altitude*3.2808399 );
+    alt = g_strdup_printf ( "%f", VIK_METERS_TO_FEET(wp->altitude) );
     break;
   default:
     alt = g_strdup_printf ( "%f", wp->altitude );
@@ -292,7 +299,11 @@ gboolean a_dialog_new_waypoint ( GtkWindow *parent, gchar **dest, VikWaypoint *w
 	  g_free(sym);
 	}
       }
-      gtk_combo_box_set_active_iter(GTK_COMBO_BOX(symbolentry), &iter);
+      // Ensure is it a valid symbol in the given symbol set (large vs small)
+      // Not all symbols are available in both
+      // The check prevents a Gtk Critical message
+      if ( iter.stamp )
+	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(symbolentry), &iter);
     }
   }
 
@@ -316,6 +327,8 @@ gboolean a_dialog_new_waypoint ( GtkWindow *parent, gchar **dest, VikWaypoint *w
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), symbollabel, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), GTK_WIDGET(symbolentry), FALSE, FALSE, 0);
 
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+
   gtk_widget_show_all ( GTK_DIALOG(dialog)->vbox );
 
   while ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT )
@@ -328,7 +341,7 @@ gboolean a_dialog_new_waypoint ( GtkWindow *parent, gchar **dest, VikWaypoint *w
       else {
         gchar *name = g_strdup ( constname );
 
-        if ( g_hash_table_lookup ( waypoints, name ) && !a_dialog_overwrite ( parent, _("The waypoint \"%s\" exists, do you want to overwrite it?"), name ) )
+        if ( g_hash_table_lookup ( waypoints, name ) && !a_dialog_yes_or_no ( parent, _("The waypoint \"%s\" exists, do you want to overwrite it?"), name ) )
           g_free ( name );
         else
         {
@@ -341,10 +354,9 @@ gboolean a_dialog_new_waypoint ( GtkWindow *parent, gchar **dest, VikWaypoint *w
 	  switch (height_units) {
 	  case VIK_UNITS_HEIGHT_METRES:
 	    wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
-	    alt = g_strdup_printf ( "%f", wp->altitude );
 	    break;
 	  case VIK_UNITS_HEIGHT_FEET:
-	    wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) ) / 3.2808399;
+	    wp->altitude = VIK_FEET_TO_METERS(atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) ));
 	    break;
 	  default:
 	    wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
@@ -381,10 +393,9 @@ gboolean a_dialog_new_waypoint ( GtkWindow *parent, gchar **dest, VikWaypoint *w
       switch (height_units) {
       case VIK_UNITS_HEIGHT_METRES:
 	wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
-	alt = g_strdup_printf ( "%f", wp->altitude );
 	break;
       case VIK_UNITS_HEIGHT_FEET:
-	wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) ) / 3.2808399;
+	wp->altitude = VIK_FEET_TO_METERS(atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) ));
 	break;
       default:
 	wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
@@ -432,7 +443,7 @@ static void get_selected_foreach_func(GtkTreeModel *model,
   *list = g_list_prepend(*list, name);
 }
 
-GList *a_dialog_select_from_list ( GtkWindow *parent, GHashTable *tracks, GList *track_names, gboolean multiple_selection_allowed, const gchar *title, const gchar *msg )
+GList *a_dialog_select_from_list ( GtkWindow *parent, GList *names, gboolean multiple_selection_allowed, const gchar *title, const gchar *msg )
 {
   GtkTreeIter iter;
   GtkCellRenderer *renderer;
@@ -446,30 +457,48 @@ GList *a_dialog_select_from_list ( GtkWindow *parent, GHashTable *tracks, GList 
                                                   GTK_STOCK_OK,
                                                   GTK_RESPONSE_ACCEPT,
                                                   NULL);
-  GtkWidget *label = gtk_label_new ( msg );
+  /* When something is selected then OK */
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+  GtkWidget *response_w = NULL;
+#if GTK_CHECK_VERSION (2, 20, 0)
+  /* Default to not apply - as initially nothing is selected! */
+  response_w = gtk_dialog_get_widget_for_response ( GTK_DIALOG(dialog), GTK_RESPONSE_REJECT );
+#endif
   GtkListStore *store = gtk_list_store_new(1, G_TYPE_STRING);
 
-  GList *track_runner = track_names;
-  while (track_runner)
+  GtkWidget *scrolledwindow;
+
+  GList *runner = names;
+  while (runner)
   {
     gtk_list_store_append(store, &iter);
-    gtk_list_store_set(store, &iter, 0, track_runner->data, -1);
-    track_runner = g_list_next(track_runner);
+    gtk_list_store_set(store, &iter, 0, runner->data, -1);
+    runner = g_list_next(runner);
   }
 
   view = gtk_tree_view_new();
   renderer = gtk_cell_renderer_text_new();
-  gtk_tree_view_insert_column_with_attributes( GTK_TREE_VIEW(view), -1, NULL, renderer, "text", 0, NULL);
+  // Use the column header to display the message text,
+  // this makes the overall widget allocation simple as treeview takes up all the space
+  gtk_tree_view_insert_column_with_attributes( GTK_TREE_VIEW(view), -1, msg, renderer, "text", 0, NULL);
   gtk_tree_view_set_model(GTK_TREE_VIEW(view), GTK_TREE_MODEL(store));
-  gtk_tree_view_set_headers_visible( GTK_TREE_VIEW(view), FALSE);
+  gtk_tree_view_set_headers_visible( GTK_TREE_VIEW(view), TRUE);
   gtk_tree_selection_set_mode( gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
       multiple_selection_allowed ? GTK_SELECTION_MULTIPLE : GTK_SELECTION_BROWSE );
   g_object_unref(store);
 
-  gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, FALSE, 0);
-  gtk_widget_show ( label );
-  gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), view, FALSE, FALSE, 0);
-  gtk_widget_show ( view );
+  scrolledwindow = gtk_scrolled_window_new ( NULL, NULL );
+  gtk_scrolled_window_set_policy ( GTK_SCROLLED_WINDOW(scrolledwindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC );
+  gtk_container_add ( GTK_CONTAINER(scrolledwindow), view );
+
+  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), scrolledwindow, TRUE, TRUE, 0 );
+  // Ensure a reasonable number of items are shown, but let the width be automatically sized
+  gtk_widget_set_size_request ( dialog, -1, 400) ;
+
+  gtk_widget_show_all ( dialog );
+
+  if ( response_w )
+    gtk_widget_grab_focus ( response_w );
 
   while ( gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT )
   {
@@ -487,7 +516,7 @@ GList *a_dialog_select_from_list ( GtkWindow *parent, GHashTable *tracks, GList 
   return NULL;
 }
 
-gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks )
+gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks, gchar *default_name )
 {
   GtkWidget *dialog = gtk_dialog_new_with_buttons (_("Add Track"),
                                                   parent,
@@ -500,6 +529,9 @@ gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks )
   GtkWidget *label = gtk_label_new ( _("Track Name:") );
   GtkWidget *entry = gtk_entry_new ();
 
+  if (default_name)
+    gtk_entry_set_text ( GTK_ENTRY(entry), default_name );
+
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, FALSE, 0);
 
@@ -507,6 +539,8 @@ gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks )
 
   gtk_widget_show ( label );
   gtk_widget_show ( entry );
+
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
 
   while ( gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT )
   {
@@ -516,7 +550,7 @@ gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks )
     else {
       gchar *name = g_strdup ( constname );
 
-      if ( g_hash_table_lookup( tracks, name ) && !a_dialog_overwrite ( parent, _("The track \"%s\" exists, do you want to overwrite it?"), gtk_entry_get_text ( GTK_ENTRY(entry) ) ) )
+      if ( g_hash_table_lookup( tracks, name ) && !a_dialog_yes_or_no ( parent, _("The track \"%s\" exists, do you want to overwrite it?"), gtk_entry_get_text ( GTK_ENTRY(entry) ) ) )
       {
         g_free ( name );
       }
@@ -547,7 +581,7 @@ GtkWidget *a_dialog_create_label_vbox ( gchar **texts, int label_count )
   return vbox;
 }
 
-gboolean a_dialog_overwrite ( GtkWindow *parent, const gchar *message, const gchar *extra )
+gboolean a_dialog_yes_or_no ( GtkWindow *parent, const gchar *message, const gchar *extra )
 {
   GtkWidget *dia;
   dia = gtk_message_dialog_new ( parent,
@@ -596,8 +630,8 @@ gboolean a_dialog_custom_zoom ( GtkWindow *parent, gdouble *xmpp, gdouble *ympp 
   xlabel = gtk_label_new ( _("X (easting): "));
   ylabel = gtk_label_new ( _("Y (northing): "));
 
-  pass_along[0] = xspin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( *xmpp, VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM, 1, 5, 5 ), 1, 8 );
-  pass_along[1] = yspin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( *ympp, VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM, 1, 5, 5 ), 1, 8 );
+  pass_along[0] = xspin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( *xmpp, VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM, 1, 5, 0 ), 1, 8 );
+  pass_along[1] = yspin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( *ympp, VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM, 1, 5, 0 ), 1, 8 );
 
   pass_along[2] = samecheck = gtk_check_button_new_with_label ( _("X and Y zoom factors must be equal") );
   /* TODO -- same factor */
@@ -617,6 +651,8 @@ gboolean a_dialog_custom_zoom ( GtkWindow *parent, gdouble *xmpp, gdouble *ympp 
 
   g_signal_connect ( G_OBJECT(xspin), "value-changed", G_CALLBACK(zoom_spin_changed), pass_along );
   g_signal_connect ( G_OBJECT(yspin), "value-changed", G_CALLBACK(zoom_spin_changed), pass_along );
+
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
 
   if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT )
   {
@@ -659,7 +695,7 @@ gboolean a_dialog_time_threshold ( GtkWindow *parent, gchar *title_text, gchar *
 
   pass_along[0] = t4;
 
-  spin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( *thr, 0, 65536, 1, 5, 5 ), 1, 0 );
+  spin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( *thr, 0, 65536, 1, 5, 0 ), 1, 0 );
 
   gtk_table_attach_defaults ( GTK_TABLE(table), label, 0, 2, 0, 1 );
   gtk_table_attach_defaults ( GTK_TABLE(table), t1, 0, 1, 1, 2 );
@@ -671,6 +707,8 @@ gboolean a_dialog_time_threshold ( GtkWindow *parent, gchar *title_text, gchar *
   gtk_widget_show_all ( table );
 
   g_signal_connect ( G_OBJECT(spin), "grab-focus", G_CALLBACK(split_spin_focused), pass_along );
+
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
 
   if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT )
   {
@@ -738,6 +776,8 @@ void a_dialog_about ( GtkWindow *parent )
 	"wrap-license", TRUE,
 	/* logo automatically retrieved via gtk_window_get_default_icon_list */
 	"authors", AUTHORS,
+	"documenters", DOCUMENTERS,
+	"translator-credits", _("Translation is coordinated on http://launchpad.net/viking"),
 	NULL);
 }
 
@@ -746,7 +786,11 @@ gboolean a_dialog_map_n_zoom(GtkWindow *parent, gchar *mapnames[], gint default_
   gchar **s;
 
   GtkWidget *dialog = gtk_dialog_new_with_buttons ( _("Download along track"), parent, 0, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL );
-
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+  GtkWidget *response_w = NULL;
+#if GTK_CHECK_VERSION (2, 20, 0)
+  response_w = gtk_dialog_get_widget_for_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+#endif
   GtkWidget *map_label = gtk_label_new(_("Map type:"));
   GtkComboBox *map_combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
   for (s = mapnames; *s; s++)
@@ -766,6 +810,9 @@ gboolean a_dialog_map_n_zoom(GtkWindow *parent, gchar *mapnames[], gint default_
 
   gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), GTK_WIDGET(box), FALSE, FALSE, 5 );
 
+  if ( response_w )
+    gtk_widget_grab_focus ( response_w );
+
   gtk_widget_show_all ( dialog );
   if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) != GTK_RESPONSE_ACCEPT ) {
     gtk_widget_destroy(dialog);
@@ -777,4 +824,34 @@ gboolean a_dialog_map_n_zoom(GtkWindow *parent, gchar *mapnames[], gint default_
 
   gtk_widget_destroy(dialog);
   return TRUE;
+}
+
+/**
+ * Display a dialog presenting the license of a map.
+ * Allow to read the license by launching a web browser.
+ */
+void a_dialog_license ( GtkWindow *parent, const gchar *map, const gchar *license, const gchar *url)
+{
+  GtkWidget *dialog = gtk_message_dialog_new (parent,
+                                 GTK_DIALOG_DESTROY_WITH_PARENT,
+                                 GTK_MESSAGE_INFO,
+                                 GTK_BUTTONS_OK,
+                                 _("The map data is licensed: %s."),
+                                 license);
+  gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (dialog),
+    _("The data provided by '<b>%s</b>' are licensed under the following license: <b>%s</b>.\n"
+    "Please, read the license before continuing."),
+    map, license);
+#define RESPONSE_OPEN_LICENSE 600
+  if (url != NULL) {
+    gtk_dialog_add_button (GTK_DIALOG (dialog), _("Open license"), RESPONSE_OPEN_LICENSE);
+  }
+  gint response;
+  do {
+    response = gtk_dialog_run (GTK_DIALOG (dialog));
+    if (response == RESPONSE_OPEN_LICENSE) {
+      open_url (parent, url);
+    }
+  } while (response != GTK_RESPONSE_DELETE_EVENT && response != GTK_RESPONSE_OK);
+  gtk_widget_destroy (dialog);
 }

@@ -1,7 +1,7 @@
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
- * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2009, Hein Ragas
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Created by Quy Tonthat <qtonthat@gmail.com>
  */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -99,6 +98,7 @@ static void none_found(VikWindow *vw)
 
   GtkWidget *search_label = gtk_label_new(_("No entries found!"));
   gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), search_label, FALSE, FALSE, 5 );
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
   gtk_widget_show_all(dialog);
 
   gtk_dialog_run ( GTK_DIALOG(dialog) );
@@ -136,6 +136,13 @@ GList *a_select_geoname_from_list(GtkWindow *parent, GList *geonames, gboolean m
                                                   GTK_STOCK_OK,
                                                   GTK_RESPONSE_ACCEPT,
                                                   NULL);
+  /* When something is selected then OK */
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+  GtkWidget *response_w = NULL;
+#if GTK_CHECK_VERSION (2, 20, 0)
+  /* Default to not apply - as initially nothing is selected! */
+  response_w = gtk_dialog_get_widget_for_response ( GTK_DIALOG(dialog), GTK_RESPONSE_REJECT );
+#endif
   GtkWidget *label = gtk_label_new ( msg );
   GtkTreeStore *store;
   if (multiple_selection_allowed)
@@ -189,6 +196,8 @@ GList *a_select_geoname_from_list(GtkWindow *parent, GList *geonames, gboolean m
   gtk_widget_show ( label );
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), view, FALSE, FALSE, 0);
   gtk_widget_show ( view );
+  if ( response_w )
+    gtk_widget_grab_focus ( response_w );
   while ( gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT )
   {
     GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));

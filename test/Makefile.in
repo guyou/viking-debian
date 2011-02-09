@@ -35,9 +35,9 @@ build_triplet = @build@
 host_triplet = @host@
 @REALTIME_GPS_TRACKING_TRUE@am__append_1 = -lgps
 check_PROGRAMS = degrees_converter$(EXEEXT) gpx2gpx$(EXEEXT) \
-	test_vikgotoxmltool$(EXEEXT)
+	test_vikgotoxmltool$(EXEEXT) test_coord_conversion$(EXEEXT)
 subdir = test
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/expat.m4 \
 	$(top_srcdir)/m4/glib-gettext.m4 $(top_srcdir)/m4/libcurl.m4 \
@@ -59,6 +59,10 @@ am_gpx2gpx_OBJECTS = gpx2gpx.$(OBJEXT)
 gpx2gpx_OBJECTS = $(am_gpx2gpx_OBJECTS)
 gpx2gpx_DEPENDENCIES = $(top_builddir)/src/libviking.a \
 	$(am__DEPENDENCIES_2)
+am_test_coord_conversion_OBJECTS = test_coord_conversion.$(OBJEXT)
+test_coord_conversion_OBJECTS = $(am_test_coord_conversion_OBJECTS)
+test_coord_conversion_DEPENDENCIES = $(top_builddir)/src/libviking.a \
+	$(am__DEPENDENCIES_2)
 am_test_vikgotoxmltool_OBJECTS = test_vikgotoxmltool.$(OBJEXT)
 test_vikgotoxmltool_OBJECTS = $(am_test_vikgotoxmltool_OBJECTS)
 test_vikgotoxmltool_DEPENDENCIES = $(top_builddir)/src/libviking.a \
@@ -72,8 +76,10 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(degrees_converter_SOURCES) $(gpx2gpx_SOURCES) \
+	$(test_coord_conversion_SOURCES) \
 	$(test_vikgotoxmltool_SOURCES)
 DIST_SOURCES = $(degrees_converter_SOURCES) $(gpx2gpx_SOURCES) \
+	$(test_coord_conversion_SOURCES) \
 	$(test_vikgotoxmltool_SOURCES)
 ETAGS = etags
 CTAGS = ctags
@@ -101,7 +107,6 @@ DATADIRNAME = @DATADIRNAME@
 DB2MAN_XSL = @DB2MAN_XSL@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DISABLE_DEPRECATED_CFLAGS = @DISABLE_DEPRECATED_CFLAGS@
 DISTCHECK_CONFIGURE_FLAGS = @DISTCHECK_CONFIGURE_FLAGS@
 DOC_USER_FORMATS = @DOC_USER_FORMATS@
 ECHO_C = @ECHO_C@
@@ -155,6 +160,8 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 POFILES = @POFILES@
 POSUB = @POSUB@
 POW_LIB = @POW_LIB@
@@ -242,6 +249,11 @@ test_vikgotoxmltool_LDADD = \
   $(top_builddir)/src/libviking.a \
   $(LDADD)
 
+test_coord_conversion_SOURCES = test_coord_conversion.c
+test_coord_conversion_LDADD = \
+  $(top_builddir)/src/libviking.a \
+  $(LDADD)
+
 all: all-am
 
 .SUFFIXES:
@@ -285,6 +297,9 @@ degrees_converter$(EXEEXT): $(degrees_converter_OBJECTS) $(degrees_converter_DEP
 gpx2gpx$(EXEEXT): $(gpx2gpx_OBJECTS) $(gpx2gpx_DEPENDENCIES) 
 	@rm -f gpx2gpx$(EXEEXT)
 	$(LINK) $(gpx2gpx_OBJECTS) $(gpx2gpx_LDADD) $(LIBS)
+test_coord_conversion$(EXEEXT): $(test_coord_conversion_OBJECTS) $(test_coord_conversion_DEPENDENCIES) 
+	@rm -f test_coord_conversion$(EXEEXT)
+	$(LINK) $(test_coord_conversion_OBJECTS) $(test_coord_conversion_LDADD) $(LIBS)
 test_vikgotoxmltool$(EXEEXT): $(test_vikgotoxmltool_OBJECTS) $(test_vikgotoxmltool_DEPENDENCIES) 
 	@rm -f test_vikgotoxmltool$(EXEEXT)
 	$(LINK) $(test_vikgotoxmltool_OBJECTS) $(test_vikgotoxmltool_LDADD) $(LIBS)
@@ -297,6 +312,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/degrees_converter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpx2gpx.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_coord_conversion.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_vikgotoxmltool.Po@am__quote@
 
 .c.o:

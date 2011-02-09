@@ -1,7 +1,10 @@
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
- * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2007, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2007, Quy Tonthat <qtonthat@gmail.com>
+ * Copyright (C) 2009-2010, Jocelyn Jaubert <jocelyn.jaubert@gmail.com>
+ * Copyright (C) 2010, Sven Wegener <sven.wegener@stealer.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +45,7 @@
 #include "globals.h"
 #include "curl_download.h"
 
-gchar *curl_download_user_agent;
+gchar *curl_download_user_agent = NULL;
 
 /*
  * Even if writing to FILE* is supported by libcurl by default,
@@ -53,6 +56,23 @@ gchar *curl_download_user_agent;
 static size_t curl_write_func(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
   return fwrite(ptr, size, nmemb, stream);
+}
+
+static size_t curl_get_etag_func(char *ptr, size_t size, size_t nmemb, void *stream)
+{
+#define ETAG_KEYWORD "ETag: "
+#define ETAG_LEN (sizeof(ETAG_KEYWORD)-1)
+  size_t len = size*nmemb;
+  char *str = g_strstr_len((const char*)ptr, len, ETAG_KEYWORD);
+  if (str) {
+    char *etag_str = str + ETAG_LEN;
+    char *end_str = g_strstr_len(etag_str, len - ETAG_LEN, "\r\n");
+    if (etag_str && end_str) {
+      stream = (void*) g_strndup(etag_str, end_str - etag_str);
+      g_debug("%s: ETAG found: %s", __FUNCTION__, (gchar*)stream);
+    }
+  }
+  return nmemb;
 }
 
 static int curl_progress_func(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
@@ -121,9 +141,16 @@ void curl_download_init()
   curl_download_user_agent = g_strdup_printf ("%s/%s %s", PACKAGE, VERSION, curl_version());
 }
 
-int curl_download_uri ( const char *uri, FILE *f, DownloadOptions *options, time_t time_condition, void *handle )
+/* This should to be called from main() to make sure thread safe */
+void curl_download_uninit()
+{
+  curl_global_cleanup();
+}
+
+int curl_download_uri ( const char *uri, FILE *f, DownloadMapOptions *options, DownloadFileOptions *file_options, void *handle )
 {
   CURL *curl;
+  struct curl_slist *curl_send_headers = NULL;
   CURLcode res = CURLE_FAILED_INIT;
   const gchar *cookie_file;
 
@@ -148,16 +175,31 @@ int curl_download_uri ( const char *uri, FILE *f, DownloadOptions *options, time
       curl_easy_setopt ( curl, CURLOPT_FOLLOWLOCATION, 1);
       curl_easy_setopt ( curl, CURLOPT_MAXREDIRS, options->follow_location);
     }
-    if(options->check_file_server_time && time_condition != 0) {
-      /* if file exists, check against server if file is recent enough */
-      curl_easy_setopt ( curl, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
-      curl_easy_setopt ( curl, CURLOPT_TIMEVALUE, time_condition);
+    if (file_options != NULL) {
+      if(options->check_file_server_time && file_options->time_condition != 0) {
+        /* if file exists, check against server if file is recent enough */
+        curl_easy_setopt ( curl, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
+        curl_easy_setopt ( curl, CURLOPT_TIMEVALUE, file_options->time_condition);
+      }
+      if (options->use_etag) {
+        if (file_options->etag != NULL) {
+          /* add an header on the HTTP request */
+          char str[60];
+          g_snprintf(str, 60, "If-None-Match: %s", file_options->etag);
+          curl_send_headers = curl_slist_append(curl_send_headers, str);
+          curl_easy_setopt ( curl, CURLOPT_HTTPHEADER , curl_send_headers);
+        }
+        /* store the new etag from the server in an option value */
+        curl_easy_setopt ( curl, CURLOPT_WRITEHEADER, &(file_options->new_etag));
+        curl_easy_setopt ( curl, CURLOPT_HEADERFUNCTION, curl_get_etag_func);
+      }
     }
   }
   curl_easy_setopt ( curl, CURLOPT_USERAGENT, curl_download_user_agent );
   if ((cookie_file = get_cookie_file(FALSE)) != NULL)
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, cookie_file);
   res = curl_easy_perform ( curl );
+
   if (res == 0) {
     glong response;
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response);
@@ -174,7 +216,7 @@ int curl_download_uri ( const char *uri, FILE *f, DownloadOptions *options, time
       else
         res = DOWNLOAD_NO_ERROR;
     } else {
-      g_warning("%s: http response: %ld for uri %s (time_condition = %ld)\n", __FUNCTION__, response, uri, time_condition);
+      g_warning("%s: http response: %ld for uri %s\n", __FUNCTION__, response, uri);
       res = DOWNLOAD_ERROR;
     }
   } else {
@@ -182,17 +224,22 @@ int curl_download_uri ( const char *uri, FILE *f, DownloadOptions *options, time
   }
   if (!handle)
      curl_easy_cleanup ( curl );
+  if (curl_send_headers) {
+    curl_slist_free_all(curl_send_headers);
+    curl_send_headers = NULL;
+    curl_easy_setopt ( curl, CURLOPT_HTTPHEADER , NULL);
+  }
   return res;
 }
 
-int curl_download_get_url ( const char *hostname, const char *uri, FILE *f, DownloadOptions *options, gboolean ftp, time_t time_condition, void *handle )
+int curl_download_get_url ( const char *hostname, const char *uri, FILE *f, DownloadMapOptions *options, gboolean ftp, DownloadFileOptions *file_options, void *handle )
 {
   int ret;
   gchar *full = NULL;
 
   /* Compose the full url */
   full = g_strdup_printf ( "%s://%s%s", (ftp?"ftp":"http"), hostname, uri );
-  ret = curl_download_uri ( full, f, options, time_condition, handle );
+  ret = curl_download_uri ( full, f, options, file_options, handle );
   g_free ( full );
   full = NULL;
 

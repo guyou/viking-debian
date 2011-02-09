@@ -24,11 +24,13 @@
 
 #include <glib.h>
 #include <glib-object.h>
-#include <gtk/gtkdialog.h>
+#include <gtk/gtk.h>
+
 G_BEGIN_DECLS
 
 /* response codes */
-#define VIK_TRW_LAYER_TPWIN_CLOSE    5
+#define VIK_TRW_LAYER_TPWIN_CLOSE    6
+#define VIK_TRW_LAYER_TPWIN_INSERT   5
 #define VIK_TRW_LAYER_TPWIN_DELETE   4
 #define VIK_TRW_LAYER_TPWIN_SPLIT    3
 #define VIK_TRW_LAYER_TPWIN_JOIN     2

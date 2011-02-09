@@ -101,7 +101,7 @@ static void tpwin_sync_alt_to_tp ( VikTrwLayerTpwin *tpwin )
       tpwin->cur_tp->altitude = gtk_spin_button_get_value ( tpwin->alt );
       break;
     case VIK_UNITS_HEIGHT_FEET:
-      tpwin->cur_tp->altitude = gtk_spin_button_get_value ( tpwin->alt ) / 3.2808399;
+      tpwin->cur_tp->altitude = VIK_FEET_TO_METERS(gtk_spin_button_get_value ( tpwin->alt ));
       break;
     default:
       tpwin->cur_tp->altitude = gtk_spin_button_get_value ( tpwin->alt );
@@ -137,6 +137,7 @@ VikTrwLayerTpwin *vik_trw_layer_tpwin_new ( GtkWindow *parent )
 
   gtk_dialog_add_buttons ( GTK_DIALOG(tpwin),
       GTK_STOCK_CLOSE, VIK_TRW_LAYER_TPWIN_CLOSE,
+      _("_Insert After"), VIK_TRW_LAYER_TPWIN_INSERT,
       GTK_STOCK_DELETE, VIK_TRW_LAYER_TPWIN_DELETE,
       _("Split Here"), VIK_TRW_LAYER_TPWIN_SPLIT,
       _("Join With Last"), VIK_TRW_LAYER_TPWIN_JOIN,
@@ -218,6 +219,7 @@ void vik_trw_layer_tpwin_set_empty ( VikTrwLayerTpwin *tpwin )
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lon), FALSE );
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->alt), FALSE );
 
+  SET_BUTTON_SENSITIVE ( tpwin, VIK_TRW_LAYER_TPWIN_INSERT, FALSE );
   SET_BUTTON_SENSITIVE ( tpwin, VIK_TRW_LAYER_TPWIN_SPLIT, FALSE );
   SET_BUTTON_SENSITIVE ( tpwin, VIK_TRW_LAYER_TPWIN_DELETE, FALSE );
   SET_BUTTON_SENSITIVE ( tpwin, VIK_TRW_LAYER_TPWIN_FORWARD, FALSE );
@@ -244,6 +246,9 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
   static struct LatLon ll;
   VikTrackpoint *tp = VIK_TRACKPOINT(tpl->data);
 
+  /* Only can insert if not at the end (otherwise use extend track) */
+  SET_BUTTON_SENSITIVE ( tpwin, VIK_TRW_LAYER_TPWIN_INSERT, (gboolean) GPOINTER_TO_INT (tpl->next) );
+
   SET_BUTTON_SENSITIVE ( tpwin, VIK_TRW_LAYER_TPWIN_DELETE, TRUE );
 
   /* We can only split up a track if it's not an endpoint. Makes sense to me. */
@@ -257,6 +262,7 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
 
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lat), TRUE );
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lon), TRUE );
+  gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->alt), TRUE );
 
   gtk_label_set_text ( tpwin->track_name, track_name );
 
@@ -271,7 +277,7 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
     gtk_spin_button_set_value ( tpwin->alt, tp->altitude );
     break;
   case VIK_UNITS_HEIGHT_FEET:
-    gtk_spin_button_set_value ( tpwin->alt, tp->altitude*3.2808399 );
+    gtk_spin_button_set_value ( tpwin->alt, VIK_METERS_TO_FEET(tp->altitude) );
     break;
   default:
     gtk_spin_button_set_value ( tpwin->alt, tp->altitude );
@@ -322,16 +328,16 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
 	vik_units_speed_t speed_units = a_vik_get_units_speed ();
 	switch (speed_units) {
 	case VIK_UNITS_SPEED_KILOMETRES_PER_HOUR:
-	  g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f km/h", vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord)) / (ABS(tp->timestamp - tpwin->cur_tp->timestamp)) * 3.6 );
+	  g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f km/h", VIK_MPS_TO_KPH(vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord)) / (ABS(tp->timestamp - tpwin->cur_tp->timestamp))) );
 	  break;
 	case VIK_UNITS_SPEED_MILES_PER_HOUR:
-	  g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f mph", vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord)) / (ABS(tp->timestamp - tpwin->cur_tp->timestamp)) * 2.23693629 );
+	  g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f mph", VIK_MPS_TO_MPH(vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord)) / (ABS(tp->timestamp - tpwin->cur_tp->timestamp))) );
 	  break;
 	case VIK_UNITS_SPEED_METRES_PER_SECOND:
 	  g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f m/s", vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord)) / ABS(tp->timestamp - tpwin->cur_tp->timestamp) );
 	  break;
 	case VIK_UNITS_SPEED_KNOTS:
-	  g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f knots", vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord)) / (ABS(tp->timestamp - tpwin->cur_tp->timestamp)) * 1.94384449 );
+	  g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f knots", VIK_MPS_TO_KNOTS(vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord)) / (ABS(tp->timestamp - tpwin->cur_tp->timestamp))) );
 	  break;
 	default:
 	  g_snprintf ( tmp_str, sizeof(tmp_str), "--" );
@@ -369,7 +375,7 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
     g_snprintf ( tmp_str, sizeof(tmp_str), "%.5f m", tp->vdop );
     break;
   case VIK_UNITS_HEIGHT_FEET:
-    g_snprintf ( tmp_str, sizeof(tmp_str), "%.5f feet", tp->vdop*3.2808399 );
+    g_snprintf ( tmp_str, sizeof(tmp_str), "%.5f feet", VIK_METERS_TO_FEET(tp->vdop) );
     break;
   default:
     g_snprintf ( tmp_str, sizeof(tmp_str), "--" );

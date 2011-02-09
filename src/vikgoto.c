@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2009, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Created by Quy Tonthat <qtonthat@gmail.com>
  */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -91,6 +91,7 @@ static gboolean prompt_try_again(VikWindow *vw)
 
   GtkWidget *goto_label = gtk_label_new(_("I don't know that place. Do you want another goto?"));
   gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), goto_label, FALSE, FALSE, 5 );
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
   gtk_widget_show_all(dialog);
 
   if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) != GTK_RESPONSE_ACCEPT )
@@ -131,6 +132,7 @@ static gchar *  a_prompt_for_goto_string(VikWindow *vw)
   gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), tool_list, FALSE, FALSE, 5 );
   gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), goto_label, FALSE, FALSE, 5 );
   gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), goto_entry, FALSE, FALSE, 5 );
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
   gtk_widget_show_all(dialog);
 
   if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) != GTK_RESPONSE_ACCEPT ) {

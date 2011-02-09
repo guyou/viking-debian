@@ -42,6 +42,12 @@
 /* Define to 1 if you have the `gps' library (-lgps). */
 #undef HAVE_LIBGPS
 
+/* Define to 1 if you have the `m' library (-lm). */
+#undef HAVE_LIBM
+
+/* Define to 1 if you have the `z' library (-lz). */
+#undef HAVE_LIBZ
+
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
 
@@ -259,6 +265,9 @@
 
 /* Id. for searching via GOOGLE */
 #undef VIK_CONFIG_SEARCH_GOOGLE
+
+/* SPOTMAPS STUFF */
+#undef VIK_CONFIG_SPOTMAPS
 
 /* TERRASERVER STUFF */
 #undef VIK_CONFIG_TERRASERVER

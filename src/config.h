@@ -43,6 +43,12 @@
 /* Define to 1 if you have the `gps' library (-lgps). */
 #define HAVE_LIBGPS 1
 
+/* Define to 1 if you have the `m' library (-lm). */
+#define HAVE_LIBM 1
+
+/* Define to 1 if you have the `z' library (-lz). */
+#define HAVE_LIBZ 1
+
 /* Define to 1 if you have the <locale.h> header file. */
 #define HAVE_LOCALE_H 1
 
@@ -186,7 +192,7 @@
 #define LIBCURL_PROTOCOL_TFTP 1
 
 /* Define the location where the catalogs will be installed */
-#define LOCALEDIR "/tmp/viking/share/locale"
+#define LOCALEDIR "/usr/local/share/locale"
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -202,7 +208,7 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 0.9.94"
+#define PACKAGE_STRING "viking 1.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
@@ -211,13 +217,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.9.94"
+#define PACKAGE_VERSION "1.1"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.9.94"
+#define VERSION "1.1"
 
 /* NO ALPHABETIZED TRW */
 #define VIK_CONFIG_ALPHABETIZED_TRW /**/
@@ -260,6 +266,9 @@
 
 /* Id. for searching via GOOGLE */
 #define VIK_CONFIG_SEARCH_GOOGLE 1
+
+/* SPOTMAPS STUFF */
+#define VIK_CONFIG_SPOTMAPS /**/
 
 /* TERRASERVER STUFF */
 #define VIK_CONFIG_TERRASERVER /**/

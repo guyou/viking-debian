@@ -1,4 +1,634 @@
 
+2011-02-08
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix typo in translation
+	* Merge branch 'i18n'
+	* Merge branch 'i18n-launchpad' into i18n
+	* Document previous translation updates
+	* Import Launchpad updates
+
+2011-02-07
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* [DOC] Add MapQuest Nominating search service in examples
+
+2011-02-06
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix dangerous code
+
+2011-02-04
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix trackpoint edit altitude sensitivity to be re-enabled after it has been disabled.
+
+2011-01-29
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge branch 'i18n-launchpad'
+	* Add Javanese translation
+
+2011-01-29
+Rob Norris <rw_norris@hotmail.com>:
+	* Use define for conversion of meters->miles units.
+
+2011-01-28
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Document previous translation updates
+	* Import Launchpad updates
+
+2011-01-28
+Rob Norris <rw_norris@hotmail.com>:
+	* Add and use defines for conversion of meters<->miles units.
+	* Adjust colour of last auto track colour to not clash with default create track colour.
+	* Tidy up: Rename a dialog function as it's used to get a yes or no value.
+	* Add menu icons for the maps layer menu.
+
+2011-01-27
+Rob Norris <rw_norris@hotmail.com>:
+	* Add myself (Rob Norris) as someone you can blame in the doap file.
+	* Improve project description in the spec file.
+
+2011-01-24
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix variable spelling part2.
+
+2011-01-23
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix spelling
+
+2011-01-21
+Rob Norris <rw_norris@hotmail.com>:
+	* Make the selection list in Merge With Other Tracks sorted alphabetically.
+	* Add sort list by name function. Will be useful for track and waypoint list ordering.
+	* Fix incorrect cut/copy of sublayers when accessed via the layers panel buttons.
+	* Prevent Gtk-CRITICAL **: gtk_list_store_get_path: assertion `iter->stamp == GTK_LIST_STORE (tree_model)->stamp' message.
+	* Fix the List Dialog so that it does not become taller than the screen when there are lots of entries.
+	* Tidy Up:Improve a_dialog_select_from_list function.
+
+2011-01-16
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Mark ready for 1.1 release. Update help manual version to 0.2.
+	* [DOC] Add layer information for Aggregates, Coords and GeoRefs in help.
+	* [DOC] Add Maps layer help information.
+	* [DOC] Add overall layer information and promote each layer to be a top level section in help.
+	* [DOC] Add DEM layer help information.
+	* [DOC] Mention waypoint properties in help information.
+	* [DOC] Update GPS layer help information.
+	* [DOC] Update track operations help information.
+	* [DOC] Update waypoint operations help information.
+	* [DOC] Update Tools help section
+	* [DOC] Update TrackWaypoint layer menu help Information
+	* Improve positioning of the menu separator on waypoint menus.
+
+2011-01-14
+Rob Norris <rw_norris@hotmail.com>:
+	* Remove unecessary print statement.
+	* Prevent Gtk-CRITICAL assertion when the application is closed with a Track Property window on display.
+	* Prevent Gtk-CRITICAL assertion when the application is closed whilst loading DEMs.
+	* Fix some compiler warnings in viktrwlayer.c when configured to build with --disable-alphabetized-trw
+
+2011-01-12
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix Resource leak detected by cppcheck 1.46
+
+2011-01-07
+Rob Norris <rw_norris@hotmail.com>:
+	* Add GeoRef layer tooltip to show the file name in use.
+	* Add GPS Layer tooltip to say the protocol (aka device manufacturer) type.
+	* TrackWaypoint Layer tooltip featuring summaries for tracks and waypoints.
+	* Add maps layer tooltip to show the map name(type).
+	* Add DEM layer tooltip to show the number of DEM files in use.
+	* Add Track and waypoint sublayer tooltip information.
+	* Add treeview use and display of layers tooltip.
+	* Add Layer Tooltip callback definition
+	* Add sublayer tooltip callback definition.
+
+2011-01-07
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix typo
+
+2011-01-07
+Rob Norris <rw_norris@hotmail.com>:
+	* When getting data via the GPS layer automatically set the view to see it, unless the realtime tracking mode is on.
+	* On acquiring data from sources (inc. GPS) automatically set the view to see it. Except for GeoCaches; as it's likely you're requesting data for the current area, so no point in trying to change the view.
+	* On opening GPX files automatically view all the data.
+	* Add 'View All Tracks' option to the panel Layer menu options, which sets the view (center & zoom) to see all the tracks of that layer.
+	* Add 'View Waypoints' option to the TrackWaypoint layer menu options, which sets the view (center & zoom) to see all the Waypoints.
+	* Add 'View Track' option to the Track sublayer menu options, which sets the view (center & zoom) to see the track.
+	* Add 'View Layer' option to the TrackWaypoint Layer menu options, which sets the view (center & zoom) to see the entire layer.
+	* Add the ability to 'autozoom' to view an area specified by maximum and minimum lat/longs for a TrackWaypoint layer.
+
+2011-01-07
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Remove the hability to hide copyright
+
+2011-01-07
+Robert Norris <rw_norris@hotmail.com>:
+	* Create a new 'Show' submenu entry
+
+2011-01-04
+Rob Norris <rw_norris@hotmail.com>:
+	* Improve curl usage as should call cleanup on application exit.
+	* Add copyright and license properties for NASA BlueMarble data.
+	* Fix compiler warning in curl_download.c
+
+2010-12-23
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix dangerous static declaration
+	* Fix compiler warning in vikmapslayer.c
+
+2010-12-23
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix compiler warning in vikwindow.c - use correct const typing.
+	* Fix compiler warnings - correct Widget / Window type.
+
+2010-12-19
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix memory leak when generating image file
+	* Fix Spotmaps license
+
+2010-12-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Add background thread loading of DEM files.
+	* Add Track->Goto Highest and Lowest points features.
+	* Tidy intended logic in if statement.
+	* Add Track->Goto Maximum Speed feature.
+	* Rework Track->Goto menu options.
+
+2010-12-15
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add support for the TMS interface provided by SPOTMaps
+	* Fix: Improve XML reading error reporting
+
+2010-12-14
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add license related properties
+
+2010-12-11
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add copyright property
+
+2010-12-09
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add undeclared translations
+
+2010-12-05
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix compiler warnings in osm.c
+	* Improve key binding for Mercator Mode -> ctrl+m
+	* Fix compiler warning in vikmapslayer.c
+
+2010-12-03
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix Waypoint & Track visibility issues.
+
+2010-11-30
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add documentation for generic TMS map source
+
+2010-11-30
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix SF#3104028: Default Color Background is incorrectly saved as black into a new .vik file.
+	* Improve key bindings for ModeLatLon.
+	* Set git to ignore test_coord_conversion program
+
+2010-11-29
+Rob Norris <rw_norris@hotmail.com>:
+	* Set git to ignore autogenerated documenters.h
+
+2010-11-28
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add OSM WMS Server
+	* Add support for WMS-C
+	* Add support for more standard TMS
+
+2010-11-27
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Move-up download methods
+	* Add LatLon projection
+
+2010-11-27
+Rob Norris <rw_norris@hotmail.com>:
+	* Better safety checking code
+
+2010-11-26
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix some translated strings
+
+2010-11-25
+Rob Norris <rw_norris@hotmail.com>:
+	* Add support for Locosys devices via GPSBabel's navilink device protocol.
+	* Add support for DeLorme devices via GPSBabel's delbin device protocol.
+	* Add the ability to insert a trackpoint into a track via the Edit Trackpoint dialog.
+	* Add internal function to insert a trackpoint after the currently selected trackpoint.
+
+2010-11-25
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add license notice to new file
+
+2010-11-24
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Replace macros by enum
+	* Simplify previous commit
+
+2010-11-22
+Rob Norris <rw_norris@hotmail.com>:
+	* Enable individual track to GPX export via the Track sublayer menu.
+
+2010-11-21
+Rob Norris <rw_norris@hotmail.com>:
+	* Set 'OK' default for autogenerated dialogs.
+	* Set 'OK' default for find waypoint dialog.
+	* Set 'OK' default for download along track dialog.
+	* Set 'OK' defaults for new track, custom zoom & split time dialogs.
+	* Set 'Cancel' default for merge track dialog. User needs to select items first.
+	* Set 'OK' default for the new waypoint dialog.
+	* Set 'OK' default for goto dialogs.
+	* Set 'OK' default for the Save to Image dialog.
+	* Set 'OK' default for the track properties dialog.
+	* Set 'OK' default for the GPS layer dialog.
+	* Set 'OK' defaults for goto dialogs.
+	* Set 'Cancel' default for the Geo Ref dialog, as user should really specify a map file first.
+	* Set 'Cancel' default for the OSM upload dialog.
+	* Set defaults for geonamesearch dialogs.
+	* Set 'OK' default for the background jobs dialog.
+	* Set 'OK' defaults for acquire dialogs.
+	* Add a perl script to auto generate basic Viking .vik files for directories containing images.
+
+2010-11-19
+Rob Norris <rw_norris@hotmail.com>:
+	* Enable control of the visibility of the menubar [including keyboard shortcut - F4]. Also enable panic key 'Escape' to restore menubar if hidden and no tool uses it.
+	* Enable control of the visibility of the toolbar [including keyboard shortcut - F3].
+	* Make use of the vikwindow toolbar variable.
+	* Enable control of the visibility of the statusbar [including keyboard shortcut - F12].
+
+2010-11-17
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Releasing viking 1.0
+	* Remove duplicates msgid
+	* Merge branch 'i18n-launchpad' into master
+	* Auto-update PO translation files
+
+2010-11-14
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Document previous translation updates
+	* Import Launchpad updates
+
+2010-11-11
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add minimal translator-credits in About dialog
+	* Use $(top_srcdir) to locate AUTHORS file
+	* Add documenters to About dialog
+
+2010-11-10
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add copyright notice to maintainer's scripts
+
+2010-11-09
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Improve copyright holders
+
+2010-11-07
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add copyright to srtm_continent.c
+	* Add origin comment
+
+2010-11-07
+Rob Norris <rw_norris@hotmail.com>:
+	* Add copyright for geonamessearch.h and correct for geonamessearch.c
+	* Add copyright for files vikgoto.h & vikgotoxmltool.h
+
+2010-11-07
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix copyright for googlesearch.[ch]
+
+2010-11-07
+Rob Norris <rw_norris@hotmail.com>:
+	* Add copyright for files preferences.c & preferences.h
+	* Add copyright for dems.c & dems.h
+	* Add copyright for datasources.h.
+
+2010-11-07
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Correct DocBook usage
+
+2010-11-07
+Rob Norris <rw_norris@hotmail.com>:
+	* Various improvements and tidy ups.
+
+2010-11-03
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Deprecated: only include gtk/gtk.h
+	* Improve depreaction options
+
+2010-11-02
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add built-in map sources in example file
+
+2010-11-02
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix extend track using magic scissors.
+
+2010-11-01
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge branch 'master' into i18n-launchpad
+	* Document previous translation updates
+
+2010-10-23
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Import Launchpad updates
+
+2010-10-20
+Sven Wegener <sven.wegener@stealer.net>:
+	* Fix autodownloading while panning
+
+2010-10-19
+Rob Norris <rw_norris@hotmail.com>:
+	* Prevent crashes when downloading Expedia Maps.
+
+2010-10-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix Debian #599048: Segmentation fault when using gpsbabel
+	* Fix dem_gradient_colors allocation.
+
+2010-10-13
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix commit 1c6a6010661da96fd105ec42ad2f048df79fabbd
+
+2010-10-12
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix compiler warnings in preferences.c
+
+2010-10-12
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix: enforce defensive code
+	* Releasing viking 0.9.96
+
+2010-10-11
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix unecessary change in string
+	* Free memory
+	* Add defensive code
+	* Increase buffer length
+
+2010-10-11
+Jon Burgess <jburgess777@gmail.com>:
+	* Fix memcheck error
+
+2010-10-11
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge remote branch 'jocelyn/etag'
+	* Disable autodownloading when dragging the map
+
+2010-10-10
+Robert Norris <rw_norris@hotmail.com>:
+	* Fix: Uninitialized color value being used
+
+2010-10-10
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Avoid uninitialized color value usage
+	* Defensive code
+
+2010-10-08
+Rob Norris <rw_norris@hotmail.com>:
+	* Add new menu entry in GPS Layer to delete the realtime information.
+	* Ensure GPS realtime information deleted when GPS Layer -->Empty All is called.
+	* Fix SF#3009431: Prevent Crash in Real Time Tracking GPS Mode & Autodownload Maps.
+	* Fix display of rounded speed units scale markers in the speed profile.
+
+2010-10-08
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Revert "Make more portable .vik file, as don't save the map cache directory if it's the map cache default directory."
+	* Merge remote branch 'rnorris/LayerMenuKeyboardAccelerators'
+
+2010-10-01
+Rob Norris <rw_norris@hotmail.com>:
+	* Make more portable .vik file, as don't save the map cache directory if it's the map cache default directory.
+	* Remove specific user's map cache directory from test Terraserver.vik file, so that anyone can use it.
+	* Prevent zoom factor string displaying unnecessary .0s when it's a whole number.
+
+2010-10-01
+Jon Burgess <jburgess777@gmail.com>:
+	* Prevent access to undefined data when fgets() returns NULL
+
+2010-10-01
+Rob Norris <rw_norris@hotmail.com>:
+	* Improve Track Properties speed profile display for low speed difference (e.g. walking) tracks.
+	* Use speed units in display of Track/Waypoint layer draw by velocity config values, but maintain units as metres per second when read from/saved to files.
+
+2010-10-01
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix arithmetic macro definition
+
+2010-10-01
+Rob Norris <rw_norris@hotmail.com>:
+	* Add and use defines for conversion of speed units.
+
+2010-10-01
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix arithmetic macro definition
+
+2010-09-29
+Rob Norris <rw_norris@hotmail.com>:
+	* Add keyboard accelerators for as many as possible View Menu entries.
+	* Remove duplicated line of code in trackpoint drawing.
+	* Fix small memory leak when downloading DEM data via the tool method.
+
+2010-09-26
+Rob Norris <rw_norris@hotmail.com>:
+	* DEM layer properties tidy up.
+
+2010-09-25
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add a new debug message
+	* Simplify zoom status when xmpp and ympp are equal
+	* Fix minor source code typo
+	* Fix arithmetic macro definition
+
+2010-09-24
+Rob Norris <rw_norris@hotmail.com>:
+	* Improve grammar/usage for conversion macro function to convert meters into feet. Also prepend these macros with VIK_ as better practice.
+
+2010-09-19
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Use constant for 'feet in meter'
+
+2010-09-19
+Rob Norris <rw_norris@hotmail.com>:
+	* Use height units in the altitude readout for the cursor position on the status bar.
+	* Use height units in display of DEM min / max elevation values, but maintain units as metres when read from/saved to files.
+	* Extend set/get param interface to have knowledge of what type of operation it is - i.e. is it related to file i/o or display/cut/copy usage.
+
+2010-09-19
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix cycle map URL
+	* Fix GType macro usage
+
+2010-09-19
+Rob Norris <rw_norris@hotmail.com>:
+	* Add keyboard accelerator for the Filter extension to the Track/Waypoint layer menu.
+	* Add keyboard accelerators for the Waypoints sublayer menu.
+	* Add keyboard accelerators for the Tracks sublayer menu and improve the text casing.
+	* Add keyboard accelerators for the Track/Waypoints layer menu and improve the text casing.
+	* Add keyboard accelerators for the Maps tools menu and improve the text casing.
+	* Add keyboard accelerators for the Maps layer menu and improve the text casing.
+	* Add keyboard accelerators for the GPS layer menu and improve text casing.
+	* Add keyboard accelerators for the GeoRef layer menu.
+
+2010-09-18
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix compiler warning in file.c
+	* Fix compiler warnings in vikgobjectbuilder.c
+	* Fix compiler warnings in vikwindow.c
+	* Fix compiler warnings in vikmaptype.c
+	* Fix compiler warning in download.c
+	* Fix compiler warning in degrees_converters.c
+	* Fix compiler warnings in babel.c
+	* Prevent getting stuck in a near infinite loop when using Coord layer, UTM mode and zoomed out to see the whole world.
+	* Fix Track Draw by Velocity mode, so that individual track points are coloured (as was the intention).
+
+2010-09-18
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add a message to explain why feature does nothing
+	* Fix previous commit
+
+2010-09-18
+Rob Norris <rw_norris@hotmail.com>:
+	* Prevent lock up in attempt to download maps along a track in UTM mode.
+
+2010-09-17
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Use the standard "Reload" verb
+
+2010-09-17
+Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
+	* Clarify text on map layer menu
+
+2010-09-17
+Rob Norris <rw_norris@hotmail.com>:
+	* Launchpad Bug #445374: Prevent crash when downloading maps along a track, with Terraserver maps when in Mercator mode.
+
+2010-09-15
+Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
+	* Simplify code on download action to do when map file is not present
+	* Fix bug where older file was removed when network not present
+
+2010-09-15
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix a minor missing include
+
+2010-09-14
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Comment VikSlippyMapSource
+
+2010-09-14
+Greg Troxel <gdt@ir.bbn.com>:
+	* Fix bashisms.
+
+2010-09-14
+Jon Burgess <jburgess777@gmail.com>:
+	* Add explicit linking against libz and libm
+
+2010-09-14
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix: warning 'draw-mode' message does not display
+
+2010-09-13
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix incorrect limitation on source map id
+
+2010-09-11
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add warning when requested GObject type is unknown
+	* [TEST] Add Terraserver viking file
+
+2010-09-11
+Rob Norris <rw_norris@hotmail.com>:
+	* Prevent viewport tool selection/edit of trackpoint or waypoint when the layer or sublayer is invisible.
+
+2010-09-07
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Releasing viking 0.9.95
+	* Merge branch 'i18n-launchpad'
+	* Restore as many translations as possible
+
+2010-09-06
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Document previous translation updates
+	* Import Launchpad updates
+
+2010-09-05
+Benjamin Wagner <thewag@users.sourceforge.net>:
+	* Invalid number of arguments in call to a_http_download_get_u
+
+2010-09-05
+Rob Norris <rw_norris@hotmail.com>:
+	* Prevent crash when cut of a GPS track/waypoint layer is attempted via the layers buttons.
+	* Prevent DEM layer colour indexing going negative and can crash on gradient view.
+	* Add some function short cut key definitions to control showing of the center mark and scale viewport features.
+	* Fix DEM layer to show default sea level.
+
+2010-08-24
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Minor update.
+	* [DOC] Replace Google with OSM capability in man pages.
+
+2010-08-17
+Rob Norris <rw_norris@hotmail.com>:
+	* When manually creating a track, automatically give it a default name.
+	* Fix track background thickness being able to set back to zero.
+	* [DOC] Tidy Up: First Pass
+	* [DOC] Add contributors from the Wiki(s) history.
+
+2010-08-16
+Sven Wegener <sven.wegener@stealer.net>:
+	* Fix internal tile locking
+
+2010-08-16
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix debug message
+
+2010-08-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix top layer not drawn after made invisible and then back to being visible.
+	* Fix impaired (drawcentermark setting bodged) vik file if saved with the top layer visibility turned off.
+
+2010-08-12
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix syntax errors in help manual
+
+2010-07-18
+Jocelyn Jaubert <jocelyn.jaubert@gmail.com>:
+	* Rename supports_if_modified_since to supports_download_only_new as it also contains etag support
+	* Remove debug printf for etag
+	* Write and read etag values from a file that is stored in the same directory than the image
+	* Check if file is old enough for options check_file_server_time and use_etag
+	* Leave download() function as soon as we know that we don't want to check server for a more recent file
+	* Enable etag - need to use options from DownloadMapOptions
+	* Get and send etag values to server if file_options allows it
+	* Add use_etag in vikslippymapsource, and enable it on OSM mapnik maps only
+	* Add use_etag to struct DownloadMapOptions
+	* Add etag to struct DownloadFileOptions
+	* Move time_condition to scruct DownloadFileOptions - this is to add the etag value
+	* Rename struct DownloadOptions to DownloadMapOptions
+	* Fix map drag and drop to show the correct whole map
+
+2010-07-18
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix "Go to UTM" dialog title.
+	* Fix first opening of a file which has spaces (or other interesting characters) via the recent files menu.
+
+2010-07-02
+Rob Norris <rw_norris@hotmail.com>:
+	* Better dialog name when searching for a waypoint.
+	* Improvements for test programs.
+
+2010-06-24
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix unnamed_tracks / unnamed_waypoints misuse.
+	* Prevent "Gtk-WARNING **: GtkSpinButton: setting an adjustment with non-zero page size is deprecated" messages.
+
+2010-06-17
+Greg Troxel <gdt@ir.bbn.com>:
+	* Change max cache time to 1 week.
+
 2010-06-11
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 	* Releasing viking 0.9.94

@@ -1,7 +1,7 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * viking
- * Copyright (C) Guilhem Bonnefille 2009 <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2009, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  * 
  * viking is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -16,6 +16,31 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+ /**
+  * SECTION:vikslippymapsource
+  * @short_description: the class for SlippyMap oriented map sources
+  * 
+  * The #VikSlippyMapSource class handles slippy map oriented map sources.
+  * The related service is tile oriented, à la Google.
+  * 
+  * The tiles are in 'google spherical mercator', which is
+  * basically a mercator projection that assumes a spherical earth.
+  * http://docs.openlayers.org/library/spherical_mercator.html
+  * 
+  * Such service is also a type of TMS (Tile Map Service) as defined in
+  * OSGeo's wiki.
+  * http://wiki.osgeo.org/wiki/Tile_Map_Service_Specification
+  * But take care that the Y axis is inverted, ie the origin is at top-left
+  * corner.
+  * Following this specification, the protocol handled by this class
+  * follows the global-mercator profile.
+  * 
+  * You can also find many interesting information on the OSM's wiki.
+  * http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+  * http://wiki.openstreetmap.org/wiki/Setting_up_TMS
+  */
+  
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -29,21 +54,19 @@
 
 static gboolean _coord_to_mapcoord ( VikMapSource *self, const VikCoord *src, gdouble xzoom, gdouble yzoom, MapCoord *dest );
 static void _mapcoord_to_center_coord ( VikMapSource *self, MapCoord *src, VikCoord *dest );
-static int _download ( VikMapSource *self, MapCoord *src, const gchar *dest_fn, void *handle );
-static void * _download_handle_init ( VikMapSource *self);
-static void _download_handle_cleanup ( VikMapSource *self, void *handle);
-static gboolean _supports_if_modified_since (VikMapSource *self );
 
-static gchar *_get_uri( VikSlippyMapSource *self, MapCoord *src );
-static gchar *_get_hostname( VikSlippyMapSource *self );
-static DownloadOptions *_get_download_options( VikSlippyMapSource *self );
+static gboolean _supports_download_only_new (VikMapSource *self );
+
+static gchar *_get_uri( VikMapSourceDefault *self, MapCoord *src );
+static gchar *_get_hostname( VikMapSourceDefault *self );
+static DownloadMapOptions *_get_download_options( VikMapSourceDefault *self );
 
 typedef struct _VikSlippyMapSourcePrivate VikSlippyMapSourcePrivate;
 struct _VikSlippyMapSourcePrivate
 {
   gchar *hostname;
   gchar *url;
-  DownloadOptions options;
+  DownloadMapOptions options;
 };
 
 #define VIK_SLIPPY_MAP_SOURCE_PRIVATE(o)  (G_TYPE_INSTANCE_GET_PRIVATE ((o), VIK_TYPE_SLIPPY_MAP_SOURCE, VikSlippyMapSourcePrivate))
@@ -58,9 +81,10 @@ enum
   PROP_REFERER,
   PROP_FOLLOW_LOCATION,
   PROP_CHECK_FILE_SERVER_TIME,
+  PROP_USE_ETAG,
 };
 
-G_DEFINE_TYPE_EXTENDED (VikSlippyMapSource, vik_slippy_map_source, VIK_TYPE_MAP_SOURCE_DEFAULT, (GTypeFlags)0,);
+G_DEFINE_TYPE (VikSlippyMapSource, vik_slippy_map_source, VIK_TYPE_MAP_SOURCE_DEFAULT);
 
 static void
 vik_slippy_map_source_init (VikSlippyMapSource *self)
@@ -132,6 +156,10 @@ vik_slippy_map_source_set_property (GObject      *object,
       priv->options.check_file_server_time = g_value_get_boolean (value);
       break;
 
+    case PROP_USE_ETAG:
+      priv->options.use_etag = g_value_get_boolean (value);
+      break;
+
     default:
       /* We don't have any other property... */
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -170,6 +198,10 @@ vik_slippy_map_source_get_property (GObject    *object,
       g_value_set_boolean (value, priv->options.check_file_server_time);
       break;
 	  
+    case PROP_USE_ETAG:
+      g_value_set_boolean (value, priv->options.use_etag);
+      break;
+
     default:
       /* We don't have any other property... */
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -181,24 +213,21 @@ static void
 vik_slippy_map_source_class_init (VikSlippyMapSourceClass *klass)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (klass);
-	VikMapSourceClass* parent_class = VIK_MAP_SOURCE_CLASS (klass);
+	VikMapSourceClass* grandparent_class = VIK_MAP_SOURCE_CLASS (klass);
+	VikMapSourceDefaultClass* parent_class = VIK_MAP_SOURCE_DEFAULT_CLASS (klass);
 	GParamSpec *pspec = NULL;
 		
 	object_class->set_property = vik_slippy_map_source_set_property;
     object_class->get_property = vik_slippy_map_source_get_property;
 
 	/* Overiding methods */
-	parent_class->coord_to_mapcoord =        _coord_to_mapcoord;
-	parent_class->mapcoord_to_center_coord = _mapcoord_to_center_coord;
-	parent_class->download =                 _download;
-	parent_class->download_handle_init =     _download_handle_init;
-	parent_class->download_handle_cleanup =  _download_handle_cleanup;
-	parent_class->supports_if_modified_since = _supports_if_modified_since;
-	
-	/* Default implementation of methods */
-	klass->get_uri = _get_uri;
-	klass->get_hostname = _get_hostname;
-	klass->get_download_options = _get_download_options;
+	grandparent_class->coord_to_mapcoord =        _coord_to_mapcoord;
+	grandparent_class->mapcoord_to_center_coord = _mapcoord_to_center_coord;
+	grandparent_class->supports_download_only_new = _supports_download_only_new;
+
+	parent_class->get_uri = _get_uri;
+	parent_class->get_hostname = _get_hostname;
+	parent_class->get_download_options = _get_download_options;
 
 	pspec = g_param_spec_string ("hostname",
 	                             "Hostname",
@@ -237,13 +266,20 @@ vik_slippy_map_source_class_init (VikSlippyMapSourceClass *klass)
                                   G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CHECK_FILE_SERVER_TIME, pspec);
 
+	pspec = g_param_spec_boolean ("use-etag",
+	                              "Use etag values with server",
+                                  "Store etag in a file, and send it to server to check if we have the latest file",
+                                  FALSE  /* default value */,
+                                  G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_USE_ETAG, pspec);
+
 	g_type_class_add_private (klass, sizeof (VikSlippyMapSourcePrivate));
 	
 	object_class->finalize = vik_slippy_map_source_finalize;
 }
 
 /* 1 << (x) is like a 2**(x) */
-#define GZ(x) ((1<<x))
+#define GZ(x) ((1<<(x)))
 
 static const gdouble scale_mpps[] = { GZ(0), GZ(1), GZ(2), GZ(3), GZ(4), GZ(5), GZ(6), GZ(7), GZ(8), GZ(9),
                                            GZ(10), GZ(11), GZ(12), GZ(13), GZ(14), GZ(15), GZ(16), GZ(17) };
@@ -270,54 +306,16 @@ static gint slippy_zoom ( gdouble mpp ) {
   return 255;
 }
 
-gchar *
-vik_slippy_map_source_get_uri( VikSlippyMapSource *self, MapCoord *src )
-{
-	VikSlippyMapSourceClass *klass;
-	g_return_val_if_fail (self != NULL, 0);
-	g_return_val_if_fail (VIK_IS_SLIPPY_MAP_SOURCE (self), 0);
-	klass = VIK_SLIPPY_MAP_SOURCE_GET_CLASS(self);
-
-	g_return_val_if_fail (klass->get_uri != NULL, 0);
-
-	return (*klass->get_uri)(self, src);
-}
-
-gchar *
-vik_slippy_map_source_get_hostname( VikSlippyMapSource *self )
-{
-	VikSlippyMapSourceClass *klass;
-	g_return_val_if_fail (self != NULL, 0);
-	g_return_val_if_fail (VIK_IS_SLIPPY_MAP_SOURCE (self), 0);
-	klass = VIK_SLIPPY_MAP_SOURCE_GET_CLASS(self);
-
-	g_return_val_if_fail (klass->get_hostname != NULL, 0);
-
-	return (*klass->get_hostname)(self);
-}
-
-DownloadOptions *
-vik_slippy_map_source_get_download_options( VikSlippyMapSource *self )
-{
-	VikSlippyMapSourceClass *klass;
-	g_return_val_if_fail (self != NULL, 0);
-	g_return_val_if_fail (VIK_IS_SLIPPY_MAP_SOURCE (self), 0);
-	klass = VIK_SLIPPY_MAP_SOURCE_GET_CLASS(self);
-
-	g_return_val_if_fail (klass->get_download_options != NULL, 0);
-
-	return (*klass->get_download_options)(self);
-}
-
 gboolean
-_supports_if_modified_since (VikMapSource *self)
+_supports_download_only_new (VikMapSource *self)
 {
-	g_return_val_if_fail (VIK_IS_SLIPPY_MAP_SOURCE(self), FALSE);
+  g_return_val_if_fail (VIK_IS_SLIPPY_MAP_SOURCE(self), FALSE);
 	
-    VikSlippyMapSourcePrivate *priv = VIK_SLIPPY_MAP_SOURCE_PRIVATE(self);
+  VikSlippyMapSourcePrivate *priv = VIK_SLIPPY_MAP_SOURCE_PRIVATE(self);
 	
-	return priv->options.check_file_server_time;
+  return priv->options.check_file_server_time || priv->options.use_etag;
 }
+
 static gboolean
 _coord_to_mapcoord ( VikMapSource *self, const VikCoord *src, gdouble xzoom, gdouble yzoom, MapCoord *dest )
 {
@@ -350,34 +348,8 @@ _mapcoord_to_center_coord ( VikMapSource *self, MapCoord *src, VikCoord *dest )
   dest->north_south = DEMERCLAT(180 - ((src->y+0.5) / GZ(17) * socalled_mpp * 360));
 }
 
-static int
-_download ( VikMapSource *self, MapCoord *src, const gchar *dest_fn, void *handle )
-{
-   int res;
-   gchar *uri = vik_slippy_map_source_get_uri(VIK_SLIPPY_MAP_SOURCE(self), src);
-   gchar *host = vik_slippy_map_source_get_hostname(VIK_SLIPPY_MAP_SOURCE(self));
-   DownloadOptions *options = vik_slippy_map_source_get_download_options(VIK_SLIPPY_MAP_SOURCE(self));
-   res = a_http_download_get_url ( host, uri, dest_fn, options, handle );
-   g_free ( uri );
-   g_free ( host );
-   return res;
-}
-
-static void *
-_download_handle_init ( VikMapSource *self )
-{
-   return a_download_handle_init ();
-}
-
-
-static void
-_download_handle_cleanup ( VikMapSource *self, void *handle )
-{
-   return a_download_handle_cleanup ( handle );
-}
-
 static gchar *
-_get_uri( VikSlippyMapSource *self, MapCoord *src )
+_get_uri( VikMapSourceDefault *self, MapCoord *src )
 {
 	g_return_val_if_fail (VIK_IS_SLIPPY_MAP_SOURCE(self), NULL);
 	
@@ -387,7 +359,7 @@ _get_uri( VikSlippyMapSource *self, MapCoord *src )
 } 
 
 static gchar *
-_get_hostname( VikSlippyMapSource *self )
+_get_hostname( VikMapSourceDefault *self )
 {
 	g_return_val_if_fail (VIK_IS_SLIPPY_MAP_SOURCE(self), NULL);
 	
@@ -395,8 +367,8 @@ _get_hostname( VikSlippyMapSource *self )
 	return g_strdup( priv->hostname );
 }
 
-static DownloadOptions *
-_get_download_options( VikSlippyMapSource *self )
+static DownloadMapOptions *
+_get_download_options( VikMapSourceDefault *self )
 {
 	g_return_val_if_fail (VIK_IS_SLIPPY_MAP_SOURCE(self), NULL);
 	

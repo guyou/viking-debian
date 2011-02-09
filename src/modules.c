@@ -1,7 +1,7 @@
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
- * Copyright (C) 2006-2007, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2006-2010, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 
 #include "modules.h"
 
+#include "spotmaps.h"
 #include "google.h"
 #include "terraserver.h"
 #include "expedia.h"
@@ -128,7 +129,10 @@ void modules_init()
 #ifdef VIK_CONFIG_GEONAMES
   geonames_init();
 #endif
-  
+#ifdef VIK_CONFIG_SPOTMAPS
+  spotmaps_init();
+#endif
+
   /* As modules are loaded, we can load configuration files */
   modules_load_config ();
 }

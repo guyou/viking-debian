@@ -1,7 +1,10 @@
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
- * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2003-2007, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2007, Quy Tonthat <qtonthat@gmail.com>
+ * Copyright (C) 2008, Hein Ragas <viking@ragas.nl>
+ * Copyright (C) 2009, Tal B <tal.bav@gmail.com>
  *
  * Some of the code adapted from GPSBabel 1.2.7
  * http://gpsbabel.sf.net/
@@ -276,7 +279,7 @@ static void gpx_end(VikTrwLayer *vtl, const char *el)
 
      case tt_trk:
        if ( ! c_tr_name )
-         c_tr_name = g_strdup_printf("VIKING_TR%d", unnamed_waypoints++);
+         c_tr_name = g_strdup_printf("VIKING_TR%d", unnamed_tracks++);
        vik_trw_layer_filein_add_track ( vtl, c_tr_name, c_tr );
        g_free ( c_tr_name );
        c_tr = NULL;

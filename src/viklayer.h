@@ -144,21 +144,26 @@ typedef void          (*VikLayerFuncChangeCoordMode)       (VikLayer *,VikCoordM
 
 typedef void          (*VikLayerFuncSetMenuItemsSelection)          (VikLayer *,guint16);
 typedef guint16          (*VikLayerFuncGetMenuItemsSelection)          (VikLayer *);
+
 typedef void          (*VikLayerFuncAddMenuItems)          (VikLayer *,GtkMenu *,gpointer); /* gpointer is a VikLayersPanel */
 typedef gboolean      (*VikLayerFuncSublayerAddMenuItems)  (VikLayer *,GtkMenu *,gpointer, /* first gpointer is a VikLayersPanel */
                                                             gint,gpointer,GtkTreeIter *);
 typedef const gchar * (*VikLayerFuncSublayerRenameRequest) (VikLayer *,const gchar *,gpointer,
                                                             gint,VikViewport *,GtkTreeIter *); /* first gpointer is a VikLayersPanel */
 typedef gboolean      (*VikLayerFuncSublayerToggleVisible) (VikLayer *,gint,gpointer);
+typedef const gchar * (*VikLayerFuncSublayerTooltip)       (VikLayer *,gint,gpointer);
+typedef const gchar * (*VikLayerFuncLayerTooltip)          (VikLayer *);
 
 typedef void          (*VikLayerFuncMarshall)              (VikLayer *, guint8 **, gint *);
 typedef VikLayer *    (*VikLayerFuncUnmarshall)            (guint8 *, gint, VikViewport *);
 
 /* returns TRUE if needs to redraw due to changed param */
-typedef gboolean      (*VikLayerFuncSetParam)              (VikLayer *, guint16, VikLayerParamData, VikViewport *);
+/* in parameter gboolean denotes if for file I/O, as opposed to display/cut/copy etc... operations */
+typedef gboolean      (*VikLayerFuncSetParam)              (VikLayer *, guint16, VikLayerParamData, VikViewport *, gboolean);
 
+/* in parameter gboolean denotes if for file I/O, as opposed to display/cut/copy etc... operations */
 typedef VikLayerParamData
-                      (*VikLayerFuncGetParam)              (VikLayer *, guint16);
+                      (*VikLayerFuncGetParam)              (VikLayer *, guint16, gboolean);
 
 typedef void          (*VikLayerFuncReadFileData)          (VikLayer *, FILE *);
 typedef void          (*VikLayerFuncWriteFileData)         (VikLayer *, FILE *);
@@ -166,6 +171,7 @@ typedef void          (*VikLayerFuncWriteFileData)         (VikLayer *, FILE *);
 /* item manipulation */
 typedef void          (*VikLayerFuncDeleteItem)            (VikLayer *, gint, gpointer);
                                                          /*      layer, subtype, pointer to sub-item */
+typedef void          (*VikLayerFuncCutItem)               (VikLayer *, gint, gpointer);
 typedef void          (*VikLayerFuncCopyItem)              (VikLayer *, gint, gpointer, guint8 **, guint *);
                                                          /*      layer, subtype, pointer to sub-item, return pointer, return len */
 typedef gboolean      (*VikLayerFuncPasteItem)             (VikLayer *, gint, guint8 *, guint);
@@ -220,6 +226,8 @@ struct _VikLayerInterface {
   VikLayerFuncSublayerAddMenuItems  sublayer_add_menu_items;
   VikLayerFuncSublayerRenameRequest sublayer_rename_request;
   VikLayerFuncSublayerToggleVisible sublayer_toggle_visible;
+  VikLayerFuncSublayerTooltip       sublayer_tooltip;
+  VikLayerFuncLayerTooltip          layer_tooltip;
 
   VikLayerFuncMarshall              marshall;
   VikLayerFuncUnmarshall            unmarshall;
@@ -233,6 +241,7 @@ struct _VikLayerInterface {
   VikLayerFuncWriteFileData         write_file_data;
 
   VikLayerFuncDeleteItem            delete_item;
+  VikLayerFuncCutItem               cut_item;
   VikLayerFuncCopyItem              copy_item;
   VikLayerFuncPasteItem             paste_item;
   VikLayerFuncFreeCopiedItem        free_copied_item;
@@ -250,7 +259,7 @@ void vik_layer_rename ( VikLayer *l, const gchar *new_name );
 void vik_layer_rename_no_copy ( VikLayer *l, gchar *new_name );
 const gchar *vik_layer_get_name ( VikLayer *l );
 
-gboolean vik_layer_set_param (VikLayer *layer, guint16 id, VikLayerParamData data, gpointer vp);
+gboolean vik_layer_set_param (VikLayer *layer, guint16 id, VikLayerParamData data, gpointer vp, gboolean is_file_operation);
 
 void vik_layer_emit_update ( VikLayer *vl );
 
@@ -275,6 +284,10 @@ void      vik_layer_unmarshall_params ( VikLayer *vl, guint8 *data, gint len, Vi
 const gchar *vik_layer_sublayer_rename_request ( VikLayer *l, const gchar *newname, gpointer vlp, gint subtype, gpointer sublayer, GtkTreeIter *iter );
 
 gboolean vik_layer_sublayer_toggle_visible ( VikLayer *l, gint subtype, gpointer sublayer );
+
+const gchar* vik_layer_sublayer_tooltip ( VikLayer *l, gint subtype, gpointer sublayer );
+
+const gchar* vik_layer_layer_tooltip ( VikLayer *l );
 
 /* TODO: put in layerspanel */
 GdkPixbuf *vik_layer_load_icon ( gint type );

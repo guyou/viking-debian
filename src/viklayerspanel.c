@@ -221,7 +221,10 @@ static void layers_panel_init ( VikLayersPanel *vlp )
   {
     /* TODO: FIXME: if name has a '/' in it it will get all messed up. why not have an itemfactory field with
                     name, icon, shortcut, etc.? */
-    entry.path = g_strdup_printf("%s/New %s Layer", base_entries[NUM_BASE_ENTRIES-1].path, vik_layer_get_interface(i)->name );
+    /* Note: we use a temporary label in order to share translation with other codde */
+    gchar *label = g_strdup_printf(_("New %s Layer"), vik_layer_get_interface(i)->name );
+    entry.path = g_strdup_printf("%s/%s", base_entries[NUM_BASE_ENTRIES-1].path, label );
+    g_free ( label );
     entry.accelerator = NULL;
     entry.callback = (GtkItemFactoryCallback) vik_layers_panel_new_layer;
     entry.callback_action = i;
@@ -516,7 +519,6 @@ void vik_layers_panel_cut_selected ( VikLayersPanel *vlp )
   gint type;
   GtkTreeIter iter;
   
-  g_debug(__FUNCTION__);
   if ( ! vik_treeview_get_selected_iter ( vlp->vt, &iter ) )
     /* Nothing to do */
     return;
@@ -526,37 +528,39 @@ void vik_layers_panel_cut_selected ( VikLayersPanel *vlp )
   if ( type == VIK_TREEVIEW_TYPE_LAYER )
   {
     VikAggregateLayer *parent = vik_treeview_item_get_parent ( vlp->vt, &iter );
-
     if ( parent )
     {
-
       /* reset trigger if trigger deleted */
       if ( vik_layers_panel_get_selected ( vlp ) == vik_viewport_get_trigger ( vlp->vvp ) )
         vik_viewport_set_trigger ( vlp->vvp, NULL );
 
       a_clipboard_copy_selected ( vlp );
-      if ( vik_aggregate_layer_delete ( parent, &iter ) )
-        vik_layers_panel_emit_update ( vlp );
+
+      if (IS_VIK_AGGREGATE_LAYER(parent)) {
+	if ( vik_aggregate_layer_delete ( parent, &iter ) )
+	  vik_layers_panel_emit_update ( vlp );
+      }
     }
     else
       a_dialog_info_msg ( VIK_GTK_WINDOW_FROM_WIDGET(vlp), _("You cannot cut the Top Layer.") );
+  }
+  else if (type == VIK_TREEVIEW_TYPE_SUBLAYER) {
+    VikLayer *sel = vik_layers_panel_get_selected ( vlp );
+    if ( vik_layer_get_interface(sel->type)->cut_item ) {
+      gint subtype = vik_treeview_item_get_data( vlp->vt, &iter);
+      vik_layer_get_interface(sel->type)->cut_item ( sel, subtype, vik_treeview_item_get_pointer(sel->vt, &iter) );
+    }
   }
 }
 
 void vik_layers_panel_copy_selected ( VikLayersPanel *vlp )
 {
-  gint type;
   GtkTreeIter iter;
-  
   if ( ! vik_treeview_get_selected_iter ( vlp->vt, &iter ) )
     /* Nothing to do */
     return;
-
-  type = vik_treeview_item_get_type ( vlp->vt, &iter );
-
-  if ( type == VIK_TREEVIEW_TYPE_LAYER ) {
-    a_clipboard_copy_selected ( vlp );
-  }
+  // NB clipboard contains layer vs sublayer logic, so don't need to do it here
+  a_clipboard_copy_selected ( vlp );
 }
 
 void vik_layers_panel_paste_selected ( VikLayersPanel *vlp )
@@ -678,7 +682,7 @@ VikAggregateLayer *vik_layers_panel_get_top_layer ( VikLayersPanel *vlp )
 
 void vik_layers_panel_clear ( VikLayersPanel *vlp )
 {
-  if ( (! vik_aggregate_layer_is_empty(vlp->toplayer)) && a_dialog_overwrite ( VIK_GTK_WINDOW_FROM_WIDGET(vlp), _("Are you sure you wish to delete all layers?"), NULL ) )
+  if ( (! vik_aggregate_layer_is_empty(vlp->toplayer)) && a_dialog_yes_or_no ( VIK_GTK_WINDOW_FROM_WIDGET(vlp), _("Are you sure you wish to delete all layers?"), NULL ) )
     vik_aggregate_layer_clear ( vlp->toplayer ); /* simply deletes all layers */
 }
 

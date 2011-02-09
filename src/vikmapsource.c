@@ -1,7 +1,7 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * viking
- * Copyright (C) Guilhem Bonnefille 2009 <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2009-2010, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  * 
  * viking is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -30,7 +30,7 @@ static void vik_map_source_init (VikMapSource *object);
 static void vik_map_source_finalize (GObject *object);
 static void vik_map_source_class_init (VikMapSourceClass *klass);
 
-static gboolean _supports_if_modified_since (VikMapSource *object);
+static gboolean _supports_download_only_new (VikMapSource *object);
 
 G_DEFINE_TYPE_EXTENDED (VikMapSource, vik_map_source, G_TYPE_OBJECT, (GTypeFlags)G_TYPE_FLAG_ABSTRACT,);
 
@@ -53,12 +53,15 @@ vik_map_source_class_init (VikMapSourceClass *klass)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (klass);
 
+	klass->get_copyright = NULL;
+	klass->get_license = NULL;
+	klass->get_license_url = NULL;
 	klass->get_uniq_id = NULL;
 	klass->get_label = NULL;
 	klass->get_tilesize_x = NULL;
 	klass->get_tilesize_y = NULL;
 	klass->get_drawmode = NULL;
-	klass->supports_if_modified_since = _supports_if_modified_since;
+	klass->supports_download_only_new = _supports_download_only_new;
 	klass->coord_to_mapcoord = NULL;
 	klass->mapcoord_to_center_coord = NULL;
 	klass->download = NULL;
@@ -69,10 +72,49 @@ vik_map_source_class_init (VikMapSourceClass *klass)
 }
 
 gboolean
-_supports_if_modified_since (VikMapSource *self)
+_supports_download_only_new (VikMapSource *self)
 {
 	// Default feature: does not support
 	return FALSE;
+}
+
+const gchar *
+vik_map_source_get_copyright (VikMapSource *self)
+{
+	VikMapSourceClass *klass;
+	g_return_val_if_fail (self != NULL, NULL);
+	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), NULL);
+	klass = VIK_MAP_SOURCE_GET_CLASS(self);
+
+	g_return_val_if_fail (klass->get_copyright != NULL, NULL);
+
+	return (*klass->get_copyright)(self);
+}
+
+const gchar *
+vik_map_source_get_license (VikMapSource *self)
+{
+	VikMapSourceClass *klass;
+	g_return_val_if_fail (self != NULL, NULL);
+	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), NULL);
+	klass = VIK_MAP_SOURCE_GET_CLASS(self);
+
+	g_return_val_if_fail (klass->get_license != NULL, NULL);
+
+	return (*klass->get_license)(self);
+}
+
+const gchar *
+vik_map_source_get_license_url (VikMapSource *self)
+{
+	VikMapSourceClass *klass;
+	g_return_val_if_fail (self != NULL, NULL);
+	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), NULL);
+	klass = VIK_MAP_SOURCE_GET_CLASS(self);
+
+	g_return_val_if_fail (klass->get_license_url != NULL, NULL);
+
+	return (*klass->get_license_url)(self);
 }
 
 guint8
@@ -141,16 +183,16 @@ vik_map_source_get_drawmode (VikMapSource *self)
 }
 
 gboolean
-vik_map_source_supports_if_modified_since (VikMapSource * self)
+vik_map_source_supports_download_only_new (VikMapSource * self)
 {
 	VikMapSourceClass *klass;
 	g_return_val_if_fail (self != NULL, 0);
 	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), 0);
 	klass = VIK_MAP_SOURCE_GET_CLASS(self);
 
-	g_return_val_if_fail (klass->supports_if_modified_since != NULL, 0);
+	g_return_val_if_fail (klass->supports_download_only_new != NULL, 0);
 
-	return (*klass->supports_if_modified_since)(self);
+	return (*klass->supports_download_only_new)(self);
 }
 
 gboolean

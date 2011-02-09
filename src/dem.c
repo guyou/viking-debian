@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2008, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2007, Quy Tonthat <qtonthat@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -448,6 +449,7 @@ VikDEM *vik_dem_new_from_file(const gchar *file)
   buffer[fread(buffer, 1, DEM_BLOCK_SIZE, f)] = '\0';
   if ( ! dem_parse_header ( buffer, rv ) ) {
     g_free ( rv );
+    fclose(f);
     return NULL;
   }
   /* TODO: actually use header -- i.e. GET # OF COLUMNS EXPECTED */

@@ -125,7 +125,7 @@ GtkWidget *a_uibuilder_new_widget ( VikLayerParam *param, VikLayerParamData data
       {
         gdouble init_val = (param->type == VIK_LAYER_PARAM_DOUBLE) ? data.d : (param->type == VIK_LAYER_PARAM_UINT ? data.u : data.i);
         VikLayerParamScale *scale = (VikLayerParamScale *) param->widget_data;
-        rv = gtk_spin_button_new ( GTK_ADJUSTMENT(gtk_adjustment_new( init_val, scale->min, scale->max, scale->step, scale->step, scale->step )), scale->step, scale->digits );
+        rv = gtk_spin_button_new ( GTK_ADJUSTMENT(gtk_adjustment_new( init_val, scale->min, scale->max, scale->step, scale->step, 0 )), scale->step, scale->digits );
       }
     break;
     case VIK_LAYER_WIDGET_ENTRY:
@@ -167,7 +167,7 @@ GtkWidget *a_uibuilder_new_widget ( VikLayerParam *param, VikLayerParamData data
     case VIK_LAYER_WIDGET_FILELIST:
       if ( param->type == VIK_LAYER_PARAM_STRING_LIST )
       {
-        rv = vik_file_list_new ( param->title );
+        rv = vik_file_list_new ( _(param->title) );
         vik_file_list_set_files ( VIK_FILE_LIST(rv), data.sl );
       }
       break;
@@ -252,12 +252,12 @@ VikLayerParamData a_uibuilder_widget_get_value ( GtkWidget *widget, VikLayerPara
 
 
 gint a_uibuilder_properties_factory ( const gchar *dialog_name, GtkWindow *parent, VikLayerParam *params,
-			guint16 params_count, gchar **groups, guint8 groups_count,
-			gboolean (*setparam) (gpointer,guint16,VikLayerParamData,gpointer),
-			gpointer pass_along1, gpointer pass_along2,
-			VikLayerParamData (*getparam) (gpointer,guint16),
-			gpointer pass_along_getparam )
-				/* pass_along1 and pass_along2 are for set_param first and last params */
+				      guint16 params_count, gchar **groups, guint8 groups_count,
+				      gboolean (*setparam) (gpointer,guint16,VikLayerParamData,gpointer,gboolean),
+				      gpointer pass_along1, gpointer pass_along2,
+				      VikLayerParamData (*getparam) (gpointer,guint16,gboolean),
+				      gpointer pass_along_getparam )
+				      /* pass_along1 and pass_along2 are for set_param first and last params */
 {
   guint16 i, j, widget_count = 0;
   gboolean must_redraw = FALSE;
@@ -279,8 +279,12 @@ gint a_uibuilder_properties_factory ( const gchar *dialog_name, GtkWindow *paren
 						      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 						      GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
 						      GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL );
+    gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+    GtkWidget *response_w = NULL;
+#if GTK_CHECK_VERSION (2, 20, 0)
+    response_w = gtk_dialog_get_widget_for_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+#endif
     gint resp;
-
 
     GtkWidget *table = NULL;
     GtkWidget **tables = NULL; /* for more than one group */
@@ -322,15 +326,18 @@ gint a_uibuilder_properties_factory ( const gchar *dialog_name, GtkWindow *paren
         if ( tables )
           table = tables[MAX(0, params[i].group)]; /* round up NOT_IN_GROUP, that's not reasonable here */
 
-        widgets[j] = a_uibuilder_new_widget ( &(params[i]), getparam ( pass_along_getparam, i ) );
+        widgets[j] = a_uibuilder_new_widget ( &(params[i]), getparam ( pass_along_getparam, i, FALSE ) );
 
         g_assert ( widgets[j] != NULL );
 
-        gtk_table_attach ( GTK_TABLE(table), gtk_label_new(params[i].title), 0, 1, j, j+1, 0, 0, 0, 0 );
+        gtk_table_attach ( GTK_TABLE(table), gtk_label_new(_(params[i].title)), 0, 1, j, j+1, 0, 0, 0, 0 );
         gtk_table_attach ( GTK_TABLE(table), widgets[j], 1, 2, j, j+1, GTK_EXPAND | GTK_FILL, 0, 2, 2 );
         j++;
       }
     }
+
+    if ( response_w )
+      gtk_widget_grab_focus ( response_w );
 
     gtk_widget_show_all ( dialog );
 
@@ -341,8 +348,11 @@ gint a_uibuilder_properties_factory ( const gchar *dialog_name, GtkWindow *paren
       {
         if ( params[i].group != VIK_LAYER_NOT_IN_PROPERTIES )
         {
-          if ( setparam ( pass_along1, i,
-              a_uibuilder_widget_get_value ( widgets[j], &(params[i]) ), pass_along2 ) )
+          if ( setparam ( pass_along1,
+			  i,
+			  a_uibuilder_widget_get_value ( widgets[j], &(params[i]) ),
+			  pass_along2,
+			  FALSE ) )
             must_redraw = TRUE;
           j++;
         }

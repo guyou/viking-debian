@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2005-2006, Alex Foobarian <foobarian@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,7 @@
 #include <glib/gprintf.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
+#include <gdk/gdkkeysyms.h>
 
 #define VIKING_WINDOW_WIDTH      1000
 #define VIKING_WINDOW_HEIGHT     800
@@ -148,6 +150,7 @@ struct _VikWindow {
 
   GtkActionGroup *action_group;
 
+  gboolean pan_move;
   gint pan_x, pan_y;
 
   guint draw_image_width, draw_image_height;
@@ -276,7 +279,8 @@ static void window_init ( VikWindow *vw )
   vw->vt = toolbox_create(vw);
   window_create_ui(vw);
   window_set_filename (vw, NULL);
-  
+  vw->toolbar = GTK_TOOLBAR(gtk_ui_manager_get_widget (vw->uim, "/MainToolbar"));
+
   toolbox_activate(vw->vt, "Pan");
 
   vw->filename = NULL;
@@ -284,7 +288,8 @@ static void window_init ( VikWindow *vw )
 
   vw->modified = FALSE;
   vw->only_updating_coord_mode_ui = FALSE;
-  
+ 
+  vw->pan_move = FALSE; 
   vw->pan_x = vw->pan_y = -1;
   vw->draw_image_width = DRAW_IMAGE_DEFAULT_WIDTH;
   vw->draw_image_height = DRAW_IMAGE_DEFAULT_HEIGHT;
@@ -294,9 +299,9 @@ static void window_init ( VikWindow *vw )
   gtk_container_add (GTK_CONTAINER (vw), main_vbox);
 
   gtk_box_pack_start (GTK_BOX(main_vbox), gtk_ui_manager_get_widget (vw->uim, "/MainMenu"), FALSE, TRUE, 0);
-  gtk_box_pack_start (GTK_BOX(main_vbox), gtk_ui_manager_get_widget (vw->uim, "/MainToolbar"), FALSE, TRUE, 0);
-  gtk_toolbar_set_icon_size(GTK_TOOLBAR(gtk_ui_manager_get_widget (vw->uim, "/MainToolbar")), GTK_ICON_SIZE_SMALL_TOOLBAR);
-  gtk_toolbar_set_style (GTK_TOOLBAR(gtk_ui_manager_get_widget (vw->uim, "/MainToolbar")), GTK_TOOLBAR_ICONS);
+  gtk_box_pack_start (GTK_BOX(main_vbox), GTK_WIDGET(vw->toolbar), FALSE, TRUE, 0);
+  gtk_toolbar_set_icon_size (vw->toolbar, GTK_ICON_SIZE_SMALL_TOOLBAR);
+  gtk_toolbar_set_style (vw->toolbar, GTK_TOOLBAR_ICONS);
 
   vik_ext_tools_add_menu_items ( vw, vw->uim );
 
@@ -345,6 +350,21 @@ static gboolean key_press_event( VikWindow *vw, GdkEventKey *event, gpointer dat
     if ( vl && ltype == vl->type )
       return vw->vt->tools[vw->vt->active_tool].ti.key_press(vl, event, vw->vt->tools[vw->vt->active_tool].state);
   }
+
+  /* Restore Main Menu via Escape key if the user has hidden it */
+  /* This key is more likely to be used as they may not remember the function key */
+  if ( event->keyval == GDK_Escape ) {
+    GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ViewMainMenu" );
+    if ( check_box ) {
+      gboolean state = gtk_check_menu_item_get_active ( GTK_CHECK_MENU_ITEM(check_box) );
+      if ( !state ) {
+	gtk_widget_show ( gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu" ) );
+	gtk_check_menu_item_set_active ( GTK_CHECK_MENU_ITEM(check_box), TRUE );
+	return TRUE; /* handled keypress */
+      }
+    }
+  }
+
   return FALSE; /* don't handle the keypress */
 }
 
@@ -395,7 +415,17 @@ static void draw_sync ( VikWindow *vw )
 static void draw_status ( VikWindow *vw )
 {
   static gchar zoom_level[22];
-  g_snprintf ( zoom_level, 22, "%.3f/%.3f %s", vik_viewport_get_xmpp (vw->viking_vvp), vik_viewport_get_ympp(vw->viking_vvp), vik_viewport_get_coord_mode(vw->viking_vvp) == VIK_COORD_UTM ? _("mpp") : _("pixelfact") );
+  gdouble xmpp = vik_viewport_get_xmpp (vw->viking_vvp);
+  gdouble ympp = vik_viewport_get_ympp(vw->viking_vvp);
+  gchar *unit = vik_viewport_get_coord_mode(vw->viking_vvp) == VIK_COORD_UTM ? _("mpp") : _("pixelfact");
+  if (xmpp != ympp)
+    g_snprintf ( zoom_level, 22, "%.3f/%.3f %s", xmpp, ympp, unit );
+  else
+    if ( (int)xmpp - xmpp < 0.0 )
+      g_snprintf ( zoom_level, 22, "%.3f %s", xmpp, unit );
+    else
+      /* xmpp should be a whole number so don't show useless .000 bit */
+      g_snprintf ( zoom_level, 22, "%d %s", (int)xmpp, unit );
   if ( vw->current_tool == TOOL_LAYER )
     vik_statusbar_set_message ( vw->viking_vs, 0, vik_layer_get_interface(vw->tool_layer_id)->tools[vw->tool_tool_id].name );
   else
@@ -422,7 +452,7 @@ static void window_configure_event ( VikWindow *vw )
     first = 0;
     cursor = toolbox_get_cursor(vw->vt, "Pan");
     /* We set cursor, even if it is NULL: it resets to default */
-    gdk_window_set_cursor ( GTK_WIDGET(vw->viking_vvp)->window, cursor );
+    gdk_window_set_cursor ( GTK_WIDGET(vw->viking_vvp)->window, (GdkCursor *)cursor );
   }
 }
 
@@ -436,7 +466,7 @@ static void draw_redraw ( VikWindow *vw )
 
   if ( ! new_trigger )
     ; /* do nothing -- have to redraw everything. */
-  else if ( (old_trigger != new_trigger) || !vik_coord_equals(&old_center, &vw->trigger_center) )
+  else if ( (old_trigger != new_trigger) || !vik_coord_equals(&old_center, &vw->trigger_center) || (new_trigger->type == VIK_LAYER_AGGREGATE) )
     vik_viewport_set_trigger ( vw->viking_vvp, new_trigger ); /* todo: set to half_drawn mode if new trigger is above old */
   else
     vik_viewport_set_half_drawn ( vw->viking_vvp, TRUE );
@@ -445,6 +475,7 @@ static void draw_redraw ( VikWindow *vw )
   vik_viewport_clear ( vw->viking_vvp);
   vik_layers_panel_draw_all ( vw->viking_vlp );
   vik_viewport_draw_scale ( vw->viking_vvp );
+  vik_viewport_draw_copyright ( vw->viking_vvp );
   vik_viewport_draw_centermark ( vw->viking_vvp );
 
   vik_viewport_set_half_drawn ( vw->viking_vvp, FALSE ); /* just in case. */
@@ -469,6 +500,7 @@ static gboolean draw_buf(gpointer data)
 static void vik_window_pan_click (VikWindow *vw, GdkEventButton *event)
 {
   /* set panning origin */
+  vw->pan_move = FALSE;
   vw->pan_x = (gint) event->x;
   vw->pan_y = (gint) event->y;
 }
@@ -491,7 +523,12 @@ static void draw_click (VikWindow *vw, GdkEventButton *event)
 static void vik_window_pan_move (VikWindow *vw, GdkEventMotion *event)
 {
   if ( vw->pan_x != -1 ) {
-    vik_viewport_pan_sync ( vw->viking_vvp, event->x - vw->pan_x, event->y - vw->pan_y );
+    vik_viewport_set_center_screen ( vw->viking_vvp, vik_viewport_get_width(vw->viking_vvp)/2 - event->x + vw->pan_x,
+                                     vik_viewport_get_height(vw->viking_vvp)/2 - event->y + vw->pan_y );
+    vw->pan_move = TRUE;
+    vw->pan_x = event->x;
+    vw->pan_y = event->y;
+    draw_update ( vw );
   }
 }
 
@@ -528,8 +565,12 @@ static void draw_mouse_motion (VikWindow *vw, GdkEventMotion *event)
     interpol_method = VIK_DEM_INTERPOL_SIMPLE;
   else
     interpol_method = VIK_DEM_INTERPOL_BEST;
-  if ((alt = a_dems_get_elev_by_coord(&coord, interpol_method)) != VIK_DEM_INVALID_ELEVATION)
-    g_snprintf ( pointer_buf, BUFFER_SIZE, _("%s %s %dm"), lat, lon, alt );
+  if ((alt = a_dems_get_elev_by_coord(&coord, interpol_method)) != VIK_DEM_INVALID_ELEVATION) {
+    if ( a_vik_get_units_height () == VIK_UNITS_HEIGHT_METRES )
+      g_snprintf ( pointer_buf, BUFFER_SIZE, _("%s %s %dm"), lat, lon, alt );
+    else
+      g_snprintf ( pointer_buf, BUFFER_SIZE, _("%s %s %dft"), lat, lon, (int)VIK_METERS_TO_FEET(alt) );
+  }
   else
     g_snprintf ( pointer_buf, BUFFER_SIZE, _("%s %s"), lat, lon );
   g_free (lat);
@@ -549,13 +590,14 @@ static void draw_mouse_motion (VikWindow *vw, GdkEventMotion *event)
 
 static void vik_window_pan_release ( VikWindow *vw, GdkEventButton *event )
 {
-  if ( ABS(vw->pan_x - event->x) <= 1 && ABS(vw->pan_y - event->y) <= 1 )
+  if ( vw->pan_move == FALSE )
     vik_viewport_set_center_screen ( vw->viking_vvp, vw->pan_x, vw->pan_y );
   else
      vik_viewport_set_center_screen ( vw->viking_vvp, vik_viewport_get_width(vw->viking_vvp)/2 - event->x + vw->pan_x,
                                       vik_viewport_get_height(vw->viking_vvp)/2 - event->y + vw->pan_y );
-  draw_update ( vw );
+  vw->pan_move = FALSE;
   vw->pan_x = vw->pan_y = -1;
+  draw_update ( vw );
 }
 
 static void draw_release ( VikWindow *vw, GdkEventButton *event )
@@ -738,12 +780,12 @@ static void draw_ruler(VikViewport *vvp, GdkDrawable *d, GdkGC *gc, gint x1, gin
       }
       break;
     case VIK_UNITS_DISTANCE_MILES:
-      if (distance >= 1600 && distance < 160000) {
-	g_sprintf(str, "%3.2f miles", distance/1600.0);
-      } else if (distance < 1600) {
+      if (distance >= VIK_MILES_TO_METERS(1) && distance < VIK_MILES_TO_METERS(100)) {
+	g_sprintf(str, "%3.2f miles", VIK_METERS_TO_MILES(distance));
+      } else if (distance < VIK_MILES_TO_METERS(1)) {
 	g_sprintf(str, "%d yards", (int)(distance*1.0936133));
       } else {
-	g_sprintf(str, "%d miles", (int)distance/1600);
+	g_sprintf(str, "%d miles", (int)VIK_METERS_TO_MILES(distance));
       }
       break;
     default:
@@ -833,7 +875,7 @@ static VikLayerToolFuncStatus ruler_click (VikLayer *vl, GdkEventButton *event, 
 	temp = g_strdup_printf ( "%s %s DIFF %f meters", lat, lon, vik_coord_diff( &coord, &(s->oldcoord) ) );
 	break;
       case VIK_UNITS_DISTANCE_MILES:
-	temp = g_strdup_printf ( "%s %s DIFF %f miles", lat, lon, vik_coord_diff( &coord, &(s->oldcoord) )* 0.000621371192);
+	temp = g_strdup_printf ( "%s %s DIFF %f miles", lat, lon, VIK_METERS_TO_MILES(vik_coord_diff( &coord, &(s->oldcoord) )) );
 	break;
       default:
 	temp = g_strdup_printf ("Just to keep the compiler happy");
@@ -905,7 +947,7 @@ static VikLayerToolFuncStatus ruler_move (VikLayer *vl, GdkEventMotion *event, r
       temp = g_strdup_printf ( "%s %s DIFF %f meters", lat, lon, vik_coord_diff( &coord, &(s->oldcoord) ) );
       break;
     case VIK_UNITS_DISTANCE_MILES:
-      temp = g_strdup_printf ( "%s %s DIFF %f miles", lat, lon, vik_coord_diff( &coord, &(s->oldcoord) )* 0.000621371192);
+      temp = g_strdup_printf ( "%s %s DIFF %f miles", lat, lon, VIK_METERS_TO_MILES (vik_coord_diff( &coord, &(s->oldcoord) )) );
       break;
     default:
       temp = g_strdup_printf ("Just to keep the compiler happy");
@@ -1183,13 +1225,49 @@ static void menu_delete_layer_cb ( GtkAction *a, VikWindow *vw )
 
 static void view_side_panel_cb ( GtkAction *a, VikWindow *vw )
 {
-  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/ViewSidePanel" );
+  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ViewSidePanel" );
   g_assert(check_box);
   gboolean state = gtk_check_menu_item_get_active ( GTK_CHECK_MENU_ITEM(check_box));
   if ( state )
     gtk_widget_show(GTK_WIDGET(vw->viking_vlp));
   else
     gtk_widget_hide(GTK_WIDGET(vw->viking_vlp));
+}
+
+static void view_statusbar_cb ( GtkAction *a, VikWindow *vw )
+{
+  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ViewStatusBar" );
+  if ( !check_box )
+    return;
+  gboolean state = gtk_check_menu_item_get_active ( GTK_CHECK_MENU_ITEM(check_box) );
+  if ( state )
+    gtk_widget_show ( GTK_WIDGET(vw->viking_vs) );
+  else
+    gtk_widget_hide ( GTK_WIDGET(vw->viking_vs) );
+}
+
+static void view_toolbar_cb ( GtkAction *a, VikWindow *vw )
+{
+  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ViewToolbar" );
+  if ( !check_box )
+    return;
+  gboolean state = gtk_check_menu_item_get_active ( GTK_CHECK_MENU_ITEM(check_box) );
+  if ( state )
+    gtk_widget_show ( GTK_WIDGET(vw->toolbar) );
+  else
+    gtk_widget_hide ( GTK_WIDGET(vw->toolbar) );
+}
+
+static void view_main_menu_cb ( GtkAction *a, VikWindow *vw )
+{
+  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ViewMainMenu" );
+  if ( !check_box )
+    return;
+  gboolean state = gtk_check_menu_item_get_active ( GTK_CHECK_MENU_ITEM(check_box) );
+  if ( !state )
+    gtk_widget_hide ( gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu" ) );
+  else
+    gtk_widget_show ( gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu" ) );
 }
 
 /***************************************
@@ -1328,7 +1406,7 @@ static void menu_tool_cb ( GtkAction *old, GtkAction *a, VikWindow *vw )
 
   cursor = toolbox_get_cursor(vw->vt, gtk_action_get_name(a));
   /* We set cursor, even if it is NULL: it resets to default */
-  gdk_window_set_cursor ( GTK_WIDGET(vw->viking_vvp)->window, cursor );
+  gdk_window_set_cursor ( GTK_WIDGET(vw->viking_vvp)->window, (GdkCursor *)cursor );
 
   if (!strcmp(gtk_action_get_name(a), "Pan")) {
     vw->current_tool = TOOL_PAN;
@@ -1384,11 +1462,29 @@ GtkWidget *vik_window_get_drawmode_button ( VikWindow *vw, VikViewportDrawMode m
     case VIK_VIEWPORT_DRAWMODE_EXPEDIA: buttonname = "/ui/MainMenu/View/ModeExpedia"; break;
 #endif
     case VIK_VIEWPORT_DRAWMODE_MERCATOR: buttonname = "/ui/MainMenu/View/ModeMercator"; break;
+    case VIK_VIEWPORT_DRAWMODE_LATLON: buttonname = "/ui/MainMenu/View/ModeLatLon"; break;
     default: buttonname = "/ui/MainMenu/View/ModeUTM";
   }
   mode_button = gtk_ui_manager_get_widget ( vw->uim, buttonname );
   g_assert ( mode_button );
   return mode_button;
+}
+
+/**
+ * vik_window_get_pan_move:
+ * @vw: some VikWindow
+ *
+ * Retrieves @vw's pan_move.
+ *
+ * Should be removed as soon as possible.
+ *
+ * Returns: @vw's pan_move
+ *
+ * Since: 0.9.96
+ **/
+gboolean vik_window_get_pan_move ( VikWindow *vw )
+{
+  return vw->pan_move;
 }
 
 static void on_activate_recent_item (GtkRecentChooser *chooser,
@@ -1408,7 +1504,7 @@ static void on_activate_recent_item (GtkRecentChooser *chooser,
       g_signal_emit ( G_OBJECT(self), window_signals[VW_OPENWINDOW_SIGNAL], 0, filenames );
     }
     else
-      vik_window_open_file ( self, filename, TRUE );
+      vik_window_open_file ( self, path, TRUE );
     g_free ( path );
   }
 
@@ -1487,11 +1583,11 @@ void vik_window_open_file ( VikWindow *vw, const gchar *filename, gboolean chang
 
       vik_layers_panel_change_coord_mode ( vw->viking_vlp, vik_viewport_get_coord_mode ( vw->viking_vvp ) );
 
-      mode_button = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/ShowScale" );
+      mode_button = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ShowScale" );
       g_assert ( mode_button );
       gtk_check_menu_item_set_active ( GTK_CHECK_MENU_ITEM(mode_button),vik_viewport_get_draw_scale(vw->viking_vvp) );
 
-      mode_button = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/ShowCenterMark" );
+      mode_button = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ShowCenterMark" );
       g_assert ( mode_button );
       gtk_check_menu_item_set_active ( GTK_CHECK_MENU_ITEM(mode_button),vik_viewport_get_draw_centermark(vw->viking_vvp) );
     }
@@ -1574,7 +1670,7 @@ static gboolean save_file_as ( GtkAction *a, VikWindow *vw )
   while ( gtk_dialog_run ( GTK_DIALOG(vw->save_dia) ) == GTK_RESPONSE_ACCEPT )
   {
     fn = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(vw->save_dia) );
-    if ( g_file_test ( fn, G_FILE_TEST_EXISTS ) == FALSE || a_dialog_overwrite ( GTK_WINDOW(vw->save_dia), _("The file \"%s\" exists, do you wish to overwrite it?"), a_file_basename ( fn ) ) )
+    if ( g_file_test ( fn, G_FILE_TEST_EXISTS ) == FALSE || a_dialog_yes_or_no ( GTK_WINDOW(vw->save_dia), _("The file \"%s\" exists, do you wish to overwrite it?"), a_file_basename ( fn ) ) )
     {
       window_set_filename ( vw, fn );
       rv = window_save ( vw );
@@ -1916,7 +2012,7 @@ static void draw_to_image_file ( VikWindow *vw, const gchar *fn, gboolean one_im
 
   zoom_label = gtk_label_new ( _("Zoom (meters per pixel):") );
   /* TODO: separate xzoom and yzoom factors */
-  zoom_spin = gtk_spin_button_new ( GTK_ADJUSTMENT(gtk_adjustment_new ( vik_viewport_get_xmpp(vw->viking_vvp), VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM/2.0, 1, 100, 3 )), 16, 3);
+  zoom_spin = gtk_spin_button_new ( GTK_ADJUSTMENT(gtk_adjustment_new ( vik_viewport_get_xmpp(vw->viking_vvp), VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM/2.0, 1, 100, 0 )), 16, 0);
 
   total_size_label = gtk_label_new ( NULL );
 
@@ -1972,6 +2068,8 @@ static void draw_to_image_file ( VikWindow *vw, const gchar *fn, gboolean one_im
 
   draw_to_image_file_total_area_cb ( NULL, current_window_pass_along ); /* set correct size info now */
 
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+
   gtk_widget_show_all ( GTK_DIALOG(dialog)->vbox );
 
   if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT )
@@ -2002,7 +2100,7 @@ static void draw_to_image_file ( VikWindow *vw, const gchar *fn, gboolean one_im
 
 static void draw_to_image_file_cb ( GtkAction *a, VikWindow *vw )
 {
-  const gchar *fn;
+  gchar *fn;
   if (!vw->save_img_dia) {
     vw->save_img_dia = gtk_file_chooser_dialog_new (_("Save Image"),
 				      GTK_WINDOW(vw),
@@ -2017,11 +2115,13 @@ static void draw_to_image_file_cb ( GtkAction *a, VikWindow *vw )
   while ( gtk_dialog_run ( GTK_DIALOG(vw->save_img_dia) ) == GTK_RESPONSE_ACCEPT )
   {
     fn = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(vw->save_img_dia) );
-    if ( g_file_test ( fn, G_FILE_TEST_EXISTS ) == FALSE || a_dialog_overwrite ( GTK_WINDOW(vw->save_img_dia), _("The file \"%s\" exists, do you wish to overwrite it?"), a_file_basename ( fn ) ) )
+    if ( g_file_test ( fn, G_FILE_TEST_EXISTS ) == FALSE || a_dialog_yes_or_no ( GTK_WINDOW(vw->save_img_dia), _("The file \"%s\" exists, do you wish to overwrite it?"), a_file_basename ( fn ) ) )
     {
       draw_to_image_file ( vw, fn, TRUE );
       break;
     }
+    g_free(fn);
+    fn = NULL;
   }
   gtk_widget_hide ( vw->save_img_dia );
 }
@@ -2069,6 +2169,9 @@ static void window_change_coord_mode_cb ( GtkAction *old_a, GtkAction *a, VikWin
   if (!strcmp(gtk_action_get_name(a), "ModeUTM")) {
     drawmode = VIK_VIEWPORT_DRAWMODE_UTM;
   }
+  else if (!strcmp(gtk_action_get_name(a), "ModeLatLon")) {
+    drawmode = VIK_VIEWPORT_DRAWMODE_LATLON;
+  }
   else if (!strcmp(gtk_action_get_name(a), "ModeExpedia")) {
     drawmode = VIK_VIEWPORT_DRAWMODE_EXPEDIA;
   }
@@ -2099,7 +2202,7 @@ static void window_change_coord_mode_cb ( GtkAction *old_a, GtkAction *a, VikWin
 
 static void set_draw_scale ( GtkAction *a, VikWindow *vw )
 {
-  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/ShowScale" );
+  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ShowScale" );
   g_assert(check_box);
   gboolean state = gtk_check_menu_item_get_active ( GTK_CHECK_MENU_ITEM(check_box));
   vik_viewport_set_draw_scale ( vw->viking_vvp, state );
@@ -2108,7 +2211,7 @@ static void set_draw_scale ( GtkAction *a, VikWindow *vw )
 
 static void set_draw_centermark ( GtkAction *a, VikWindow *vw )
 {
-  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/ShowCenterMark" );
+  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ShowCenterMark" );
   g_assert(check_box);
   gboolean state = gtk_check_menu_item_get_active ( GTK_CHECK_MENU_ITEM(check_box));
   vik_viewport_set_draw_centermark ( vw->viking_vvp, state );
@@ -2141,6 +2244,7 @@ static GtkActionEntry entries[] = {
   { "File", NULL, N_("_File"), 0, 0, 0 },
   { "Edit", NULL, N_("_Edit"), 0, 0, 0 },
   { "View", NULL, N_("_View"), 0, 0, 0 },
+  { "SetShow", NULL, N_("_Show"), 0, 0, 0 },
   { "SetZoom", NULL, N_("_Zoom"), 0, 0, 0 },
   { "SetPan", NULL, N_("_Pan"), 0, 0, 0 },
   { "Layers", NULL, N_("_Layers"), 0, 0, 0 },
@@ -2171,10 +2275,10 @@ static GtkActionEntry entries[] = {
   { "SaveExit",  GTK_STOCK_QUIT,         N_("Save and Exit"),                 NULL, N_("Save and Exit the program"),                             (GCallback)save_file_and_exit          },
 
   { "GotoDefaultLocation", GTK_STOCK_HOME, N_("Go to the _Default Location"),  NULL,         N_("Go to the default location"),                     (GCallback)goto_default_location },
-  { "GotoSearch", GTK_STOCK_JUMP_TO,     N_("Go to Location..."),    	      NULL,         N_("Go to address/place using text search"),        (GCallback)goto_address       },
+  { "GotoSearch", GTK_STOCK_JUMP_TO,     N_("Go to _Location..."),    	      NULL,         N_("Go to address/place using text search"),        (GCallback)goto_address       },
   { "GotoLL",    GTK_STOCK_JUMP_TO,      N_("_Go to Lat/Lon..."),           NULL,         N_("Go to arbitrary lat/lon coordinate"),         (GCallback)draw_goto_cb          },
   { "GotoUTM",   GTK_STOCK_JUMP_TO,      N_("Go to UTM..."),                  NULL,         N_("Go to arbitrary UTM coordinate"),               (GCallback)draw_goto_cb          },
-  { "SetBGColor",GTK_STOCK_SELECT_COLOR, N_("Set Background Color..."),       NULL,         NULL,                                           (GCallback)set_bg_color          },
+  { "SetBGColor",GTK_STOCK_SELECT_COLOR, N_("Set Bac_kground Color..."),      NULL,         NULL,                                           (GCallback)set_bg_color          },
   { "ZoomIn",    GTK_STOCK_ZOOM_IN,      N_("Zoom _In"),                   "<control>plus", NULL,                                           (GCallback)draw_zoom_cb          },
   { "ZoomOut",   GTK_STOCK_ZOOM_OUT,     N_("Zoom _Out"),                 "<control>minus", NULL,                                           (GCallback)draw_zoom_cb          },
   { "ZoomTo",    GTK_STOCK_ZOOM_FIT,     N_("Zoom _To..."),               "<control>Z", NULL,                                           (GCallback)zoom_to_cb            },
@@ -2196,10 +2300,10 @@ static GtkActionEntry entries[] = {
   { "Zoom8192",  NULL,                   N_("8192"),                          NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
   { "Zoom16384", NULL,                   N_("16384"),                         NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
   { "Zoom32768", NULL,                   N_("32768"),                         NULL,         NULL,                                           (GCallback)draw_zoom_cb          },
-  { "PanNorth",  NULL,                   N_("Pan North"),                  "<control>Up", NULL,                                           (GCallback)draw_pan_cb },
-  { "PanEast",  NULL,                    N_("Pan East"),                   "<control>Right", NULL,                                           (GCallback)draw_pan_cb },
-  { "PanSouth",  NULL,                   N_("Pan South"),                  "<control>Down", NULL,                                           (GCallback)draw_pan_cb },
-  { "PanWest",  NULL,                    N_("Pan West"),                   "<control>Left", NULL,                                           (GCallback)draw_pan_cb },
+  { "PanNorth",  NULL,                   N_("Pan _North"),                "<control>Up",    NULL,                                           (GCallback)draw_pan_cb },
+  { "PanEast",   NULL,                   N_("Pan _East"),                 "<control>Right", NULL,                                           (GCallback)draw_pan_cb },
+  { "PanSouth",  NULL,                   N_("Pan _South"),                "<control>Down",  NULL,                                           (GCallback)draw_pan_cb },
+  { "PanWest",   NULL,                   N_("Pan _West"),                 "<control>Left",  NULL,                                           (GCallback)draw_pan_cb },
   { "BGJobs",    GTK_STOCK_EXECUTE,      N_("Background _Jobs"),              NULL,         NULL,                                           (GCallback)a_background_show_window },
 
   { "Cut",       GTK_STOCK_CUT,          N_("Cu_t"),                          NULL,         NULL,                                           (GCallback)menu_cut_layer_cb     },
@@ -2217,10 +2321,12 @@ static GtkActionEntry entries[] = {
 };
 
 /* Radio items */
+/* FIXME use VIEWPORT_DRAWMODE values */
 static GtkRadioActionEntry mode_entries[] = {
   { "ModeUTM",         NULL,         N_("_UTM Mode"),               "<control>u", NULL, 0 },
   { "ModeExpedia",     NULL,         N_("_Expedia Mode"),           "<control>e", NULL, 1 },
-  { "ModeMercator",    NULL,         N_("_Mercator Mode"),            "<control>g", NULL, 4 }
+  { "ModeMercator",    NULL,         N_("_Mercator Mode"),            "<control>m", NULL, 4 },
+  { "ModeLatLon",      NULL,         N_("Lat_/Lon Mode"),           "<control>l", NULL, 5 },
 };
 
 static GtkRadioActionEntry tool_entries[] = {
@@ -2230,10 +2336,13 @@ static GtkRadioActionEntry tool_entries[] = {
 };
 
 static GtkToggleActionEntry toggle_entries[] = {
-  { "ShowScale", NULL,                        N_("_Show Scale"),               NULL,         N_("Show Scale"),                                           (GCallback)set_draw_scale, TRUE   },
-  { "ShowCenterMark", NULL,                   N_("Show _Center Mark"),         NULL,         N_("Show Center Mark"),                                           (GCallback)set_draw_centermark, TRUE   },
-  { "FullScreen",    GTK_STOCK_FULLSCREEN,    N_("_Full Screen"),              "F11",        N_("Activate full screen mode"),                                           (GCallback)full_screen_cb, FALSE },
-  { "ViewSidePanel", GTK_STOCK_INDEX,   N_("Show Side Panel"),                 "F9",         N_("Show Side Panel"),                                           (GCallback)view_side_panel_cb, TRUE    },
+  { "ShowScale",      NULL,                 N_("Show _Scale"),               "F5",         N_("Show Scale"),                              (GCallback)set_draw_scale, TRUE },
+  { "ShowCenterMark", NULL,                 N_("Show _Center Mark"),         "F6",         N_("Show Center Mark"),                        (GCallback)set_draw_centermark, TRUE },
+  { "FullScreen",     GTK_STOCK_FULLSCREEN, N_("_Full Screen"),              "F11",        N_("Activate full screen mode"),               (GCallback)full_screen_cb, FALSE },
+  { "ViewSidePanel",  GTK_STOCK_INDEX,      N_("Show Side _Panel"),          "F9",         N_("Show Side Panel"),                         (GCallback)view_side_panel_cb, TRUE },
+  { "ViewStatusBar",  NULL,                 N_("Show Status_bar"),           "F12",        N_("Show Statusbar"),                          (GCallback)view_statusbar_cb, TRUE },
+  { "ViewToolbar",    NULL,                 N_("Show _Toolbar"),             "F3",         N_("Show Toolbar"),                            (GCallback)view_toolbar_cb, TRUE },
+  { "ViewMainMenu",   NULL,                 N_("Show _Menu"),                "F4",         N_("Show Menu"),                               (GCallback)view_main_menu_cb, TRUE },
 };
 
 #include "menu.xml.h"

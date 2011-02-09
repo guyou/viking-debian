@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2006, Quy Tonthat <qtonthat@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,7 +222,7 @@ gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, BabelStat
       args[i++] = "-o";
       args[i++] = "gpx";
       args[i++] = "-f";
-      args[i++] = from;
+      args[i++] = (char *)from;
       args[i++] = "-F";
       args[i++] = name_dst;
       args[i] = NULL;
@@ -281,7 +282,7 @@ gboolean a_babel_convert_from_shellcommand ( VikTrwLayer *vt, const char *input_
 
 gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char *input_type, BabelStatusFunc cb, gpointer user_data )
 {
-  static DownloadOptions options = { FALSE, NULL, 0, a_check_kml_file};
+  static DownloadMapOptions options = { FALSE, FALSE, NULL, 0, a_check_kml_file};
   gint fd_src;
   int fetch_ret;
   gboolean ret = FALSE;
@@ -315,7 +316,7 @@ gboolean babel_general_convert_to( VikTrwLayer *vt, BabelStatusFunc cb, gchar **
   gchar *cmd;
   gchar **args2;
   
-  if (!a_file_export(vt, name_src, FILE_TYPE_GPX)) {
+  if (!a_file_export(vt, name_src, FILE_TYPE_GPX, NULL)) {
     g_warning("%s(): error exporting to %s", __FUNCTION__, name_src);
     return(FALSE);
   }
@@ -382,7 +383,7 @@ gboolean babel_general_convert_to( VikTrwLayer *vt, BabelStatusFunc cb, gchar **
   GError *error = NULL;
   gint babel_stdout;
 
-  if (!a_file_export(vt, name_src, FILE_TYPE_GPX)) {
+  if (!a_file_export(vt, name_src, FILE_TYPE_GPX, NULL)) {
     g_warning("%s(): error exporting to %s", __FUNCTION__, name_src);
     return(FALSE);
   }
@@ -446,7 +447,7 @@ gboolean a_babel_convert_to( VikTrwLayer *vt, const char *babelargs, BabelStatus
       args[i++] = "-f";
       args[i++] = name_src;
       args[i++] = "-F";
-      args[i++] = to;
+      args[i++] = (char *)to;
       args[i] = NULL;
 
       ret = babel_general_convert_to ( vt, cb, args, name_src, user_data );
