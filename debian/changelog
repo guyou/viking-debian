@@ -1,3 +1,11 @@
+viking (1.1-1) unstable; urgency=low
+
+  * [271c7221] Imported Upstream version 1.1
+  * [7aed446e] Refreshing patches. Dropping those which were applied
+    upstream.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 09 Feb 2011 21:52:13 +0100
+
 viking (0.9.94-3) unstable; urgency=low
 
   * [f5016ac4] Fix spelling error in the long description. (Closes:
