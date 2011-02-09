@@ -1,7 +1,7 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * viking
- * Copyright (C) Guilhem Bonnefille 2009 <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2009, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  * 
  * viking is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -29,12 +29,13 @@
 
 static gboolean _coord_to_mapcoord ( VikMapSource *self, const VikCoord *src, gdouble xzoom, gdouble yzoom, MapCoord *dest );
 static void _mapcoord_to_center_coord ( VikMapSource *self, MapCoord *src, VikCoord *dest );
-static int _download ( VikMapSource *self, MapCoord *src, const gchar *dest_fn, void *handle );
-static void * _download_handle_init ( VikMapSource *self );
-static void _download_handle_cleanup ( VikMapSource *self, void *handle );
+
+static gchar *_get_uri( VikMapSourceDefault *self, MapCoord *src );
+static gchar *_get_hostname( VikMapSourceDefault *self );
+static DownloadMapOptions *_get_download_options( VikMapSourceDefault *self );
 
 /* FIXME Huge gruik */
-static DownloadOptions terraserver_options = { 0, NULL, 0, a_check_map_file };
+static DownloadMapOptions terraserver_options = { FALSE, FALSE, NULL, 0, a_check_map_file };
 
 typedef struct _TerraserverMapSourcePrivate TerraserverMapSourcePrivate;
 struct _TerraserverMapSourcePrivate
@@ -52,7 +53,7 @@ enum
   PROP_TYPE,
 };
 
-G_DEFINE_TYPE_EXTENDED (TerraserverMapSource, terraserver_map_source, VIK_TYPE_MAP_SOURCE_DEFAULT, (GTypeFlags)0,);
+G_DEFINE_TYPE (TerraserverMapSource, terraserver_map_source, VIK_TYPE_MAP_SOURCE_DEFAULT);
 
 static void
 terraserver_map_source_init (TerraserverMapSource *self)
@@ -121,18 +122,20 @@ static void
 terraserver_map_source_class_init (TerraserverMapSourceClass *klass)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (klass);
-	VikMapSourceClass* parent_class = VIK_MAP_SOURCE_CLASS (klass);
+	VikMapSourceClass* grandparent_class = VIK_MAP_SOURCE_CLASS (klass);
+	VikMapSourceDefaultClass* parent_class = VIK_MAP_SOURCE_DEFAULT_CLASS (klass);
     GParamSpec *pspec = NULL;
 	
 	object_class->set_property = terraserver_map_source_set_property;
     object_class->get_property = terraserver_map_source_get_property;
 	
 	/* Overiding methods */
-	parent_class->coord_to_mapcoord =        _coord_to_mapcoord;
-	parent_class->mapcoord_to_center_coord = _mapcoord_to_center_coord;
-	parent_class->download =                 _download;
-	parent_class->download_handle_init =     _download_handle_init;
-	parent_class->download_handle_cleanup =  _download_handle_cleanup;
+	grandparent_class->coord_to_mapcoord =        _coord_to_mapcoord;
+	grandparent_class->mapcoord_to_center_coord = _mapcoord_to_center_coord;
+	
+	parent_class->get_uri = _get_uri;
+	parent_class->get_hostname = _get_hostname;
+	parent_class->get_download_options = _get_download_options;
 
 	pspec = g_param_spec_uint ("type",
 	                           "Type",
@@ -187,7 +190,8 @@ _coord_to_mapcoord ( VikMapSource *self, const VikCoord *src, gdouble xmpp, gdou
 	
 	TerraserverMapSourcePrivate *priv = TERRASERVER_MAP_SOURCE_PRIVATE(self);
 	int type = priv->type;
-	g_assert ( src->mode == VIK_COORD_UTM );
+	if ( src->mode != VIK_COORD_UTM )
+		return FALSE;
 
 	if ( xmpp != ympp )
 		return FALSE;
@@ -213,35 +217,55 @@ _mapcoord_to_center_coord ( VikMapSource *self, MapCoord *src, VikCoord *dest )
 	dest->north_south = ((src->y * 200) + 100) * mpp;
 }
 
-static int
-_download ( VikMapSource *self, MapCoord *src, const gchar *dest_fn, void *handle )
+static gchar *
+_get_uri( VikMapSourceDefault *self, MapCoord *src )
 {
-	g_return_val_if_fail(TERRASERVER_IS_MAP_SOURCE(self), FALSE);
+	g_return_val_if_fail (TERRASERVER_IS_MAP_SOURCE(self), NULL);
 	
-	TerraserverMapSourcePrivate *priv = TERRASERVER_MAP_SOURCE_PRIVATE(self);  int res = -1;
+	TerraserverMapSourcePrivate *priv = TERRASERVER_MAP_SOURCE_PRIVATE(self);
 	int type = priv->type;
 	gchar *uri = g_strdup_printf ( "/tile.ashx?T=%d&S=%d&X=%d&Y=%d&Z=%d", type,
                                   src->scale, src->x, src->y, src->z );
-	res = a_http_download_get_url ( TERRASERVER_SITE, uri, dest_fn, &terraserver_options, handle );
-	g_free ( uri );
-	return res;
+	return uri;
+} 
+
+static gchar *
+_get_hostname( VikMapSourceDefault *self )
+{
+	g_return_val_if_fail (TERRASERVER_IS_MAP_SOURCE(self), NULL);
+	
+	return g_strdup( TERRASERVER_SITE );
 }
 
-static void *
-_download_handle_init ( VikMapSource *self )
+static DownloadMapOptions *
+_get_download_options( VikMapSourceDefault *self )
 {
-	return a_download_handle_init ();
-}
-
-
-static void
-_download_handle_cleanup ( VikMapSource *self, void *handle )
-{
-	return a_download_handle_cleanup ( handle );
+	g_return_val_if_fail (TERRASERVER_IS_MAP_SOURCE(self), NULL);
+	
+	return &terraserver_options;
 }
 
 TerraserverMapSource *
 terraserver_map_source_new_with_id (guint8 id, const char *label, int type)
 {
-	return g_object_new(TERRASERVER_TYPE_MAP_SOURCE, "id", id, "label", label, "type", type, NULL);
+	char *copyright = NULL;
+	switch (type)
+	{
+	case 1:
+		copyright = "© DigitalGlobe";
+		break;
+	case 2:
+		copyright = "© LandVoyage";
+		break;
+	case 4:
+		copyright = "© DigitalGlobe";
+		break;
+	default:
+		g_critical("Houston, we've had a problem. type=%d", type);
+	}
+
+	return g_object_new(TERRASERVER_TYPE_MAP_SOURCE,
+	                    "id", id, "label", label, "type", type,
+	                    "copyright", copyright,
+	                    NULL);
 }

@@ -43,10 +43,11 @@ VikLayerParam georef_layer_params[] = {
 
 enum { PARAM_IMAGE = 0, PARAM_CE, PARAM_CN, PARAM_ME, PARAM_MN, NUM_PARAMS };
 
+static const gchar* georef_layer_tooltip ( VikGeorefLayer *vgl );
 static void georef_layer_marshall( VikGeorefLayer *vgl, guint8 **data, gint *len );
 static VikGeorefLayer *georef_layer_unmarshall( guint8 *data, gint len, VikViewport *vvp );
-static gboolean georef_layer_set_param ( VikGeorefLayer *vgl, guint16 id, VikLayerParamData data, VikViewport *vp );
-static VikLayerParamData georef_layer_get_param ( VikGeorefLayer *vgl, guint16 id );
+static gboolean georef_layer_set_param ( VikGeorefLayer *vgl, guint16 id, VikLayerParamData data, VikViewport *vp, gboolean is_file_operation );
+static VikLayerParamData georef_layer_get_param ( VikGeorefLayer *vgl, guint16 id, gboolean is_file_operation );
 VikGeorefLayer *georef_layer_new ( );
 VikGeorefLayer *georef_layer_create ( VikViewport *vp );
 static void georef_layer_free ( VikGeorefLayer *vgl );
@@ -105,6 +106,8 @@ VikLayerInterface vik_georef_layer_interface = {
 
   (VikLayerFuncSublayerRenameRequest)   NULL,
   (VikLayerFuncSublayerToggleVisible)   NULL,
+  (VikLayerFuncSublayerTooltip)         NULL,
+  (VikLayerFuncLayerTooltip)            georef_layer_tooltip,
 
   (VikLayerFuncMarshall)		georef_layer_marshall,
   (VikLayerFuncUnmarshall)		georef_layer_unmarshall,
@@ -116,6 +119,7 @@ VikLayerInterface vik_georef_layer_interface = {
   (VikLayerFuncWriteFileData)           NULL,
 
   (VikLayerFuncDeleteItem)              NULL,
+  (VikLayerFuncCutItem)                 NULL,
   (VikLayerFuncCopyItem)                NULL,
   (VikLayerFuncPasteItem)               NULL,
   (VikLayerFuncFreeCopiedItem)          NULL,
@@ -162,6 +166,11 @@ GType vik_georef_layer_get_type ()
   return vgl_type;
 }
 
+static const gchar* georef_layer_tooltip ( VikGeorefLayer *vgl )
+{
+  return vgl->image;
+}
+
 static void georef_layer_marshall( VikGeorefLayer *vgl, guint8 **data, gint *len )
 {
   vik_layer_marshall_params ( VIK_LAYER(vgl), data, len );
@@ -177,7 +186,7 @@ static VikGeorefLayer *georef_layer_unmarshall( guint8 *data, gint len, VikViewp
   return rv;
 }
 
-static gboolean georef_layer_set_param ( VikGeorefLayer *vgl, guint16 id, VikLayerParamData data, VikViewport *vp )
+static gboolean georef_layer_set_param ( VikGeorefLayer *vgl, guint16 id, VikLayerParamData data, VikViewport *vp, gboolean is_file_operation )
 {
   switch ( id )
   {
@@ -190,7 +199,7 @@ static gboolean georef_layer_set_param ( VikGeorefLayer *vgl, guint16 id, VikLay
   return TRUE;
 }
 
-static VikLayerParamData georef_layer_get_param ( VikGeorefLayer *vgl, guint16 id )
+static VikLayerParamData georef_layer_get_param ( VikGeorefLayer *vgl, guint16 id, gboolean is_file_operation )
 {
   VikLayerParamData rv;
   switch ( id )
@@ -437,6 +446,12 @@ static gboolean georef_layer_dialog ( VikGeorefLayer **vgl, gpointer vp, GtkWind
                                                   GTK_STOCK_OK,
                                                   GTK_RESPONSE_ACCEPT,
                                                   NULL );
+  /* Default to reject as user really needs to specify map file first */
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_REJECT );
+  GtkWidget *response_w = NULL;
+#if GTK_CHECK_VERSION (2, 20, 0)
+  response_w = gtk_dialog_get_widget_for_response ( GTK_DIALOG(dialog), GTK_RESPONSE_REJECT );
+#endif
   GtkWidget *table, *wfp_hbox, *wfp_label, *wfp_button, *ce_label, *ce_spin, *cn_label, *cn_spin, *xlabel, *xspin, *ylabel, *yspin, *imagelabel, *imageentry;
 
   GtkWidget *pass_along[4];
@@ -452,19 +467,19 @@ static gboolean georef_layer_dialog ( VikGeorefLayer **vgl, gpointer vp, GtkWind
   gtk_box_pack_start ( GTK_BOX(wfp_hbox), wfp_button, FALSE, FALSE, 3 );
 
   ce_label = gtk_label_new ( _("Corner pixel easting:") );
-  ce_spin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, 0.0, 1500000.0, 1, 5, 5 ), 1, 4 );
+  ce_spin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, 0.0, 1500000.0, 1, 5, 0 ), 1, 4 );
   gtk_widget_set_tooltip_text ( GTK_WIDGET(ce_spin), _("the UTM \"easting\" value of the upper-right corner pixel of the map") );
 
   cn_label = gtk_label_new ( _("Corner pixel northing:") );
-  cn_spin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, 0.0, 9000000.0, 1, 5, 5 ), 1, 4 );
+  cn_spin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, 0.0, 9000000.0, 1, 5, 0 ), 1, 4 );
   gtk_widget_set_tooltip_text ( GTK_WIDGET(cn_spin), _("the UTM \"northing\" value of the upper-right corner pixel of the map") );
 
   xlabel = gtk_label_new ( _("X (easting) scale (mpp): "));
   ylabel = gtk_label_new ( _("Y (northing) scale (mpp): "));
 
-  xspin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM, 1, 5, 5 ), 1, 8 );
+  xspin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM, 1, 5, 0 ), 1, 8 );
   gtk_widget_set_tooltip_text ( GTK_WIDGET(xspin), _("the scale of the map in the X direction (meters per pixel)") );
-  yspin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM, 1, 5, 5 ), 1, 8 );
+  yspin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, VIK_VIEWPORT_MIN_ZOOM, VIK_VIEWPORT_MAX_ZOOM, 1, 5, 0 ), 1, 8 );
   gtk_widget_set_tooltip_text ( GTK_WIDGET(yspin), _("the scale of the map in the Y direction (meters per pixel)") );
 
   imagelabel = gtk_label_new ( _("Map Image:") );
@@ -508,6 +523,9 @@ static gboolean georef_layer_dialog ( VikGeorefLayer **vgl, gpointer vp, GtkWind
   pass_along[2] = ce_spin;
   pass_along[3] = cn_spin;
   g_signal_connect_swapped ( G_OBJECT(wfp_button), "clicked", G_CALLBACK(georef_layer_dialog_load), pass_along );
+
+  if ( response_w )
+    gtk_widget_grab_focus ( response_w );
 
   gtk_widget_show_all ( table );
 
@@ -571,17 +589,17 @@ static void georef_layer_add_menu_items ( VikGeorefLayer *vgl, GtkMenu *menu, gp
   gtk_menu_shell_append ( GTK_MENU_SHELL(menu), item );
   gtk_widget_show ( item );
 
-  item = gtk_menu_item_new_with_label ( _("Zoom to Fit Map") );
+  item = gtk_menu_item_new_with_mnemonic ( _("_Zoom to Fit Map") );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(georef_layer_zoom_to_fit), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );
 
-  item = gtk_menu_item_new_with_label ( _("Goto Map Center") );
+  item = gtk_menu_item_new_with_mnemonic ( _("_Goto Map Center") );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(georef_layer_goto_center), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );
 
-  item = gtk_menu_item_new_with_label ( _("Export to World File") );
+  item = gtk_menu_item_new_with_mnemonic ( _("_Export to World File") );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(georef_layer_export_params), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );

@@ -1,3 +1,23 @@
+/*
+ * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
+ *
+ * Copyright (C) 2003-2007, Evan Battaglia <gtoevan@gmx.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <string.h>
@@ -169,7 +189,8 @@ static gboolean preferences_load_from_file()
     gchar *key, *val;
     VikLayerTypedParamData *oldval, *newval;
     while ( ! feof (f) ) {
-      fgets(buf,sizeof(buf),f);
+      if (fgets(buf,sizeof(buf),f) == NULL)
+        break;
       if ( preferences_load_parse_param(buf, &key, &val ) ) {
         // if it's not in there, ignore it
         oldval = g_hash_table_lookup ( values, key );
@@ -211,7 +232,7 @@ void a_preferences_run_setparam ( VikLayerParamData data, VikLayerParam *params 
   preferences_run_setparam (NULL, 0, data, params);
 }
 
-static VikLayerParamData preferences_run_getparam ( gpointer notused, guint16 i )
+static VikLayerParamData preferences_run_getparam ( gpointer notused, guint16 i, gboolean notused2 )
 {
   VikLayerTypedParamData *val = (VikLayerTypedParamData *) g_hash_table_lookup ( values, ((VikLayerParam *)g_ptr_array_index(params,i))->name );
   g_assert ( val != NULL );
@@ -265,7 +286,7 @@ void a_preferences_show_window(GtkWindow *parent) {
     preferences_load_from_file();
     if ( a_uibuilder_properties_factory ( _("Preferences"), parent, contiguous_params, params_count,
 				(gchar **) groups_names->pdata, groups_names->len, // groups, groups_count, // groups? what groups?!
-                                (gboolean (*) (gpointer,guint16,VikLayerParamData,gpointer)) preferences_run_setparam,
+				(gboolean (*) (gpointer,guint16,VikLayerParamData,gpointer,gboolean)) preferences_run_setparam,
 				NULL /* not used */, contiguous_params,
                                 preferences_run_getparam, NULL /* not used */ ) ) {
       a_preferences_save_to_file();

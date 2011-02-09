@@ -7,14 +7,26 @@ bin_PROGRAMS = viking
 
 noinst_LIBRARIES = libviking.a
 
-authors.h: ../AUTHORS
+authors.h: $(top_srcdir)/AUTHORS
 	rm -f $@
 	echo "/* Generated file. */" >> $@
 	echo "const gchar *AUTHORS[] = {\\" >> $@
 	sed -e "s/ \*\*.*//" -e 's/^/"/' -e 's/$$/",\\/' -e '$$s/\\$$//' $< >> $@
 	echo "NULL};" >> $@
 
-BUILT_SOURCES = authors.h
+if HAVE_XSLTPROC
+XP=@XP@
+documenters.h: $(top_srcdir)/help/C/viking.xml
+	$(XP) $(srcdir)/docbook2documenters.xsl $(top_srcdir)/help/C/viking.xml > $@
+else
+documenters.h:
+	rm -f $@
+	echo "/* Generated file. */" >> $@
+	echo "const gchar *DOCUMENTERS[] = {\\" >> $@
+	echo "NULL};" >> $@
+endif
+
+BUILT_SOURCES = authors.h documenters.h
 
 vikenumtypes.h: vikenumtypes.h.template $(ENUM_H_FILES) $(GLIB_MKENUMS)
 	(cd $(srcdir) && $(GLIB_MKENUMS) --template vikenumtypes.h.template $(ENUM_H_FILES)) > $@
@@ -23,6 +35,7 @@ vikenumtypes.c: vikenumtypes.c.template $(ENUM_H_FILES) $(GLIB_MKENUMS)
 	(cd $(srcdir) && $(GLIB_MKENUMS) --template vikenumtypes.c.template $(ENUM_H_FILES)) > $@
 
 EXTRA_DIST =                         \
+        docbook2documenters.xsl      \
         vikenumtypes.h.template      \
         vikenumtypes.c.template
 
@@ -48,6 +61,7 @@ libviking_a_SOURCES = \
 	gpspoint.c gpspoint.h \
 	file.c file.h \
 	authors.h \
+	documenters.h \
 	dialog.c dialog.h \
 	util.c util.h \
 	download.c download.h \
@@ -81,6 +95,8 @@ libviking_a_SOURCES = \
 	vikmapslayer_compat.c vikmapslayer_compat.h \
 	vikmaptype.c vikmaptype.h \
 	vikslippymapsource.c vikslippymapsource.h \
+	vikwmscmapsource.c vikwmscmapsource.h \
+	viktmsmapsource.c viktmsmapsource.h \
         gpx.c gpx.h \
 	garminsymbols.c garminsymbols.h \
 	acquire.c acquire.h \
@@ -138,6 +154,11 @@ libviking_a_SOURCES += \
 	geonamessearch.c geonamessearch.h
 endif
 
+#if SPOTMAPS
+libviking_a_SOURCES += \
+	spotmaps.c spotmaps.h
+#endif
+
 viking_SOURCES = main.c
 
 LDADD           = libviking.a $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ icons/libicons.a
@@ -145,7 +166,6 @@ if REALTIME_GPS_TRACKING
 LDADD           += -lgps
 endif
 AM_CFLAGS		= -Wall -g -D_GNU_SOURCE \
-	$(DISABLE_DEPRECATED_CFLAGS) \
 	$(PACKAGE_CFLAGS) \
 	@EXPAT_CFLAGS@ @LIBCURL_CPPFLAGS@
 

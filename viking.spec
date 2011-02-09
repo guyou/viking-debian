@@ -3,7 +3,7 @@
 #%% May be redistributed without this notice.
 
 Name:		viking
-Version:	0.9.94
+Version:	1.1
 Release:	1
 
 Summary:	GPS data editor and analyzer
@@ -24,10 +24,9 @@ BuildRequires:	intltool
 BuildRequires:	libxslt
 
 %description
-Viking is a free/open source program to manage GPS data. You can import and
-plot tracks and waypoints, show Terraserver maps under it, add coordinate
-lines, make new tracks and waypoints, hide different things, etc. It is written
-in C with the GTK+ 2.
+Viking is a free/open source program to manage GPS data.
+You can import, plot and create tracks and waypoints, show OSM, Terraserver and other maps, see real-time GPS position, get geocaches, control items, etc.
+It is written in C with the GTK+2 toolkit.
 
 %prep
 %setup -q

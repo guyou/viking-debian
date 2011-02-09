@@ -3,6 +3,7 @@
 #include "addtr_18_pixmap.h"
 #include "addwp_18_pixmap.h"
 #include "begintr_18_pixmap.h"
+#include "bing_maps_pixmap.h"
 #include "cursor_addtr_pixmap.h"
 #include "cursor_addwp_pixmap.h"
 #include "cursor_begintr_pixmap.h"

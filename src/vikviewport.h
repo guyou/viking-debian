@@ -25,7 +25,7 @@
 
 #include <glib.h>
 #include <glib-object.h>
-#include <gtk/gtkdrawingarea.h>
+#include <gtk/gtk.h>
 
 #include "vikcoord.h"
 
@@ -98,6 +98,7 @@ typedef enum {
   VIK_VIEWPORT_DRAWMODE_UTM=0,
   VIK_VIEWPORT_DRAWMODE_EXPEDIA,
   VIK_VIEWPORT_DRAWMODE_MERCATOR,
+  VIK_VIEWPORT_DRAWMODE_LATLON,
   VIK_VIEWPORT_NUM_DRAWMODES      /*< skip >*/
 } VikViewportDrawMode;
 
@@ -134,10 +135,14 @@ void vik_viewport_draw_pixbuf ( VikViewport *vvp, GdkPixbuf *pixbuf, gint src_x,
 gint vik_viewport_get_width ( VikViewport *vvp );
 gint vik_viewport_get_height ( VikViewport *vvp );
 
+void vik_viewport_reset_copyrights ( VikViewport *vp );
+void vik_viewport_add_copyright ( VikViewport *vp, const gchar *copyright );
+
 /* Viewport features */
 void vik_viewport_draw_scale ( VikViewport *vvp );
 void vik_viewport_set_draw_scale ( VikViewport *vvp, gboolean draw_scale );
 gboolean vik_viewport_get_draw_scale ( VikViewport *vvp );
+void vik_viewport_draw_copyright ( VikViewport *vvp );
 void vik_viewport_draw_centermark ( VikViewport *vvp );
 void vik_viewport_set_draw_centermark ( VikViewport *vvp, gboolean draw_centermark );
 gboolean vik_viewport_get_draw_centermark ( VikViewport *vvp );

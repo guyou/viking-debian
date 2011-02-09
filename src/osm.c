@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2007, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@
 #include "osm.h"
 #include "vikmapslayer.h"
 #include "vikslippymapsource.h"
+#include "vikwmscmapsource.h"
 #include "vikwebtoolcenter.h"
 #include "vikexttools.h"
 #include "vikgotoxmltool.h"
@@ -41,6 +43,10 @@ void osm_init () {
                                 "hostname", "tah.openstreetmap.org",
                                 "url", "/Tiles/tile/%d/%d/%d.png",
                                 "check-file-server-time", TRUE,
+                                "use-etag", FALSE,
+                                "copyright", "© OpenStreetMap contributors",
+                                "license", "CC-BY-SA",
+                                "license-url", "http://www.openstreetmap.org/copyright",
                                 NULL));
   VikMapSource *mapnik_type =
     VIK_MAP_SOURCE(g_object_new(VIK_TYPE_SLIPPY_MAP_SOURCE,
@@ -48,7 +54,11 @@ void osm_init () {
                                 "label", "OpenStreetMap (Mapnik)",
                                 "hostname", "tile.openstreetmap.org",
                                 "url", "/%d/%d/%d.png",
-                                "check-file-server-time", TRUE,
+                                "check-file-server-time", FALSE,
+                                "use-etag", TRUE,
+                                "copyright", "© OpenStreetMap contributors",
+                                "license", "CC-BY-SA",
+                                "license-url", "http://www.openstreetmap.org/copyright",
                                 NULL));
   VikMapSource *maplint_type =
     VIK_MAP_SOURCE(g_object_new(VIK_TYPE_SLIPPY_MAP_SOURCE,
@@ -57,20 +67,40 @@ void osm_init () {
                                 "hostname", "tah.openstreetmap.org",
                                 "url", "/Tiles/maplint.php/%d/%d/%d.png",
                                 "check-file-server-time", TRUE,
+                                "use-etag", FALSE,
+                                "copyright", "© OpenStreetMap contributors",
+                                "license", "CC-BY-SA",
+                                "license-url", "http://www.openstreetmap.org/copyright",
                                 NULL));
   VikMapSource *cycle_type =
     VIK_MAP_SOURCE(g_object_new(VIK_TYPE_SLIPPY_MAP_SOURCE,
                                 "id", 17,
                                 "label", "OpenStreetMap (Cycle)",
-                                "hostname", "thunderflames.org/tiles/cycle/",
-                                "url", "%d/%d/%d.png",
+                                "hostname", "b.tile.opencyclemap.org",
+                                "url", "/cycle/%d/%d/%d.png",
                                 "check-file-server-time", TRUE,
+                                "use-etag", FALSE,
+                                "copyright", "© OpenStreetMap contributors",
+                                "license", "CC-BY-SA",
+                                "license-url", "http://www.openstreetmap.org/copyright",
+                                NULL));
+  VikMapSource *wms_type =
+    VIK_MAP_SOURCE(g_object_new(VIK_TYPE_WMSC_MAP_SOURCE,
+                                "id", 18,
+                                "label", "OpenStreetMap (WMS)",
+                                "hostname", "full.wms.geofabrik.de",
+                                "url", "/std/demo_key?LAYERS=osm-full&FORMAT=image/png&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&EXCEPTIONS=&SRS=EPSG:4326&BBOX=%s,%s,%s,%s&WIDTH=256&HEIGHT=256",
+                                "check-file-server-time", FALSE,
+                                "copyright", "© OpenStreetMap contributors",
+                                "license", "CC-BY-SA",
+                                "license-url", "http://www.openstreetmap.org/copyright",
                                 NULL));
 
   maps_layer_register_map_source (osmarender_type);
   maps_layer_register_map_source (mapnik_type);
   maps_layer_register_map_source (maplint_type);
   maps_layer_register_map_source (cycle_type);
+  maps_layer_register_map_source (wms_type);
 
   // Webtools
   VikWebtoolCenter *webtool = NULL;

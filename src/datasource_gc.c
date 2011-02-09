@@ -1,7 +1,7 @@
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
- * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2003-2007, Evan Battaglia <gtoevan@gmx.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ VikDataSourceInterface vik_datasource_gc_interface = {
   VIK_DATASOURCE_SHELL_CMD,
   VIK_DATASOURCE_ADDTOLAYER,
   VIK_DATASOURCE_INPUTTYPE_NONE,
+  FALSE,
   TRUE,
   (VikDataSourceInitFunc)		datasource_gc_init,
   (VikDataSourceCheckExistenceFunc)	datasource_gc_check_existence,
@@ -168,11 +169,11 @@ static void datasource_gc_add_setup_widgets ( GtkWidget *dialog, VikViewport *vv
   gchar *s_ll;
 
   num_label = gtk_label_new (_("Number geocaches:"));
-  widgets->num_spin = gtk_spin_button_new ( GTK_ADJUSTMENT(gtk_adjustment_new( 100, 1, 1000, 10, 20, 50 )), 25, 0 );
+  widgets->num_spin = gtk_spin_button_new ( GTK_ADJUSTMENT(gtk_adjustment_new( 100, 1, 1000, 10, 20, 0 )), 25, 0 );
   center_label = gtk_label_new (_("Centered around:"));
   widgets->center_entry = gtk_entry_new();
   miles_radius_label = gtk_label_new ("Miles Radius:");
-  widgets->miles_radius_spin = gtk_spin_button_new ( GTK_ADJUSTMENT(gtk_adjustment_new( 100, 1, 1000, 5, 20, 50 )), 25, 2 );
+  widgets->miles_radius_spin = gtk_spin_button_new ( GTK_ADJUSTMENT(gtk_adjustment_new( 100, 1, 1000, 5, 20, 0 )), 25, 2 );
 
   vik_coord_to_latlon ( vik_viewport_get_center(vvp), &ll );
   s_ll = g_strdup_printf("%f,%f", ll.lat, ll.lon );

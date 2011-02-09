@@ -1,7 +1,8 @@
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
- * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2003-2005, Quy Tonthat <qtonthat@gmail.com>
+ * Copyright (C) 2009, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Created by Quy Tonthat <qtonthat@gmail.com>
  */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -41,7 +40,7 @@
 #define GOOGLE_GOTO_PATTERN_2 ",lng:"
 #define GOOGLE_GOTO_NOT_FOUND "not understand the location"
 
-static DownloadOptions googlesearch_options = { 0, "http://maps.google.com/", 0, a_check_map_file };
+static DownloadMapOptions googlesearch_options = { FALSE, FALSE, "http://maps.google.com/", 0, a_check_map_file };
 
 static void google_goto_tool_class_init ( GoogleGotoToolClass *klass );
 static void google_goto_tool_init ( GoogleGotoTool *vwd );
@@ -49,7 +48,7 @@ static void google_goto_tool_init ( GoogleGotoTool *vwd );
 static void google_goto_tool_finalize ( GObject *gob );
 
 static gchar *google_goto_tool_get_url_format ( VikGotoTool *self );
-static DownloadOptions *google_goto_tool_get_download_options ( VikGotoTool *self );
+static DownloadMapOptions *google_goto_tool_get_download_options ( VikGotoTool *self );
 static gboolean google_goto_tool_parse_file_for_latlon(VikGotoTool *self, gchar *filename, struct LatLon *ll);
 
 GType google_goto_tool_get_type()
@@ -179,7 +178,7 @@ static gchar *google_goto_tool_get_url_format ( VikGotoTool *self )
   return GOOGLE_GOTO_URL_FMT;
 }
 
-DownloadOptions *google_goto_tool_get_download_options ( VikGotoTool *self )
+DownloadMapOptions *google_goto_tool_get_download_options ( VikGotoTool *self )
 {
   return &googlesearch_options;
 }

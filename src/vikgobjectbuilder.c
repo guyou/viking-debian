@@ -1,7 +1,7 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * viking
- * Copyright (C) Guilhem Bonnefille 2009 <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2009, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  * 
  * viking is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -29,7 +29,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
-#include <gtk/gtkbuilder.h>
+#include <gtk/gtk.h>
 
 #include "vikgobjectbuilder.h"
 
@@ -77,7 +77,6 @@ static void
 vik_gobject_builder_class_init (VikGobjectBuilderClass *klass)
 {
 	GObjectClass* object_class = G_OBJECT_CLASS (klass);
-	GObjectClass* parent_class = G_OBJECT_CLASS (klass);
 
 	object_class->finalize = vik_gobject_builder_finalize;
 
@@ -107,6 +106,11 @@ _start_element (GMarkupParseContext *context,
 	{
 		class_name = g_strdup(attribute_values[0]);
 		gtype = g_type_from_name (class_name);
+		if (gtype == 0)
+		{
+			g_warning("Unknown GObject type '%s'", class_name);
+			return;
+		}
 	}
 	if (strcmp(element_name, "property") == 0 && gtype != 0)
 	{
@@ -145,7 +149,7 @@ _end_element (GMarkupParseContext *context,
 		int i = 0;
 		for (i = 0 ; i < nb_parameters ; i++)
 		{
-			g_free (parameters[i].name);
+			g_free ((gchar *)parameters[i].name);
 			g_value_unset (&(parameters[i].value));
 		}
 		g_free (parameters);
@@ -196,7 +200,7 @@ _text (GMarkupParseContext *context,
 		{
 			/* store new parameter */
 			g_debug("VikGobjectBuilder: store new GParameter for %s: (%s)%s=%*s",
-			        g_type_name(gtype), g_type_name(G_VALUE_TYPE(&gvalue)), property_name, text_len, text);
+			        g_type_name(gtype), g_type_name(G_VALUE_TYPE(&gvalue)), property_name, (gint)text_len, text);
 			nb_parameters++;
 			parameters = g_realloc(parameters, sizeof(GParameter)*nb_parameters);
 			/* parameter name */
@@ -218,7 +222,7 @@ vik_gobject_builder_parse (VikGobjectBuilder *self, const gchar *filename)
 {
 	GMarkupParser xml_parser;
 	GMarkupParseContext *xml_context;
-	GError *error;
+	GError *error = NULL;
 
 	FILE *file = g_fopen (filename, "r");
 	if (file == NULL)
@@ -239,11 +243,13 @@ vik_gobject_builder_parse (VikGobjectBuilder *self, const gchar *filename)
 	while ((nb = fread (buff, sizeof(gchar), BUFSIZ, file)) > 0)
 	{
 		if (!g_markup_parse_context_parse(xml_context, buff, nb, &error))
-			printf("read_xml() : parsing error.\n");
+			g_warning("%s: parsing error: %s", __FUNCTION__,
+			          error != NULL ? error->message : "???");
 	}
 	/* cleanup */
 	if (!g_markup_parse_context_end_parse(xml_context, &error))
-		printf("read_xml() : errors occurred reading file.\n");
+		g_warning("%s: errors occurred reading file '%s': %s", __FUNCTION__, filename,
+		          error != NULL ? error->message : "???");
 	
 	g_markup_parse_context_free(xml_context);
 	fclose (file);

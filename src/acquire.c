@@ -95,7 +95,7 @@ static void get_from_anything ( w_and_interface_t *wi )
   gchar *cmd = wi->cmd;
   gchar *extra = wi->extra;
   gboolean result = TRUE;
-  VikTrwLayer *vtl;
+  VikTrwLayer *vtl = NULL;
 
   gboolean creating_new_layer = TRUE;
 
@@ -154,6 +154,11 @@ static void get_from_anything ( w_and_interface_t *wi )
 	  vik_aggregate_layer_add_layer( vik_layers_panel_get_top_layer(w->vlp), VIK_LAYER(vtl));
 	else
 	  gtk_label_set_text ( GTK_LABEL(w->status), _("No data.") );
+      }
+      /* View this data if available and is desired */
+      if ( vtl && source_interface->autoview ) {
+	vik_trw_layer_auto_set_view ( vtl, vik_layers_panel_get_viewport(w->vlp) );
+	vik_layers_panel_emit_update (w->vlp);
       }
       if ( source_interface->keep_dialog_open ) {
         gtk_dialog_set_response_sensitive ( GTK_DIALOG(w->dialog), GTK_RESPONSE_ACCEPT, TRUE );
@@ -220,7 +225,8 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   GtkWidget *dialog = NULL;
   GtkWidget *status;
   gchar *cmd, *extra;
-  gchar *cmd_off, *extra_off;
+  gchar *cmd_off = NULL;
+  gchar *extra_off = NULL;
   acq_dialog_widgets_t *w;
   gpointer user_data;
 
@@ -253,8 +259,17 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   if ( source_interface->add_setup_widgets_func ) {
     dialog = gtk_dialog_new_with_buttons ( "", GTK_WINDOW(vw), 0, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL );
 
+    gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+    GtkWidget *response_w = NULL;
+#if GTK_CHECK_VERSION (2, 20, 0)
+    response_w = gtk_dialog_get_widget_for_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+#endif
+
     source_interface->add_setup_widgets_func(dialog, vvp, user_data);
     gtk_window_set_title ( GTK_WINDOW(dialog), _(source_interface->window_title) );
+
+    if ( response_w )
+      gtk_widget_grab_focus ( response_w );
 
     if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) != GTK_RESPONSE_ACCEPT ) {
       source_interface->cleanup_func(user_data);
@@ -337,6 +352,7 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   w->ok = TRUE;
   status = gtk_label_new (_("Status: detecting gpsbabel"));
   gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), status, FALSE, FALSE, 5 );
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
   gtk_widget_show_all(status);
   w->status = status;
 
@@ -399,7 +415,7 @@ static GtkWidget *acquire_build_menu ( VikWindow *vw, VikLayersPanel *vlp, VikVi
     if ( filters[i]->inputtype == inputtype ) {
       if ( ! menu_item ) { /* do this just once, but return NULL if no filters */
         menu = gtk_menu_new();
-        menu_item = gtk_menu_item_new_with_label ( menu_title );
+        menu_item = gtk_menu_item_new_with_mnemonic ( menu_title );
         gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu_item), menu );
       }
 
@@ -416,7 +432,7 @@ static GtkWidget *acquire_build_menu ( VikWindow *vw, VikLayersPanel *vlp, VikVi
 
 GtkWidget *a_acquire_trwlayer_menu (VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikTrwLayer *vtl)
 {
-  return acquire_build_menu ( vw, vlp, vvp, vtl, NULL, "Filter", VIK_DATASOURCE_INPUTTYPE_TRWLAYER );
+  return acquire_build_menu ( vw, vlp, vvp, vtl, NULL, "_Filter", VIK_DATASOURCE_INPUTTYPE_TRWLAYER );
 }
 
 GtkWidget *a_acquire_trwlayer_track_menu (VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikTrwLayer *vtl)

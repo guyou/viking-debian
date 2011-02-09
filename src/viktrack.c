@@ -90,7 +90,8 @@ void vik_track_free(VikTrack *tr)
   g_list_foreach ( tr->trackpoints, (GFunc) g_free, NULL );
   g_list_free( tr->trackpoints );
   if (tr->property_dialog)
-    gtk_widget_destroy ( GTK_WIDGET(tr->property_dialog) );
+    if ( GTK_IS_WIDGET(tr->property_dialog) )
+      gtk_widget_destroy ( GTK_WIDGET(tr->property_dialog) );
   g_free ( tr );
 }
 
@@ -648,6 +649,84 @@ VikTrackpoint *vik_track_get_closest_tp_by_percentage_time ( VikTrack *tr, gdoub
   if (seconds_from_start)
     *seconds_from_start = VIK_TRACKPOINT(iter->data)->timestamp - VIK_TRACKPOINT(tr->trackpoints->data)->timestamp;
   return VIK_TRACKPOINT(iter->data);
+}
+
+VikTrackpoint* vik_track_get_tp_by_max_speed ( const VikTrack *tr )
+{
+  gdouble maxspeed = 0.0, speed = 0.0;
+
+  if ( !tr->trackpoints )
+    return NULL;
+
+  GList *iter = tr->trackpoints;
+  VikTrackpoint *max_speed_tp = NULL;
+
+  while (iter) {
+    if (iter->prev) {
+      if ( VIK_TRACKPOINT(iter->data)->has_timestamp &&
+	   VIK_TRACKPOINT(iter->prev->data)->has_timestamp &&
+	   (! VIK_TRACKPOINT(iter->data)->newsegment) ) {
+	speed =  vik_coord_diff ( &(VIK_TRACKPOINT(iter->data)->coord), &(VIK_TRACKPOINT(iter->prev->data)->coord) )
+	  / ABS(VIK_TRACKPOINT(iter->data)->timestamp - VIK_TRACKPOINT(iter->prev->data)->timestamp);
+	if ( speed > maxspeed ) {
+	  maxspeed = speed;
+	  max_speed_tp = VIK_TRACKPOINT(iter->data);
+	}
+      }
+    }
+    iter = iter->next;
+  }
+  
+  if (!max_speed_tp)
+    return NULL;
+
+  return max_speed_tp;
+}
+
+VikTrackpoint* vik_track_get_tp_by_max_alt ( const VikTrack *tr )
+{
+  gdouble maxalt = -5000.0;
+  if ( !tr->trackpoints )
+    return NULL;
+
+  GList *iter = tr->trackpoints;
+  VikTrackpoint *max_alt_tp = NULL;
+
+  while (iter) {
+    if ( VIK_TRACKPOINT(iter->data)->altitude > maxalt ) {
+      maxalt = VIK_TRACKPOINT(iter->data)->altitude;
+      max_alt_tp = VIK_TRACKPOINT(iter->data);
+    }
+    iter = iter->next;
+  }
+
+  if (!max_alt_tp)
+    return NULL;
+
+  return max_alt_tp;
+}
+
+VikTrackpoint* vik_track_get_tp_by_min_alt ( const VikTrack *tr )
+{
+  gdouble minalt = 25000.0;
+  if ( !tr->trackpoints )
+    return NULL;
+
+  GList *iter = tr->trackpoints;
+  VikTrackpoint *min_alt_tp = NULL;
+
+  while (iter) {
+    if ( VIK_TRACKPOINT(iter->data)->altitude < minalt ) {
+      minalt = VIK_TRACKPOINT(iter->data)->altitude;
+      min_alt_tp = VIK_TRACKPOINT(iter->data);
+    }
+    iter = iter->next;
+  }
+
+  if (!min_alt_tp)
+    return NULL;
+
+  return min_alt_tp;
 }
 
 gboolean vik_track_get_minmax_alt ( const VikTrack *tr, gdouble *min_alt, gdouble *max_alt )

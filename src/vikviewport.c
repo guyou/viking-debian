@@ -1,7 +1,7 @@
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
- * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2003-2007, Evan Battaglia <gtoevan@gmx.net>
  *
  * Lat/Lon plotting functions calcxy* are from GPSDrive
  * GPSDrive Copyright (C) 2001-2004 Fritz Ganter <ganter@ganter.at>
@@ -32,6 +32,9 @@
 #include <gtk/gtk.h>
 #ifdef HAVE_MATH_H
 #include <math.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
 #endif
 
 #include "coords.h"
@@ -79,6 +82,10 @@ struct _VikViewport {
   GdkGC *background_gc;
   GdkColor background_color;
   GdkGC *scale_bg_gc;
+
+  GSList *copyrights;
+
+  /* Wether or not display OSD info */
   gboolean draw_scale;
   gboolean draw_centermark;
 
@@ -184,6 +191,9 @@ static void viewport_init ( VikViewport *vvp )
   vvp->utm_zone_width = 0.0;
   vvp->background_gc = NULL;
   vvp->scale_bg_gc = NULL;
+
+  vvp->copyrights = NULL;
+
   vvp->draw_scale = TRUE;
   vvp->draw_centermark = TRUE;
 
@@ -213,14 +223,16 @@ const gchar *vik_viewport_get_background_color ( VikViewport *vvp )
 
 void vik_viewport_set_background_color ( VikViewport *vvp, const gchar *colorname )
 {
-  g_assert ( vvp->background_gc );
-  gdk_color_parse ( colorname, &(vvp->background_color) );
-  gdk_gc_set_rgb_fg_color ( vvp->background_gc, &(vvp->background_color) );
+  g_assert ( vvp && vvp->background_gc );
+  if ( gdk_color_parse ( colorname, &(vvp->background_color) ) )
+    gdk_gc_set_rgb_fg_color ( vvp->background_gc, &(vvp->background_color) );
+  else
+    g_warning("%s: Failed to parse color '%s'", __FUNCTION__, colorname);
 }
 
 void vik_viewport_set_background_gdkcolor ( VikViewport *vvp, GdkColor *color )
 {
-  g_assert ( vvp->background_gc );
+  g_assert ( vvp && vvp->background_gc );
   vvp->background_color = *color;
   gdk_gc_set_rgb_fg_color ( vvp->background_gc, color );
 }
@@ -228,12 +240,14 @@ void vik_viewport_set_background_gdkcolor ( VikViewport *vvp, GdkColor *color )
 
 GdkGC *vik_viewport_new_gc ( VikViewport *vvp, const gchar *colorname, gint thickness )
 {
-  GdkGC *rv;
+  GdkGC *rv = NULL;
   GdkColor color;
 
   rv = gdk_gc_new ( GTK_WIDGET(vvp)->window );
-  gdk_color_parse ( colorname, &color );
-  gdk_gc_set_rgb_fg_color ( rv, &color );
+  if ( gdk_color_parse ( colorname, &color ) )
+    gdk_gc_set_rgb_fg_color ( rv, &color );
+  else
+    g_warning("%s: Failed to parse color '%s'", __FUNCTION__, colorname);
   gdk_gc_set_line_attributes ( rv, thickness, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND );
   return rv;
 }
@@ -288,10 +302,10 @@ gboolean vik_viewport_configure ( VikViewport *vvp )
   /* TODO trigger */
 
   /* this is down here so it can get a GC (necessary?) */
-  if ( ! vvp->background_gc )
+  if ( !vvp->background_gc )
   {
-    vvp->background_gc = vik_viewport_new_gc ( vvp, "", 1 );
-    vik_viewport_set_background_color ( vvp, DEFAULT_BACKGROUND_COLOR ); /* set to "backup" color in vvp->background_color */
+    vvp->background_gc = vik_viewport_new_gc ( vvp, DEFAULT_BACKGROUND_COLOR, 1 );
+    vik_viewport_set_background_color ( vvp, DEFAULT_BACKGROUND_COLOR );
   }
   if ( !vvp->scale_bg_gc) {
     vvp->scale_bg_gc = vik_viewport_new_gc(vvp, "grey", 3);
@@ -330,6 +344,7 @@ void vik_viewport_clear ( VikViewport *vvp )
 {
   g_return_if_fail ( vvp != NULL );
   gdk_draw_rectangle(GDK_DRAWABLE(vvp->scr_buffer), vvp->background_gc, TRUE, 0, 0, vvp->width, vvp->height);
+  vik_viewport_reset_copyrights ( vvp );
 }
 
 void vik_viewport_set_draw_scale ( VikViewport *vvp, gboolean draw_scale )
@@ -344,6 +359,8 @@ gboolean vik_viewport_get_draw_scale ( VikViewport *vvp )
 
 void vik_viewport_draw_scale ( VikViewport *vvp )
 {
+  g_return_if_fail ( vvp != NULL );
+
   if ( vvp->draw_scale ) {
     VikCoord left, right;
     gdouble unit, base, diff, old_unit, old_diff, ratio;
@@ -351,8 +368,6 @@ void vik_viewport_draw_scale ( VikViewport *vvp )
     PangoFontDescription *pfd;
     PangoLayout *pl;
     gchar s[128];
-
-    g_return_if_fail ( vvp != NULL );
 
     vik_viewport_screen_to_coord ( vvp, 0, vvp->height, &left );
     vik_viewport_screen_to_coord ( vvp, vvp->width/SCSIZE, vvp->height, &right );
@@ -364,7 +379,7 @@ void vik_viewport_draw_scale ( VikViewport *vvp )
       break;
     case VIK_UNITS_DISTANCE_MILES:
       // in 0.1 miles (copes better when zoomed in as 1 mile can be too big)
-      base = vik_coord_diff ( &left, &right ) * 0.00621371192;
+      base = VIK_METERS_TO_MILES(vik_coord_diff ( &left, &right )) * 10.0;
       break;
     default:
       base = 1; // Keep the compiler happy
@@ -454,6 +469,48 @@ void vik_viewport_draw_scale ( VikViewport *vvp )
   }
 }
 
+void vik_viewport_draw_copyright ( VikViewport *vvp )
+{
+  g_return_if_fail ( vvp != NULL );
+
+  gint PAD = 10;
+  PangoFontDescription *pfd;
+  PangoLayout *pl;
+  PangoRectangle ink_rect, logical_rect;
+  gchar s[128] = "";
+
+  /* compute copyrights string */
+  guint len = g_slist_length ( vvp->copyrights );
+  int i;
+  for (i = 0 ; i < len ; i++)
+  {
+    gchar *copyright = g_slist_nth_data ( vvp->copyrights, i );
+    strcat ( s, copyright );
+    strcat ( s, " " );
+  }
+
+  /* create pango layout */
+  pl = gtk_widget_create_pango_layout (GTK_WIDGET(&vvp->drawing_area), NULL); 
+  pfd = pango_font_description_from_string ("Sans 8"); // FIXME: settable option? global variable?
+  pango_layout_set_font_description (pl, pfd);
+  pango_font_description_free (pfd);
+  pfd = NULL;
+  pango_layout_set_alignment ( pl, PANGO_ALIGN_RIGHT );
+
+  /* Set the text */
+  pango_layout_set_text(pl, s, -1);
+
+  /* Use maximum of half the viewport width */
+  pango_layout_set_width ( pl, ( vvp->width / 2 - PAD ) * PANGO_SCALE );
+  pango_layout_get_pixel_extents(pl, &ink_rect, &logical_rect);
+  vik_viewport_draw_layout(vvp, GTK_WIDGET(&vvp->drawing_area)->style->black_gc,
+			   vvp->width / 2, vvp->height - PAD - logical_rect.height, pl);
+
+  /* Free memory */
+  g_object_unref(pl);
+  pl = NULL;		
+}
+
 void vik_viewport_set_draw_centermark ( VikViewport *vvp, gboolean draw_centermark )
 {
   vvp->draw_centermark = draw_centermark;
@@ -466,6 +523,8 @@ gboolean vik_viewport_get_draw_centermark ( VikViewport *vvp )
 
 void vik_viewport_draw_centermark ( VikViewport *vvp )
 {
+  g_return_if_fail ( vvp != NULL );
+
   if ( !vvp->draw_centermark )
     return;
 
@@ -711,12 +770,12 @@ gint vik_viewport_get_height( VikViewport *vvp )
 
 void vik_viewport_screen_to_coord ( VikViewport *vvp, int x, int y, VikCoord *coord )
 {
+  g_return_if_fail ( vvp != NULL );
+
   if ( vvp->coord_mode == VIK_COORD_UTM ) {
     int zone_delta;
     struct UTM *utm = (struct UTM *) coord;
     coord->mode = VIK_COORD_UTM;
-
-    g_return_if_fail ( vvp != NULL );
 
     utm->zone = vvp->center.utm_zone;
     utm->letter = vvp->center.utm_letter;
@@ -727,7 +786,10 @@ void vik_viewport_screen_to_coord ( VikViewport *vvp, int x, int y, VikCoord *co
     utm->northing = ( ( ( vvp->height / 2) - y ) * vvp->ympp ) + vvp->center.north_south;
   } else if ( vvp->coord_mode == VIK_COORD_LATLON ) {
     coord->mode = VIK_COORD_LATLON;
-    if ( vvp->drawmode == VIK_VIEWPORT_DRAWMODE_EXPEDIA )
+    if ( vvp->drawmode == VIK_VIEWPORT_DRAWMODE_LATLON ) {
+      coord->east_west = vvp->center.east_west + (180.0 * vvp->xmpp / 65536 / 256 * (x - vvp->width/2));
+      coord->north_south = vvp->center.north_south + (180.0 * vvp->ympp / 65536 / 256 * (vvp->height/2 - y));
+    } else if ( vvp->drawmode == VIK_VIEWPORT_DRAWMODE_EXPEDIA )
       calcxy_rev(&(coord->east_west), &(coord->north_south), x, y, vvp->center.east_west, vvp->center.north_south, vvp->xmpp * ALTI_TO_MPP, vvp->ympp * ALTI_TO_MPP, vvp->width/2, vvp->height/2);
     else if ( vvp->drawmode == VIK_VIEWPORT_DRAWMODE_MERCATOR ) {
       /* FIXMERCATOR */
@@ -773,7 +835,11 @@ void vik_viewport_coord_to_screen ( VikViewport *vvp, const VikCoord *coord, int
     struct LatLon *center = (struct LatLon *) &(vvp->center);
     struct LatLon *ll = (struct LatLon *) coord;
     double xx,yy;
-    if ( vvp->drawmode == VIK_VIEWPORT_DRAWMODE_EXPEDIA ) {
+    if ( vvp->drawmode == VIK_VIEWPORT_DRAWMODE_LATLON ) {
+      /* FIXMERCATOR: Optimize */
+      *x = vvp->width/2 + (65536.0 / 180 / vvp->xmpp * (ll->lon - center->lon))*256.0;
+      *y = vvp->height/2 + (65536.0 / 180 / vvp->ympp * (center->lat - ll->lat))*256.0;
+    } else if ( vvp->drawmode == VIK_VIEWPORT_DRAWMODE_EXPEDIA ) {
       calcxy ( &xx, &yy, center->lon, center->lat, ll->lon, ll->lat, vvp->xmpp * ALTI_TO_MPP, vvp->ympp * ALTI_TO_MPP, vvp->width / 2, vvp->height / 2 );
       *x = xx; *y = yy;
     } else if ( vvp->drawmode == VIK_VIEWPORT_DRAWMODE_MERCATOR ) {
@@ -798,7 +864,6 @@ void a_viewport_clip_line ( gint *x1, gint *y1, gint *x2, gint *y2 )
     gdouble shrinkfactor = ABS(20000.0 / (gdouble)*x2);
     *x2 = *x1 + (shrinkfactor * (*x2-*x1));
     *y2 = *y1 + (shrinkfactor * (*y2-*y1));
-    g_print("%f, %d, %d\n", shrinkfactor, *x2, *y2);
   } else if ( *y2 > 20000 || *y2 < -20000 ) {
     gdouble shrinkfactor = ABS(20000.0 / (gdouble)*x2);
     *x2 = *x1 + (shrinkfactor * (*x2-*x1));
@@ -1104,4 +1169,26 @@ void vik_viewport_get_min_max_lat_lon ( VikViewport *vp, gdouble *min_lat, gdoub
   *min_lat = MIN(bleft.north_south, bright.north_south);
   *max_lon = MAX(tright.east_west, bright.east_west);
   *min_lon = MIN(tleft.east_west, bleft.east_west);
+}
+
+void vik_viewport_reset_copyrights ( VikViewport *vp ) 
+{
+  g_return_if_fail ( vp != NULL );
+  g_slist_foreach ( vp->copyrights, (GFunc)g_free, NULL );
+  g_slist_free ( vp->copyrights );
+  vp->copyrights = NULL;
+}
+
+void vik_viewport_add_copyright ( VikViewport *vp, const gchar *copyright ) 
+{
+  g_return_if_fail ( vp != NULL );
+  if ( copyright )
+  {
+    gchar *found = (gchar*)g_slist_find_custom ( vp->copyrights, copyright, (GCompareFunc)strcmp );
+    if ( found == NULL )
+    {
+      gchar *duple = g_strdup ( copyright );
+      vp->copyrights = g_slist_prepend ( vp->copyrights, duple );
+    }
+  }
 }

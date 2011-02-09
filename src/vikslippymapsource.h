@@ -1,7 +1,7 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * viking
- * Copyright (C) Guilhem Bonnefille 2009 <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2009, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  * 
  * viking is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -23,7 +23,6 @@
 #include "vikcoord.h"
 #include "mapcoord.h"
 #include "vikmapsourcedefault.h"
-#include "download.h"
 
 G_BEGIN_DECLS
 
@@ -40,10 +39,6 @@ typedef struct _VikSlippyMapSource VikSlippyMapSource;
 struct _VikSlippyMapSourceClass
 {
 	VikMapSourceDefaultClass parent_class;
-
-	gchar * (*get_uri) ( VikSlippyMapSource *self, MapCoord *src );
-	gchar * (*get_hostname) ( VikSlippyMapSource *self );
-	DownloadOptions * (*get_download_options) ( VikSlippyMapSource *self );
 };
 
 struct _VikSlippyMapSource
@@ -54,10 +49,6 @@ struct _VikSlippyMapSource
 GType vik_slippy_map_source_get_type (void) G_GNUC_CONST;
 
 VikSlippyMapSource * vik_slippy_map_source_new_with_id (guint8 id, const gchar *label, const gchar *hostname, const gchar *url);
-
-gchar * vik_slippy_map_source_get_uri( VikSlippyMapSource *self, MapCoord *src );
-gchar * vik_slippy_map_source_get_hostname( VikSlippyMapSource *self );
-DownloadOptions * vik_slippy_map_source_get_download_options( VikSlippyMapSource *self );
 
 G_END_DECLS
 

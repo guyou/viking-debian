@@ -23,6 +23,9 @@ vik_viewport_draw_mode_get_type (void)
 			{ VIK_VIEWPORT_DRAWMODE_MERCATOR,
 			  "VIK_VIEWPORT_DRAWMODE_MERCATOR",
 			  "mercator" },
+			{ VIK_VIEWPORT_DRAWMODE_LATLON,
+			  "VIK_VIEWPORT_DRAWMODE_LATLON",
+			  "latlon" },
 			{ 0, NULL, NULL }
 		};
 		the_type = g_enum_register_static (

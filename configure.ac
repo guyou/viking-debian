@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(viking, 0.9.94)
+AC_INIT(viking, 1.1)
 AM_INIT_AUTOMAKE()
 dnl AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
@@ -42,6 +42,8 @@ AC_TYPE_MODE_T
 AC_FUNC_STAT
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([floor gethostbyname memset mkdtemp pow realpath socket sqrt strcasecmp strchr strdup strncasecmp strtol strtoul])
+AC_CHECK_LIB(m, tan)
+AC_CHECK_LIB(z, inflate)
 
 # Expat
 AM_WITH_EXPAT
@@ -75,21 +77,28 @@ dnl | User Manual |---------------------------------------
 dnl  -------------
 GNOME_DOC_INIT
 
-###############
-# Depecations #
-###############
+dnl ---------------------------------------------------------------------------
+dnl - Use deprecated options (default enabled for devs, disabled in releases) 
+dnl ---------------------------------------------------------------------------
+
 AC_ARG_ENABLE(deprecations,
               [AC_HELP_STRING([--enable-deprecations],
-                              [warn about deprecated usages [default=no]])],,
-              [enable_deprecations=no])
+                              [warn about deprecated usages [default=no]])],
+                              [ac_cv_enable_deprecations=$enableval],
+                              [ac_cv_enable_deprecations=no])
+AC_CACHE_CHECK([whether to enable deprecated features],
+               [ac_cv_enable_deprecations], [ac_cv_enable_deprecations=no])
 
-if test "x$enable_deprecations" = "xyes"; then
+if test "x$ac_cv_enable_deprecations" = "xyes"; then
    DISABLE_DEPRECATED_CFLAGS="\
+-DG_DISABLE_SINGLE_INCLUDES \
+-DGSEAL_ENABLE \
 -DG_DISABLE_DEPRECATED \
 -DGDK_DISABLE_DEPRECATED \
--DGTK_DISABLE_DEPRECATED \
--DGDK_PIXBUF_DISABLE_DEPRECATED"
-   AC_SUBST(DISABLE_DEPRECATED_CFLAGS)
+-DGDK_PIXBUF_DISABLE_DEPRECATED \
+-DGTK_DISABLE_SINGLE_INCLUDES \
+-DGTK_DISABLE_DEPRECATED"
+   CPPFLAGS="$CPPFLAGS $DISABLE_DEPRECATED_CFLAGS"
 fi
 
 # Options
@@ -199,6 +208,19 @@ case $ac_cv_enable_geocaches in
 esac
 AM_CONDITIONAL([GEOCACHES], [test x$ac_cv_enable_geocaches = xyes])
 
+AC_ARG_ENABLE(spotmaps, AC_HELP_STRING([--enable-spotmaps],
+	      [enable SPOTMaps map (default is enable).]),
+              [ac_cv_enable_spotmaps=$enableval],
+              [ac_cv_enable_spotmaps=yes])
+AC_CACHE_CHECK([whether to enable SPOTMaps map],
+               [ac_cv_enable_spotmaps], [ac_cv_enable_spotmaps=yes])
+case $ac_cv_enable_spotmaps in
+  yes)
+    AC_DEFINE(VIK_CONFIG_SPOTMAPS, [], [SPOTMAPS STUFF])
+    ;;
+esac
+AM_CONDITIONAL([SPOTMAPS], [test x$ac_cv_enable_spotmaps = xyes])
+
 
 AC_ARG_ENABLE(dem24k, AC_HELP_STRING([--enable-dem24k],
 	      [enable USGS 24k DEM (default is disable) download source. Requires dem24k.pl script in path.]),
@@ -290,6 +312,7 @@ dnl man pages processing
 DB2MAN_XSL=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl
 AC_SUBST(DB2MAN_XSL)
 AC_PATH_PROG(XP,xsltproc)
+AM_CONDITIONAL([HAVE_XSLTPROC],[test "x$XP" != "x"])
 AM_CONDITIONAL([GEN_MANPAGES],[test "x$XP" != "x" && test -r "$DB2MAN_XSL"])
 
 dnl This will cause the automake generated makefiles to pass the
@@ -319,9 +342,10 @@ echo "-------------------------------------------"
 echo "Alphabetized track & waypoints   : $ac_cv_enable_alpha_trw"
 echo "Google Maps                      : $ac_cv_enable_google"
 echo "Terraserver Maps                 : $ac_cv_enable_terraserver"
-#echo "Expedia Maps                     : $ac_cv_enable_expedia"
+echo "Expedia Maps                     : $ac_cv_enable_expedia"
 echo "Open Street Map                  : $ac_cv_enable_openstreetmap"
 echo "BlueMarble                       : $ac_cv_enable_bluemarble"
+echo "SPOTMaps                         : $ac_cv_enable_spotmaps"
 echo "Geonames                         : $ac_cv_enable_geonames"
 #echo "Geocaches Acquire                : $ac_cv_enable_geocaches"
 echo "USGS 24k DEM                     : $ac_cv_enable_dem24k"

@@ -152,7 +152,7 @@ static void write_layer_params_and_data ( VikLayer *l, FILE *f )
     guint16 i, params_count = vik_layer_get_interface(l->type)->params_count;
     for ( i = 0; i < params_count; i++ )
     {
-      data = get_param(l,i);
+      data = get_param(l, i, TRUE);
       file_write_layer_param(f, params[i].name, params[i].type, data);
     }
   }
@@ -188,11 +188,12 @@ static void file_write ( VikAggregateLayer *top, FILE *f, gpointer vp )
     case VIK_VIEWPORT_DRAWMODE_UTM: modestring = "utm"; break;
     case VIK_VIEWPORT_DRAWMODE_EXPEDIA: modestring = "expedia"; break;
     case VIK_VIEWPORT_DRAWMODE_MERCATOR: modestring = "mercator"; break;
+    case VIK_VIEWPORT_DRAWMODE_LATLON: modestring = "latlon"; break;
     default:
       g_critical("Houston, we've had a problem. mode=%d", mode);
   }
 
-  fprintf ( f, "#VIKING GPS Data file " VIKING_URL "\n\nxmpp=%f\nympp=%f\nlat=%f\nlon=%f\nmode=%s\ncolor=%s\ndrawscale=%s\ndrawcentermark=%s",
+  fprintf ( f, "#VIKING GPS Data file " VIKING_URL "\n\nxmpp=%f\nympp=%f\nlat=%f\nlon=%f\nmode=%s\ncolor=%s\ndrawscale=%s\ndrawcentermark=%s\n",
       vik_viewport_get_xmpp ( VIK_VIEWPORT(vp) ), vik_viewport_get_ympp ( VIK_VIEWPORT(vp) ), ll.lat, ll.lon,
       modestring, vik_viewport_get_background_color(VIK_VIEWPORT(vp)),
       vik_viewport_get_draw_scale(VIK_VIEWPORT(vp)) ? "t" : "f",
@@ -259,7 +260,7 @@ static void string_list_set_param (gint i, GList *list, gpointer *layer_and_vp)
 {
   VikLayerParamData x;
   x.sl = list;
-  vik_layer_set_param ( VIK_LAYER(layer_and_vp[0]), i, x, layer_and_vp[1] );
+  vik_layer_set_param ( VIK_LAYER(layer_and_vp[0]), i, x, layer_and_vp[1], TRUE );
 }
 
 static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
@@ -431,6 +432,8 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
       }
       else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "mode", eq_pos ) == 0 && strcasecmp ( line+5, "mercator" ) == 0)
         vik_viewport_set_drawmode ( VIK_VIEWPORT(vp), VIK_VIEWPORT_DRAWMODE_MERCATOR );
+      else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "mode", eq_pos ) == 0 && strcasecmp ( line+5, "latlon" ) == 0)
+        vik_viewport_set_drawmode ( VIK_VIEWPORT(vp), VIK_VIEWPORT_DRAWMODE_LATLON );
       else if ( stack->under == NULL && eq_pos == 5 && strncasecmp ( line, "color", eq_pos ) == 0 )
         vik_viewport_set_background_color ( VIK_VIEWPORT(vp), line+6 );
       else if ( stack->under == NULL && eq_pos == 9 && strncasecmp ( line, "drawscale", eq_pos ) == 0 )
@@ -477,7 +480,7 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
                 /* STRING or STRING_LIST -- if STRING_LIST, just set param to add a STRING */
                 default: x.s = line;
               }
-              vik_layer_set_param ( VIK_LAYER(stack->data), i, x, vp );
+              vik_layer_set_param ( VIK_LAYER(stack->data), i, x, vp, TRUE );
             }
             found_match = TRUE;
             break;
@@ -553,7 +556,7 @@ static void xfclose ( FILE *f )
 /* 0 on failure, 1 on success (vik file) 2 on success (other file) */
 gshort a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filename_or_uri )
 {
-  char *filename = filename_or_uri;
+  char *filename = (char *)filename_or_uri;
   if (strncmp(filename, "file://", 7) == 0)
     filename = filename + 7;
 
@@ -574,7 +577,6 @@ gshort a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filen
   }
   else
   {
-    VikCoord new_center;
     VikLayer *vtl = vik_layer_create ( VIK_LAYER_TRW, vp, NULL, FALSE );
     vik_layer_rename ( vtl, a_file_basename ( filename ) );
 
@@ -587,8 +589,8 @@ gshort a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filen
 
     vik_aggregate_layer_add_layer ( top, vtl );
 
-    if ( vik_trw_layer_find_center ( VIK_TRW_LAYER(vtl), &new_center ) )
-      vik_viewport_set_center_coord ( VIK_VIEWPORT(vp), &new_center );
+    vik_trw_layer_auto_set_view ( VIK_TRW_LAYER(vtl), vp );
+
     xfclose(f);
     return 2;
   }
@@ -644,17 +646,35 @@ gboolean check_file_ext ( const gchar *filename, const gchar *fileext )
   return FALSE;
 }
 
-gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, gshort file_type )
+gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t file_type, const gchar *trackname )
 {
   FILE *f = g_fopen ( filename, "w" );
   if ( f )
   {
-    if ( file_type == FILE_TYPE_GPSMAPPER )
-      a_gpsmapper_write_file ( vtl, f );
-    else if ( file_type == FILE_TYPE_GPX )
-      a_gpx_write_file ( vtl, f );
-    else
-      a_gpspoint_write_file ( vtl, f );
+    if (trackname) {
+      VikTrack *vt = vik_trw_layer_get_track ( vtl, trackname );
+      switch ( file_type ) {
+        case FILE_TYPE_GPX:
+          a_gpx_write_track_file ( trackname, vt, f );
+          break;
+        default:
+          g_critical("Houston, we've had a problem. file_type=%d", file_type);
+      }
+    } else {
+      switch ( file_type ) {
+        case FILE_TYPE_GPSMAPPER:
+          a_gpsmapper_write_file ( vtl, f );
+          break;
+        case FILE_TYPE_GPX:
+          a_gpx_write_file ( vtl, f );
+          break;
+        case FILE_TYPE_GPSPOINT:
+          a_gpspoint_write_file ( vtl, f );
+          break;
+        default:
+          g_critical("Houston, we've had a problem. file_type=%d", file_type);
+      }
+    }
     fclose ( f );
     f = NULL;
     return TRUE;
