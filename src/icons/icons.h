@@ -1,5 +1,6 @@
 /* Generated file */
 extern const GdkPixdata viking_pixbuf;
+extern const GdkPixdata bing_maps_pixbuf;
 extern const GdkPixdata addtr_18_pixbuf;
 extern const GdkPixdata begintr_18_pixbuf;
 extern const GdkPixdata addwp_18_pixbuf;
@@ -14,6 +15,7 @@ extern const GdkPixdata ruler_18_pixbuf;
 extern const GdkPixdata showpic_18_pixbuf;
 extern const GdkPixdata zoom_18_pixbuf;
 extern const GdkPixdata iscissors_18_pixbuf;
+extern const GdkPixdata select_18_pixbuf;
 extern const GdkPixdata thumbnails_pixbuf;
 extern const GdkPixdata vikaggregatelayer_pixbuf;
 extern const GdkPixdata vikcoordlayer_pixbuf;

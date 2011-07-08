@@ -87,7 +87,7 @@ static void draw_mouse_motion ( VikWindow *vw, GdkEventMotion *event );
 static void draw_zoom_cb ( GtkAction *a, VikWindow *vw );
 static void draw_goto_cb ( GtkAction *a, VikWindow *vw );
 
-static void draw_status ();
+static void draw_status ( VikWindow *vw );
 
 /* End Drawing Functions */
 
@@ -168,12 +168,29 @@ struct _VikWindow {
   /* half-drawn update */
   VikLayer *trigger;
   VikCoord trigger_center;
+
+  /* Store at this level for highlighted selection drawing since it applies to the viewport and the layers panel */
+  /* Only one of these items can be selected at the same time */
+  gpointer selected_vtl; /* notionally VikTrwLayer */
+  gpointer selected_tracks; /* notionally GList */
+  gpointer selected_track; /* notionally VikTrack */
+  gpointer selected_waypoints; /* notionally GList */
+  gpointer selected_waypoint; /* notionally VikWaypoint */
+  /* only use for individual track or waypoint */
+  gpointer selected_name; /* notionally gchar */
+  ////// NEED TO THINK ABOUT VALIDITY OF THESE             //////
+  ////// i.e. what happens when stuff is deleted elsewhere //////
+  ////// Generally seems alright as can not access them    //////
+  ////// containing_vtl now seems unecessary               //////
+  /* For track(s) & waypoint(s) it is the layer they are in - this helps refering to the individual item easier */
+  gpointer containing_vtl; /* notionally VikTrwLayer */
 };
 
 enum {
  TOOL_PAN = 0,
  TOOL_ZOOM,
  TOOL_RULER,
+ TOOL_SELECT,
  TOOL_LAYER,
  NUMBER_OF_TOOLS
 };
@@ -186,7 +203,7 @@ enum {
 
 static guint window_signals[VW_LAST_SIGNAL] = { 0 };
 
-static gchar *tool_names[NUMBER_OF_TOOLS] = { N_("Pan"), N_("Zoom"), N_("Ruler") };
+static gchar *tool_names[NUMBER_OF_TOOLS] = { N_("Pan"), N_("Zoom"), N_("Ruler"), N_("Select") };
 
 GType vik_window_get_type (void)
 {
@@ -215,6 +232,11 @@ GType vik_window_get_type (void)
 VikViewport * vik_window_viewport(VikWindow *vw)
 {
   return(vw->viking_vvp);
+}
+
+VikLayersPanel * vik_window_layers_panel(VikWindow *vw)
+{
+  return(vw->viking_vlp);
 }
 
 void vik_window_selected_layer(VikWindow *vw, VikLayer *vl)
@@ -477,6 +499,7 @@ static void draw_redraw ( VikWindow *vw )
   vik_viewport_draw_scale ( vw->viking_vvp );
   vik_viewport_draw_copyright ( vw->viking_vvp );
   vik_viewport_draw_centermark ( vw->viking_vvp );
+  vik_viewport_draw_logo ( vw->viking_vvp );
 
   vik_viewport_set_half_drawn ( vw->viking_vvp, FALSE ); /* just in case. */
 }
@@ -1072,6 +1095,124 @@ static VikToolInterface pan_tool =
     GDK_FLEUR };
 /*** end pan code ********************************************************/
 
+/********************************************************************************
+ ** Select tool code
+ ********************************************************************************/
+static gpointer selecttool_create (VikWindow *vw, VikViewport *vvp)
+{
+  tool_ed_t *t = g_new(tool_ed_t, 1);
+  t->vw = vw;
+  t->vvp = vvp;
+  t->vtl = NULL;
+  t->is_waypoint = FALSE;
+  return t;
+}
+
+static void selecttool_destroy (tool_ed_t *t)
+{
+  g_free(t);
+}
+
+typedef struct {
+  gboolean cont;
+  VikViewport *vvp;
+  GdkEventButton *event;
+  tool_ed_t *tool_edit;
+} clicker;
+
+static void click_layer_selected (VikLayer *vl, clicker *ck)
+{
+  /* Do nothing when function call returns true; */
+  /* i.e. stop on first found item */
+  if ( ck->cont )
+    if ( vl->visible )
+      if ( vik_layer_get_interface(vl->type)->select_click )
+	ck->cont = !vik_layer_get_interface(vl->type)->select_click ( vl, ck->event, ck->vvp, ck->tool_edit );
+}
+
+static VikLayerToolFuncStatus selecttool_click (VikLayer *vl, GdkEventButton *event, tool_ed_t *t)
+{
+  /* Only allow selection on primary button */
+  if ( event->button == 1 ) {
+    /* Enable click to apply callback to potentially all track/waypoint layers */
+    /* Useful as we can find things that aren't necessarily in the currently selected layer */
+    GList* gl = vik_layers_panel_get_all_layers_of_type ( t->vw->viking_vlp, VIK_LAYER_TRW, FALSE ); // Don't get invisible layers
+    clicker ck;
+    ck.cont = TRUE;
+    ck.vvp = t->vw->viking_vvp;
+    ck.event = event;
+    ck.tool_edit = t;
+    g_list_foreach ( gl, (GFunc) click_layer_selected, &ck );
+    g_list_free ( gl );
+
+    // If nothing found then deselect & redraw screen if necessary to remove the highlight
+    if ( ck.cont ) {
+      GtkTreeIter iter;
+      VikTreeview *vtv = vik_layers_panel_get_treeview ( t->vw->viking_vlp );
+
+      if ( vik_treeview_get_selected_iter ( vtv, &iter ) ) {
+	// Only clear if selected thing is a TrackWaypoint layer or a sublayer
+	gint type = vik_treeview_item_get_type ( vtv, &iter );
+	if ( type == VIK_TREEVIEW_TYPE_SUBLAYER ||
+	     VIK_LAYER(vik_treeview_item_get_pointer ( vtv, &iter ))->type == VIK_LAYER_TRW ) {
+   
+	  vik_treeview_item_unselect ( vtv, &iter );
+	  if ( vik_window_clear_highlight ( t->vw ) )
+	    draw_update ( t->vw );
+	}
+      }
+    }
+  }
+  else if ( ( event->button == 3 ) && ( vl && ( vl->type == VIK_LAYER_TRW ) ) ) {
+    if ( vl->visible )
+      /* Act on currently selected item to show menu */
+      if ( ( t->vw->selected_track || t->vw->selected_waypoint ) && t->vw->selected_name )
+	if ( vik_layer_get_interface(vl->type)->show_viewport_menu )
+	  vik_layer_get_interface(vl->type)->show_viewport_menu ( vl, event, t->vw->viking_vvp );
+  }
+
+  return VIK_LAYER_TOOL_ACK;
+}
+
+static VikLayerToolFuncStatus selecttool_move (VikLayer *vl, GdkEventButton *event, tool_ed_t *t)
+{
+  /* Only allow selection on primary button */
+  if ( event->button == 1 ) {
+    // Don't care about vl here
+    if ( t->vtl )
+      if ( vik_layer_get_interface(VIK_LAYER_TRW)->select_move )
+	vik_layer_get_interface(VIK_LAYER_TRW)->select_move ( vl, event, t->vvp, t );
+  }
+  return VIK_LAYER_TOOL_ACK;
+}
+
+static VikLayerToolFuncStatus selecttool_release (VikLayer *vl, GdkEventButton *event, tool_ed_t *t)
+{
+  /* Only allow selection on primary button */
+  if ( event->button == 1 ) {
+    // Don't care about vl here
+    if ( t->vtl )
+      if ( vik_layer_get_interface(VIK_LAYER_TRW)->select_release )
+	vik_layer_get_interface(VIK_LAYER_TRW)->select_release ( (VikLayer*)t->vtl, event, t->vvp, t );
+  }
+  return VIK_LAYER_TOOL_ACK;
+}
+
+static VikToolInterface select_tool =
+  { "Select",
+    (VikToolConstructorFunc) selecttool_create,
+    (VikToolDestructorFunc) selecttool_destroy,
+    (VikToolActivationFunc) NULL,
+    (VikToolActivationFunc) NULL,
+    (VikToolMouseFunc) selecttool_click,
+    (VikToolMouseMoveFunc) selecttool_move,
+    (VikToolMouseFunc) selecttool_release,
+    (VikToolKeyFunc) NULL,
+    GDK_LEFT_PTR,
+    NULL,
+    NULL };
+/*** end select tool code ********************************************************/
+
 static void draw_pan_cb ( GtkAction *a, VikWindow *vw )
 {
   if (!strcmp(gtk_action_get_name(a), "PanNorth")) {
@@ -1178,8 +1319,9 @@ static void menu_copy_layer_cb ( GtkAction *a, VikWindow *vw )
 
 static void menu_cut_layer_cb ( GtkAction *a, VikWindow *vw )
 {
-  a_clipboard_copy_selected ( vw->viking_vlp );
-  menu_delete_layer_cb ( a, vw );
+  vik_layers_panel_cut_selected ( vw->viking_vlp );
+  draw_update ( vw );
+  vw->modified = TRUE;
 }
 
 static void menu_paste_layer_cb ( GtkAction *a, VikWindow *vw )
@@ -1199,12 +1341,16 @@ static void menu_properties_cb ( GtkAction *a, VikWindow *vw )
 
 static void help_help_cb ( GtkAction *a, VikWindow *vw )
 {
+#ifdef WINDOWS
+  ShellExecute(NULL, "open", ""PACKAGE".pdf", NULL, NULL, SW_SHOWNORMAL);
+#else /* WINDOWS */
 #if GTK_CHECK_VERSION (2, 14, 0)
   gchar *uri;
   uri = g_strdup_printf("ghelp:%s", PACKAGE);
   gtk_show_uri(NULL, uri, GDK_CURRENT_TIME, NULL);
   g_free(uri);
 #endif
+#endif /* WINDOWS */
 }
 
 static void help_about_cb ( GtkAction *a, VikWindow *vw )
@@ -1417,6 +1563,9 @@ static void menu_tool_cb ( GtkAction *old, GtkAction *a, VikWindow *vw )
   else if (!strcmp(gtk_action_get_name(a), "Ruler")) {
     vw->current_tool = TOOL_RULER;
   }
+  else if (!strcmp(gtk_action_get_name(a), "Select")) {
+    vw->current_tool = TOOL_SELECT;
+  }
   else {
     /* TODO: only enable tools from active layer */
     for (layer_id=0; layer_id<VIK_LAYER_NUM_TYPES; layer_id++) {
@@ -1567,10 +1716,13 @@ void vik_window_open_file ( VikWindow *vw, const gchar *filename, gboolean chang
 {
   switch ( a_file_load ( vik_layers_panel_get_top_layer(vw->viking_vlp), vw->viking_vvp, filename ) )
   {
-    case 0:
+    case LOAD_TYPE_READ_FAILURE:
       a_dialog_error_msg ( GTK_WINDOW(vw), _("The file you requested could not be opened.") );
       break;
-    case 1:
+    case LOAD_TYPE_GPSBABEL_FAILURE:
+      a_dialog_error_msg ( GTK_WINDOW(vw), _("GPSBabel is required to load files of this type or GPSBabel encountered problems.") );
+      break;
+    case LOAD_TYPE_VIK_SUCCESS:
     {
       GtkWidget *mode_button;
       /* Update UI */
@@ -1582,7 +1734,7 @@ void vik_window_open_file ( VikWindow *vw, const gchar *filename, gboolean chang
       vw->only_updating_coord_mode_ui = FALSE;
 
       vik_layers_panel_change_coord_mode ( vw->viking_vlp, vik_viewport_get_coord_mode ( vw->viking_vvp ) );
-
+      
       mode_button = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ShowScale" );
       g_assert ( mode_button );
       gtk_check_menu_item_set_active ( GTK_CHECK_MENU_ITEM(mode_button),vik_viewport_get_draw_scale(vw->viking_vvp) );
@@ -1590,10 +1742,16 @@ void vik_window_open_file ( VikWindow *vw, const gchar *filename, gboolean chang
       mode_button = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ShowCenterMark" );
       g_assert ( mode_button );
       gtk_check_menu_item_set_active ( GTK_CHECK_MENU_ITEM(mode_button),vik_viewport_get_draw_centermark(vw->viking_vvp) );
+      
+      mode_button = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ShowHighlight" );
+      g_assert ( mode_button );
+      gtk_check_menu_item_set_active ( GTK_CHECK_MENU_ITEM(mode_button),vik_viewport_get_draw_highlight (vw->viking_vvp) );
     }
+    //case LOAD_TYPE_OTHER_SUCCESS:
     default:
       update_recently_used_document(filename);
       draw_update ( vw );
+      break;
   }
 }
 static void load_file ( GtkAction *a, VikWindow *vw )
@@ -2218,6 +2376,15 @@ static void set_draw_centermark ( GtkAction *a, VikWindow *vw )
   draw_update ( vw );
 }
 
+static void set_draw_highlight ( GtkAction *a, VikWindow *vw )
+{
+  GtkWidget *check_box = gtk_ui_manager_get_widget ( vw->uim, "/ui/MainMenu/View/SetShow/ShowHighlight" );
+  g_assert(check_box);
+  gboolean state = gtk_check_menu_item_get_active ( GTK_CHECK_MENU_ITEM(check_box));
+  vik_viewport_set_draw_highlight (  vw->viking_vvp, state );
+  draw_update ( vw );
+}
+
 static void set_bg_color ( GtkAction *a, VikWindow *vw )
 {
   GtkWidget *colorsd = gtk_color_selection_dialog_new ( _("Choose a background color") );
@@ -2228,6 +2395,22 @@ static void set_bg_color ( GtkAction *a, VikWindow *vw )
   {
     gtk_color_selection_get_current_color ( GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(colorsd)->colorsel), color );
     vik_viewport_set_background_gdkcolor ( vw->viking_vvp, color );
+    draw_update ( vw );
+  }
+  g_free ( color );
+  gtk_widget_destroy ( colorsd );
+}
+
+static void set_highlight_color ( GtkAction *a, VikWindow *vw )
+{
+  GtkWidget *colorsd = gtk_color_selection_dialog_new ( _("Choose a track highlight color") );
+  GdkColor *color = vik_viewport_get_highlight_gdkcolor ( vw->viking_vvp );
+  gtk_color_selection_set_previous_color ( GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(colorsd)->colorsel), color );
+  gtk_color_selection_set_current_color ( GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(colorsd)->colorsel), color );
+  if ( gtk_dialog_run ( GTK_DIALOG(colorsd) ) == GTK_RESPONSE_OK )
+  {
+    gtk_color_selection_get_current_color ( GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(colorsd)->colorsel), color );
+    vik_viewport_set_highlight_gdkcolor ( vw->viking_vvp, color );
     draw_update ( vw );
   }
   g_free ( color );
@@ -2278,6 +2461,7 @@ static GtkActionEntry entries[] = {
   { "GotoSearch", GTK_STOCK_JUMP_TO,     N_("Go to _Location..."),    	      NULL,         N_("Go to address/place using text search"),        (GCallback)goto_address       },
   { "GotoLL",    GTK_STOCK_JUMP_TO,      N_("_Go to Lat/Lon..."),           NULL,         N_("Go to arbitrary lat/lon coordinate"),         (GCallback)draw_goto_cb          },
   { "GotoUTM",   GTK_STOCK_JUMP_TO,      N_("Go to UTM..."),                  NULL,         N_("Go to arbitrary UTM coordinate"),               (GCallback)draw_goto_cb          },
+  { "SetHLColor",GTK_STOCK_SELECT_COLOR, N_("Set _Highlight Color..."),       NULL,         NULL,                                           (GCallback)set_highlight_color   },
   { "SetBGColor",GTK_STOCK_SELECT_COLOR, N_("Set Bac_kground Color..."),      NULL,         NULL,                                           (GCallback)set_bg_color          },
   { "ZoomIn",    GTK_STOCK_ZOOM_IN,      N_("Zoom _In"),                   "<control>plus", NULL,                                           (GCallback)draw_zoom_cb          },
   { "ZoomOut",   GTK_STOCK_ZOOM_OUT,     N_("Zoom _Out"),                 "<control>minus", NULL,                                           (GCallback)draw_zoom_cb          },
@@ -2332,12 +2516,14 @@ static GtkRadioActionEntry mode_entries[] = {
 static GtkRadioActionEntry tool_entries[] = {
   { "Pan",      "vik-icon-pan",        N_("_Pan"),                         "<control><shift>P", N_("Pan Tool"),  0 },
   { "Zoom",      "vik-icon-zoom",        N_("_Zoom"),                         "<control><shift>Z", N_("Zoom Tool"),  1 },
-  { "Ruler",     "vik-icon-ruler",       N_("_Ruler"),                        "<control><shift>R", N_("Ruler Tool"), 2 }
+  { "Ruler",     "vik-icon-ruler",       N_("_Ruler"),                        "<control><shift>R", N_("Ruler Tool"), 2 },
+  { "Select",    "vik-icon-select",      N_("_Select"),                       "<control><shift>S", N_("Select Tool"), 3 }
 };
 
 static GtkToggleActionEntry toggle_entries[] = {
   { "ShowScale",      NULL,                 N_("Show _Scale"),               "F5",         N_("Show Scale"),                              (GCallback)set_draw_scale, TRUE },
   { "ShowCenterMark", NULL,                 N_("Show _Center Mark"),         "F6",         N_("Show Center Mark"),                        (GCallback)set_draw_centermark, TRUE },
+  { "ShowHighlight",  GTK_STOCK_UNDERLINE,  N_("Show _Highlight"),           "F7",         N_("Show Highlight"),                          (GCallback)set_draw_highlight, TRUE },
   { "FullScreen",     GTK_STOCK_FULLSCREEN, N_("_Full Screen"),              "F11",        N_("Activate full screen mode"),               (GCallback)full_screen_cb, FALSE },
   { "ViewSidePanel",  GTK_STOCK_INDEX,      N_("Show Side _Panel"),          "F9",         N_("Show Side Panel"),                         (GCallback)view_side_panel_cb, TRUE },
   { "ViewStatusBar",  NULL,                 N_("Show Status_bar"),           "F12",        N_("Show Statusbar"),                          (GCallback)view_statusbar_cb, TRUE },
@@ -2364,6 +2550,7 @@ static void window_create_ui( VikWindow *window )
   toolbox_add_tool(window->vt, &ruler_tool, TOOL_LAYER_TYPE_NONE);
   toolbox_add_tool(window->vt, &zoom_tool, TOOL_LAYER_TYPE_NONE);
   toolbox_add_tool(window->vt, &pan_tool, TOOL_LAYER_TYPE_NONE);
+  toolbox_add_tool(window->vt, &select_tool, TOOL_LAYER_TYPE_NONE);
 
   error = NULL;
   if (!(mid = gtk_ui_manager_add_ui_from_string (uim, menu_xml, -1, &error))) {
@@ -2479,10 +2666,10 @@ static struct {
   { &edwp_18_pixbuf,		"Edit Waypoint"     },
   { &zoom_18_pixbuf,		"vik-icon-zoom"     },
   { &ruler_18_pixbuf,		"vik-icon-ruler"    },
+  { &select_18_pixbuf,		"vik-icon-select"   },
   { &geozoom_18_pixbuf,		"Georef Zoom Tool"  },
   { &geomove_18_pixbuf,		"Georef Move Map"   },
   { &mapdl_18_pixbuf,		"Maps Download"     },
-  { &showpic_18_pixbuf,		"Show Picture"      },
 };
  
 static gint n_stock_icons = G_N_ELEMENTS (stock_icons);
@@ -2501,3 +2688,117 @@ register_vik_icons (GtkIconFactory *icon_factory)
   }
 }
 
+gpointer vik_window_get_selected_trw_layer ( VikWindow *vw )
+{
+  return vw->selected_vtl;
+}
+
+void vik_window_set_selected_trw_layer ( VikWindow *vw, gpointer vtl )
+{
+  vw->selected_vtl   = vtl;
+  vw->containing_vtl = vtl;
+  /* Clear others */
+  vw->selected_track     = NULL;
+  vw->selected_tracks    = NULL;
+  vw->selected_waypoint  = NULL;
+  vw->selected_waypoints = NULL;
+  vw->selected_name      = NULL;
+}
+
+gpointer vik_window_get_selected_tracks ( VikWindow *vw )
+{
+  return vw->selected_tracks;
+}
+
+void vik_window_set_selected_tracks ( VikWindow *vw, gpointer gl, gpointer vtl )
+{
+  vw->selected_tracks = gl;
+  vw->containing_vtl  = vtl;
+  /* Clear others */
+  vw->selected_vtl       = NULL;
+  vw->selected_track     = NULL;
+  vw->selected_waypoint  = NULL;
+  vw->selected_waypoints = NULL;
+  vw->selected_name      = NULL;
+}
+
+gpointer vik_window_get_selected_track ( VikWindow *vw )
+{
+  return vw->selected_track;
+}
+
+void vik_window_set_selected_track ( VikWindow *vw, gpointer *vt, gpointer vtl, gpointer name )
+{
+  vw->selected_track = vt;
+  vw->containing_vtl = vtl;
+  vw->selected_name  = name;
+  /* Clear others */
+  vw->selected_vtl       = NULL;
+  vw->selected_tracks    = NULL;
+  vw->selected_waypoint  = NULL;
+  vw->selected_waypoints = NULL;
+}
+gpointer vik_window_get_selected_waypoints ( VikWindow *vw )
+{
+  return vw->selected_waypoints;
+}
+
+void vik_window_set_selected_waypoints ( VikWindow *vw, gpointer gl, gpointer vtl )
+{
+  vw->selected_waypoints = gl;
+  vw->containing_vtl     = vtl;
+  /* Clear others */
+  vw->selected_vtl       = NULL;
+  vw->selected_track     = NULL;
+  vw->selected_tracks    = NULL;
+  vw->selected_waypoint  = NULL;
+  vw->selected_name      = NULL;
+}
+
+gpointer vik_window_get_selected_waypoint ( VikWindow *vw )
+{
+  return vw->selected_waypoint;
+}
+
+void vik_window_set_selected_waypoint ( VikWindow *vw, gpointer *vwp, gpointer vtl, gpointer name )
+{
+  vw->selected_waypoint = vwp;
+  vw->containing_vtl    = vtl;
+  vw->selected_name     = name;
+  /* Clear others */
+  vw->selected_vtl       = NULL;
+  vw->selected_track     = NULL;
+  vw->selected_tracks    = NULL;
+  vw->selected_waypoints = NULL;
+}
+
+gpointer vik_window_get_selected_name ( VikWindow *vw )
+{
+  return vw->selected_name;
+}
+
+gboolean vik_window_clear_highlight ( VikWindow *vw )
+{
+  gboolean need_redraw = FALSE;
+  if ( vw->selected_vtl != NULL ) {
+    vw->selected_vtl = NULL;
+    need_redraw = TRUE;
+  }
+  if ( vw->selected_track != NULL ) {
+    vw->selected_track = NULL;
+    need_redraw = TRUE;
+  }
+  if ( vw->selected_tracks != NULL ) {
+    vw->selected_tracks = NULL;
+    need_redraw = TRUE;
+  }
+  if ( vw->selected_waypoint != NULL ) {
+    vw->selected_waypoint = NULL;
+    need_redraw = TRUE;
+  }
+  if ( vw->selected_waypoints != NULL ) {
+    vw->selected_waypoints = NULL;
+    need_redraw = TRUE;
+  }
+  return need_redraw;
+}

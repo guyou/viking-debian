@@ -28,6 +28,7 @@
 #include <string.h>
 
 #include <glib/gi18n.h>
+#include <gdk/gdkkeysyms.h>
 
 enum {
   VLP_UPDATE_SIGNAL,
@@ -69,6 +70,7 @@ static void menu_popup_cb (VikLayersPanel *vlp);
 static void layers_popup_cb (VikLayersPanel *vlp);
 static void layers_popup ( VikLayersPanel *vlp, GtkTreeIter *iter, gint mouse_button );
 static gboolean layers_button_press_cb (VikLayersPanel *vlp, GdkEventButton *event);
+static gboolean layers_key_press_cb (VikLayersPanel *vlp, GdkEventKey *event);
 static void layers_move_item ( VikLayersPanel *vlp, gboolean up );
 static void layers_move_item_up ( VikLayersPanel *vlp );
 static void layers_move_item_down ( VikLayersPanel *vlp );
@@ -157,6 +159,7 @@ static void layers_panel_init ( VikLayersPanel *vlp )
   g_signal_connect_swapped ( vlp->vt, "button_press_event", G_CALLBACK(layers_button_press_cb), vlp);
   g_signal_connect_swapped ( vlp->vt, "item_toggled", G_CALLBACK(layers_item_toggled), vlp);
   g_signal_connect_swapped ( vlp->vt, "item_edited", G_CALLBACK(layers_item_edited), vlp);
+  g_signal_connect_swapped ( vlp->vt, "key_press_event", G_CALLBACK(layers_key_press_cb), vlp);
 
   /* Add button */
   addimage = gtk_image_new_from_stock ( GTK_STOCK_ADD, GTK_ICON_SIZE_SMALL_TOOLBAR );
@@ -314,6 +317,16 @@ static gboolean layers_button_press_cb ( VikLayersPanel *vlp, GdkEventButton *ev
   return FALSE;
 }
 
+static gboolean layers_key_press_cb ( VikLayersPanel *vlp, GdkEventKey *event )
+{
+  // Accept all forms of delete keys
+  if (event->keyval == GDK_Delete || event->keyval == GDK_KP_Delete || event->keyval == GDK_BackSpace) {
+    vik_layers_panel_delete_selected (vlp);
+    return TRUE;
+ }
+ return FALSE;
+}
+
 static void layers_popup ( VikLayersPanel *vlp, GtkTreeIter *iter, gint mouse_button )
 {
   GtkMenu *menu = NULL;
@@ -375,7 +388,7 @@ static void layers_popup ( VikLayersPanel *vlp, GtkTreeIter *iter, gint mouse_bu
     else
     {
       menu = GTK_MENU ( gtk_menu_new () );
-      if ( ! vik_layer_sublayer_add_menu_items ( vik_treeview_item_get_parent ( vlp->vt, iter ), menu, vlp, vik_treeview_item_get_data ( vlp->vt, iter ), vik_treeview_item_get_pointer ( vlp->vt, iter ), iter ) )
+      if ( ! vik_layer_sublayer_add_menu_items ( vik_treeview_item_get_parent ( vlp->vt, iter ), menu, vlp, vik_treeview_item_get_data ( vlp->vt, iter ), vik_treeview_item_get_pointer ( vlp->vt, iter ), iter, vlp->vvp ) )
       {
         gtk_widget_destroy ( GTK_WIDGET(menu) );
         return;
@@ -471,7 +484,7 @@ static void layers_move_item ( VikLayersPanel *vlp, gboolean up )
   if ( ! vik_treeview_get_selected_iter ( vlp->vt, &iter ) )
     return;
 
-  vik_treeview_select_iter ( vlp->vt, &iter ); /* cancel any layer-name editing going on... */
+  vik_treeview_select_iter ( vlp->vt, &iter, FALSE ); /* cancel any layer-name editing going on... */
 
   if ( vik_treeview_item_get_type ( vlp->vt, &iter ) == VIK_TREEVIEW_TYPE_LAYER )
   {
@@ -585,6 +598,12 @@ void vik_layers_panel_delete_selected ( VikLayersPanel *vlp )
 
   if ( type == VIK_TREEVIEW_TYPE_LAYER )
   {
+    // Get confirmation from the user
+    if ( ! a_dialog_yes_or_no ( VIK_GTK_WINDOW_FROM_WIDGET(vlp),
+				_("Are you sure you want to delete %s?"),
+				vik_layer_get_name ( VIK_LAYER(vik_treeview_item_get_pointer ( vlp->vt, &iter )) ) ) )
+      return;
+
     VikAggregateLayer *parent = vik_treeview_item_get_parent ( vlp->vt, &iter );
     if ( parent )
     {
@@ -668,11 +687,11 @@ VikLayer *vik_layers_panel_get_layer_of_type ( VikLayersPanel *vlp, gint type )
     return rv;
 }
 
-GList *vik_layers_panel_get_all_layers_of_type(VikLayersPanel *vlp, gint type)
+GList *vik_layers_panel_get_all_layers_of_type(VikLayersPanel *vlp, gint type, gboolean include_invisible)
 {
   GList *layers = NULL;
 
-  return (vik_aggregate_layer_get_all_layers_of_type ( vlp->toplayer, layers, type ));
+  return (vik_aggregate_layer_get_all_layers_of_type ( vlp->toplayer, layers, type, include_invisible));
 }
 
 VikAggregateLayer *vik_layers_panel_get_top_layer ( VikLayersPanel *vlp )
@@ -699,3 +718,7 @@ static void layers_panel_finalize ( GObject *gob )
   G_OBJECT_CLASS(parent_class)->finalize(gob);
 }
 
+VikTreeview *vik_layers_panel_get_treeview ( VikLayersPanel *vlp )
+{
+  return vlp->vt;
+}

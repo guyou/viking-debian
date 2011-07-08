@@ -1,6 +1,199 @@
 
+2011-06-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Releasing viking 1.2.1
+
+2011-06-14
+Rob Norris <rw_norris@hotmail.com>:
+	* Support proper MAC OS file locations.
+	* Fix incorrect track property line marker positioning when the track has gaps.
+	* Fix track property point marker drawing error - sometimes draws dot marker too low.
+
+2011-05-29
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Releasing viking 1.2
+	* Fix translations: addbing mapsource.c
+
+2011-05-24
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Merge branch 'i18n-launchpad' into viking-1.2.rc1
+
+2011-05-22
+Rob Norris <rw_norris@hotmail.com>:
+	* Better safety checking to prevent crash due to null variable reference in use of the current trackpoint.
+	* Remove unecessary treeview item selection.
+
+2011-05-21
+Sven Wegener <sven.wegener@stealer.net>:
+	* Fix etag handling
+	* Add zoom level 0.5 to map layer
+
+2011-05-21
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* [DOC] Add links to access Viking's source code
+
+2011-05-16
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix: generate doc/reference/Makefile when needed
+	* Improve configure script when error occurs
+	* Document previous translation updates
+	* Import Launchpad updates
+
+2011-05-10
+Rob Norris <rw_norris@hotmail.com>:
+	* Rename file to prevent any case-insensitive issues.
+	* Improve README to mention OSM.
+
+2011-04-07
+Rob Norris <rw_norris@hotmail.com>:
+	* Add getting the users confirmation when deleting (emptying) data from the GPS layer.
+	* Enable keypad delete to remove layers in the layers panel.
+	* Enable deleting multiple tracks or waypoints within a layer by selecting them from a list.
+	* Add getting the users confirmation when deleting an individual track or waypoint.
+	* Add the ability to delete all waypoints or tracks in the layer.
+	* Add getting the users confirmation when deleting a layer.
+	* Start a new 'Tracks' treeview menu, similar to the 'new' Waypoints treeview menu.
+	* Add operations on waypoints into the 'new' Waypoints treeview menu.
+	* Prevent unnecessary internal track creation/deletion when splitting a track by time request doesn't actually alter the number of tracks.
+	* Fix Track -> Split by Timestamp such that newly created tracks are ordered correctly.
+
+2011-04-06
+Rob Norris <rw_norris@hotmail.com>:
+	* Add new graph type Speed/Distance in the track properties window.
+	* Tidy up draw_elevations and draw_vt functions.
+	* Add new graph type Elevation/Time in the track properties window.
+	* Remove unnecessary calculation in make_speed_map in viktrack.c
+	* Add new graph type Distance/Time in the track properties window.
+	* Update source code copyright on viktrwlayer_propwin.c
+	* Remove pointless storage of vlp in track properties window.
+	* Improve Track Properties speed/time drawing to display in nice human friendly whole number scaled units.
+	* Improve Track Properties elevation drawing to display in nice human friendly whole number scaled units.
+	* On the Track Properties Window draw an always updating indicator of where the readings are taken from.
+	* Track Properties Window internal tidy: Maintain minimum/maximum altitudes/speeds for reuse.
+	* Enable controls of drawing DEM data and GPS speeds on the Track Properties Window.
+	* Track Properties Window internal tidy: Enable DEM and GPS speeds to be optionally drawn on the elevation profile.
+	* Add keyboard accelerators for the Track Properties Window.
+	* Add ability to resize the Track Properties window.
+	* Track Properties internal refactor: rename function to reflect what it really does.
+	* On the Track Properties Window, also show the elevation or speed for the current track position as indicated by the mouse pointer.
+	* Track Properties internal refactor: make getting percentage along a track via distance or time into separate functions for further reuse.
+	* Track Properties Window internal tidy: individual profile sizes for each window.
+	* Track Properties Window internal tidy: maintain graph profile arrays for reuse by update and future functions.
+	* Fix sensitivity of the track properties window split marker to be disabled when the track marker is not drawn.
+	* Restructure the graph drawing functions to only handle a single aspect of functionality. (create or update)
+	* Rename function minmax_alt to minmax_array, and refactor for optional altitude test.
+	* Fix crashing due to incorrect usage of libcurl - SF#3206628.
+
+2011-03-31
+Rob Norris <rw_norris@hotmail.com>:
+	* Add support for kml files.
+	* Add ... where necessary to track & waypoint menu entries.
+	* Enable vik_layers_panel_get_all_layers_of_type to optionally return only visible layers.
+	* Enable Open Waypoint Image via right click menu entry.
+	* Use ability to select a waypoint given the thumbnail image size.
+	* Add ability to open the trackpoint edit dialog via the viewport right click menu when a trackpoint is selected.
+	* Add ability to move selected trackpoint or waypoint by the mouse within the select tool.
+	* Add a new select tool at the window level to enable/disbale item selection of the a track or a waypoint.
+	* Enable getting the treeview from the layerspanel.
+	* Enable to unselect treeview item
+	* Define an interface function to show the viewport menu on the selected item (track or waypoint).
+	* Store name of individual track or waypoint for later selection usage.
+	* Need to store the containing trw layer for later usage of selected track(s) or waypoint(s) operations.
+	* Add Select Request layer interface and use within the track/waypoint layer to select an item.
+	* Add internal track right click menu variable.
+	* On selection of layers panel item, automatically ensure it is fully shown.
+	* Tidy up track/waypoint sublayer callbacks to only use the layers panel if it available.
+	* Add viewport to sublayer add menu items callback.
+	* Make the highlight colour configurable and use as appropriate for the selected track/waypoint drawing.
+	* Add track and waypoint highlight for the selected layer or individual item.
+	* Add the storage and retrieval of any kind of track or waypoint selected item (either an individual item, list (i.e. a sublayer) or layer) at the window level.
+	* Add the ability to return the layers_panel from the window.
+	* Add viewport property to control the display of the track / waypoint item highlight.
+	* Add backup support for launching URLs with Mac OS based browsers.
+	* Add backup support for launching URLs with Google Chrome based browsers.
+	* Fix non-void function should return a value.
+	* Fix compiler warning for Bing use of dynamic copyright.
+	* Fix compiler warning for dynamic copyright.
+	* Improve git ignore for reference documentation generation.
+	* Fix reference documentation generation - some systems need explicit mention of libz.
+	* gtk_object_sink has been deprecated since gtk version 2.10, use g_object_ref_sink() instead.
+
+2011-03-27
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add support for Bing maps
+	* Add support for dynamic copyright
+	* Add map's logo support
+
+2011-03-26
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Document VikViewport
+	* Document Map Source hierarchie
+	* Improve documentation of background.c
+	* Add support for reference documentation
+
+2011-03-17
+Rob Norris <rw_norris@hotmail.com>:
+	* Generate a trackwaypoint layer update on the finish creatiing of the thumbnails so the images are shown.
+
+2011-03-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix displaying of 'Waypoints' treeview menu.
+	* Enable the tree view panel to be more usefully resized smaller than the text names.
+
+2011-03-14
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Improve HACKING documentation
+
+2011-03-11
+Mathieu Albinet <mathieu17@gmail.com>:
+	* Windows : Open help pdf file when when clicked on Help->help
+
+2011-03-03
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix vik_aggregate_layer_get_all_layers_of_type for track/waypoint layer types, since these may also be stored under GPS layers.
+
+2011-03-02
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add autoconf HAVE macros
+
+2011-02-28
+Rob Norris <rw_norris@hotmail.com>:
+	* Improve previous fix: background calling code should control return value
+	* [DOC] Split By Number of Points
+	* Add Track->Split by Number of Points (as per SF#2847587 request).
+	* Add a new dialog to return positive number.
+
+2011-02-22
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix: background calling code should control return value
+	* Fix: enforce background feature
+
+2011-02-17
+Rob Norris <rw_norris@hotmail.com>:
+	* Rework the a_dialog_new_waypoint function
+	* Fix compiler warnings from gcc 4.5.4
+
+2011-02-17
+Milan Jurik <jurikm@users.sourceforge.net>:
+	* SF#3178554: Fix Sun Studio build
+
+2011-02-15
+Rob Norris <rw_norris@hotmail.com>:
+	* Prevent map license from being displayed more than necessary.
+
+2011-02-13
+Rob Norris <rw_norris@hotmail.com>:
+	* Remove dulipcate icon reference.
+	* Correct several babel.h function return types.
+	* SF#2844872: Suggest name for the new track when splitting the track via the trackpoint edit dialog.
+
+2011-02-10
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Reduce GObject cast
+
 2011-02-08
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Releasing viking 1.1
 	* Fix typo in translation
 	* Merge branch 'i18n'
 	* Merge branch 'i18n-launchpad' into i18n

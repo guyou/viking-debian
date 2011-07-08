@@ -138,6 +138,9 @@ gint vik_viewport_get_height ( VikViewport *vvp );
 void vik_viewport_reset_copyrights ( VikViewport *vp );
 void vik_viewport_add_copyright ( VikViewport *vp, const gchar *copyright );
 
+void vik_viewport_reset_logos ( VikViewport *vp );
+void vik_viewport_add_logo ( VikViewport *vp, const GdkPixbuf *logo );
+
 /* Viewport features */
 void vik_viewport_draw_scale ( VikViewport *vvp );
 void vik_viewport_set_draw_scale ( VikViewport *vvp, gboolean draw_scale );
@@ -146,6 +149,9 @@ void vik_viewport_draw_copyright ( VikViewport *vvp );
 void vik_viewport_draw_centermark ( VikViewport *vvp );
 void vik_viewport_set_draw_centermark ( VikViewport *vvp, gboolean draw_centermark );
 gboolean vik_viewport_get_draw_centermark ( VikViewport *vvp );
+void vik_viewport_draw_logo ( VikViewport *vvp );
+void vik_viewport_set_draw_highlight ( VikViewport *vvp, gboolean draw_highlight );
+gboolean vik_viewport_get_draw_highlight ( VikViewport *vvp );
 
 /* Color/graphics context management */
 void vik_viewport_set_background_color ( VikViewport *vvp, const gchar *color );
@@ -156,6 +162,12 @@ void vik_gc_get_fg_color ( GdkGC *gc, GdkColor *dest ); /* warning: could be slo
 GdkGC *vik_viewport_new_gc ( VikViewport *vvp, const gchar *colorname, gint thickness );
 GdkGC *vik_viewport_new_gc_from_color ( VikViewport *vvp, GdkColor *color, gint thickness );
 GdkFunction vik_gc_get_function ( GdkGC *gc );
+
+void vik_viewport_set_highlight_color ( VikViewport *vvp, const gchar *color );
+const gchar *vik_viewport_get_highlight_color ( VikViewport *vvp );
+GdkColor *vik_viewport_get_highlight_gdkcolor ( VikViewport *vvp );
+void vik_viewport_set_highlight_gdkcolor ( VikViewport *vvp, GdkColor * );
+GdkGC* vik_viewport_get_gc_highlight ( VikViewport *vvp );
 
 /* Drawing primitives */
 void a_viewport_clip_line ( gint *x1, gint *y1, gint *x2, gint *y2 ); /* run this before drawing a line. vik_viewport_draw_line runs it for you */

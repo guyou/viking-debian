@@ -2,10 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(viking, 1.1)
+AC_INIT(viking, 1.2.1)
 AM_INIT_AUTOMAKE()
 dnl AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
+GTK_DOC_CHECK(1.0)
 
 # Checks for programs.
 AC_PROG_CC
@@ -53,7 +54,7 @@ LIBCURL_CHECK_CONFIG([yes],[],[],[AC_MSG_ERROR([libcurl is needed but not found]
 
 # gdk-pixbuf-csource
 AC_CHECK_PROG([GDK_PIXBUF_CSOURCE],gdk-pixbuf-csource,[yes])
-if test $GDK_PIXBUF_CSOURCE != "yes"
+if test "x$GDK_PIXBUF_CSOURCE" != "xyes"
 then
   AC_MSG_ERROR([gdk-pixbuf-csource is needed but not found])
 fi
@@ -113,6 +114,19 @@ case $ac_cv_enable_alpha_trw in
     AC_DEFINE(VIK_CONFIG_ALPHABETIZED_TRW, [], [NO ALPHABETIZED TRW])
     ;;
 esac
+
+AC_ARG_ENABLE(bing, AC_HELP_STRING([--enable-bing],
+              [enable Bing stuff (default is enable)]),
+              [ac_cv_enable_bing=$enableval],
+              [ac_cv_enable_bing=yes])
+AC_CACHE_CHECK([whether to enable Bing stuff],
+               [ac_cv_enable_bing], [ac_cv_enable_bing=yes])
+case $ac_cv_enable_bing in
+  yes)
+    AC_DEFINE(VIK_CONFIG_BING, [], [BING STUFF])
+    ;;
+esac
+AM_CONDITIONAL([BING], [test x$ac_cv_enable_bing = xyes])
 
 AC_ARG_ENABLE(google, AC_HELP_STRING([--enable-google],
               [enable Google stuff (default is enable)]),
@@ -330,6 +344,9 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  doc/examples/Makefile
                  doc/dev/Makefile])
+if test x$enable_gtk_doc = xyes; then
+AC_CONFIG_FILES([doc/reference/Makefile])
+fi
 AC_OUTPUT([
 	   viking.spec
 	   ])
@@ -340,6 +357,7 @@ echo "==========================================="
 echo "$PACKAGE $VERSION"
 echo "-------------------------------------------"
 echo "Alphabetized track & waypoints   : $ac_cv_enable_alpha_trw"
+echo "Bing Maps                        : $ac_cv_enable_bing"
 echo "Google Maps                      : $ac_cv_enable_google"
 echo "Terraserver Maps                 : $ac_cv_enable_terraserver"
 echo "Expedia Maps                     : $ac_cv_enable_expedia"

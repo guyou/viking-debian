@@ -88,9 +88,9 @@ static guint *params_maptypes_ids = NULL;
 
 /******** MAPZOOMS *********/
 
-static gchar *params_mapzooms[] = { N_("Use Viking Zoom Level"), "0.25", "1", "2", "4", "8", "16", "32", "64", "128", "256", "512", "1024", "USGS 10k", "USGS 24k", "USGS 25k", "USGS 50k", "USGS 100k", "USGS 200k", "USGS 250k", NULL };
-static gdouble __mapzooms_x[] = { 0.0, 0.25, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1024.0, 1.016, 2.4384, 2.54, 5.08, 10.16, 20.32, 25.4 };
-static gdouble __mapzooms_y[] = { 0.0, 0.25, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1024.0, 1.016, 2.4384, 2.54, 5.08, 10.16, 20.32, 25.4 };
+static gchar *params_mapzooms[] = { N_("Use Viking Zoom Level"), "0.25", "0.5", "1", "2", "4", "8", "16", "32", "64", "128", "256", "512", "1024", "USGS 10k", "USGS 24k", "USGS 25k", "USGS 50k", "USGS 100k", "USGS 200k", "USGS 250k", NULL };
+static gdouble __mapzooms_x[] = { 0.0, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1024.0, 1.016, 2.4384, 2.54, 5.08, 10.16, 20.32, 25.4 };
+static gdouble __mapzooms_y[] = { 0.0, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1024.0, 1.016, 2.4384, 2.54, 5.08, 10.16, 20.32, 25.4 };
 
 #define NUM_MAPZOOMS (sizeof(params_mapzooms)/sizeof(params_mapzooms[0]) - 1)
 
@@ -169,6 +169,7 @@ VikLayerInterface vik_maps_layer_interface = {
   (VikLayerFuncSublayerToggleVisible)   NULL,
   (VikLayerFuncSublayerTooltip)         NULL,
   (VikLayerFuncLayerTooltip)            maps_layer_tooltip,
+  (VikLayerFuncLayerSelected)           NULL,
 
   (VikLayerFuncMarshall)		maps_layer_marshall,
   (VikLayerFuncUnmarshall)		maps_layer_unmarshall,
@@ -185,6 +186,11 @@ VikLayerInterface vik_maps_layer_interface = {
   (VikLayerFuncPasteItem)               NULL,
   (VikLayerFuncFreeCopiedItem)          NULL,
   (VikLayerFuncDragDropRequest)		NULL,
+
+  (VikLayerFuncSelectClick)             NULL,
+  (VikLayerFuncSelectMove)              NULL,
+  (VikLayerFuncSelectRelease)           NULL,
+  (VikLayerFuncSelectedViewportMenu)    NULL,
 };
 
 struct _VikMapsLayer {
@@ -205,6 +211,9 @@ struct _VikMapsLayer {
   GtkMenu *dl_right_click_menu;
   VikCoord redownload_ul, redownload_br; /* right click menu only */
   VikViewport *redownload_vvp;
+
+  gboolean license_notice_shown; // FALSE for new maps only, otherwise
+                                 // TRUE for saved maps & other layer changes as we don't need to show it again
 };
 
 enum { REDOWNLOAD_NONE = 0,    /* download only missing maps */
@@ -326,6 +335,10 @@ gchar *vik_maps_layer_get_map_label(VikMapsLayer *vml)
 #include <io.h>
 #define GLOBAL_MAPS_DIR "C:\\VIKING-MAPS\\"
 #define LOCAL_MAPS_DIR "VIKING-MAPS"
+#elif defined __APPLE__
+#include <stdlib.h>
+#define GLOBAL_MAPS_DIR "/Library/cache/Viking/maps/"
+#define LOCAL_MAPS_DIR "/Library/Application Support/Viking/viking-maps"
 #else /* POSIX */
 #include <stdlib.h>
 #define GLOBAL_MAPS_DIR "/var/cache/maps/"
@@ -449,6 +462,10 @@ static guint map_uniq_id_to_index ( guint uniq_id )
 
 static gboolean maps_layer_set_param ( VikMapsLayer *vml, guint16 id, VikLayerParamData data, VikViewport *vvp, gboolean is_file_operation )
 {
+  // When loading from a file don't need the license reminder
+  if ( is_file_operation )
+    vml->license_notice_shown = TRUE;
+
   switch ( id )
   {
     case PARAM_CACHE_DIR: maps_layer_set_cache_dir ( vml, data.s ); break;
@@ -504,6 +521,7 @@ static VikMapsLayer *maps_layer_new ( VikViewport *vvp )
   vml->last_ympp = 0.0;
 
   vml->dl_right_click_menu = NULL;
+  vml->license_notice_shown = FALSE;
 
   return vml;
 }
@@ -513,7 +531,7 @@ static void maps_layer_free ( VikMapsLayer *vml )
   g_free ( vml->cache_dir );
   vml->cache_dir = NULL;
   if ( vml->dl_right_click_menu )
-    gtk_object_sink ( GTK_OBJECT(vml->dl_right_click_menu) );
+    g_object_ref_sink ( G_OBJECT(vml->dl_right_click_menu) );
   g_free(vml->last_center);
   vml->last_center = NULL;
 }
@@ -529,18 +547,21 @@ static void maps_layer_post_read (VikLayer *vl, VikViewport *vp, gboolean from_f
     VikMapsLayer *vml = VIK_MAPS_LAYER(vl);
     VikMapSource *map = NULL;
  
-    vp_drawmode = vik_viewport_get_drawmode ( VIK_VIEWPORT(vp) );
+    vp_drawmode = vik_viewport_get_drawmode ( vp );
     map = MAPS_LAYER_NTH_TYPE(vml->maptype);
     if (vik_map_source_get_drawmode(map) != vp_drawmode) {
-      const gchar *drawmode_name = vik_viewport_get_drawmode_name (VIK_VIEWPORT(vp), vik_map_source_get_drawmode(map));
+      const gchar *drawmode_name = vik_viewport_get_drawmode_name (vp, vik_map_source_get_drawmode(map));
       gchar *msg = g_strdup_printf(_("New map cannot be displayed in the current drawmode.\nSelect \"%s\" from View menu to view it."), drawmode_name);
       a_dialog_warning_msg ( VIK_GTK_WINDOW_FROM_WIDGET(vp), msg );
       g_free(msg);
     }
 
     if (vik_map_source_get_license (map) != NULL) {
-      a_dialog_license (VIK_GTK_WINDOW_FROM_WIDGET(vp), vik_map_source_get_label (map),
-                        vik_map_source_get_license (map), vik_map_source_get_license_url (map) );
+      if ( ! vml->license_notice_shown ) {
+	a_dialog_license (VIK_GTK_WINDOW_FROM_WIDGET(vp), vik_map_source_get_label (map),
+			  vik_map_source_get_license (map), vik_map_source_get_license_url (map) );
+	vml->license_notice_shown = TRUE;
+      }
     }
   }
 }
@@ -845,8 +866,14 @@ static void maps_layer_draw ( VikMapsLayer *vml, VikViewport *vvp )
     VikCoord ul, br;
 
     /* Copyright */
-    const gchar *copyright = vik_map_source_get_copyright ( MAPS_LAYER_NTH_TYPE(vml->maptype) );
-    vik_viewport_add_copyright ( vvp, copyright );
+    gdouble level = vik_viewport_get_zoom ( vvp );
+    LatLonBBox bbox;
+    vik_viewport_get_min_max_lat_lon ( vvp, &bbox.south, &bbox.north, &bbox.west, &bbox.east );
+    vik_map_source_get_copyright ( MAPS_LAYER_NTH_TYPE(vml->maptype), bbox, level, vik_viewport_add_copyright, vvp );
+
+    /* Logo */
+    const GdkPixbuf *logo = vik_map_source_get_logo ( MAPS_LAYER_NTH_TYPE(vml->maptype) );
+    vik_viewport_add_logo ( vvp, logo );
 
     /* get corner coords */
     if ( vik_viewport_get_coord_mode ( vvp ) == VIK_COORD_UTM && ! vik_viewport_is_one_zone ( vvp ) ) {

@@ -28,6 +28,8 @@
 #endif
 
 #define DEFAULT_BACKGROUND_COLOR "#CCCCCC"
+#define DEFAULT_HIGHLIGHT_COLOR "#EEA500"
+/* Default highlight in orange */
 
 #include <gtk/gtk.h>
 #ifdef HAVE_MATH_H
@@ -48,6 +50,8 @@
 #include "globals.h"
 
 static gdouble EASTING_OFFSET = 500000.0;
+
+static gint PAD = 10;
 
 static void viewport_class_init ( VikViewportClass *klass );
 static void viewport_init ( VikViewport *vvp );
@@ -84,10 +88,14 @@ struct _VikViewport {
   GdkGC *scale_bg_gc;
 
   GSList *copyrights;
+  GSList *logos;
 
   /* Wether or not display OSD info */
   gboolean draw_scale;
   gboolean draw_centermark;
+  gboolean draw_highlight;
+  GdkGC *highlight_gc;
+  GdkColor highlight_color;
 
   /* subset of coord types. lat lon can be plotted in 2 ways, google or exp. */
   VikViewportDrawMode drawmode;
@@ -190,12 +198,14 @@ static void viewport_init ( VikViewport *vvp )
   vvp->alpha_pixbuf_width = vvp->alpha_pixbuf_height = 0;
   vvp->utm_zone_width = 0.0;
   vvp->background_gc = NULL;
+  vvp->highlight_gc = NULL;
   vvp->scale_bg_gc = NULL;
 
   vvp->copyrights = NULL;
 
   vvp->draw_scale = TRUE;
   vvp->draw_centermark = TRUE;
+  vvp->draw_highlight = TRUE;
 
   vvp->trigger = NULL;
   vvp->snapshot_buffer = NULL;
@@ -237,6 +247,39 @@ void vik_viewport_set_background_gdkcolor ( VikViewport *vvp, GdkColor *color )
   gdk_gc_set_rgb_fg_color ( vvp->background_gc, color );
 }
 
+GdkColor *vik_viewport_get_highlight_gdkcolor ( VikViewport *vvp )
+{
+  GdkColor *rv = g_malloc ( sizeof ( GdkColor ) );
+  *rv = vvp->highlight_color;
+  return rv;
+}
+
+/* returns pointer to internal static storage, changes next time function called, use quickly */
+const gchar *vik_viewport_get_highlight_color ( VikViewport *vvp )
+{
+  static gchar color[8];
+  g_snprintf(color, sizeof(color), "#%.2x%.2x%.2x", (int)(vvp->highlight_color.red/256),(int)(vvp->highlight_color.green/256),(int)(vvp->highlight_color.blue/256));
+  return color;
+}
+
+void vik_viewport_set_highlight_color ( VikViewport *vvp, const gchar *colorname )
+{
+  g_assert ( vvp->highlight_gc );
+  gdk_color_parse ( colorname, &(vvp->highlight_color) );
+  gdk_gc_set_rgb_fg_color ( vvp->highlight_gc, &(vvp->highlight_color) );
+}
+
+void vik_viewport_set_highlight_gdkcolor ( VikViewport *vvp, GdkColor *color )
+{
+  g_assert ( vvp->highlight_gc );
+  vvp->highlight_color = *color;
+  gdk_gc_set_rgb_fg_color ( vvp->highlight_gc, color );
+}
+
+GdkGC *vik_viewport_get_gc_highlight ( VikViewport *vvp )
+{
+  return vvp->highlight_gc;
+}
 
 GdkGC *vik_viewport_new_gc ( VikViewport *vvp, const gchar *colorname, gint thickness )
 {
@@ -307,6 +350,11 @@ gboolean vik_viewport_configure ( VikViewport *vvp )
     vvp->background_gc = vik_viewport_new_gc ( vvp, DEFAULT_BACKGROUND_COLOR, 1 );
     vik_viewport_set_background_color ( vvp, DEFAULT_BACKGROUND_COLOR );
   }
+  if ( ! vvp->highlight_gc )
+  {
+    vvp->highlight_gc = vik_viewport_new_gc ( vvp, DEFAULT_HIGHLIGHT_COLOR, 1 );
+    vik_viewport_set_highlight_color ( vvp, DEFAULT_HIGHLIGHT_COLOR );
+  }
   if ( !vvp->scale_bg_gc) {
     vvp->scale_bg_gc = vik_viewport_new_gc(vvp, "grey", 3);
   }
@@ -332,6 +380,9 @@ static void viewport_finalize ( GObject *gob )
   if ( vvp->background_gc )
     g_object_unref ( G_OBJECT ( vvp->background_gc ) );
 
+  if ( vvp->highlight_gc )
+    g_object_unref ( G_OBJECT ( vvp->highlight_gc ) );
+
   if ( vvp->scale_bg_gc ) {
     g_object_unref ( G_OBJECT ( vvp->scale_bg_gc ) );
     vvp->scale_bg_gc = NULL;
@@ -340,13 +391,27 @@ static void viewport_finalize ( GObject *gob )
   G_OBJECT_CLASS(parent_class)->finalize(gob);
 }
 
+/**
+ * vik_viewport_clear:
+ * @vvp: self object
+ * 
+ * Clear the whole viewport.
+ */
 void vik_viewport_clear ( VikViewport *vvp )
 {
   g_return_if_fail ( vvp != NULL );
   gdk_draw_rectangle(GDK_DRAWABLE(vvp->scr_buffer), vvp->background_gc, TRUE, 0, 0, vvp->width, vvp->height);
   vik_viewport_reset_copyrights ( vvp );
+  vik_viewport_reset_logos ( vvp );
 }
 
+/**
+ * vik_viewport_set_draw_scale:
+ * @vvp: self
+ * @draw_scale: new value
+ * 
+ * Enable/Disable display of scale.
+ */
 void vik_viewport_set_draw_scale ( VikViewport *vvp, gboolean draw_scale )
 {
   vvp->draw_scale = draw_scale;
@@ -364,7 +429,7 @@ void vik_viewport_draw_scale ( VikViewport *vvp )
   if ( vvp->draw_scale ) {
     VikCoord left, right;
     gdouble unit, base, diff, old_unit, old_diff, ratio;
-    gint odd, len, PAD = 10, SCSIZE = 5, HEIGHT=10;
+    gint odd, len, SCSIZE = 5, HEIGHT=10;
     PangoFontDescription *pfd;
     PangoLayout *pl;
     gchar s[128];
@@ -473,7 +538,6 @@ void vik_viewport_draw_copyright ( VikViewport *vvp )
 {
   g_return_if_fail ( vvp != NULL );
 
-  gint PAD = 10;
   PangoFontDescription *pfd;
   PangoLayout *pl;
   PangoRectangle ink_rect, logical_rect;
@@ -511,6 +575,13 @@ void vik_viewport_draw_copyright ( VikViewport *vvp )
   pl = NULL;		
 }
 
+/**
+ * vik_viewport_set_draw_centermark:
+ * @vvp: self object
+ * @draw_centermark: new value
+ * 
+ * Enable/Disable display of center mark.
+ */
 void vik_viewport_set_draw_centermark ( VikViewport *vvp, gboolean draw_centermark )
 {
   vvp->draw_centermark = draw_centermark;
@@ -545,6 +616,35 @@ void vik_viewport_draw_centermark ( VikViewport *vvp )
   vik_viewport_draw_line(vvp, black_gc, center_x, center_y - len, center_x, center_y - gap);
   vik_viewport_draw_line(vvp, black_gc, center_x, center_y + gap, center_x, center_y + len);
   
+}
+
+void vik_viewport_draw_logo ( VikViewport *vvp )
+{
+  g_return_if_fail ( vvp != NULL );
+
+  /* compute copyrights string */
+  guint len = g_slist_length ( vvp->logos );
+  gint x = vvp->width - PAD;
+  gint y = PAD;
+  int i;
+  for (i = 0 ; i < len ; i++)
+  {
+    GdkPixbuf *logo = g_slist_nth_data ( vvp->logos, i );
+    gint width = gdk_pixbuf_get_width ( logo );
+    gint height = gdk_pixbuf_get_height ( logo );
+    vik_viewport_draw_pixbuf ( vvp, logo, 0, 0, x - width, y, width, height );
+    x = x - width - PAD;
+  }
+}
+
+void vik_viewport_set_draw_highlight ( VikViewport *vvp, gboolean draw_highlight )
+{
+  vvp->draw_highlight = draw_highlight;
+}
+
+gboolean vik_viewport_get_draw_highlight ( VikViewport *vvp )
+{
+  return vvp->draw_highlight;
 }
 
 void vik_viewport_sync ( VikViewport *vvp )
@@ -1179,6 +1279,13 @@ void vik_viewport_reset_copyrights ( VikViewport *vp )
   vp->copyrights = NULL;
 }
 
+/**
+ * vik_viewport_add_copyright:
+ * @vp: self object
+ * @copyright: new copyright to display
+ * 
+ * Add a copyright to display on viewport.
+ */
 void vik_viewport_add_copyright ( VikViewport *vp, const gchar *copyright ) 
 {
   g_return_if_fail ( vp != NULL );
@@ -1189,6 +1296,27 @@ void vik_viewport_add_copyright ( VikViewport *vp, const gchar *copyright )
     {
       gchar *duple = g_strdup ( copyright );
       vp->copyrights = g_slist_prepend ( vp->copyrights, duple );
+    }
+  }
+}
+
+void vik_viewport_reset_logos ( VikViewport *vp )
+{
+  g_return_if_fail ( vp != NULL );
+  /* do not free elem */
+  g_slist_free ( vp->logos );
+  vp->logos = NULL;
+}
+
+void vik_viewport_add_logo ( VikViewport *vp, const GdkPixbuf *logo )
+{
+  g_return_if_fail ( vp != NULL );
+  if ( logo )
+  {
+    GdkPixbuf *found = NULL; /* FIXME (GdkPixbuf*)g_slist_find_custom ( vp->logos, logo, (GCompareFunc)== ); */
+    if ( found == NULL )
+    {
+      vp->logos = g_slist_prepend ( vp->logos, (gpointer)logo );
     }
   }
 }

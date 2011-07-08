@@ -3,9 +3,9 @@
 "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY appname          "Viking">
   <!ENTITY app "<application>Viking</application>">
-  <!ENTITY appversion   "1.1">
+  <!ENTITY appversion   "1.2">
   <!ENTITY manrevision  "0.2">
-  <!ENTITY date "January 2011">
+  <!ENTITY date "June 2011">
 ]>
 <!--
       (Do not remove this comment block.)
@@ -327,7 +327,7 @@ You are probably better off expanding the waypoint list and directly start typin
 
 <section><title>Export Layer</title>
 <para>
-The layer (all tracks and waypoints) can be exported to a file GPX, GPSPoint or GPSMapper format.
+The layer (all tracks and waypoints) can be exported to a file GPX, GPSPoint, GPSMapper or Google's KML format.
 </para>
 <para>
 Version1.1+: An individual track can be exported to a GPX file via the track menu.
@@ -479,6 +479,13 @@ This operation will split a single track into segments wherever the
 time interval between successive trackpoints is larger than some
 threshold. This is useful when processing raw NMEA GPS data, especially
 taken over a long time.
+</para>
+</section>
+
+<section><title>Split By Number of Points</title>
+<para>
+Version1.2+: This operation will split a single track into segments by the number of points specified.
+This can be useful with devices which may have limits on the number of points it supports.
 </para>
 </section>
 

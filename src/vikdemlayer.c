@@ -215,6 +215,7 @@ VikLayerInterface vik_dem_layer_interface = {
   (VikLayerFuncSublayerToggleVisible)   NULL,
   (VikLayerFuncSublayerTooltip)         NULL,
   (VikLayerFuncLayerTooltip)            dem_layer_tooltip,
+  (VikLayerFuncLayerSelected)           NULL,
 
   (VikLayerFuncMarshall)		dem_layer_marshall,
   (VikLayerFuncUnmarshall)		dem_layer_unmarshall,
@@ -231,6 +232,11 @@ VikLayerInterface vik_dem_layer_interface = {
   (VikLayerFuncPasteItem)               NULL,
   (VikLayerFuncFreeCopiedItem)          NULL,
   (VikLayerFuncDragDropRequest)		NULL,
+
+  (VikLayerFuncSelectClick)             NULL,
+  (VikLayerFuncSelectMove)              NULL,
+  (VikLayerFuncSelectRelease)           NULL,
+  (VikLayerFuncSelectedViewportMenu)    NULL,
 };
 
 struct _VikDEMLayer {

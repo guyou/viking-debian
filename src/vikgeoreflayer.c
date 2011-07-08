@@ -108,6 +108,7 @@ VikLayerInterface vik_georef_layer_interface = {
   (VikLayerFuncSublayerToggleVisible)   NULL,
   (VikLayerFuncSublayerTooltip)         NULL,
   (VikLayerFuncLayerTooltip)            georef_layer_tooltip,
+  (VikLayerFuncLayerSelected)           NULL,
 
   (VikLayerFuncMarshall)		georef_layer_marshall,
   (VikLayerFuncUnmarshall)		georef_layer_unmarshall,
@@ -124,6 +125,11 @@ VikLayerInterface vik_georef_layer_interface = {
   (VikLayerFuncPasteItem)               NULL,
   (VikLayerFuncFreeCopiedItem)          NULL,
   (VikLayerFuncDragDropRequest)		NULL,
+
+  (VikLayerFuncSelectClick)             NULL,
+  (VikLayerFuncSelectMove)              NULL,
+  (VikLayerFuncSelectRelease)           NULL,
+  (VikLayerFuncSelectedViewportMenu)    NULL,
 };
 
 struct _VikGeorefLayer {
@@ -178,7 +184,7 @@ static void georef_layer_marshall( VikGeorefLayer *vgl, guint8 **data, gint *len
 
 static VikGeorefLayer *georef_layer_unmarshall( guint8 *data, gint len, VikViewport *vvp )
 {
-  VikGeorefLayer *rv = georef_layer_new ( vvp );
+  VikGeorefLayer *rv = georef_layer_new ();
   vik_layer_unmarshall_params ( VIK_LAYER(rv), data, len, vvp );
   if (rv->image) {
     georef_layer_load_image ( rv );

@@ -62,14 +62,15 @@ static size_t curl_get_etag_func(char *ptr, size_t size, size_t nmemb, void *str
 {
 #define ETAG_KEYWORD "ETag: "
 #define ETAG_LEN (sizeof(ETAG_KEYWORD)-1)
+  gchar **etag = stream;
   size_t len = size*nmemb;
   char *str = g_strstr_len((const char*)ptr, len, ETAG_KEYWORD);
   if (str) {
     char *etag_str = str + ETAG_LEN;
     char *end_str = g_strstr_len(etag_str, len - ETAG_LEN, "\r\n");
     if (etag_str && end_str) {
-      stream = (void*) g_strndup(etag_str, end_str - etag_str);
-      g_debug("%s: ETAG found: %s", __FUNCTION__, (gchar*)stream);
+      *etag = g_strndup(etag_str, end_str - etag_str);
+      g_debug("%s: ETAG found: %s", __FUNCTION__, *etag);
     }
   }
   return nmemb;
@@ -162,6 +163,7 @@ int curl_download_uri ( const char *uri, FILE *f, DownloadMapOptions *options, D
   }
   if (vik_verbose)
     curl_easy_setopt ( curl, CURLOPT_VERBOSE, 1 );
+  curl_easy_setopt ( curl, CURLOPT_NOSIGNAL, 1 ); // Yep, we're a multi-threaded program so don't let signals mess it up!
   curl_easy_setopt ( curl, CURLOPT_URL, uri );
   curl_easy_setopt ( curl, CURLOPT_WRITEDATA, f );
   curl_easy_setopt ( curl, CURLOPT_WRITEFUNCTION, curl_write_func);
