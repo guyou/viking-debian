@@ -147,12 +147,13 @@ typedef guint16          (*VikLayerFuncGetMenuItemsSelection)          (VikLayer
 
 typedef void          (*VikLayerFuncAddMenuItems)          (VikLayer *,GtkMenu *,gpointer); /* gpointer is a VikLayersPanel */
 typedef gboolean      (*VikLayerFuncSublayerAddMenuItems)  (VikLayer *,GtkMenu *,gpointer, /* first gpointer is a VikLayersPanel */
-                                                            gint,gpointer,GtkTreeIter *);
+                                                            gint,gpointer,GtkTreeIter *,VikViewport *);
 typedef const gchar * (*VikLayerFuncSublayerRenameRequest) (VikLayer *,const gchar *,gpointer,
                                                             gint,VikViewport *,GtkTreeIter *); /* first gpointer is a VikLayersPanel */
 typedef gboolean      (*VikLayerFuncSublayerToggleVisible) (VikLayer *,gint,gpointer);
 typedef const gchar * (*VikLayerFuncSublayerTooltip)       (VikLayer *,gint,gpointer);
 typedef const gchar * (*VikLayerFuncLayerTooltip)          (VikLayer *);
+typedef gboolean      (*VikLayerFuncLayerSelected)         (VikLayer *,gint,gpointer,gint,gpointer); /* 2nd gpointer is a VikLayersPanel */
 
 typedef void          (*VikLayerFuncMarshall)              (VikLayer *, guint8 **, gint *);
 typedef VikLayer *    (*VikLayerFuncUnmarshall)            (guint8 *, gint, VikViewport *);
@@ -181,6 +182,11 @@ typedef void          (*VikLayerFuncFreeCopiedItem)        (gint, gpointer);
  * and the source and destination iters in the treeview. 
  */
 typedef void 	      (*VikLayerFuncDragDropRequest)       (VikLayer *, VikLayer *, GtkTreeIter *, GtkTreePath *);
+
+typedef gboolean      (*VikLayerFuncSelectClick)           (VikLayer *, GdkEventButton *, VikViewport *, tool_ed_t*);
+typedef gboolean      (*VikLayerFuncSelectMove)            (VikLayer *, GdkEventButton *, VikViewport *, tool_ed_t*);
+typedef gboolean      (*VikLayerFuncSelectRelease)         (VikLayer *, GdkEventButton *, VikViewport *, tool_ed_t*);
+typedef gboolean      (*VikLayerFuncSelectedViewportMenu)  (VikLayer *, GdkEventButton *, VikViewport *);
 
 typedef enum {
   VIK_MENU_ITEM_PROPERTY=1,
@@ -228,6 +234,7 @@ struct _VikLayerInterface {
   VikLayerFuncSublayerToggleVisible sublayer_toggle_visible;
   VikLayerFuncSublayerTooltip       sublayer_tooltip;
   VikLayerFuncLayerTooltip          layer_tooltip;
+  VikLayerFuncLayerSelected         layer_selected;
 
   VikLayerFuncMarshall              marshall;
   VikLayerFuncUnmarshall            unmarshall;
@@ -247,6 +254,11 @@ struct _VikLayerInterface {
   VikLayerFuncFreeCopiedItem        free_copied_item;
 
   VikLayerFuncDragDropRequest       drag_drop_request;
+
+  VikLayerFuncSelectClick           select_click;
+  VikLayerFuncSelectMove            select_move;
+  VikLayerFuncSelectRelease         select_release;
+  VikLayerFuncSelectedViewportMenu  show_viewport_menu;
 };
 
 VikLayerInterface *vik_layer_get_interface ( gint type );
@@ -273,7 +285,7 @@ gboolean vik_layer_properties ( VikLayer *layer, gpointer vp );
 void vik_layer_realize ( VikLayer *l, VikTreeview *vt, GtkTreeIter * layer_iter );
 void vik_layer_post_read ( VikLayer *layer, VikViewport *vp, gboolean from_file );
 
-gboolean vik_layer_sublayer_add_menu_items ( VikLayer *l, GtkMenu *menu, gpointer vlp, gint subtype, gpointer sublayer, GtkTreeIter *iter );
+gboolean vik_layer_sublayer_add_menu_items ( VikLayer *l, GtkMenu *menu, gpointer vlp, gint subtype, gpointer sublayer, GtkTreeIter *iter, VikViewport *vvp );
 
 VikLayer *vik_layer_copy ( VikLayer *vl, gpointer vp );
 void      vik_layer_marshall ( VikLayer *vl, guint8 **data, gint *len );
@@ -288,6 +300,8 @@ gboolean vik_layer_sublayer_toggle_visible ( VikLayer *l, gint subtype, gpointer
 const gchar* vik_layer_sublayer_tooltip ( VikLayer *l, gint subtype, gpointer sublayer );
 
 const gchar* vik_layer_layer_tooltip ( VikLayer *l );
+
+gboolean vik_layer_selected ( VikLayer *l, gint subtype, gpointer sublayer, gint type, gpointer vlp );
 
 /* TODO: put in layerspanel */
 GdkPixbuf *vik_layer_load_icon ( gint type );

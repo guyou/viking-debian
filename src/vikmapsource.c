@@ -16,6 +16,14 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+ /**
+  * SECTION:vikmapsource
+  * @short_description: the base class to describe map source
+  * 
+  * The #VikMapSource class is both the interface and the base class
+  * for the hierarchie of map source.
+  */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -56,6 +64,7 @@ vik_map_source_class_init (VikMapSourceClass *klass)
 	klass->get_copyright = NULL;
 	klass->get_license = NULL;
 	klass->get_license_url = NULL;
+	klass->get_logo = NULL;
 	klass->get_uniq_id = NULL;
 	klass->get_label = NULL;
 	klass->get_tilesize_x = NULL;
@@ -78,17 +87,27 @@ _supports_download_only_new (VikMapSource *self)
 	return FALSE;
 }
 
-const gchar *
-vik_map_source_get_copyright (VikMapSource *self)
+/**
+ * vik_map_source_get_copyright:
+ * @self: the VikMapSource of interest.
+ * @bbox: bounding box of interest.
+ * @zoom: the zoom level of interest.
+ * @fct: the callback function to use to return matching copyrights.
+ * @data: the user data to use to call the callbaack function.
+ *
+ * retreive copyright(s) for the corresponding bounding box and zoom level.
+ */
+void
+vik_map_source_get_copyright (VikMapSource *self, LatLonBBox bbox, gdouble zoom, void (*fct)(VikViewport*,const gchar*), void *data)
 {
 	VikMapSourceClass *klass;
-	g_return_val_if_fail (self != NULL, NULL);
-	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), NULL);
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (VIK_IS_MAP_SOURCE (self));
 	klass = VIK_MAP_SOURCE_GET_CLASS(self);
 
-	g_return_val_if_fail (klass->get_copyright != NULL, NULL);
+	g_return_if_fail (klass->get_copyright != NULL);
 
-	return (*klass->get_copyright)(self);
+	(*klass->get_copyright)(self, bbox, zoom, fct, data);
 }
 
 const gchar *
@@ -115,6 +134,19 @@ vik_map_source_get_license_url (VikMapSource *self)
 	g_return_val_if_fail (klass->get_license_url != NULL, NULL);
 
 	return (*klass->get_license_url)(self);
+}
+
+const GdkPixbuf *
+vik_map_source_get_logo (VikMapSource *self)
+{
+	VikMapSourceClass *klass;
+	g_return_val_if_fail (self != NULL, NULL);
+	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), NULL);
+	klass = VIK_MAP_SOURCE_GET_CLASS(self);
+
+	g_return_val_if_fail (klass->get_logo != NULL, NULL);
+
+	return (*klass->get_logo)(self);
 }
 
 guint8
@@ -218,7 +250,7 @@ vik_map_source_mapcoord_to_center_coord (VikMapSource *self, MapCoord *src, VikC
 
 	g_return_if_fail (klass->mapcoord_to_center_coord != NULL);
 
-	return (*klass->mapcoord_to_center_coord)(self, src, dest);
+	(*klass->mapcoord_to_center_coord)(self, src, dest);
 }
 
 int

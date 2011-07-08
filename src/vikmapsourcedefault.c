@@ -17,13 +17,23 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ /**
+  * SECTION:vikmapsourcedefault
+  * @short_description: the base class implementing most of generic features
+  * 
+  * The #VikMapSourceDefault class is the base class implementing most of
+  * generic feature, using properties or reducing complexity of some
+  * functions.
+  */
+
 #include "vikmapsourcedefault.h"
 #include "vikenumtypes.h"
 #include "download.h"
 
-static const gchar *map_source_get_copyright (VikMapSource *self);
+static void map_source_get_copyright (VikMapSource *self, LatLonBBox bbox, gdouble zoom, void (*fct)(VikViewport*,const gchar*), void *data);
 static const gchar *map_source_get_license (VikMapSource *self);
 static const gchar *map_source_get_license_url (VikMapSource *self);
+static const GdkPixbuf *map_source_get_logo (VikMapSource *self);
 
 static guint8 map_source_get_uniq_id (VikMapSource *self);
 static const gchar *map_source_get_label (VikMapSource *self);
@@ -42,7 +52,8 @@ struct _VikMapSourceDefaultPrivate
 	gchar *copyright;
 	gchar *license;
 	gchar *license_url;
-	
+	GdkPixbuf *logo;
+
 	guint8 uniq_id;
 	gchar *label;
 	guint16 tilesize_x;
@@ -79,6 +90,7 @@ vik_map_source_default_init (VikMapSourceDefault *object)
   priv->copyright = NULL;
   priv->license = NULL;
   priv->license_url = NULL;
+  priv->logo = NULL;
 }
 
 static void
@@ -94,6 +106,8 @@ vik_map_source_default_finalize (GObject *object)
   g_free (priv->license);
   priv->license = NULL;
   g_free (priv->license_url);
+  priv->license_url = NULL;
+  g_free (priv->logo);
   priv->license_url = NULL;
 	
   G_OBJECT_CLASS (vik_map_source_default_parent_class)->finalize (object);
@@ -114,7 +128,7 @@ vik_map_source_default_set_property (GObject      *object,
       priv->uniq_id = g_value_get_uint (value);
       break;
 
-	case PROP_LABEL:
+    case PROP_LABEL:
       g_free (priv->label);
       priv->label = g_strdup(g_value_get_string (value));
       break;
@@ -217,6 +231,7 @@ vik_map_source_default_class_init (VikMapSourceDefaultClass *klass)
 	parent_class->get_copyright =   map_source_get_copyright;
 	parent_class->get_license =     map_source_get_license;
 	parent_class->get_license_url = map_source_get_license_url;
+	parent_class->get_logo =        map_source_get_logo;
 	parent_class->get_uniq_id =    map_source_get_uniq_id;
 	parent_class->get_label =      map_source_get_label;
 	parent_class->get_tilesize_x = map_source_get_tilesize_x;
@@ -253,7 +268,7 @@ vik_map_source_default_class_init (VikMapSourceDefaultClass *klass)
                                0  /* minimum value */,
                                G_MAXUINT16 /* maximum value */,
                                0  /* default value */,
-                               G_PARAM_READWRITE);
+                               G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_TILESIZE_X, pspec);
 
 	pspec = g_param_spec_uint ("tilesize-y",
@@ -262,7 +277,7 @@ vik_map_source_default_class_init (VikMapSourceDefaultClass *klass)
                                0  /* minimum value */,
                                G_MAXUINT16 /* maximum value */,
                                0  /* default value */,
-                               G_PARAM_READWRITE);
+                               G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_TILESIZE_Y, pspec);
 
 	pspec = g_param_spec_enum("drawmode",
@@ -277,7 +292,7 @@ vik_map_source_default_class_init (VikMapSourceDefaultClass *klass)
 	                             "Copyright",
 	                             "The copyright of the map source",
 	                             NULL,
-	                             G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+	                             G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_COPYRIGHT, pspec);
 
 	pspec = g_param_spec_string ("license",
@@ -299,14 +314,19 @@ vik_map_source_default_class_init (VikMapSourceDefaultClass *klass)
 	object_class->finalize = vik_map_source_default_finalize;
 }
 
-static const gchar *
-map_source_get_copyright (VikMapSource *self)
+static void
+map_source_get_copyright (VikMapSource *self, LatLonBBox bbox, gdouble zoom, void (*fct)(VikViewport*,const gchar*), void *data)
 {
-	g_return_val_if_fail (VIK_IS_MAP_SOURCE_DEFAULT(self), NULL);
+	/* Just ignore bbox and zoom level */
+	g_return_if_fail (VIK_IS_MAP_SOURCE_DEFAULT(self));
+
+	g_debug ("%s: %g %g %g %g %g", __FUNCTION__,
+		bbox.south, bbox.north, bbox.east, bbox.west,
+		zoom);
 	
 	VikMapSourceDefaultPrivate *priv = VIK_MAP_SOURCE_DEFAULT_PRIVATE(self);
 
-	return priv->copyright;
+	(*fct) (data, priv->copyright);
 }
 
 static const gchar *
@@ -327,6 +347,16 @@ map_source_get_license_url (VikMapSource *self)
 	VikMapSourceDefaultPrivate *priv = VIK_MAP_SOURCE_DEFAULT_PRIVATE(self);
 
 	return priv->license_url;
+}
+
+static const GdkPixbuf *
+map_source_get_logo (VikMapSource *self)
+{
+	g_return_val_if_fail (VIK_IS_MAP_SOURCE_DEFAULT(self), NULL);
+
+	VikMapSourceDefaultPrivate *priv = VIK_MAP_SOURCE_DEFAULT_PRIVATE(self);
+
+	return priv->logo;
 }
 
 static guint8
@@ -402,7 +432,7 @@ _download_handle_init ( VikMapSource *self )
 static void
 _download_handle_cleanup ( VikMapSource *self, void *handle )
 {
-   return a_download_handle_cleanup ( handle );
+   a_download_handle_cleanup ( handle );
 }
 
 gchar *

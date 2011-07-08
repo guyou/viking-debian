@@ -37,38 +37,39 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = @build@
-host_triplet = @host@
 bin_PROGRAMS = viking$(EXEEXT)
-@GOOGLE_TRUE@am__append_1 = \
+@BING_TRUE@am__append_1 = \
+@BING_TRUE@	bingmapsource.c bingmapsource.h \
+@BING_TRUE@	bing.c bing.h
+
+@GOOGLE_TRUE@am__append_2 = \
 @GOOGLE_TRUE@	google.c google.h
 
-@TERRASERVER_TRUE@am__append_2 = \
+@TERRASERVER_TRUE@am__append_3 = \
 @TERRASERVER_TRUE@	terraservermapsource.c terraservermapsource.h \
 @TERRASERVER_TRUE@	terraserver.c terraserver.h
 
-@EXPEDIA_TRUE@am__append_3 = \
+@EXPEDIA_TRUE@am__append_4 = \
 @EXPEDIA_TRUE@	expedia.c expedia.h
 
-@OPENSTREETMAP_TRUE@am__append_4 = \
+@OPENSTREETMAP_TRUE@am__append_5 = \
 @OPENSTREETMAP_TRUE@	osm.c osm.h \
 @OPENSTREETMAP_TRUE@	osm-traces.c osm-traces.h
 
-@BLUEMARBLE_TRUE@am__append_5 = \
+@BLUEMARBLE_TRUE@am__append_6 = \
 @BLUEMARBLE_TRUE@	bluemarble.c bluemarble.h
 
-@GEONAMES_TRUE@am__append_6 = \
+@GEONAMES_TRUE@am__append_7 = \
 @GEONAMES_TRUE@	geonames.c geonames.h \
 @GEONAMES_TRUE@	geonamessearch.c geonamessearch.h
 
-@REALTIME_GPS_TRACKING_TRUE@am__append_7 = -lgps
+@REALTIME_GPS_TRACKING_TRUE@am__append_8 = -lgps
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/config.h.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/expat.m4 \
-	$(top_srcdir)/m4/glib-gettext.m4 $(top_srcdir)/m4/libcurl.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/libcurl.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -80,23 +81,24 @@ AR = ar
 ARFLAGS = cru
 libviking_a_AR = $(AR) $(ARFLAGS)
 libviking_a_LIBADD =
-am__libviking_a_SOURCES_DIST = modules.h modules.c curl_download.c \
-	curl_download.h menu.xml.h degrees_converters.c \
-	degrees_converters.h globals.c globals.h viking.h mapcoord.h \
-	config.h viktrack.c viktrack.h vikwaypoint.c vikwaypoint.h \
-	clipboard.c clipboard.h coords.c coords.h gpsmapper.c \
-	gpsmapper.h gpspoint.c gpspoint.h file.c file.h authors.h \
-	documenters.h dialog.c dialog.h util.c util.h download.c \
-	download.h vikenumtypes.c vikenumtypes.h viktreeview.c \
-	viktreeview.h viktrwlayer.c viktrwlayer.h viklayer.c \
-	viklayer.h viklayerspanel.c viklayerspanel.h vikcoordlayer.c \
-	vikcoordlayer.h vikstatus.c vikstatus.h vikwindow.c \
-	vikwindow.h vikviewport.c vikviewport.h vikaggregatelayer.c \
-	vikaggregatelayer.h vikgobjectbuilder.c vikgobjectbuilder.h \
-	vikgpslayer.c vikgpslayer.h vikgeoreflayer.c vikgeoreflayer.h \
-	vikfileentry.c vikfileentry.h vikgototool.c vikgototool.h \
-	vikgotoxmltool.c vikgotoxmltool.h vikgoto.c vikgoto.h \
-	viktrwlayer_tpwin.c viktrwlayer_tpwin.h viktrwlayer_propwin.c \
+am__libviking_a_SOURCES_DIST = bbox.h modules.h modules.c \
+	curl_download.c curl_download.h menu.xml.h \
+	degrees_converters.c degrees_converters.h globals.c globals.h \
+	viking.h mapcoord.h config.h viktrack.c viktrack.h \
+	vikwaypoint.c vikwaypoint.h clipboard.c clipboard.h coords.c \
+	coords.h gpsmapper.c gpsmapper.h gpspoint.c gpspoint.h file.c \
+	file.h authors.h documenters.h dialog.c dialog.h util.c util.h \
+	download.c download.h vikenumtypes.c vikenumtypes.h \
+	viktreeview.c viktreeview.h viktrwlayer.c viktrwlayer.h \
+	viklayer.c viklayer.h viklayerspanel.c viklayerspanel.h \
+	vikcoordlayer.c vikcoordlayer.h vikstatus.c vikstatus.h \
+	vikwindow.c vikwindow.h vikviewport.c vikviewport.h \
+	vikaggregatelayer.c vikaggregatelayer.h vikgobjectbuilder.c \
+	vikgobjectbuilder.h vikgpslayer.c vikgpslayer.h \
+	vikgeoreflayer.c vikgeoreflayer.h vikfileentry.c \
+	vikfileentry.h vikgototool.c vikgototool.h vikgotoxmltool.c \
+	vikgotoxmltool.h vikgoto.c vikgoto.h viktrwlayer_tpwin.c \
+	viktrwlayer_tpwin.h viktrwlayer_propwin.c \
 	viktrwlayer_propwin.h thumbnails.c thumbnails.h background.c \
 	background.h vikradiogroup.c vikradiogroup.h vikcoord.c \
 	vikcoord.h mapcache.c mapcache.h vikmapsource.c vikmapsource.h \
@@ -114,18 +116,20 @@ am__libviking_a_SOURCES_DIST = modules.h modules.c curl_download.c \
 	vikwebtoolcenter.c vikwebtoolcenter.h dems.c dems.h \
 	srtm_continent.c uibuilder.c uibuilder.h print-preview.c \
 	print-preview.h print.c print.h preferences.c preferences.h \
-	google.c google.h terraservermapsource.c \
-	terraservermapsource.h terraserver.c terraserver.h expedia.c \
-	expedia.h osm.c osm.h osm-traces.c osm-traces.h bluemarble.c \
-	bluemarble.h geonames.c geonames.h geonamessearch.c \
-	geonamessearch.h spotmaps.c spotmaps.h
-@GOOGLE_TRUE@am__objects_1 = google.$(OBJEXT)
-@TERRASERVER_TRUE@am__objects_2 = terraservermapsource.$(OBJEXT) \
+	bingmapsource.c bingmapsource.h bing.c bing.h google.c \
+	google.h terraservermapsource.c terraservermapsource.h \
+	terraserver.c terraserver.h expedia.c expedia.h osm.c osm.h \
+	osm-traces.c osm-traces.h bluemarble.c bluemarble.h geonames.c \
+	geonames.h geonamessearch.c geonamessearch.h spotmaps.c \
+	spotmaps.h
+@BING_TRUE@am__objects_1 = bingmapsource.$(OBJEXT) bing.$(OBJEXT)
+@GOOGLE_TRUE@am__objects_2 = google.$(OBJEXT)
+@TERRASERVER_TRUE@am__objects_3 = terraservermapsource.$(OBJEXT) \
 @TERRASERVER_TRUE@	terraserver.$(OBJEXT)
-@EXPEDIA_TRUE@am__objects_3 = expedia.$(OBJEXT)
-@OPENSTREETMAP_TRUE@am__objects_4 = osm.$(OBJEXT) osm-traces.$(OBJEXT)
-@BLUEMARBLE_TRUE@am__objects_5 = bluemarble.$(OBJEXT)
-@GEONAMES_TRUE@am__objects_6 = geonames.$(OBJEXT) \
+@EXPEDIA_TRUE@am__objects_4 = expedia.$(OBJEXT)
+@OPENSTREETMAP_TRUE@am__objects_5 = osm.$(OBJEXT) osm-traces.$(OBJEXT)
+@BLUEMARBLE_TRUE@am__objects_6 = bluemarble.$(OBJEXT)
+@GEONAMES_TRUE@am__objects_7 = geonames.$(OBJEXT) \
 @GEONAMES_TRUE@	geonamessearch.$(OBJEXT)
 am_libviking_a_OBJECTS = modules.$(OBJEXT) curl_download.$(OBJEXT) \
 	degrees_converters.$(OBJEXT) globals.$(OBJEXT) \
@@ -158,7 +162,7 @@ am_libviking_a_OBJECTS = modules.$(OBJEXT) curl_download.$(OBJEXT) \
 	print-preview.$(OBJEXT) print.$(OBJEXT) preferences.$(OBJEXT) \
 	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
-	spotmaps.$(OBJEXT)
+	$(am__objects_7) spotmaps.$(OBJEXT)
 libviking_a_OBJECTS = $(am_libviking_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(desktopdir)"
 PROGRAMS = $(bin_PROGRAMS)
@@ -277,7 +281,11 @@ GLIB_MKENUMS = @GLIB_MKENUMS@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
 GREP = @GREP@
+GTKDOC_CHECK = @GTKDOC_CHECK@
+GTKDOC_MKPDF = @GTKDOC_MKPDF@
+GTKDOC_REBASE = @GTKDOC_REBASE@
 HELP_DIR = @HELP_DIR@
+HTML_DIR = @HTML_DIR@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -343,22 +351,14 @@ am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
-build = @build@
 build_alias = @build_alias@
-build_cpu = @build_cpu@
-build_os = @build_os@
-build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
-host = @host@
 host_alias = @host_alias@
-host_cpu = @host_cpu@
-host_os = @host_os@
-host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -392,7 +392,7 @@ ENUM_H_FILES = \
 
 
 #if SPOTMAPS
-libviking_a_SOURCES = modules.h modules.c curl_download.c \
+libviking_a_SOURCES = bbox.h modules.h modules.c curl_download.c \
 	curl_download.h menu.xml.h degrees_converters.c \
 	degrees_converters.h globals.c globals.h viking.h mapcoord.h \
 	config.h viktrack.c viktrack.h vikwaypoint.c vikwaypoint.h \
@@ -427,12 +427,12 @@ libviking_a_SOURCES = modules.h modules.c curl_download.c \
 	srtm_continent.c uibuilder.c uibuilder.h print-preview.c \
 	print-preview.h print.c print.h preferences.c preferences.h \
 	$(am__append_1) $(am__append_2) $(am__append_3) \
-	$(am__append_4) $(am__append_5) $(am__append_6) spotmaps.c \
-	spotmaps.h
+	$(am__append_4) $(am__append_5) $(am__append_6) \
+	$(am__append_7) spotmaps.c spotmaps.h
 #endif
 viking_SOURCES = main.c
 LDADD = libviking.a $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ \
-	icons/libicons.a $(am__append_7)
+	icons/libicons.a $(am__append_8)
 AM_CFLAGS = -Wall -g -D_GNU_SOURCE \
 	$(PACKAGE_CFLAGS) \
 	@EXPAT_CFLAGS@ @LIBCURL_CPPFLAGS@
@@ -550,6 +550,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/acquire.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/babel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/background.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bing.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bingmapsource.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bluemarble.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clipboard.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coords.Po@am__quote@

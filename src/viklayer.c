@@ -394,6 +394,14 @@ gboolean vik_layer_sublayer_toggle_visible ( VikLayer *l, gint subtype, gpointer
   return TRUE; /* if unknown, will always be visible */
 }
 
+gboolean vik_layer_selected ( VikLayer *l, gint subtype, gpointer sublayer, gint type, gpointer vlp )
+{
+  if ( vik_layer_interfaces[l->type]->layer_selected )
+    return vik_layer_interfaces[l->type]->layer_selected ( l, subtype, sublayer, type, vlp );
+  /* Since no 'layer_selected' function explicitly turn off here */
+  return vik_window_clear_highlight ( (VikWindow *)VIK_GTK_WINDOW_FROM_LAYER(l) );
+}
+
 void vik_layer_realize ( VikLayer *l, VikTreeview *vt, GtkTreeIter *layer_iter )
 {
   l->vt = vt;
@@ -423,10 +431,10 @@ void vik_layer_add_menu_items ( VikLayer *l, GtkMenu *menu, gpointer vlp )
     vik_layer_interfaces[l->type]->add_menu_items ( l, menu, vlp );
 }
 
-gboolean vik_layer_sublayer_add_menu_items ( VikLayer *l, GtkMenu *menu, gpointer vlp, gint subtype, gpointer sublayer, GtkTreeIter *iter )
+gboolean vik_layer_sublayer_add_menu_items ( VikLayer *l, GtkMenu *menu, gpointer vlp, gint subtype, gpointer sublayer, GtkTreeIter *iter, VikViewport *vvp )
 {
   if ( vik_layer_interfaces[l->type]->sublayer_add_menu_items )
-    return vik_layer_interfaces[l->type]->sublayer_add_menu_items ( l, menu, vlp, subtype, sublayer, iter );
+    return vik_layer_interfaces[l->type]->sublayer_add_menu_items ( l, menu, vlp, subtype, sublayer, iter, vvp );
   return FALSE;
 }
 

@@ -47,6 +47,7 @@ ENUM_H_FILES = \
 	vikviewport.h
 
 libviking_a_SOURCES = \
+	bbox.h \
 	modules.h modules.c \
 	curl_download.c curl_download.h \
 	menu.xml.h \
@@ -120,6 +121,12 @@ libviking_a_SOURCES = \
 	print-preview.c print-preview.h \
 	print.c print.h \
 	preferences.c preferences.h
+
+if BING
+libviking_a_SOURCES += \
+	bingmapsource.c bingmapsource.h \
+	bing.c bing.h
+endif
 
 if GOOGLE
 libviking_a_SOURCES += \

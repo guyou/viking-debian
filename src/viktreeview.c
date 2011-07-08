@@ -262,7 +262,7 @@ static void treeview_add_columns ( VikTreeview *vt )
   g_signal_connect (renderer, "edited",
 		    G_CALLBACK (treeview_edited_cb), vt);
 
-  g_object_set (G_OBJECT (renderer), "xalign", 0.0, NULL);
+  g_object_set (G_OBJECT (renderer), "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 
   col_offset = gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (vt),
 							    -1, _("Layer Name"),
@@ -271,9 +271,11 @@ static void treeview_add_columns ( VikTreeview *vt )
 							    "editable", EDITABLE_COLUMN,
 							    NULL);
 
+  /* ATM the minimum overall width (and starting default) of the treeview size is determined
+     by the buttons added to the bottom of the layerspanel */
   column = gtk_tree_view_get_column (GTK_TREE_VIEW (vt), col_offset - 1);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+                                   GTK_TREE_VIEW_COLUMN_FIXED);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
 
   /* Layer type */
@@ -325,9 +327,29 @@ static void select_cb(GtkTreeSelection *selection, gpointer data)
   VikLayer *vl;
   VikWindow * vw;
 
+  gpointer tmp_layer;
+  VikLayer *tmp_vl = NULL;
+  gint tmp_subtype = 0;
+  gint tmp_type = VIK_TREEVIEW_TYPE_LAYER;
+
   if (!gtk_tree_selection_get_selected(selection, NULL, &iter)) return;
   type = vik_treeview_item_get_type( vt, &iter);
 
+  /* Find the Sublayer type if possible */
+  tmp_layer = vik_treeview_item_get_pointer ( vt, &iter );
+  if (tmp_layer) {
+    if (type == VIK_TREEVIEW_TYPE_SUBLAYER) {
+      tmp_vl = VIK_LAYER(vik_treeview_item_get_parent(vt, &iter));
+      tmp_subtype = vik_treeview_item_get_data(vt, &iter);
+      tmp_type = VIK_TREEVIEW_TYPE_SUBLAYER;
+    }
+  }
+  else {
+    tmp_subtype = vik_treeview_item_get_data(vt, &iter);
+    tmp_type = VIK_TREEVIEW_TYPE_SUBLAYER;
+  }
+
+  /* Go up the tree to find the Vik Layer */
   while ( type != VIK_TREEVIEW_TYPE_LAYER ) {
     if ( ! vik_treeview_item_get_parent_iter ( vt, &iter, &parent ) )
       return;
@@ -339,6 +361,19 @@ static void select_cb(GtkTreeSelection *selection, gpointer data)
 
   vw = VIK_WINDOW(VIK_GTK_WINDOW_FROM_LAYER(vl));
   vik_window_selected_layer(vw, vl);
+
+  if (tmp_vl == NULL)
+    tmp_vl = vl;
+  /* Apply settings now we have the all details  */
+  if ( vik_layer_selected ( tmp_vl,
+			    tmp_subtype,
+			    tmp_layer,
+			    tmp_type,
+			    vik_window_layers_panel(vw) ) ) {
+    /* Redraw required */
+    vik_layers_panel_emit_update ( vik_window_layers_panel(vw) );
+  }
+
 }
 
 static gboolean treeview_selection_filter(GtkTreeSelection *selection, GtkTreeModel *model, GtkTreePath *path, gboolean path_currently_selected, gpointer data)
@@ -443,9 +478,26 @@ gboolean vik_treeview_get_iter_at_pos ( VikTreeview *vt, GtkTreeIter *iter, gint
   return TRUE;
 }
 
-void vik_treeview_select_iter ( VikTreeview *vt, GtkTreeIter *iter )
+/* Option to ensure visible */
+void vik_treeview_select_iter ( VikTreeview *vt, GtkTreeIter *iter, gboolean view_all )
 {
-  gtk_tree_selection_select_iter ( gtk_tree_view_get_selection ( GTK_TREE_VIEW ( vt ) ), iter );
+  GtkTreeView *tree_view = GTK_TREE_VIEW ( vt );
+  GtkTreePath *path;
+
+  if ( view_all ) {
+    path = gtk_tree_model_get_path ( gtk_tree_view_get_model (tree_view), iter );
+    gtk_tree_view_expand_to_path ( tree_view, path );
+  }
+
+  gtk_tree_selection_select_iter ( gtk_tree_view_get_selection ( tree_view ), iter );
+
+  if ( view_all ) {
+    gtk_tree_view_scroll_to_cell  ( tree_view,
+				    path,
+				    gtk_tree_view_get_expander_column (tree_view),
+				    FALSE,
+				    0.0, 0.0 );
+  }
 }
 
 gboolean vik_treeview_get_selected_iter ( VikTreeview *vt, GtkTreeIter *iter )
@@ -483,6 +535,11 @@ void vik_treeview_expand ( VikTreeview *vt, GtkTreeIter *iter )
 void vik_treeview_item_select ( VikTreeview *vt, GtkTreeIter *iter )
 {
   gtk_tree_selection_select_iter ( gtk_tree_view_get_selection ( GTK_TREE_VIEW ( vt ) ), iter );
+}
+
+void vik_treeview_item_unselect ( VikTreeview *vt, GtkTreeIter *iter )
+{
+  gtk_tree_selection_unselect_iter ( gtk_tree_view_get_selection ( GTK_TREE_VIEW ( vt ) ), iter );
 }
 
 void vik_treeview_add_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent,

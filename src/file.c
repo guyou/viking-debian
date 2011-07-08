@@ -25,6 +25,7 @@
 #include "viking.h"
 
 #include "gpx.h"
+#include "babel.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -193,11 +194,13 @@ static void file_write ( VikAggregateLayer *top, FILE *f, gpointer vp )
       g_critical("Houston, we've had a problem. mode=%d", mode);
   }
 
-  fprintf ( f, "#VIKING GPS Data file " VIKING_URL "\n\nxmpp=%f\nympp=%f\nlat=%f\nlon=%f\nmode=%s\ncolor=%s\ndrawscale=%s\ndrawcentermark=%s\n",
+  fprintf ( f, "#VIKING GPS Data file " VIKING_URL "\n\nxmpp=%f\nympp=%f\nlat=%f\nlon=%f\nmode=%s\ncolor=%s\nhighlightcolor=%s\ndrawscale=%s\ndrawcentermark=%s\ndrawhighlight=%s\n",
       vik_viewport_get_xmpp ( VIK_VIEWPORT(vp) ), vik_viewport_get_ympp ( VIK_VIEWPORT(vp) ), ll.lat, ll.lon,
       modestring, vik_viewport_get_background_color(VIK_VIEWPORT(vp)),
+      vik_viewport_get_highlight_color(VIK_VIEWPORT(vp)),
       vik_viewport_get_draw_scale(VIK_VIEWPORT(vp)) ? "t" : "f",
-      vik_viewport_get_draw_centermark(VIK_VIEWPORT(vp)) ? "t" : "f" );
+      vik_viewport_get_draw_centermark(VIK_VIEWPORT(vp)) ? "t" : "f",
+      vik_viewport_get_draw_highlight(VIK_VIEWPORT(vp)) ? "t" : "f" );
 
   if ( ! VIK_LAYER(top)->visible )
     fprintf ( f, "visible=f\n" );
@@ -436,10 +439,14 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
         vik_viewport_set_drawmode ( VIK_VIEWPORT(vp), VIK_VIEWPORT_DRAWMODE_LATLON );
       else if ( stack->under == NULL && eq_pos == 5 && strncasecmp ( line, "color", eq_pos ) == 0 )
         vik_viewport_set_background_color ( VIK_VIEWPORT(vp), line+6 );
+      else if ( stack->under == NULL && eq_pos == 14 && strncasecmp ( line, "highlightcolor", eq_pos ) == 0 )
+        vik_viewport_set_highlight_color ( VIK_VIEWPORT(vp), line+15 );
       else if ( stack->under == NULL && eq_pos == 9 && strncasecmp ( line, "drawscale", eq_pos ) == 0 )
         vik_viewport_set_draw_scale ( VIK_VIEWPORT(vp), TEST_BOOLEAN(line+10) );
       else if ( stack->under == NULL && eq_pos == 14 && strncasecmp ( line, "drawcentermark", eq_pos ) == 0 )
         vik_viewport_set_draw_centermark ( VIK_VIEWPORT(vp), TEST_BOOLEAN(line+15) );
+      else if ( stack->under == NULL && eq_pos == 13 && strncasecmp ( line, "drawhighlight", eq_pos ) == 0 )
+        vik_viewport_set_draw_highlight ( VIK_VIEWPORT(vp), TEST_BOOLEAN(line+14) );
       else if ( stack->under && eq_pos == 4 && strncasecmp ( line, "name", eq_pos ) == 0 )
         vik_layer_rename ( VIK_LAYER(stack->data), line+5 );
       else if ( eq_pos == 7 && strncasecmp ( line, "visible", eq_pos ) == 0 )
@@ -553,8 +560,19 @@ static void xfclose ( FILE *f )
   }
 }
 
-/* 0 on failure, 1 on success (vik file) 2 on success (other file) */
-gshort a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filename_or_uri )
+/*
+ * Function to determine if a filename is a 'viking' type file
+ */
+gboolean check_file_magic_vik ( const gchar *filename )
+{
+  gboolean result;
+  FILE *ff = xfopen ( filename, "r" );
+  result = check_magic ( ff, VIK_MAGIC );
+  xfclose ( ff );
+  return result;
+}
+
+VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filename_or_uri )
 {
   char *filename = (char *)filename_or_uri;
   if (strncmp(filename, "file://", 7) == 0)
@@ -566,24 +584,34 @@ gshort a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filen
   g_assert ( vp );
 
   if ( ! f )
-    return 0;
+    return LOAD_TYPE_READ_FAILURE;
 
   if ( !is_gpx_file && check_magic ( f, VIK_MAGIC ) )
   {
     file_read ( top, f, vp );
     if ( f != stdin )
       xfclose(f);
-    return 1;
+    return LOAD_TYPE_VIK_SUCCESS;
   }
   else
   {
     VikLayer *vtl = vik_layer_create ( VIK_LAYER_TRW, vp, NULL, FALSE );
     vik_layer_rename ( vtl, a_file_basename ( filename ) );
 
-    if ( is_gpx_file || check_magic ( f, GPX_MAGIC ) )
+    // In fact both kml & gpx files start the same as they are in xml
+    if ( check_file_ext ( filename, ".kml" ) && check_magic ( f, GPX_MAGIC ) ) {
+      // Implicit Conversion
+      if ( ! a_babel_convert_from ( VIK_TRW_LAYER(vtl), "-i kml", NULL, filename, NULL ) ) {
+	// Probably want to remove the vtl, but I'm not sure how yet...
+	xfclose(f);
+	return LOAD_TYPE_GPSBABEL_FAILURE;
+      }
+    }
+    else if ( is_gpx_file || check_magic ( f, GPX_MAGIC ) ) {
       a_gpx_read_file ( VIK_TRW_LAYER(vtl), f );
+    }
     else
-     a_gpspoint_read_file ( VIK_TRW_LAYER(vtl), f );
+      a_gpspoint_read_file ( VIK_TRW_LAYER(vtl), f );
 
     vik_layer_post_read ( vtl, vp, TRUE );
 
@@ -592,7 +620,7 @@ gshort a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filen
     vik_trw_layer_auto_set_view ( VIK_TRW_LAYER(vtl), vp );
 
     xfclose(f);
-    return 2;
+    return LOAD_TYPE_OTHER_SUCCESS;
   }
 }
 
@@ -671,6 +699,11 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
         case FILE_TYPE_GPSPOINT:
           a_gpspoint_write_file ( vtl, f );
           break;
+        case FILE_TYPE_KML:
+	  fclose ( f );
+	  f = NULL;
+          return a_babel_convert_to ( vtl, "-o kml", NULL, filename, NULL );
+          break;
         default:
           g_critical("Houston, we've had a problem. file_type=%d", file_type);
       }
@@ -704,7 +737,11 @@ const gchar *a_get_viking_dir()
       g_critical("Unable to find a base directory");
 
     /* Build the name of the directory */
+#ifdef __APPLE__
+    viking_dir = g_build_filename(home, "/Library/Application Support/Viking", NULL);
+#else
     viking_dir = g_build_filename(home, ".viking", NULL);
+#endif
     if (g_file_test(viking_dir, G_FILE_TEST_EXISTS) == FALSE)
       g_mkdir(viking_dir, 0755);
   }

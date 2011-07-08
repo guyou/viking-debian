@@ -201,6 +201,7 @@ WAYPOINT_ICONS_LARGE += wp_zoo_large.png
 
 ICONS = \
   viking.png \
+  bing_maps.png \
   addtr_18.png \
   begintr_18.png \
   addwp_18.png \
@@ -215,6 +216,7 @@ ICONS = \
   showpic_18.png \
   zoom_18.png \
   iscissors_18.png \
+  select_18.png \
   thumbnails.png \
   vikaggregatelayer.png \
   vikcoordlayer.png \
