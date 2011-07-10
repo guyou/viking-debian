@@ -1,3 +1,11 @@
+viking (1.2.1-1) unstable; urgency=low
+
+  * [e81daa57] Imported Upstream version 1.2.1
+  * [1afd3ad4] Don't run dh_autoreconf.
+    Seems to fail due to missing files in the tarball.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 10 Jul 2011 10:50:29 +0200
+
 viking (1.1-1) unstable; urgency=low
 
   * [271c7221] Imported Upstream version 1.1
