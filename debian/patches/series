@@ -1,2 +1,3 @@
+curl-ftbfs-fix.patch
 0001-disable-po-check.patch
 0003-Add-missing-lz.patch
