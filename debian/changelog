@@ -1,3 +1,10 @@
+viking (1.2.1-2) unstable; urgency=low
+
+  * [81581646] Don't include curl/types.h as its deprecated and removed.
+    Thanks to Lucas Nussbaum (Closes: #639062)
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sat, 08 Oct 2011 11:24:21 +0200
+
 viking (1.2.1-1) unstable; urgency=low
 
   * [e81daa57] Imported Upstream version 1.2.1
