@@ -6,11 +6,9 @@ Subject: [PATCH] Add missing -lz.
  src/Makefile.am |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/src/Makefile.am b/src/Makefile.am
-index e598210..7500bf4 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -140,7 +140,7 @@ endif
+@@ -168,7 +168,7 @@ libviking_a_SOURCES += \
  
  viking_SOURCES = main.c
  
@@ -19,4 +17,3 @@ index e598210..7500bf4 100644
  if REALTIME_GPS_TRACKING
  LDADD           += -lgps
  endif
--- 
