@@ -1,4 +1,16 @@
 
+2011-11-03
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Releasing version 1.2.2
+
+2011-11-03
+Hanno Boeck <ctulhu@users.sourceforge.net>:
+	* Fix compilation with curl 7.21.7 (SF#3376584)
+
+2011-11-03
+Rob Norris <rw_norris@hotmail.com>:
+	* Increase default tile age check to 7 days.
+
 2011-06-16
 Rob Norris <rw_norris@hotmail.com>:
 	* Releasing viking 1.2.1
