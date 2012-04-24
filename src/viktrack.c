@@ -309,6 +309,42 @@ gdouble vik_track_get_average_speed(const VikTrack *tr)
   return (time == 0) ? 0 : ABS(len/time);
 }
 
+/**
+ * Based on a simple average speed, but with a twist - to give a moving average.
+ *  . GPSs often report a moving average in their statistics output
+ *  . bicycle speedos often don't factor in time when stopped - hence reporting a moving average for speed
+ *
+ * Often GPS track will record every second but not when stationary
+ * This method doesn't use samples that differ over the specified time limit - effectively skipping that time chunk from the total time
+ *
+ * Suggest to use 60 seconds as the stop length (as the default used in the TrackWaypoint draw stops factor)
+ */
+gdouble vik_track_get_average_speed_moving (const VikTrack *tr, int stop_length_seconds)
+{
+  gdouble len = 0.0;
+  guint32 time = 0;
+  if ( tr->trackpoints )
+  {
+    GList *iter = tr->trackpoints->next;
+    while (iter)
+    {
+      if ( VIK_TRACKPOINT(iter->data)->has_timestamp &&
+          VIK_TRACKPOINT(iter->prev->data)->has_timestamp &&
+          (! VIK_TRACKPOINT(iter->data)->newsegment) )
+      {
+	if ( ( VIK_TRACKPOINT(iter->data)->timestamp - VIK_TRACKPOINT(iter->prev->data)->timestamp ) < stop_length_seconds ) {
+	  len += vik_coord_diff ( &(VIK_TRACKPOINT(iter->data)->coord),
+				  &(VIK_TRACKPOINT(iter->prev->data)->coord) );
+	
+	  time += ABS(VIK_TRACKPOINT(iter->data)->timestamp - VIK_TRACKPOINT(iter->prev->data)->timestamp);
+	}
+      }
+      iter = iter->next;
+    }
+  }
+  return (time == 0) ? 0 : ABS(len/time);
+}
+
 gdouble vik_track_get_max_speed(const VikTrack *tr)
 {
   gdouble maxspeed = 0.0, speed = 0.0;
@@ -412,7 +448,8 @@ gdouble *vik_track_make_elevation_map ( const VikTrack *tr, guint16 num_chunks )
        **/
 
       if ( ignore_it )
-        pts[current_chunk] = VIK_DEFAULT_ALTITUDE;
+	// Seemly can't determine average for this section - so use last known good value (much better than just sticking in zero)
+        pts[current_chunk] = altitude1;
       else
         pts[current_chunk] = altitude1 + (altitude2-altitude1)*((dist_along_seg - (chunk_length/2))/current_seg_length);
 
@@ -445,7 +482,7 @@ gdouble *vik_track_make_elevation_map ( const VikTrack *tr, guint16 num_chunks )
 
       /* final seg */
       dist_along_seg = chunk_length - current_dist;
-      if ( ignore_it || !iter->next ) {
+      if ( ignore_it || ( iter && !iter->next ) ) {
         pts[current_chunk] = current_area_under_curve / current_dist;
         if (!iter->next) {
           int i;
@@ -1066,6 +1103,20 @@ void vik_track_apply_dem_data ( VikTrack *tr )
   }
 }
 
+/*
+ * Apply DEM data (if available) - to only the last trackpoint
+ */
+void vik_track_apply_dem_data_last_trackpoint ( VikTrack *tr )
+{
+  gint16 elev;
+  if ( tr->trackpoints ) {
+    /* As in vik_track_apply_dem_data above - use 'best' interpolation method */
+    elev = a_dems_get_elev_by_coord ( &(VIK_TRACKPOINT(g_list_last(tr->trackpoints)->data)->coord), VIK_DEM_INTERPOL_BEST );
+    if ( elev != VIK_DEM_INVALID_ELEVATION )
+      VIK_TRACKPOINT(g_list_last(tr->trackpoints)->data)->altitude = elev;
+  }
+}
+
 /* appends t2 to t1, leaving t2 with no trackpoints */
 void vik_track_steal_and_append_trackpoints ( VikTrack *t1, VikTrack *t2 )
 {
@@ -1081,9 +1132,8 @@ void vik_track_steal_and_append_trackpoints ( VikTrack *t1, VikTrack *t2 )
 }
 
 /* starting at the end, looks backwards for the last "double point", a duplicate trackpoint.
- * this is indicative of magic scissors continued use. If there is no double point,
- * deletes all the trackpoints. Returns the new end of the track (or the start if
- * there are no double points
+ * If there is no double point, deletes all the trackpoints.
+ * Returns the new end of the track (or the start if there are no double points)
  */
 VikCoord *vik_track_cut_back_to_double_point ( VikTrack *tr )
 {

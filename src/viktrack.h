@@ -83,6 +83,7 @@ void vik_track_remove_dup_points ( VikTrack *vt );
 
 gdouble vik_track_get_max_speed(const VikTrack *tr);
 gdouble vik_track_get_average_speed(const VikTrack *tr);
+gdouble vik_track_get_average_speed_moving ( const VikTrack *tr, int stop_length_seconds );
 
 void vik_track_convert ( VikTrack *tr, VikCoordMode dest_mode );
 gdouble *vik_track_make_elevation_map ( const VikTrack *tr, guint16 num_chunks );
@@ -101,14 +102,17 @@ void vik_track_marshall ( VikTrack *tr, guint8 **data, guint *len);
 VikTrack *vik_track_unmarshall (guint8 *data, guint datalen);
 
 void vik_track_apply_dem_data ( VikTrack *tr);
+/*
+ * Apply DEM data (if available) - to only the last trackpoint
+ */
+void vik_track_apply_dem_data_last_trackpoint ( VikTrack *tr );
 
 /* appends t2 to t1, leaving t2 with no trackpoints */
 void vik_track_steal_and_append_trackpoints ( VikTrack *t1, VikTrack *t2 );
 
 /* starting at the end, looks backwards for the last "double point", a duplicate trackpoint.
- * this is indicative of magic scissors continued use. If there is no double point,
- * deletes all the trackpoints. returns new end of the track (or the start if
- * there are no double points)
+ * If there is no double point, deletes all the trackpoints.
+ * Returns the new end of the track (or the start if there are no double points
  */
 VikCoord *vik_track_cut_back_to_double_point ( VikTrack *tr );
 

@@ -79,7 +79,7 @@
           <para role="author">Guilhem Bonnefille <email>guilhem.bonnefille@gmail.com</email></para>
           <para role="publisher">GNOME Documentation Project</para>
         </revdescription>
-      </revision> 
+      </revision>
     </revhistory>
 
     <releaseinfo>This manual describes version &appversion; of &appname;.</releaseinfo>
@@ -148,7 +148,7 @@ Analyzing speed at different places (to some degree), adding waypoints where you
 </listitem>
 <listitem>
 <para>
-Downloading and storing OSM and/or Terraserver maps on your hard drive and looking at them later.
+Downloading and storing OpenStreetMap and/or Terraserver maps on your hard drive and looking at them later.
 </para>
 </listitem>
 <listitem>
@@ -159,6 +159,16 @@ Editing tracks and trackpoints, joining and splitting up tracks
 <listitem>
 <para>
 Show the live GPS position on the map (for use on a mobile device - e.g. a laptop)
+</para>
+</listitem>
+<listitem>
+<para>
+Import track+waypoint files of various types via GPSBabel
+</para>
+</listitem>
+<listitem>
+<para>
+View, create and update Geotagged Images (using EXIF data).
 </para>
 </listitem>
 </itemizedlist>
@@ -239,6 +249,7 @@ Layers supported by &appname; are:
 <listitem><para>GPS</para></listitem>
 <listitem><para>DEM</para></listitem>
 <listitem><para>Coord</para></listitem>
+<listitem><para>Map</para></listitem>
 <listitem><para>GeoRef</para></listitem>
 </itemizedlist>
 <para>
@@ -264,8 +275,6 @@ The cut/copy/paste options can be accessed in a variety of ways once the layer h
 <para>
 See the individual section for detail about each layer.
 </para>
-
-</section>
 
 <section><title>TrackWaypoint Layer</title>
 <para>
@@ -346,19 +355,27 @@ This gets 'interesting' points from Wikipedia for the specified view: either wit
 </para>
 </section>
 
+<section><title>Geotag Images</title>
+<para>
+This starts the Geotagging Images dialog against all tracks in the layer.
+See <link linkend="geotagging">Geotagging</link> for further detail.
+</para>
+</section>
+
 <section id="osm_upload"><title>Upload To OSM</title>
 <para>
-This opens a dialog to upload all tracks and waypoints to OSM traces.
-Useful if you are an OSM contributor (you will need an OSM account), these details can be stored in &appname; preferences.
+This opens a dialog to upload all tracks and waypoints to <ulink url="http://openstreetmap.org/">OpenStreetMap</ulink> traces.
+Useful if you are an OpenStreetMap contributor (you will need an OpenStreetMap account), these details can be stored in &appname; <link linkend="prefs_osm">preferences.</link>
 </para>
 <para>
- &appname; allows you to edit a track, e.g. remove duplicate points, perhaps remove track points leading to your home and then upload it to OSM.
+ &appname; allows you to edit a track, e.g. remove duplicate points, perhaps remove track points leading to your home and then upload it to OpenStreetMap.
 </para>
 <note>
 <para>
  <emphasis role="bold">Warning!</emphasis>
-The password is transferred <emphasis role="bold">unencrypted</emphasis> in every request sent to the OSM server. This is due to OSM's basic authentication method.
+The password is transferred <emphasis role="bold">unencrypted</emphasis> in every request sent to the OpenStreetMap server. This is due to the use of OpenStreetMap's basic authentication method.
 </para>
+<para>Currently &appname; does not support the <ulink url="http://oauth.net/">OAuth</ulink> mechanism.</para>
 </note>
 </section>
 
@@ -390,6 +407,13 @@ This runs <application>GPSBabel</application> on the layer using information fro
 </itemizedlist>
 <para>
 The result is generated in a new Track/Waypoint layer.
+</para>
+</section>
+
+<section><title>Geotag Images</title>
+<para>
+This starts the Geotagging Images dialog using the specific track.
+See <link linkend="geotagging">Geotagging</link> for further detail.
 </para>
 </section>
 
@@ -507,9 +531,9 @@ Changes the current tool to add trackpoints to the end of the track.
 </para>
 </section>
 
-<section><title>Extend Using Magic Scissors</title>
+<section><title>Extend Using Route Finder</title>
 <para>
-Enables the Magic Scissors tool. Thus on a subsequent left click in the viewport, a route is calculated from the end of track to that point using Google's route service and applied to the track.
+Enables the Route Finder tool. Thus on a subsequent left click in the viewport, a route is calculated from the end of track to that point using Google's route service and applied to the track.
 </para>
 </section>
 
@@ -527,14 +551,14 @@ This selects the track to be used in the <link linkend="filter_with_track">Filte
 
 <section><title>View Google Directions</title>
 <para>
-This option is only available on a track created using the Magic Scissors tool.
+This option is only available on a track created using the Route Finder tool.
 </para>
 <para>
 Launch a web browser to see the Google directions page which yielded the route.
 </para>
 <note>
 <para>
-The record of the Google route is stored in the track's comment, so if the comment is changed (or the route was created by something other than the Magic Scissors tool) this will not work correctly.
+The record of the Google route is stored in the track's comment, so if the comment is changed (or the route was created by something other than the Route Finder tool) this will not work correctly.
 </para>
 </note>
 </section>
@@ -545,6 +569,10 @@ The record of the Google route is stored in the track's comment, so if the comme
 
 <para>
 This shows a dialog with detailed information for the waypoint. Many properties of the waypoint can changed here, such as the comment, the symbol used in drawing or the image (normally a photograph taken at this position) assiocated with it. When a waypoint has an image, a thumbnail of it is drawn in the viewport for the waypoint (in preference to the symbol).
+</para>
+<para>
+If the waypoint has an associated image, then the Geotag information may be updated, either with updating the file's modification timestamp or not.
+This can be useful when the waypoint has been moved.
 </para>
 
 </section><!-- WP Prop END -->
@@ -570,6 +598,32 @@ Same as the layer <link linkend="new_wp">New Waypoint</link>.
 </section>
 
 </section><!-- WP END -->
+
+<section id="geotagging"><title>Version1.3+: Geotag Images</title>
+<para>
+This dialog allows geotagging images (normally taken with a digital camera) via interpolation against a specific track or all tracks in the TrackWaypoint layer - depending on how it is invoked.
+</para>
+<para>
+Images need to have an EXIF DATE_TIME_ORIGINAL (nearly always set by a camera). This timestamp is then used to find the location when the image(s) was taken by searching through the track(s) to find the nearest time - interpolating between points if necessary to set the location.
+</para>
+<note>
+<para>
+Generally it is good policy to synchronize your camera's clock with your GPS clock before taking photographs. However the times can be adjusted afterwards (if necessary) to take into consideration clock differences.
+</para>
+</note>
+<para>
+Various options allow control of how the geotagging process is performed:
+</para>
+<itemizedlist>
+<listitem><para>Images - Add the images used for geotagging</para></listitem>
+<listitem><para>Create Waypoints</para></listitem>
+<listitem><para>Write EXIF</para></listitem>
+<listitem><para>Overwrite Existing GPS Information</para></listitem>
+<listitem><para>Interpolate Between Track Segments</para></listitem>
+<listitem><para>Image Time Offset - The number of seconds to ADD to the photos time to make it match the GPS data. Calculate this with (GPS - Photo). Can be negative or positive. Useful to adjust times when a camera's timestamp was incorrect.</para></listitem>
+<listitem><para>Image Timezone - The timezone that the used when the images were created. For example, if a camera is set to AWST or +8:00 hours. Enter +8:00 here so that the correct adjustment to the images' time can be made. GPS data is always in UTC.</para></listitem>
+</itemizedlist>
+</section>
 
 </section><!-- TRW Layer END -->
 
@@ -620,7 +674,7 @@ There are several options to quickly delete a subsection of data:
 
 </section><!-- End GPS -->
 
-<section><title> DEM (Digital Elevation Model) Layer</title>
+<section><title>DEM (Digital Elevation Model) Layer</title>
 <para>
 This layer provides elevation data from the <ulink url="http://www2.jpl.nasa.gov/srtm/">Shuttle Radar Topography Mission (SRTM)</ulink>
 </para>
@@ -651,19 +705,20 @@ This layer provides a single map resource, you may have multiple map layers but 
 You will need an open internet connection when you are downloading maps, but once downloaded they are available from the hard disk cache. When map are avaliable from the disk cache it is much faster and can be used offline.
 </para>
 <para>
-Some maps are continually improving over time (e.g. OSM) and so in order to not to have to (re)download the data all the time &appname; employs a timeout method - 'Tile Age' to determine whether to access the server. However a forced refresh for the current view can be made via the <guilabel>Reload All Onscreen Maps</guilabel> option.
+Some maps are continually improving over time (e.g. OpenStreetMap) and so in order to not to have to (re)download the data all the time &appname; employs a timeout method - 'Tile Age' to determine whether to access the server. However a forced refresh for the current view can be made via the <guilabel>Reload All Onscreen Maps</guilabel> option.
 </para>
 <para>
-Inbuilt maps include various <ulink url="http://en.wikipedia.org/wiki/TerraServer-USA">Terraserver</ulink> (Primarily USA coverage) and <ulink url="http://en.wikipedia.org/wiki/OpenStreetMap">OpenStreetMap (OSM)</ulink> ones and more:
+Inbuilt maps include various <ulink url="http://en.wikipedia.org/wiki/TerraServer-USA">Terraserver</ulink> (Primarily USA coverage) and <ulink url="http://openstreetmap.org/">OpenStreetMap (OSM)</ulink> ones and more:
 </para>
 <itemizedlist>
+<listitem><para>Bing Bird's Eye (Aerial) Maps (&appname; Version1.2+)</para></listitem>
 <listitem><para>Terraserver Topos</para></listitem>
 <listitem><para>Terraserver Aerials</para></listitem>
 <listitem><para>Terraserver Urban Areas</para></listitem>
-<listitem><para>OpenStreetMap (Osmarender)</para></listitem>
-<listitem><para>OpenStreetMap (Mapnik) - This is the default</para></listitem>
-<listitem><para>OpenStreetMap (Maplint)</para></listitem>
+<listitem><para>OpenStreetMap (Mapquest) - This is the default (&appname; Version1.3+)</para></listitem>
+<listitem><para>OpenStreetMap (Mapnik)</para></listitem>
 <listitem><para>OpenStreetMap (Cycle)</para></listitem>
+<listitem><para>OpenStreetMap (Transport) (&appname; Version1.3+)</para></listitem>
 <listitem><para>NASA BlueMarble</para></listitem>
 <listitem><para>SpotMap (&appname; Version1.1+)</para></listitem>
 </itemizedlist>
@@ -762,6 +817,8 @@ This layer is allows drawing of grid lines on the viewport.
 </para>
 </section><!-- End Coord -->
 
+</section>
+
 <section><title>Tools</title>
 <para>
 You can use the scroll wheel and the right-click to zoom and pan no matter what tool you are using.
@@ -785,6 +842,13 @@ Left or Middle-click: make the clicked point on the map the center
 Middle-click and drag: pan
 </para>
 
+<section><title>Pan</title>
+<para>
+Pan moves the viewpoint. A single click centers the viewport at that point, whereas click and drag dynamically moves the view around.
+This is the default tool.
+</para>
+</section>
+
 <section><title>Zoom</title>
 <para>
 Zooms in and out on the clicked part of the map.
@@ -795,6 +859,15 @@ Zooms in and out on the clicked part of the map.
 <para>
 The ruler is used to measure the bearing and distance between two points: Click on first point and then move the mouse point around - the values will be continually updated.
 A second click will 'freeze' the ruler at that point.
+</para>
+</section>
+
+<section><title>Version1.1+: Select</title>
+<para>
+The select tool allows one to choose any waypoint or track by clicking on it (or reasonably near) in the viewpoint.
+</para>
+<para>
+ATM to select a track one must actually click on a trackpoint, which is also selected.
 </para>
 </section>
 
@@ -812,10 +885,10 @@ Left click will open the new waypoint dialog using the specified position.
 <para>
 Left click to create a new trackpoint. If it's the initial trackpoint you will be asked to enter a name for the track.
 If <keycap>Ctrl</keycap> is held at the same time, it will jump the new trackpoint position to a nearby existing trackpoint.
-Right click or <keycap>Backspace</keycap> : undo one point.
+Right click or <keycap>Backspace</keycap>: undo one point.
 </para>
 <para>
-Double click or <keycap>Escape</keycap> : finish track creation.
+Double click or <keycap>Escape</keycap>: finish track creation.
 </para>
 </section>
 
@@ -849,7 +922,7 @@ On Windows this uses the default system image viewer.
 </para>
 </section>
 
-<section><title>Magic Scissors</title>
+<section><title>Route Finder</title>
 <para>Creates a track using Google maps routing between two points.
 Requires an internet connection. Click one point, then click another to
 create a track.
@@ -921,7 +994,8 @@ This feature is called <guilabel>Webtools</guilabel>. It is also known as Extern
 </section>
 
 <!-- Preferences -->
-<section><title>Preferences</title>
+<section id="prefs"><title>Preferences</title>
+<section><title>General</title>
 <section><title>Localisation</title>
 <para>You can select units displayed by &appname; to best fit your usage.</para>
 <figure>
@@ -950,6 +1024,14 @@ This feature is called <guilabel>Webtools</guilabel>. It is also known as Extern
 </screenshot>
 </figure>
 </section>
+<section><title>Waypoint Icon Size</title>
+<para>An option exists to control the icon (symbol) size used for waypoints
+</para>
+</section>
+<section><title>'Home' Default Location: Latitude and Longitude</title>
+<para>You can set the 'Home' location directly by inputting the latitude and longitude in decimal degrees.
+</para>
+</section>
 <section><title>Tile's age</title>
 <para>This age is used to decided wether or not a new request to tile server must be done.
 </para>
@@ -961,7 +1043,46 @@ This value is used when you create a new map layer.
 </para>
 <para>You are still able to change this value in each map layer properties.</para>
 </section>
+<section><title>Map Cache Memory Size</title>
+<para>This controls the amount of maps that are stored in memory, rather than having to reread from disk.
+Generally if you have a system with lots of memory it's recommended to increase this value.
+</para>
 </section>
+</section>
+
+<section><title>Export/External</title>
+<section><title>KML Export Units</title>
+<para>Allows setting the units used when saved as the KML file type, such as Metric or Statue units</para>
+</section>
+<section><title>Image Viewer (Not Windows)</title>
+<para>Allows setting the program used to view images associated with Waypoints.</para>
+<para>By default this is set to 'xdg-open' which should open the system's default image viewer, however this can be overridden with this setting.</para>
+<para>Note: for Windows systems, viewing images associated with Waypoints always uses the system's default image viewer.</para>
+</section>
+<section><title>External GPX programs</title>
+<para>Allows setting the programs invoked via the TrackWaypoint Layer -> Export Layer -> Open With 'program'</para>
+<para>Two options are given so that it can be configured for various uses such as:</para>
+<itemizedlist>
+<listitem><para>An OSM editor (default)</para></listitem>
+<listitem><para>Some other user defined program</para></listitem>
+</itemizedlist>
+</section>
+</section>
+
+<section id="prefs_osm"><title>OpenStreetMap Traces</title>
+<section><title>OSM Username + Password</title>
+<para>Store your OSM details here, so that you don't need to enter it in every time in the <link linkend="osm_upload">Upload to OSM</link> procedure.</para>
+<warning>
+<para>
+Your OSM password will be stored in plain text.
+</para>
+</warning>
+</section>
+</section>
+
+</section>
+
+<!-- HOWTOS-->
 <section><title>Mini-Howto's</title>
 <section><title>Getting Started</title>
 <para>
@@ -997,37 +1118,19 @@ Currently Garmin, Magellan, DeLorme and Navilink protocols are supported.
 <procedure>
 <title>Method C</title>
 <step>
-<para>Get data from files in GPX format. For other formats (kml,
-ozi...), use a converter such as GPSBabel to convert the files to GPX
-format first.
-</para>
-</step>
-<step>
 <para>
-Open up &appname; and use File - Open or File - Append
-file to open the file.
+Get data from files in GPX or KML format, which can be opened directly.
+Use <menuchoice><guimenu>File</guimenu><guimenuitem>Open</guimenuitem></menuchoice>
+</para>
+<para>
+Other formats can be imported that are supported by GPSBabel.
+<menuchoice><guimenu>File</guimenu><guimenuitem>Acquire</guimenuitem><guimenuitem>Import File With GPSBabel...</guimenuitem></menuchoice>
 </para>
 </step>
 <step>
 <para>
 Expand Tracks or Waypoints. Right-click on the
 track or waypoint of interest and select <guimenuitem>Goto "Center"</guimenuitem>.
-</para>
-</step>
-</procedure>
-<procedure>
-<title>Method D</title>
-<step>
-<para>
-Use File - Append File to add your track and waypoint data to
-&appname;. This has been tested with Geocaching.com's *.loc format,
-(others(?)).
-</para>
-</step>
-<step>
-<para>
-Expand Tracks or Waypoints. Right-click on the tack or
-point of interest and select <guimenuitem>Goto "Center"</guimenuitem>.
 </para>
 </step>
 </procedure>
@@ -1211,6 +1314,12 @@ Do not forget to save your configuration (as discussed above).
 </section>
 
 </section>
+<section><title>OpenStreetMap project</title>
+<para>
+<ulink url="http://openstreetmap.org/">OpenStreetMap (OSM)</ulink> is a collaborative project to create a free editable map of the world.
+One of sources of data for this project is GPS tracks.
+&appname; supports this project via the GPS Traces methods, both uploading and downloading such data.
+</para>
 <section><title>Uploading data to OpenStreetMap</title>
 <para>
 It is possible to upload data directly from &appname; to OpenStreetMap.
@@ -1234,64 +1343,34 @@ this, simply select the layer and right click on it. Then, select
 <title>Fill in the form</title>
 <para>
 In both cases, &appname; will retain some information.
-The email field is the email you used to subscribed into OSM.
+The email field is the email you used to subscribed into OpenStreetMap.
 The password field is the password you used with this account.
 The filename is the name you want your upload has on the server. This information is displayed by the osm server.
 The description is some descriptive information.
 The tags field is a white separated list of tag.
 </para> 
 </formalpara>
-
 </section>
-<section><title>Geocoded Photo</title>
+<section><title>Downloading traces from OpenStreetMap</title>
 <para>
-HOWTO GEOCODE YOUR PHOTOS AND SEE THEM IN VIKING 
+It is possible to download GPS traces directly from OpenStreetMap into &appname;.
+This feature can be really useful for checking existing data before uploading new ones.
 </para>
-<para>1) Synchronize your camera's clock with your GPS clock. If your
-camera's clock doesn't have a seconds value you can change, you might
-try setting the minute value just when the minute changes.
+<formalpara>
+<title>Download all visible tracks</title>
+<para>One solution is to select
+<menuchoice>
+<guimenu>File</guimenu>
+<guisubmenu>Acquire</guisubmenu>
+<guimenuitem>OSM traces...</guimenuitem>
+</menuchoice>.
+Each request can get up to 5,000 points.
+The dialog box allows setting which group of 5,000 points to get. These groups are known as 'Page Numbers' which start at 0.
+Increasing the page number parameter allows one to request the subsequent sets of point groups.
+See <ulink url="http://wiki.openstreetmap.org/wiki/API_v0.6#GPS_Traces"/> for further detail.
 </para>
-<para>
-2) Activate the track log on your GPS.
-</para>
-<para>3) Get outside and take some pictures with your camera while
-making sure your GPS has reception. If you forgot to turn your GPS on
-or forgot to bring it when you took a picture but you know where you
-took the picture, you can make a waypoint with a name of the format
-YYMMDDhhmm, representing the time the picture was taken, to record
-where you were at that time.
-</para>
-<para>4) Get home and download your pictures and GPS data. You can
-download the GPS data several ways. The first is using gpspoint to
-download from a Garmin GPS: <programlisting>gpspoint -p /dev/ttyS0 -dw -dt -of 2004-04-02-trip1</programlisting>
-</para>
-<para>
-Where /dev/ttyS0 is the serial port the GPS is connected to. If you
-don't have a Garmin GPS, or if you don't feel like install gpspoint,
-you can use my version of gpsbabel with support for gpspoint files. You
-can use gpsbabel to either translate the GPS data from a format you
-already have the data in or download it directly from your GPS
-reciever. A typical command line would something like this:<programlisting>gpsbabel -i garmin -f /dev/ttyS0 -o gpspoint -F 2004-04-02-trip1</programlisting>
-</para>
-<para>
-5) Launch GPSPhoto.
-</para>
-<para>
-6) You must now bring your photos into GPSPhoto. Either drag them (or
-the directory containing them) from your favorite file manager to the
-list on the left of the GPSPhoto window, or use the buttons below the
-list to find them.
-</para>
-<para>
-7) Do the same for your GPS data file(s), dragging them to the list on the right of the GPSPhoto Window.
-</para>
-<para>8) Click the Execute button, and choose a location to save the
-gpspoint file containing the waypoints for your photos. Then click OK
-to write the waypoints to this file.
-</para>
-<para>
-9) Open Viking and open both your original GPS data file and your image waypoint file just created.
-</para>
+</formalpara>
+</section>
 </section>
 
 <section id="extend_viking">
@@ -1313,7 +1392,7 @@ to write the waypoints to this file.
       <para>You can find more examples in the documentation part of the distribution.</para>
       <section>
         <title>Map Source</title>
-        <para>It is possible to add new map's sources. The file is <filename>~/.viking/maps.xml</filename>.</para>
+        <para>It is possible to add new map's sources. The file is <filename>~/.viking/maps.xml</filename> for <trademark>UNIX</trademark> like systems and <filename>C:\Documents and Settings\<replaceable>username</replaceable>\.viking\maps.xml</filename> on <trademark>Windows XP</trademark>.</para>
         <para>An example of the file is in the distribution <filename>doc/examples/maps.xml</filename>. Further examples and values are online in the <ulink url="http://sourceforge.net/apps/mediawiki/viking/index.php?title=Maps">Maps Wiki</ulink></para>
 
         <para>The VikSlippyMapSource allows to declare any map's source working like OpenStreetMap. It supports the following properties:
@@ -1531,6 +1610,15 @@ Accept: */*
 </para>
 </section>
 
+</section>
+
+<section><title>Dependencies</title>
+<formalpara><title>gpsbabel</title>
+<para>&appname; uses <ulink url="http://gpsbabel.org/">GPSBabel</ulink> to convert data.</para>
+</formalpara>
+<formalpara><title>unbuffer (optional)</title>
+<para>&appname; uses unbuffer command to optimize conversion calls.</para>
+</formalpara>
 </section>
 
 </article>

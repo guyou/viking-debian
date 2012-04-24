@@ -74,7 +74,7 @@ static void gps_download_cb( gpointer layer_and_vlp[2] );
 static void gps_empty_upload_cb( gpointer layer_and_vlp[2] );
 static void gps_empty_download_cb( gpointer layer_and_vlp[2] );
 static void gps_empty_all_cb( gpointer layer_and_vlp[2] );
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
 static void gps_empty_realtime_cb( gpointer layer_and_vlp[2] );
 static void gps_start_stop_tracking_cb( gpointer layer_and_vlp[2] );
 static void realtime_tracking_draw(VikGpsLayer *vgl, VikViewport *vp);
@@ -119,7 +119,7 @@ typedef struct {
   GtkWidget *progress_label;
   GtkWidget *trk_label;
   VikViewport *vvp;
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   gboolean realtime_tracking;
 #endif
 } GpsSession;
@@ -127,14 +127,14 @@ static void gps_session_delete(GpsSession *sess);
 
 static gchar *params_groups[] = {
   "Data Mode",
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   "Realtime Tracking Mode",
 #endif
 };
 
 enum {GROUP_DATA_MODE, GROUP_REALTIME_MODE};
 
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
 static gchar *params_vehicle_position[] = {
   "Keep vehicle at center",
   "Keep vehicle on screen",
@@ -151,8 +151,11 @@ enum {
 static VikLayerParam gps_layer_params[] = {
   { "gps_protocol", VIK_LAYER_PARAM_UINT, GROUP_DATA_MODE, N_("GPS Protocol:"), VIK_LAYER_WIDGET_COMBOBOX, params_protocols, NULL},
   { "gps_port", VIK_LAYER_PARAM_STRING, GROUP_DATA_MODE, N_("Serial Port:"), VIK_LAYER_WIDGET_COMBOBOX, params_ports, NULL},
-
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+  { "gps_download_tracks", VIK_LAYER_PARAM_BOOLEAN, GROUP_DATA_MODE, N_("Download Tracks:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL},
+  { "gps_upload_tracks", VIK_LAYER_PARAM_BOOLEAN, GROUP_DATA_MODE, N_("Upload Tracks:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL},
+  { "gps_download_waypoints", VIK_LAYER_PARAM_BOOLEAN, GROUP_DATA_MODE, N_("Download Waypoints:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL},
+  { "gps_upload_waypoints", VIK_LAYER_PARAM_BOOLEAN, GROUP_DATA_MODE, N_("Upload Waypoints:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL},
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   { "record_tracking", VIK_LAYER_PARAM_BOOLEAN, GROUP_REALTIME_MODE, N_("Recording tracks"), VIK_LAYER_WIDGET_CHECKBUTTON},
   { "center_start_tracking", VIK_LAYER_PARAM_BOOLEAN, GROUP_REALTIME_MODE, N_("Jump to current position on start"), VIK_LAYER_WIDGET_CHECKBUTTON},
   { "moving_map_method", VIK_LAYER_PARAM_UINT, GROUP_REALTIME_MODE, N_("Moving Map Method:"), VIK_LAYER_WIDGET_RADIOGROUP_STATIC, params_vehicle_position, NULL},
@@ -163,7 +166,9 @@ static VikLayerParam gps_layer_params[] = {
 };
 enum {
   PARAM_PROTOCOL=0, PARAM_PORT,
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+  PARAM_DOWNLOAD_TRACKS, PARAM_UPLOAD_TRACKS,
+  PARAM_DOWNLOAD_WAYPOINTS, PARAM_UPLOAD_WAYPOINTS,
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   PARAM_REALTIME_REC, PARAM_REALTIME_CENTER_START, PARAM_VEHICLE_POSITION, PARAM_GPSD_HOST, PARAM_GPSD_PORT, PARAM_GPSD_RETRY_INTERVAL,
 #endif /* VIK_CONFIG_REALTIME_GPS_TRACKING */
   NUM_PARAMS};
@@ -226,18 +231,18 @@ VikLayerInterface vik_gps_layer_interface = {
 };
 
 enum {TRW_DOWNLOAD=0, TRW_UPLOAD,
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   TRW_REALTIME,
 #endif
   NUM_TRW};
 static gchar * trw_names[] = {
   N_("GPS Download"), N_("GPS Upload"),
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   N_("GPS Realtime Tracking"),
 #endif
 };
 
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
 typedef struct {
   struct gps_data_t gpsd;
   VikGpsLayer *vgl;
@@ -255,7 +260,7 @@ struct _VikGpsLayer {
   VikTrwLayer * trw_children[NUM_TRW];
   GList * children;	/* used only for writing file */
   int cur_read_child;   /* used only for reading file */
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   VglGpsd *vgpsd;
   gboolean realtime_tracking;  /* set/reset only by the callback */
   gboolean first_realtime_trackpoint;
@@ -284,6 +289,10 @@ struct _VikGpsLayer {
 #endif /* VIK_CONFIG_REALTIME_GPS_TRACKING */
   guint protocol_id;
   gchar *serial_port;
+  gboolean download_tracks;
+  gboolean download_waypoints;
+  gboolean upload_tracks;
+  gboolean upload_waypoints;
 };
 
 GType vik_gps_layer_get_type ()
@@ -422,7 +431,19 @@ static gboolean gps_layer_set_param ( VikGpsLayer *vgl, guint16 id, VikLayerPara
       else
         g_warning(_("Unknown serial port device"));
       break;
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+    case PARAM_DOWNLOAD_TRACKS:
+      vgl->download_tracks = data.b;
+      break;
+    case PARAM_UPLOAD_TRACKS:
+      vgl->upload_tracks = data.b;
+      break;
+    case PARAM_DOWNLOAD_WAYPOINTS:
+      vgl->download_waypoints = data.b;
+      break;
+    case PARAM_UPLOAD_WAYPOINTS:
+      vgl->upload_waypoints = data.b;
+      break;
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
     case PARAM_GPSD_HOST:
       if (vgl->gpsd_host)
         g_free(vgl->gpsd_host);
@@ -465,7 +486,19 @@ static VikLayerParamData gps_layer_get_param ( VikGpsLayer *vgl, guint16 id, gbo
       rv.s = vgl->serial_port;
       g_debug("%s: %s", __FUNCTION__, rv.s);
       break;
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+    case PARAM_DOWNLOAD_TRACKS:
+      rv.b = vgl->download_tracks;
+      break;
+    case PARAM_UPLOAD_TRACKS:
+      rv.b = vgl->upload_tracks;
+      break;
+    case PARAM_DOWNLOAD_WAYPOINTS:
+      rv.b = vgl->download_waypoints;
+      break;
+    case PARAM_UPLOAD_WAYPOINTS:
+      rv.b = vgl->upload_waypoints;
+      break;
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
     case PARAM_GPSD_HOST:
       rv.s = vgl->gpsd_host ? vgl->gpsd_host : "";
       break;
@@ -503,7 +536,7 @@ VikGpsLayer *vik_gps_layer_new (VikViewport *vp)
   vgl->children = NULL;
   vgl->cur_read_child = 0;
 
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   vgl->realtime_tracking = FALSE;
   vgl->first_realtime_trackpoint = FALSE;
   vgl->vgpsd = NULL;
@@ -527,6 +560,10 @@ VikGpsLayer *vik_gps_layer_new (VikViewport *vp)
 #endif /* VIK_CONFIG_REALTIME_GPS_TRACKING */
   vgl->protocol_id = 0;
   vgl->serial_port = NULL;
+  vgl->download_tracks = TRUE;
+  vgl->download_waypoints = TRUE;
+  vgl->upload_tracks = TRUE;
+  vgl->upload_waypoints = TRUE;
 
 #ifndef WINDOWS
   /* Attempt to auto set default USB serial port entry */
@@ -565,7 +602,7 @@ static void vik_gps_layer_draw ( VikGpsLayer *vgl, gpointer data )
     if (!vik_viewport_get_half_drawn( VIK_VIEWPORT(data)))
       vik_layer_draw ( vl, data );
   }
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   if (vgl->realtime_tracking) {
     if (VIK_LAYER(vgl) == trigger) {
       if ( vik_viewport_get_half_drawn ( VIK_VIEWPORT(data) ) ) {
@@ -600,20 +637,26 @@ static void gps_layer_add_menu_items( VikGpsLayer *vgl, GtkMenu *menu, gpointer 
   gtk_menu_shell_append ( GTK_MENU_SHELL(menu), item );
   gtk_widget_show ( item );
 
-  item = gtk_menu_item_new_with_mnemonic ( _("_Upload to GPS") );
+  /* Now with icons */
+  item = gtk_image_menu_item_new_with_mnemonic ( _("_Upload to GPS") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_GO_UP, GTK_ICON_SIZE_MENU) );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(gps_upload_cb), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );
 
-  item = gtk_menu_item_new_with_mnemonic ( _("Download from _GPS") );
+  item = gtk_image_menu_item_new_with_mnemonic ( _("Download from _GPS") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_GO_DOWN, GTK_ICON_SIZE_MENU) );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(gps_download_cb), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );
 
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
-  item = gtk_menu_item_new_with_mnemonic ( vgl->realtime_tracking  ?
-                                           "_Stop Realtime Tracking" :
-                                           "_Start Realtime Tracking" );
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
+  item = gtk_image_menu_item_new_with_mnemonic ( vgl->realtime_tracking  ?
+						 "_Stop Realtime Tracking" :
+						 "_Start Realtime Tracking" );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, vgl->realtime_tracking ?
+				  gtk_image_new_from_stock (GTK_STOCK_MEDIA_STOP, GTK_ICON_SIZE_MENU) :
+				  gtk_image_new_from_stock (GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU) );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(gps_start_stop_tracking_cb), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );
@@ -622,23 +665,27 @@ static void gps_layer_add_menu_items( VikGpsLayer *vgl, GtkMenu *menu, gpointer 
   gtk_menu_shell_append ( GTK_MENU_SHELL(menu), item );
   gtk_widget_show ( item );
 
-  item = gtk_menu_item_new_with_mnemonic ( _("Empty _Realtime") );
+  item = gtk_image_menu_item_new_with_mnemonic ( _("Empty _Realtime") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU) );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(gps_empty_realtime_cb), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );
 #endif /* VIK_CONFIG_REALTIME_GPS_TRACKING */
 
-  item = gtk_menu_item_new_with_mnemonic ( _("E_mpty Upload") );
+  item = gtk_image_menu_item_new_with_mnemonic ( _("E_mpty Upload") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU) );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(gps_empty_upload_cb), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );
 
-  item = gtk_menu_item_new_with_mnemonic ( _("_Empty Download") );
+  item = gtk_image_menu_item_new_with_mnemonic ( _("_Empty Download") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU) );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(gps_empty_download_cb), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );
 
-  item = gtk_menu_item_new_with_mnemonic ( _("Empty _All") );
+  item = gtk_image_menu_item_new_with_mnemonic ( _("Empty _All") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU) );
   g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(gps_empty_all_cb), pass_along );
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show ( item );
@@ -666,7 +713,7 @@ static void vik_gps_layer_free ( VikGpsLayer *vgl )
       disconnect_layer_signal(VIK_LAYER(vgl->trw_children[i]), vgl);
     g_object_unref(vgl->trw_children[i]);
   }
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   if (vgl->realtime_track_gc != NULL)
     g_object_unref(vgl->realtime_track_gc);
   if (vgl->realtime_track_bg_gc != NULL)
@@ -744,12 +791,9 @@ static void gps_layer_drag_drop_request ( VikGpsLayer *val_src, VikGpsLayer *val
 {
   VikTreeview *vt = VIK_LAYER(val_src)->vt;
   VikLayer *vl = vik_treeview_item_get_pointer(vt, src_item_iter);
-  GtkTreeIter dest_iter;
   gchar *dp;
-  gboolean target_exists;
 
   dp = gtk_tree_path_to_string(dest_path);
-  target_exists = vik_treeview_get_iter_from_path_str(vt, &dest_iter, dp);
 
   /* vik_gps_layer_delete unrefs, but we don't want that here.
    * we're still using the layer. */
@@ -1024,13 +1068,12 @@ static void gps_comm_thread(GpsSession *sess)
   gboolean result;
 
   if (sess->direction == GPS_DOWN)
-    result = a_babel_convert_from (sess->vtl, sess->cmd_args,
-        (BabelStatusFunc) gps_download_progress_func, sess->port, sess);
+    result = a_babel_convert_from (sess->vtl, sess->cmd_args, sess->port,
+        (BabelStatusFunc) gps_download_progress_func, sess);
   else
-    result = a_babel_convert_to (sess->vtl, sess->cmd_args,
-        (BabelStatusFunc) gps_upload_progress_func, sess->port, sess);
+    result = a_babel_convert_to (sess->vtl, sess->cmd_args, sess->port,
+        (BabelStatusFunc) gps_upload_progress_func, sess);
 
-  gdk_threads_enter();
   if (!result) {
     gtk_label_set_text ( GTK_LABEL(sess->status_label), _("Error: couldn't find gpsbabel.") );
   } 
@@ -1042,14 +1085,14 @@ static void gps_comm_thread(GpsSession *sess)
       gtk_dialog_set_response_sensitive ( GTK_DIALOG(sess->dialog), GTK_RESPONSE_REJECT, FALSE );
 
       /* Do not change the view if we are following the current GPS position */
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
       if (!sess->realtime_tracking)
 #endif
       {
 	if (sess->vvp) {
 	  /* View the data available */
 	  vik_trw_layer_auto_set_view ( sess->vtl, sess->vvp) ;
-	  vik_layer_emit_update ( VIK_LAYER(sess->vtl) );
+	  vik_layer_emit_update ( VIK_LAYER(sess->vtl), TRUE ); // Yes update from background thread
 	}
       }
     } else {
@@ -1067,25 +1110,39 @@ static void gps_comm_thread(GpsSession *sess)
     g_mutex_unlock(sess->mutex);
     gps_session_delete(sess);
   }
-  gdk_threads_leave();
   g_thread_exit(NULL);
 }
 
-static gint gps_comm(VikTrwLayer *vtl, gps_dir dir, vik_gps_proto proto, gchar *port, gboolean tracking, VikViewport *vvp) {
+static gint gps_comm(VikTrwLayer *vtl, gps_dir dir, vik_gps_proto proto, gchar *port, gboolean tracking, VikViewport *vvp, gboolean do_tracks, gboolean do_waypoints) {
   GpsSession *sess = g_malloc(sizeof(GpsSession));
+  char *tracks = NULL;
+  char *waypoints = NULL;
 
   sess->mutex = g_mutex_new();
   sess->direction = dir;
   sess->vtl = vtl;
   sess->port = g_strdup(port);
   sess->ok = TRUE;
-  sess->cmd_args = g_strdup_printf("-D 9 -t -w -%c %s",
-      (dir == GPS_DOWN) ? 'i' : 'o', protocols_args[proto]);
   sess->window_title = (dir == GPS_DOWN) ? _("GPS Download") : _("GPS Upload");
   sess->vvp = vvp;
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   sess->realtime_tracking = tracking;
 #endif
+
+  if (do_tracks)
+    tracks = "-t";
+  else
+    tracks = "";
+  if (do_waypoints)
+    waypoints = "-w";
+  else
+    waypoints = "";
+
+  sess->cmd_args = g_strdup_printf("-D 9 %s %s -%c %s",
+				   tracks, waypoints, (dir == GPS_DOWN) ? 'i' : 'o', protocols_args[proto]);
+  tracks = NULL;
+  waypoints = NULL;
+
   sess->dialog = gtk_dialog_new_with_buttons ( "", VIK_GTK_WINDOW_FROM_LAYER(vtl), 0, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL );
   gtk_dialog_set_response_sensitive ( GTK_DIALOG(sess->dialog),
       GTK_RESPONSE_ACCEPT, FALSE );
@@ -1136,7 +1193,7 @@ static void gps_upload_cb( gpointer layer_and_vlp[2] )
 {
   VikGpsLayer *vgl = (VikGpsLayer *)layer_and_vlp[0];
   VikTrwLayer *vtl = vgl->trw_children[TRW_UPLOAD];
-  gps_comm(vtl, GPS_UP, vgl->protocol_id, vgl->serial_port, FALSE, NULL);
+  gps_comm(vtl, GPS_UP, vgl->protocol_id, vgl->serial_port, FALSE, NULL, vgl->upload_tracks, vgl->upload_waypoints);
 }
 
 static void gps_download_cb( gpointer layer_and_vlp[2] )
@@ -1145,10 +1202,10 @@ static void gps_download_cb( gpointer layer_and_vlp[2] )
   VikTrwLayer *vtl = vgl->trw_children[TRW_DOWNLOAD];
   VikWindow *vw = VIK_WINDOW(VIK_GTK_WINDOW_FROM_LAYER(vgl));
   VikViewport *vvp = vik_window_viewport(vw);
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
-  gps_comm(vtl, GPS_DOWN, vgl->protocol_id, vgl->serial_port, vgl->realtime_tracking, vvp);
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
+  gps_comm(vtl, GPS_DOWN, vgl->protocol_id, vgl->serial_port, vgl->realtime_tracking, vvp, vgl->download_tracks, vgl->download_waypoints);
 #else
-  gps_comm(vtl, GPS_DOWN, vgl->protocol_id, vgl->serial_port, FALSE, vvp);
+  gps_comm(vtl, GPS_DOWN, vgl->protocol_id, vgl->serial_port, FALSE, vvp, vgl->download_tracks, vgl->download_waypoints);
 #endif
 }
 
@@ -1176,7 +1233,7 @@ static void gps_empty_download_cb( gpointer layer_and_vlp[2] )
   vik_trw_layer_delete_all_tracks ( vgl-> trw_children[TRW_DOWNLOAD]);
 }
 
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
 static void gps_empty_realtime_cb( gpointer layer_and_vlp[2] )
 {
   VikGpsLayer *vgl = (VikGpsLayer *)layer_and_vlp[0];
@@ -1202,13 +1259,13 @@ static void gps_empty_all_cb( gpointer layer_and_vlp[2] )
   vik_trw_layer_delete_all_tracks ( vgl-> trw_children[TRW_UPLOAD]);
   vik_trw_layer_delete_all_waypoints ( vgl-> trw_children[TRW_DOWNLOAD]);
   vik_trw_layer_delete_all_tracks ( vgl-> trw_children[TRW_DOWNLOAD]);
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
   vik_trw_layer_delete_all_waypoints ( vgl-> trw_children[TRW_REALTIME]);
   vik_trw_layer_delete_all_tracks ( vgl-> trw_children[TRW_REALTIME]);
 #endif
 }
 
-#ifdef VIK_CONFIG_REALTIME_GPS_TRACKING
+#if defined (VIK_CONFIG_REALTIME_GPS_TRACKING) && defined (GPSD_API_MAJOR_VERSION)
 static void rt_gpsd_disconnect(VikGpsLayer *vgl);
 static gboolean rt_gpsd_connect(VikGpsLayer *vgl, gboolean ask_if_failed);
 
@@ -1230,7 +1287,7 @@ static void realtime_tracking_draw(VikGpsLayer *vgl, VikViewport *vp)
     gint half_back_x, half_back_y;
     gint half_back_bg_x, half_back_bg_y;
     gint pt_x, pt_y;
-    gint ptbg_x, ptbg_y;
+    gint ptbg_x;
     gint side1_x, side1_y, side2_x, side2_y;
     gint side1bg_x, side1bg_y, side2bg_x, side2bg_y;
 
@@ -1249,7 +1306,7 @@ static void realtime_tracking_draw(VikGpsLayer *vgl, VikViewport *vp)
 
     pt_y = half_back_y-24*heading_cos;
     pt_x = half_back_x+24*heading_sin;
-    ptbg_y = half_back_bg_y-28*heading_cos;
+    //ptbg_y = half_back_bg_y-28*heading_cos;
     ptbg_x = half_back_bg_x+28*heading_sin;
 
     side1_y = half_back_y+9*heading_sin;
@@ -1393,9 +1450,7 @@ static void gpsd_raw_hook(VglGpsd *vgpsd, gchar *data)
     vgl->first_realtime_trackpoint = FALSE;
     create_realtime_trackpoint(vgl, FALSE);
 
-    gdk_threads_enter();
-    vik_layer_emit_update ( update_all ? VIK_LAYER(vgl) : VIK_LAYER(vgl->trw_children[TRW_REALTIME]));
-    gdk_threads_leave();
+    vik_layer_emit_update ( update_all ? VIK_LAYER(vgl) : VIK_LAYER(vgl->trw_children[TRW_REALTIME]), TRUE); // Yes update from background thread
   }
 }
 
@@ -1403,8 +1458,17 @@ static gboolean gpsd_data_available(GIOChannel *source, GIOCondition condition, 
 {
   VikGpsLayer *vgl = data;
   if (condition == G_IO_IN) {
-    if (!gps_poll(&vgl->vgpsd->gpsd))
+#if GPSD_API_MAJOR_VERSION == 3 || GPSD_API_MAJOR_VERSION == 4
+    if (!gps_poll(&vgl->vgpsd->gpsd)) {
+#elif GPSD_API_MAJOR_VERSION == 5
+    if (gps_read(&vgl->vgpsd->gpsd) > -1) {
+      // Reuse old function to perform operations on the new GPS data
+      gpsd_raw_hook(vgl->vgpsd, NULL);
+#else
+      // Broken compile
+#endif
       return TRUE;
+    }
     else {
       g_warning("Disconnected from gpsd. Trying to reconnect");
       rt_gpsd_disconnect(vgl);
@@ -1433,21 +1497,26 @@ static gchar *make_track_name(VikTrwLayer *vtl)
 static gboolean rt_gpsd_try_connect(gpointer *data)
 {
   VikGpsLayer *vgl = (VikGpsLayer *)data;
-#ifndef HAVE_GPS_OPEN_R
+#if GPSD_API_MAJOR_VERSION == 3
   struct gps_data_t *gpsd = gps_open(vgl->gpsd_host, vgl->gpsd_port);
 
   if (gpsd == NULL) {
-#else
+#elif GPSD_API_MAJOR_VERSION == 4
   vgl->vgpsd = g_malloc(sizeof(VglGpsd));
 
   if (gps_open_r(vgl->gpsd_host, vgl->gpsd_port, /*(struct gps_data_t *)*/vgl->vgpsd) != 0) {
+#elif GPSD_API_MAJOR_VERSION == 5
+  vgl->vgpsd = g_malloc(sizeof(VglGpsd));
+  if (gps_open(vgl->gpsd_host, vgl->gpsd_port, &vgl->vgpsd->gpsd) != 0) {
+#else
+// Delibrately break compilation...
 #endif
     g_warning("Failed to connect to gpsd at %s (port %s). Will retry in %d seconds",
                      vgl->gpsd_host, vgl->gpsd_port, vgl->gpsd_retry_interval);
     return TRUE;   /* keep timer running */
   }
 
-#ifndef HAVE_GPS_OPEN_R
+#if GPSD_API_MAJOR_VERSION == 3
   vgl->vgpsd = realloc(gpsd, sizeof(VglGpsd));
 #endif
   vgl->vgpsd->vgl = vgl;
@@ -1465,15 +1534,21 @@ static gboolean rt_gpsd_try_connect(gpointer *data)
     vik_trw_layer_add_track(vtl, vgl->realtime_track_name, vgl->realtime_track);
   }
 
+#if GPSD_API_MAJOR_VERSION == 3 || GPSD_API_MAJOR_VERSION == 4
   gps_set_raw_hook(&vgl->vgpsd->gpsd, gpsd_raw_hook);
+#endif
+
   vgl->realtime_io_channel = g_io_channel_unix_new(vgl->vgpsd->gpsd.gps_fd);
   vgl->realtime_io_watch_id = g_io_add_watch( vgl->realtime_io_channel,
                     G_IO_IN | G_IO_ERR | G_IO_HUP, gpsd_data_available, vgl);
-#if HAVE_GPS_STREAM
-  gps_stream(&vgl->vgpsd->gpsd, WATCH_ENABLE, NULL);
-#else
+
+#if GPSD_API_MAJOR_VERSION == 3
   gps_query(&vgl->vgpsd->gpsd, "w+x");
 #endif
+#if GPSD_API_MAJOR_VERSION == 4 || GPSD_API_MAJOR_VERSION == 5
+  gps_stream(&vgl->vgpsd->gpsd, WATCH_ENABLE, NULL);
+#endif
+
   return FALSE;  /* no longer called by timeout */
 }
 
@@ -1512,13 +1587,13 @@ static gboolean rt_gpsd_connect(VikGpsLayer *vgl, gboolean ask_if_failed)
 
 static void rt_gpsd_disconnect(VikGpsLayer *vgl)
 {
-  if (vgl->realtime_io_watch_id) {
-    g_source_remove(vgl->realtime_io_watch_id);
-    vgl->realtime_io_watch_id = 0;
-  }
   if (vgl->realtime_retry_timer) {
     g_source_remove(vgl->realtime_retry_timer);
     vgl->realtime_retry_timer = 0;
+  }
+  if (vgl->realtime_io_watch_id) {
+    g_source_remove(vgl->realtime_io_watch_id);
+    vgl->realtime_io_watch_id = 0;
   }
   if (vgl->realtime_io_channel) {
     GError *error = NULL;
@@ -1526,11 +1601,14 @@ static void rt_gpsd_disconnect(VikGpsLayer *vgl)
     vgl->realtime_io_channel = NULL;
   }
   if (vgl->vgpsd) {
+#if GPSD_API_MAJOR_VERSION == 4 || GPSD_API_MAJOR_VERSION == 5
+    gps_stream(&vgl->vgpsd->gpsd, WATCH_DISABLE, NULL);
+#endif
     gps_close(&vgl->vgpsd->gpsd);
-#ifdef HAVE_GPS_OPEN_R
-    g_free(vgl->vgpsd);
-#else
+#if GPSD_API_MAJOR_VERSION == 3
     free(vgl->vgpsd);
+#elif GPSD_API_MAJOR_VERSION == 4 || GPSD_API_MAJOR_VERSION == 5
+    g_free(vgl->vgpsd);
 #endif
     vgl->vgpsd = NULL;
   }

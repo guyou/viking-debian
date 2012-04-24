@@ -69,7 +69,7 @@ typedef enum {
 
 /* (Hopefully!) Human friendly altitude grid sizes - note no fixed 'ratio' just numbers that look nice...*/
 static const gdouble chunksa[] = {2.0, 5.0, 10.0, 15.0, 20.0,
-				  25.0, 50.0, 75.0, 100.0,
+				  25.0, 40.0, 50.0, 75.0, 100.0,
 				  150.0, 200.0, 250.0, 375.0, 500.0,
 				  750.0, 1000.0, 2000.0, 5000.0, 10000.0, 100000.0};
 
@@ -110,6 +110,7 @@ typedef struct _propwidgets {
   GtkWidget *w_duptp_count;
   GtkWidget *w_max_speed;
   GtkWidget *w_avg_speed;
+  GtkWidget *w_mvg_speed;
   GtkWidget *w_avg_dist;
   GtkWidget *w_elev_range;
   GtkWidget *w_elev_gain;
@@ -149,7 +150,11 @@ typedef struct _propwidgets {
   gdouble   min_altitude;
   gdouble   max_altitude;
   gdouble   draw_min_altitude;
+  gdouble   draw_min_altitude_time;
   gint      cia; // Chunk size Index into Altitudes
+  gint      ciat; // Chunk size Index into Altitudes / Time
+  // NB cia & ciat are normally same value but sometimes not due to differing methods of altitude array creation
+  //    thus also have draw_min_altitude for each altitude graph type
   gdouble   *speeds;
   gdouble   *speeds_dist;
   gdouble   min_speed;
@@ -311,7 +316,7 @@ static VikTrackpoint *set_center_at_graph_position(gdouble event_x,
       /* since vlp not set, vvp should be valid instead! */
       if ( vvp )
 	vik_viewport_set_center_coord ( vvp, &coord );
-      vik_layer_emit_update ( VIK_LAYER(vtl) );
+      vik_layer_emit_update ( VIK_LAYER(vtl), FALSE );
     }
   }
   return trackpoint;
@@ -587,8 +592,7 @@ static gint blobby_altitude_time ( gdouble x_blob, PropWidgets *widgets )
   if (ix == widgets->profile_width)
     ix--;
 
-  gint y_blob = widgets->profile_height-widgets->profile_height*(widgets->ats[ix]-widgets->draw_min_altitude)/(chunksa[widgets->cia]*LINES);
-  // only difference here [could refactor]?          _____________________/
+  gint y_blob = widgets->profile_height-widgets->profile_height*(widgets->ats[ix]-widgets->draw_min_altitude_time)/(chunksa[widgets->ciat]*LINES);
   return y_blob;
 }
 
@@ -1082,7 +1086,7 @@ static void draw_dem_alt_speed_dist(VikTrack *tr,
 	// No conversion needed if already in metres
 
 	// consider chunk size
-	int y_alt = height - ((height * (elev-alt_offset))/(chunksa[cia]*LINES) );
+	int y_alt = height - ((height * elev)/(chunksa[cia]*LINES) );
 	gdk_draw_rectangle(GDK_DRAWABLE(pix), alt_gc, TRUE, x-2, y_alt-2, 4, 4);
       }
     }
@@ -1243,7 +1247,7 @@ static void draw_vt ( GtkWidget *image, VikTrack *tr, PropWidgets *widgets)
 {
   GtkWidget *window;
   GdkPixmap *pix;
-  gdouble mins, maxs;
+  gdouble mins;
   guint i;
 
   // Free previous allocation
@@ -1293,7 +1297,6 @@ static void draw_vt ( GtkWidget *image, VikTrack *tr, PropWidgets *widgets)
 
   // Assign locally
   mins = widgets->draw_min_speed;
-  maxs = widgets->max_speed;
   
   /* clear the image */
   gdk_draw_rectangle(GDK_DRAWABLE(pix), window->style->bg_gc[0], 
@@ -1513,7 +1516,7 @@ static void draw_et ( GtkWidget *image, VikTrack *tr, PropWidgets *widgets )
 {
   GtkWidget *window;
   GdkPixmap *pix;
-  gdouble mina,maxa;
+  gdouble mina;
   guint i;
 
   // Free previous allocation
@@ -1537,11 +1540,10 @@ static void draw_et ( GtkWidget *image, VikTrack *tr, PropWidgets *widgets )
 
   minmax_array(widgets->ats, &widgets->min_altitude, &widgets->max_altitude, TRUE, widgets->profile_width);
 
-  get_new_min_and_chunk_index_altitude (widgets->min_altitude, widgets->max_altitude, &widgets->draw_min_altitude, &widgets->cia);
+  get_new_min_and_chunk_index_altitude (widgets->min_altitude, widgets->max_altitude, &widgets->draw_min_altitude_time, &widgets->ciat);
 
   // Assign locally
-  mina = widgets->draw_min_altitude;
-  maxa = widgets->max_altitude;
+  mina = widgets->draw_min_altitude_time;
 
   window = gtk_widget_get_toplevel (widgets->elev_time_box);
 
@@ -1568,11 +1570,11 @@ static void draw_et ( GtkWidget *image, VikTrack *tr, PropWidgets *widgets )
     pango_font_description_free (pfd);
     switch (height_units) {
     case VIK_UNITS_HEIGHT_METRES:
-      sprintf(s, "%8dm", (int)(mina + (LINES-i)*chunksa[widgets->cia]));
+      sprintf(s, "%8dm", (int)(mina + (LINES-i)*chunksa[widgets->ciat]));
       break;
     case VIK_UNITS_HEIGHT_FEET:
       // NB values already converted into feet
-      sprintf(s, "%8dft", (int)(mina + (LINES-i)*chunksa[widgets->cia]));
+      sprintf(s, "%8dft", (int)(mina + (LINES-i)*chunksa[widgets->ciat]));
       break;
     default:
       sprintf(s, "--");
@@ -1592,7 +1594,7 @@ static void draw_et ( GtkWidget *image, VikTrack *tr, PropWidgets *widgets )
   /* draw elevations */
   for ( i = 0; i < widgets->profile_width; i++ )
       gdk_draw_line ( GDK_DRAWABLE(pix), window->style->dark_gc[3],
-		      i + MARGIN, widgets->profile_height, i + MARGIN, widgets->profile_height-widgets->profile_height*(widgets->ats[i]-mina)/(chunksa[widgets->cia]*LINES) );
+		      i + MARGIN, widgets->profile_height, i + MARGIN, widgets->profile_height-widgets->profile_height*(widgets->ats[i]-mina)/(chunksa[widgets->ciat]*LINES) );
 
   // Show speed indicator
   if ( gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widgets->w_show_elev_speed)) ) {
@@ -1627,7 +1629,7 @@ static void draw_sd ( GtkWidget *image, VikTrack *tr, PropWidgets *widgets)
 {
   GtkWidget *window;
   GdkPixmap *pix;
-  gdouble mins, maxs;
+  gdouble mins;
   guint i;
 
   // Free previous allocation
@@ -1678,7 +1680,6 @@ static void draw_sd ( GtkWidget *image, VikTrack *tr, PropWidgets *widgets)
 
   // Assign locally
   mins = widgets->draw_min_speed;
-  maxs = widgets->max_speed_dist;
   
   /* clear the image */
   gdk_draw_rectangle(GDK_DRAWABLE(pix), window->style->bg_gc[0],
@@ -2306,13 +2307,13 @@ static void propwin_response_cb( GtkDialog *dialog, gint resp, PropWidgets *widg
       break;
     case VIK_TRW_LAYER_PROPWIN_REVERSE:
       vik_track_reverse(tr);
-      vik_layer_emit_update ( VIK_LAYER(vtl) );
+      vik_layer_emit_update ( VIK_LAYER(vtl), FALSE );
       break;
     case VIK_TRW_LAYER_PROPWIN_DEL_DUP:
       vik_track_remove_dup_points(tr);
       /* above operation could have deleted current_tp or last_tp */
       trw_layer_cancel_tps_of_track ( vtl, widgets->track_name );
-      vik_layer_emit_update ( VIK_LAYER(vtl) );
+      vik_layer_emit_update ( VIK_LAYER(vtl), FALSE );
       break;
     case VIK_TRW_LAYER_PROPWIN_SPLIT:
       {
@@ -2349,7 +2350,7 @@ static void propwin_response_cb( GtkDialog *dialog, gint resp, PropWidgets *widg
           /* Don't let track destroy this dialog */
           vik_track_clear_property_dialog(tr);
           vik_trw_layer_delete_track ( vtl, widgets->track_name );
-          vik_layer_emit_update ( VIK_LAYER(vtl) ); /* chase thru the hoops */
+          vik_layer_emit_update ( VIK_LAYER(vtl), FALSE ); /* chase thru the hoops */
         }
       }
       break;
@@ -2367,7 +2368,7 @@ static void propwin_response_cb( GtkDialog *dialog, gint resp, PropWidgets *widg
           break;
         }
 
-        gchar *r_name = g_strdup_printf("%s #R", widgets->track_name);
+        gchar *r_name = g_strdup_printf("%s #2", widgets->track_name);
         if (vik_trw_layer_get_track(vtl, r_name ) && 
              ( ! a_dialog_yes_or_no( VIK_GTK_WINDOW_FROM_LAYER(vtl),
               "The track \"%s\" exists, do you wish to overwrite it?", r_name)))
@@ -2393,7 +2394,7 @@ static void propwin_response_cb( GtkDialog *dialog, gint resp, PropWidgets *widg
         tr_right->trackpoints = iter;
 
         vik_trw_layer_add_track(vtl, r_name, tr_right);
-        vik_layer_emit_update ( VIK_LAYER(vtl) );
+        vik_layer_emit_update ( VIK_LAYER(vtl), FALSE );
       }
       break;
     default:
@@ -2496,7 +2497,7 @@ void vik_trw_layer_propwin_run ( GtkWindow *parent, VikTrwLayer *vtl, VikTrack *
   int cnt;
   int i;
 
-  static gchar *label_texts[] = { N_("<b>Comment:</b>"), N_("<b>Track Length:</b>"), N_("<b>Trackpoints:</b>"), N_("<b>Segments:</b>"), N_("<b>Duplicate Points:</b>"), N_("<b>Max Speed:</b>"), N_("<b>Avg. Speed:</b>"), N_("<b>Avg. Dist. Between TPs:</b>"), N_("<b>Elevation Range:</b>"), N_("<b>Total Elevation Gain/Loss:</b>"), N_("<b>Start:</b>"), N_("<b>End:</b>"), N_("<b>Duration:</b>") };
+  static gchar *label_texts[] = { N_("<b>Comment:</b>"), N_("<b>Track Length:</b>"), N_("<b>Trackpoints:</b>"), N_("<b>Segments:</b>"), N_("<b>Duplicate Points:</b>"), N_("<b>Max Speed:</b>"), N_("<b>Avg. Speed:</b>"), N_("<b>Moving Avg. Speed:</b>"), N_("<b>Avg. Dist. Between TPs:</b>"), N_("<b>Elevation Range:</b>"), N_("<b>Total Elevation Gain/Loss:</b>"), N_("<b>Start:</b>"), N_("<b>End:</b>"), N_("<b>Duration:</b>") };
   static gchar tmp_buf[50];
   gdouble tmp_speed;
 
@@ -2584,6 +2585,34 @@ void vik_trw_layer_propwin_run ( GtkWindow *parent, VikTrwLayer *vtl, VikTrack *
     }
   }
   widgets->w_avg_speed = content[cnt++] = gtk_label_new ( tmp_buf );
+
+  // Use 60sec as the default period to be considered stopped
+  //  this is the TrackWaypoint draw stops default value 'vtl->stop_length'
+  //  however this variable is not directly accessible - and I don't expect it's often changed from the default
+  //  so ATM just put in the number
+  tmp_speed = vik_track_get_average_speed_moving(tr, 60);
+  if ( tmp_speed == 0 )
+    g_snprintf(tmp_buf, sizeof(tmp_buf), _("No Data"));
+  else {
+    switch (speed_units) {
+    case VIK_UNITS_SPEED_KILOMETRES_PER_HOUR:
+      g_snprintf(tmp_buf, sizeof(tmp_buf), "%.2f km/h", VIK_MPS_TO_KPH(tmp_speed));
+      break;
+    case VIK_UNITS_SPEED_MILES_PER_HOUR:
+      g_snprintf(tmp_buf, sizeof(tmp_buf), "%.2f mph", VIK_MPS_TO_MPH(tmp_speed));
+      break;
+    case VIK_UNITS_SPEED_METRES_PER_SECOND:
+      g_snprintf(tmp_buf, sizeof(tmp_buf), "%.2f m/s", tmp_speed );
+      break;
+    case VIK_UNITS_SPEED_KNOTS:
+      g_snprintf(tmp_buf, sizeof(tmp_buf), "%.2f knots", VIK_MPS_TO_KNOTS(tmp_speed));
+      break;
+    default:
+      g_snprintf (tmp_buf, sizeof(tmp_buf), "--" );
+      g_critical("Houston, we've had a problem. speed=%d", speed_units);
+    }
+  }
+  widgets->w_mvg_speed = content[cnt++] = gtk_label_new ( tmp_buf );
 
   switch (dist_units) {
   case VIK_UNITS_DISTANCE_KILOMETRES:

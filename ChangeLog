@@ -1,4 +1,165 @@
 
+2012-04-22
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Releasing viking 1.3
+	* Merge branch 'i18n-launchpad'
+	* Document previous translation updates
+	* Import Launchpad updates
+	* Merge tag 'viking-1.2.2'
+	* [DOC] Fix DocBook syntax in user manual
+	* [I18N] Fix POTFILES with new files
+
+2012-04-11
+Rob Norris <rw_norris@hotmail.com>:
+	* Be consistent in that track and waypoint list dialogs are always sorted alphabetically.
+	* Fix build when --disable-alphabetized-trw is specified
+
+2012-04-09
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Update current built in map types.
+	* [DOC] Add more detailed help about the available preferences.
+	* Credit tile supplier Andy Allan for OSM Cyclemap tiles.
+	* Add OSM Transport map as a built in map option.
+	* Tidy map examples.
+	* Remove Tiles@home support as the service has stopped.
+
+2012-04-03
+Rob Norris <rw_norris@hotmail.com>:
+	* Add supported MIME types to the desktop file specification.
+	* Reduce warnings from the build due to slightly misformed libcurl.m4 macros.
+
+2012-02-11
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix Track Properties graph blob marker drawn at wrong elevation when elevation graphs have different min/max heights.
+
+2012-02-04
+Rob Norris <rw_norris@hotmail.com>:
+	* Example script that can be used to upload a track as a route to a predefined GPS device.
+	* [DOC] Update auto generated INSTALL file to latest version.
+	* cleanup: Remove unused and out of date 'viking-remote' script and related files.
+	* cleanup: Remove *very* old documentation and don't bother distributing any of it which is all old.
+	* Out of date file GEOCODED-PHOTOS has been removed
+
+2012-01-29
+Rob Norris <rw_norris@hotmail.com>:
+	* Reduce scope of a variable.
+
+2012-01-20
+Rob Norris <rw_norris@hotmail.com>:
+	* Display the average moving speed for a track in the track properties.
+	* Add function to return an average moving speed for a track.
+	* Add ability to open a TrackWaypoint layer with another external program (default merkaartor).
+	* Add ability to open a TrackWaypoint layer with an external program (default JOSM).
+
+2012-01-19
+Rob Norris <rw_norris@hotmail.com>:
+	* Better memory cleanup on unint.
+	* Update HACKING information for contribution recommendations.
+
+2012-01-18
+Rob Norris <rw_norris@hotmail.com>:
+	* Add an image without GPS Information and the associated tracklog sample for testing purposes. (Location Stonehenge in England).
+	* Add an image with GPS Information for testing purposes. (Location Brecon Beacons in Wales).
+	* Fix small memory leak in geotagging images processing.
+	* Correct format for an include statement of a C standard library.
+	* Fix compiler warning.
+
+2012-01-17
+Rob Norris <rw_norris@hotmail.com>:
+	* Allow TrackWaypoint layer creation without a viewport.
+	* Restore compilation of test program gpx2gpx.
+
+2012-01-15
+Rob Norris <rw_norris@hotmail.com>:
+	* Reduce scope of wikipedia_submenu variable, as it's not used if VIK_CONFIF_GEONAMES is not enabled.
+
+2012-01-07
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix error identified by cppcheck 1.52.
+	* Fix error identified by cppcheck 1.52.
+	* Fix error identified by cppcheck 1.52.
+	* Fix error identified by cppcheck 1.52.
+	* Fix error identified by cppcheck 1.52.
+	* Fix error identified by cppcheck 1.52.
+	* Fix potential GdkPixbuf-CRITICAL warning in thumbnail creation.
+
+2011-12-22
+Rob Norris <rw_norris@hotmail.com>:
+	* Use map default: OSM MapQuest tileserver.
+	* Add map OSM MapQuest tileserver as a built-in type.
+
+2011-12-19
+Rob Norris <rw_norris@hotmail.com>:
+	* Merge branch 'Geotagging'
+	* Merge branch 'ExternalOptions'
+	* Fix Track Properties graph DEM points drawn at wrong elevation when lowest elevation is not zero.
+
+2011-12-18
+Rob Norris <rw_norris@hotmail.com>:
+	* Tidy up static preference values.
+	* Use an intermediary program which will invoke the system's default for opening images.
+	* Add and use a preference for the associated image viewer program.
+	* Add and use KML File Export units option.
+	* Add second group of global preferences, called 'Export/External'
+
+2011-12-11
+Rob Norris <rw_norris@hotmail.com>:
+	* Make geotag processing run in the background.
+	* [DOC] Add help for Geotagging. Remove old documentation.
+	* [DOC] Mention Bing maps and some more Tools.
+	* Add files for internationalization.
+	* Add ability to geotag images interpolating times against tracks.
+	* Make jpeg-data build against glib i18n instead of own i18n version.
+	* Add libjpeg utilities from exif command line tool version 0.6.20
+	* Acquire Geotag Images via TRW Layer
+	* Ensure vtl created in acquire operation runs post read stage.
+	* EXIF read implementation for geotagged images (libexif).
+	* Rationalize babel function parameter ordering.
+	* Add new process stage for acquire methods.
+	* Ensure track stop is drawn before trackpoint.
+	* Ensure track stops are always drawn if required.
+
+2011-12-11
+Greg Troxel <gdt@ir.bbn.com>:
+	* Add comments.
+
+2011-12-11
+Greg Troxel <gdt@lexort.com>:
+	* Omit drawops when point == last point.
+
+2011-12-11
+Rob Norris <rw_norris@hotmail.com>:
+	* Restore "New layer" button (with "+" icon) function.
+	* Code cleanup. Remove very old GTK support for <2.6 since 2.12 is needed for building.
+	* Enable reversing a track from the track menu.
+	* Fix: Improve internal redrawing method.
+	* Fix opening of external web sites via center method when the zoom level is less than 1 mpp.
+	* Enable internationalization and simpilify 'Global' preferences text into less specific 'General' term.
+
+2011-12-04
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix crashing on opening a file via recent menu after a .vik file is opened.
+	* Display compact message on the statusbar for the selected trackpoint or waypoint. (SF#3314888)
+
+2011-11-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Enable multiple selection and deletion of entries from vikfilelist.
+	* Do not use preset Google cookie when we don't even use google maps (images) anymore.
+	* Acquire: Maintain default to Garmin devices (assumed most popular/numerous device)
+	* Scale waypoint icons to give large or small icons as necessary.
+	* Add Yahoo! Maps webtool link.
+	* Fix too easy to accidently move a waypoint with an image with the select tool - must use shift key.
+	* Fix Join Tracks functionality - Part2.
+	* Ensure waypoint image size always initialized.
+	* Fix can not immediately select another layer if currently selected layer's visibility changes.
+	* Improve trackpoint edit dialog window sizing when the trackname is very long.
+	* Merge branch 'GPSD-API-v5'
+
+2011-11-13
+Rob Norris <rw_norris@hotmail.com>:
+	* Improve libgps test with the consistently available function: gps_close
+	* Merge branch 'master' into GPSD-API-v5
+
 2011-11-03
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
 	* Releasing version 1.2.2
@@ -10,6 +171,186 @@ Hanno Boeck <ctulhu@users.sourceforge.net>:
 2011-11-03
 Rob Norris <rw_norris@hotmail.com>:
 	* Increase default tile age check to 7 days.
+
+2011-10-29
+Rob Norris <rw_norris@hotmail.com>:
+	* Remember last track and waypoint request type on GPS acquire dialog.
+	* Add control of GPS upload/download of components tracks and waypoints.
+	* 'Import files with GPSBabel' help update.
+	* Fix <GTK 2.24 combo box usage.
+	* Merge branch 'WebToolBounds'
+	* Use new webtoolbounds to invoke local webservice on port 8111 - i.e. JOSM (or merkaartor)
+	* Extend webtools with a bounds version for the URL which takes four string parameters.
+	* Add webtool for Bing maps.
+
+2011-10-28
+Rob Norris <rw_norris@hotmail.com>:
+	* Restore distance and times between trackpoints shown on the trackpoint edit window.
+	* Fix crashing on opening multiple files after a .vik file is opened.
+	* Fix potential crashes if check_file_magic_vik function is used incorrectly.
+	* Add Acquire OSM option into the Track/Waypoint layer operations.
+	* Solution for SF#2766266 - Give user feedback about OSM uploads (success/failure).
+
+2011-10-21
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Remove duplicate redraw
+	* Fix: send VLP's update signal when adding a layer
+
+2011-10-17
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add Windows' path to configuration files
+
+2011-10-14
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix: Don't abort program when attempting webtool center with different x & y factors.
+
+2011-10-08
+Roberto Camarero <rcamarero@gmail.com>:
+	* Spanish translation of the win32 installer
+
+2011-10-02
+Rob Norris <rw_norris@hotmail.com>:
+	* Add used geo-* scripts as they are public domain.
+	* Continue geocaching.com support via third party tools.
+	* Show Geocache configure status.
+	* Show elevation gain/loss on track creation 'tooltip' (as per SF#2838561 request), when such data is available.
+	* Automatically attempt to set elevation data from the DEM layer whilst a track is being created.
+	* When creating a track, display the total distance of track (via a tooltip like text) on the main display.
+	* TrackWaypoint Layer Interface function code tidy.
+	* Improve trackpoint or waypoint edit selection.
+	* Fix Join Tracks functionality.
+	* Make tile age parameter jump by 1 minute steps in preferences setup.
+	* Add keyboard accelerator 'N' for New Layer in Aggregate Menu.
+	* Remove unused function definition.
+	* Fix SF#3408170: Selected Track Thickness is Always 1px
+	* Use more icons for menu entries.
+
+2011-10-01
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Allow to import any file known by gpsbabel
+
+2011-09-20
+Rob Norris <rw_norris@hotmail.com>:
+	* Merge branch 'WindowsInstaller'
+
+2011-09-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix tracks not shown over map when map layer is dragged to the end of the treeview list.
+	* Add some file open filters to ease file selection.
+	* Increase default tile age check to 7 days.
+	* Show error message earlier if in incompatible print image directory coord mode.
+	* Fix spelling
+	* Refuse to load unsupported file types.
+	* Restore broken GPS power off command.
+
+2011-09-11
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add support for any device known by gpsbabel
+	* Dynamically adapt viking to gpsbabel's file formats
+	* factorize gpsbabel command line
+
+2011-09-11
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix: SF#3042692 - Tiles May Get Deleted During Offline Usage.
+	* Fix some tracks elevation profile may display no altitude, despite all altitudes available in the track.
+	* Use more icons for menu entries.
+
+2011-09-10
+Rob Norris <rw_norris@hotmail.com>:
+	* Add experimental support for GPSD_API_MAJOR_VERSION 5.
+	* Rework gpsd interface for conditional compiling using GPSD_API_MAJOR_VERSION.
+	* Add Acquire options into the Track/Waypoint layer operations.
+
+2011-09-10
+Mathieu Albinet <mathieu17@gmail.com>:
+	* Add Windows Installer (NSIS)
+
+2011-09-07
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* [DOC] Document viking's dependencies
+
+2011-09-01
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix SF#3387590: Top Layer cannot be renamed
+
+2011-08-26
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Oups: clean code
+	* [QA] Factorize code
+
+2011-08-25
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Minor fix: declare static internal functions
+
+2011-08-23
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix typo
+
+2011-08-21
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Add ability to acquire GPS traces stored on OSM
+	* Extend OSM to OpenStreetMap
+
+2011-08-20
+Rob Norris <rw_norris@hotmail.com>:
+	* Enable merging tracks without timestamps to other tracks that do not have timestamps. (SF#2886231)
+	* Prevent track merge by time requests when there are no other suitable tracks.
+	* Remove DEM data source 'None' as it does nothing.
+	* Enable copying layer/sublayer names as plain text, so that it can be pasted into external text handling applications.
+	* When exporting a TrackWaypoint layer as a GPX file, automatically append '.gpx' to the suggested filename.
+	* Enable getting of the statusbar from the window.
+	* Enumerate use of and simplify the internals of the statusbar. This enables control of the size of the first element of the statusbar.
+
+2011-08-19
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* [DOC] Fix layer related structure of documentation
+	* [DOC] Improve reference documentation for babel.c
+
+2011-07-25
+Hanno Boeck <ctulhu@users.sourceforge.net>:
+	* Fix compilation with curl 7.21.7 (SF#3376584)
+
+2011-07-15
+Rob Norris <rw_norris@hotmail.com>:
+	* Improve track name when split from Track Properties window.
+
+2011-07-14
+Rob Norris <rw_norris@hotmail.com>:
+	* Better safety checking to prevent crash due to null variable reference in use of the current waypoint.
+
+2011-07-13
+Rob Norris <rw_norris@hotmail.com>:
+	* Better safety checking to prevent crash due to null variable reference in use of the current trackpoint.
+	* When loading from the recent file menu, only open a new window if a Viking file.
+	* On creating a new waypoint always attempt to auto set the altitude if DEM data is available.
+	* Enable the escape key to remove/reset the ruler tool.
+	* Enable keypress processing for vik windows tools.
+
+2011-07-02
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Document utility functions
+
+2011-06-27
+Rob Norris <rw_norris@hotmail.com>:
+	* Oops, remember to remove reference to deleted icon.
+
+2011-06-25
+Rob Norris <rw_norris@hotmail.com>:
+	* Internal tidy: replace magic scissor variables/references with route finder.
+	* Improve the associated icon, remove the scissor effort and use something to try to suggest the idea of a list of directions to get somewhere for 'Route Finding'.
+	* Replace 'Magic Scissors' by a more accurate name - 'Route Finder'.
+	* Improve altitude track property display by adding another grid size chunk value.
+	* Enable internationalization of the OSM Traces preferences text.
+
+2011-06-22
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix compiler warnings generated with gcc4.6 in viktrwlayer_propwin.c
+	* Fix compiler warnings generated with gcc4.6 in viktrwlayer.c
+	* Fix compiler warnings generated with gcc4.6 in viktreeview.c
+	* Fix compiler warnings generated with gcc4.6 in viktmsmapsource.c
+	* Fix compiler warnings generated with gcc4.6 in vikgpslayer.c
+	* Fix compiler warnings generated with gcc4.6 in print.c
+	* Fix compiler warnings generated with gcc4.6 in file.c
 
 2011-06-16
 Rob Norris <rw_norris@hotmail.com>:

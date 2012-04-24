@@ -94,7 +94,6 @@ static gchar *params_source[] = {
 #ifdef VIK_CONFIG_DEM24K
 	"USA 10m (USGS 24k)",
 #endif
-        "None",
 	NULL
 	};
 
@@ -108,7 +107,6 @@ enum { DEM_SOURCE_SRTM,
 #ifdef VIK_CONFIG_DEM24K
        DEM_SOURCE_DEM24K,
 #endif
-       DEM_SOURCE_NONE,
      };
 
 enum { DEM_TYPE_HEIGHT = 0,
@@ -322,11 +320,11 @@ static int dem_layer_load_list_thread ( dem_load_thread_data *dltd, gpointer thr
 
   // ATM as each file is processed the screen is not updated (no mechanism exposed to a_dems_load_list)
   // Thus force draw only at the end, as loading is complete/aborted
-  gdk_threads_enter();
+  //gdk_threads_enter();
   // Test is helpful to prevent Gtk-CRITICAL warnings if the program is exitted whilst loading
   if ( IS_VIK_LAYER(dltd->vdl) )
-    vik_layer_emit_update ( VIK_LAYER(dltd->vdl) );
-  gdk_threads_leave();
+    vik_layer_emit_update ( VIK_LAYER(dltd->vdl), TRUE ); // Yes update from background thread
+  //gdk_threads_leave();
 
   return result;
 }
@@ -980,6 +978,7 @@ static void dem24k_dem_download_thread ( DEMDownloadParams *p, gpointer threadda
 	ceil(p->lon*8)/8 );
   /* FIX: don't use system, use execv or something. check for existence */
   system(cmdline);
+  g_free ( cmdline );
 }
 
 static gchar *dem24k_lat_lon_to_dest_fn ( gdouble lat, gdouble lon )
@@ -1070,7 +1069,6 @@ static gboolean dem_layer_add_file ( VikDEMLayer *vdl, const gchar *full_path )
       vdl->files = g_list_prepend ( vdl->files, duped_path );
       a_dems_load ( duped_path );
       g_debug("%s: %s", __FUNCTION__, duped_path);
-      vik_layer_emit_update ( VIK_LAYER(vdl) );
     }
     return TRUE;
   } else
@@ -1085,17 +1083,19 @@ static void dem_download_thread ( DEMDownloadParams *p, gpointer threaddata )
   else if ( p->source == DEM_SOURCE_DEM24K )
     dem24k_dem_download_thread ( p, threaddata );
 #endif
+  else
+    return;
 
-  gdk_threads_enter();
+  //gdk_threads_enter();
   g_mutex_lock ( p->mutex );
   if ( p->vdl ) {
     g_object_weak_unref ( G_OBJECT(p->vdl), weak_ref_cb, p );
 
     if ( dem_layer_add_file ( p->vdl, p->dest ) )
-      vik_layer_emit_update ( VIK_LAYER(p->vdl) );
+      vik_layer_emit_update ( VIK_LAYER(p->vdl), TRUE ); // Yes update from background thread
   }
   g_mutex_unlock ( p->mutex );
-  gdk_threads_leave();
+  //gdk_threads_leave();
 }
 
 
@@ -1119,9 +1119,6 @@ static gboolean dem_layer_download_release ( VikDEMLayer *vdl, GdkEventButton *e
 
   gchar *full_path;
   gchar *dem_file = NULL;
-
-  if ( vdl->source == DEM_SOURCE_NONE )
-    a_dialog_error_msg ( VIK_GTK_WINDOW_FROM_LAYER(vdl), _("No download source selected. Edit layer properties.") );
 
   vik_viewport_screen_to_coord ( vvp, event->x, event->y, &coord );
   vik_coord_to_latlon ( &coord, &ll );
@@ -1160,6 +1157,8 @@ static gboolean dem_layer_download_release ( VikDEMLayer *vdl, GdkEventButton *e
 
     g_free ( tmp );
   }
+  else
+    vik_layer_emit_update ( VIK_LAYER(vdl), FALSE );
 
   g_free ( dem_file );
   g_free ( full_path );
