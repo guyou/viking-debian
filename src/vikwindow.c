@@ -239,6 +239,14 @@ VikLayersPanel * vik_window_layers_panel(VikWindow *vw)
   return(vw->viking_vlp);
 }
 
+/**
+ *  Returns the statusbar for the window
+ */
+VikStatusbar * vik_window_get_statusbar ( VikWindow *vw )
+{
+  return vw->viking_vs;
+}
+
 void vik_window_selected_layer(VikWindow *vw, VikLayer *vl)
 {
   int i, j, tool_count;
@@ -373,6 +381,11 @@ static gboolean key_press_event( VikWindow *vw, GdkEventKey *event, gpointer dat
       return vw->vt->tools[vw->vt->active_tool].ti.key_press(vl, event, vw->vt->tools[vw->vt->active_tool].state);
   }
 
+  // No layer - but enable window tool keypress processing - these should be able to handle a NULL layer
+  if ( vw->vt->tools[vw->vt->active_tool].ti.key_press ) {
+    return vw->vt->tools[vw->vt->active_tool].ti.key_press ( vl, event, vw->vt->tools[vw->vt->active_tool].state );
+  }
+
   /* Restore Main Menu via Escape key if the user has hidden it */
   /* This key is more likely to be used as they may not remember the function key */
   if ( event->keyval == GDK_Escape ) {
@@ -449,11 +462,11 @@ static void draw_status ( VikWindow *vw )
       /* xmpp should be a whole number so don't show useless .000 bit */
       g_snprintf ( zoom_level, 22, "%d %s", (int)xmpp, unit );
   if ( vw->current_tool == TOOL_LAYER )
-    vik_statusbar_set_message ( vw->viking_vs, 0, vik_layer_get_interface(vw->tool_layer_id)->tools[vw->tool_tool_id].name );
+    vik_statusbar_set_message ( vw->viking_vs, VIK_STATUSBAR_TOOL, vik_layer_get_interface(vw->tool_layer_id)->tools[vw->tool_tool_id].name );
   else
-    vik_statusbar_set_message ( vw->viking_vs, 0, _(tool_names[vw->current_tool]) );
+    vik_statusbar_set_message ( vw->viking_vs, VIK_STATUSBAR_TOOL, _(tool_names[vw->current_tool]) );
 
-  vik_statusbar_set_message ( vw->viking_vs, 2, zoom_level );
+  vik_statusbar_set_message ( vw->viking_vs, VIK_STATUSBAR_ZOOM, zoom_level );
 }
 
 void vik_window_set_redraw_trigger(VikLayer *vl)
@@ -600,7 +613,7 @@ static void draw_mouse_motion (VikWindow *vw, GdkEventMotion *event)
   lat = NULL;
   g_free (lon);
   lon = NULL;
-  vik_statusbar_set_message ( vw->viking_vs, 4, pointer_buf );
+  vik_statusbar_set_message ( vw->viking_vs, VIK_STATUSBAR_POSITION, pointer_buf );
 
   vik_window_pan_move ( vw, event );
 
@@ -912,7 +925,7 @@ static VikLayerToolFuncStatus ruler_click (VikLayer *vl, GdkEventButton *event, 
       s->has_oldcoord = TRUE;
     }
 
-    vik_statusbar_set_message ( s->vw->viking_vs, 3, temp );
+    vik_statusbar_set_message ( s->vw->viking_vs, VIK_STATUSBAR_INFO, temp );
     g_free ( temp );
 
     s->oldcoord = coord;
@@ -976,7 +989,7 @@ static VikLayerToolFuncStatus ruler_move (VikLayer *vl, GdkEventMotion *event, r
       temp = g_strdup_printf ("Just to keep the compiler happy");
       g_critical("Houston, we've had a problem. distance=%d", dist_units);
     }
-    vik_statusbar_set_message ( vw->viking_vs, 3, temp );
+    vik_statusbar_set_message ( vw->viking_vs, VIK_STATUSBAR_INFO, temp );
     g_free ( temp );
   }
   return VIK_LAYER_TOOL_ACK;
@@ -992,6 +1005,16 @@ static void ruler_deactivate (VikLayer *vl, ruler_tool_state_t *s)
   draw_update ( s->vw );
 }
 
+static gboolean ruler_key_press (VikLayer *vl, GdkEventKey *event, ruler_tool_state_t *s)
+{
+  if (event->keyval == GDK_Escape) {
+    s->has_oldcoord = FALSE;
+    ruler_deactivate ( vl, s );
+    return TRUE;
+  }
+  return FALSE;
+}
+
 static VikToolInterface ruler_tool = 
   { "Ruler", 
     (VikToolConstructorFunc) ruler_create,
@@ -1001,7 +1024,7 @@ static VikToolInterface ruler_tool =
     (VikToolMouseFunc) ruler_click, 
     (VikToolMouseMoveFunc) ruler_move, 
     (VikToolMouseFunc) ruler_release,
-    NULL,
+    (VikToolKeyFunc) ruler_key_press,
     GDK_CURSOR_IS_PIXMAP,
     &cursor_ruler_pixbuf };
 /*** end ruler code ********************************************************/
@@ -1320,7 +1343,6 @@ static void menu_copy_layer_cb ( GtkAction *a, VikWindow *vw )
 static void menu_cut_layer_cb ( GtkAction *a, VikWindow *vw )
 {
   vik_layers_panel_cut_selected ( vw->viking_vlp );
-  draw_update ( vw );
   vw->modified = TRUE;
 }
 
@@ -1328,7 +1350,6 @@ static void menu_paste_layer_cb ( GtkAction *a, VikWindow *vw )
 {
   if ( a_clipboard_paste ( vw->viking_vlp ) )
   {
-    draw_update ( vw );
     vw->modified = TRUE;
   }
 }
@@ -1649,12 +1670,15 @@ static void on_activate_recent_item (GtkRecentChooser *chooser,
     g_object_unref ( file );
     if ( self->filename )
     {
-      gchar *filenames[] = { path, NULL };
+      GSList *filenames = NULL;
+      filenames = g_slist_append ( filenames, path );
       g_signal_emit ( G_OBJECT(self), window_signals[VW_OPENWINDOW_SIGNAL], 0, filenames );
+      // NB: GSList & contents are freed by main.open_window
     }
-    else
+    else {
       vik_window_open_file ( self, path, TRUE );
-    g_free ( path );
+      g_free ( path );
+    }
   }
 
   g_free (filename);
@@ -1722,6 +1746,9 @@ void vik_window_open_file ( VikWindow *vw, const gchar *filename, gboolean chang
     case LOAD_TYPE_GPSBABEL_FAILURE:
       a_dialog_error_msg ( GTK_WINDOW(vw), _("GPSBabel is required to load files of this type or GPSBabel encountered problems.") );
       break;
+    case LOAD_TYPE_UNSUPPORTED_FAILURE:
+      a_dialog_error_msg_extra ( GTK_WINDOW(vw), _("Unsupported file type for %s"), filename );
+      break;
     case LOAD_TYPE_VIK_SUCCESS:
     {
       GtkWidget *mode_button;
@@ -1778,6 +1805,42 @@ static void load_file ( GtkAction *a, VikWindow *vw )
 				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 				      NULL);
+    GtkFileFilter *filter;
+    // NB file filters are listed this way for alphabetical ordering
+#ifdef VIK_CONFIG_GEOCACHES
+    filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name( filter, _("Geocaching") );
+    gtk_file_filter_add_pattern ( filter, "*.loc" ); // No MIME type available
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+#endif
+
+    filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name( filter, _("Google Earth") );
+    gtk_file_filter_add_mime_type ( filter, "application/vnd.google-earth.kml+xml");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+
+    filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name( filter, _("GPX") );
+    gtk_file_filter_add_pattern ( filter, "*.gpx" ); // No MIME type available
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+
+    filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name( filter, _("Viking") );
+    gtk_file_filter_add_pattern ( filter, "*.vik" );
+    gtk_file_filter_add_pattern ( filter, "*.viking" );
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+
+    // NB could have filters for gpspoint (*.gps,*.gpsoint?) + gpsmapper (*.gsm,*.gpsmapper?)
+    // However assume this are barely used and thus not worthy of inclusion
+    //   as they'll just make the options too many and have no clear file pattern
+    //   one can always use the all option
+    filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name( filter, _("All") );
+    gtk_file_filter_add_pattern ( filter, "*" );
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+    // Default to any file - same as before open filters were added
+    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+
     gtk_file_chooser_set_select_multiple ( GTK_FILE_CHOOSER(vw->open_dia), TRUE );
     gtk_window_set_transient_for ( GTK_WINDOW(vw->open_dia), GTK_WINDOW(vw) );
     gtk_window_set_destroy_with_parent ( GTK_WINDOW(vw->open_dia), TRUE );
@@ -1867,7 +1930,17 @@ static gboolean save_file ( GtkAction *a, VikWindow *vw )
 
 static void acquire_from_gps ( GtkAction *a, VikWindow *vw )
 {
+  // Via the file menu, acquiring from a GPS makes a new layer
+  //  this has always been the way (not entirely sure if this was the real intention!)
+  //  thus maintain the behaviour ATM.
+  // Hence explicit setting here (as the value may be changed elsewhere)
+  vik_datasource_gps_interface.mode = VIK_DATASOURCE_CREATENEWLAYER;
   a_acquire(vw, vw->viking_vlp, vw->viking_vvp, &vik_datasource_gps_interface );
+}
+
+static void acquire_from_file ( GtkAction *a, VikWindow *vw )
+{
+  a_acquire(vw, vw->viking_vlp, vw->viking_vvp, &vik_datasource_file_interface );
 }
 
 static void acquire_from_google ( GtkAction *a, VikWindow *vw )
@@ -1875,10 +1948,25 @@ static void acquire_from_google ( GtkAction *a, VikWindow *vw )
   a_acquire(vw, vw->viking_vlp, vw->viking_vvp, &vik_datasource_google_interface );
 }
 
+#ifdef VIK_CONFIG_OPENSTREETMAP
+static void acquire_from_osm ( GtkAction *a, VikWindow *vw )
+{
+  a_acquire(vw, vw->viking_vlp, vw->viking_vvp, &vik_datasource_osm_interface );
+}
+#endif
+
 #ifdef VIK_CONFIG_GEOCACHES
 static void acquire_from_gc ( GtkAction *a, VikWindow *vw )
 {
   a_acquire(vw, vw->viking_vlp, vw->viking_vvp, &vik_datasource_gc_interface );
+}
+#endif
+
+#ifdef VIK_CONFIG_GEOTAG
+static void acquire_from_geotag ( GtkAction *a, VikWindow *vw )
+{
+  vik_datasource_geotag_interface.mode = VIK_DATASOURCE_CREATENEWLAYER;
+  a_acquire(vw, vw->viking_vlp, vw->viking_vvp, &vik_datasource_geotag_interface );
 }
 #endif
 
@@ -2240,16 +2328,14 @@ static void draw_to_image_file ( VikWindow *vw, const gchar *fn, gboolean one_im
                       gtk_spin_button_get_value ( GTK_SPIN_BUTTON(zoom_spin) ), /* do not save this value, default is current zoom */
                       vw->draw_image_save_as_png = gtk_toggle_button_get_active ( GTK_TOGGLE_BUTTON(png_radio) ) );
     else {
-      if ( vik_viewport_get_coord_mode(vw->viking_vvp) == VIK_COORD_UTM )
-        save_image_dir ( vw, fn, 
+      // NB is in UTM mode ATM
+      save_image_dir ( vw, fn,
                        vw->draw_image_width = gtk_spin_button_get_value_as_int ( GTK_SPIN_BUTTON(width_spin) ),
                        vw->draw_image_height = gtk_spin_button_get_value_as_int ( GTK_SPIN_BUTTON(height_spin) ),
                        gtk_spin_button_get_value ( GTK_SPIN_BUTTON(zoom_spin) ), /* do not save this value, default is current zoom */
                        vw->draw_image_save_as_png = gtk_toggle_button_get_active ( GTK_TOGGLE_BUTTON(png_radio) ),
                        gtk_spin_button_get_value ( GTK_SPIN_BUTTON(tiles_width_spin) ),
                        gtk_spin_button_get_value ( GTK_SPIN_BUTTON(tiles_height_spin) ) );
-      else
-        a_dialog_error_msg ( GTK_WINDOW(vw), _("You must be in UTM mode to use this feature") );
     }
   }
   gtk_widget_destroy ( GTK_WIDGET(dialog) );
@@ -2288,6 +2374,11 @@ static void draw_to_image_dir_cb ( GtkAction *a, VikWindow *vw )
 {
   gchar *fn = NULL;
   
+  if ( vik_viewport_get_coord_mode(vw->viking_vvp) != VIK_COORD_UTM ) {
+    a_dialog_error_msg ( GTK_WINDOW(vw), _("You must be in UTM mode to use this feature") );
+    return;
+  }
+
   if (!vw->save_img_dir_dia) {
     vw->save_img_dir_dia = gtk_file_chooser_dialog_new (_("Choose a directory to hold images"),
 				      GTK_WINDOW(vw),
@@ -2439,11 +2530,18 @@ static GtkActionEntry entries[] = {
   { "Open",      GTK_STOCK_OPEN,         N_("_Open..."),                         "<control>O", N_("Open a file"),                                  (GCallback)load_file             },
   { "OpenRecentFile", NULL,              N_("Open _Recent File"),         NULL,         NULL,                                               (GCallback)NULL },
   { "Append",    GTK_STOCK_ADD,          N_("Append _File..."),           NULL,         N_("Append data from a different file"),            (GCallback)load_file             },
-  { "Acquire", NULL, N_("A_cquire"), 0, 0, 0 },
+  { "Acquire",   GTK_STOCK_GO_DOWN,      N_("A_cquire"),                  NULL,         NULL,                                               (GCallback)NULL },
   { "AcquireGPS",   NULL,                N_("From _GPS..."),           	  NULL,         N_("Transfer data from a GPS device"),              (GCallback)acquire_from_gps      },
+  { "AcquireGPSBabel",   NULL,                N_("Import File With GPS_Babel..."),           	  NULL,         N_("Import file via GPSBabel converter"),              (GCallback)acquire_from_file      },
   { "AcquireGoogle",   NULL,             N_("Google _Directions..."),     NULL,         N_("Get driving directions from Google"),           (GCallback)acquire_from_google   },
+#ifdef VIK_CONFIG_OPENSTREETMAP
+  { "AcquireOSM",   NULL,                 N_("_OSM Traces..."),    	  NULL,         N_("Get traces from OpenStreetMap"),            (GCallback)acquire_from_osm       },
+#endif
 #ifdef VIK_CONFIG_GEOCACHES
   { "AcquireGC",   NULL,                 N_("Geo_caches..."),    	  NULL,         N_("Get Geocaches from geocaching.com"),            (GCallback)acquire_from_gc       },
+#endif
+#ifdef VIK_CONFIG_GEOTAG
+  { "AcquireGeotag", NULL,               N_("From Geotagged _Images..."), NULL,         N_("Create waypoints from geotagged images"),       (GCallback)acquire_from_geotag   },
 #endif
   { "Save",      GTK_STOCK_SAVE,         N_("_Save"),                         "<control>S", N_("Save the file"),                                (GCallback)save_file             },
   { "SaveAs",    GTK_STOCK_SAVE_AS,      N_("Save _As..."),                      NULL,  N_("Save the file under different name"),           (GCallback)save_file_as          },
@@ -2656,7 +2754,7 @@ static struct {
   gchar *stock_id;
 } stock_icons[] = {
   { &begintr_18_pixbuf,		"Begin Track"      },
-  { &iscissors_18_pixbuf,	"Magic Scissors"   },
+  { &route_finder_18_pixbuf,	"Route Finder"     },
   { &mover_22_pixbuf,		"vik-icon-pan"     },
   { &demdl_18_pixbuf,		"DEM Download/Import"     },
   { &showpic_18_pixbuf,		"Show Picture"      },
@@ -2703,6 +2801,8 @@ void vik_window_set_selected_trw_layer ( VikWindow *vw, gpointer vtl )
   vw->selected_waypoint  = NULL;
   vw->selected_waypoints = NULL;
   vw->selected_name      = NULL;
+  // Set highlight thickness
+  vik_viewport_set_highlight_thickness ( vw->viking_vvp, vik_trw_layer_get_property_tracks_line_thickness (vw->containing_vtl) );
 }
 
 gpointer vik_window_get_selected_tracks ( VikWindow *vw )
@@ -2720,6 +2820,8 @@ void vik_window_set_selected_tracks ( VikWindow *vw, gpointer gl, gpointer vtl )
   vw->selected_waypoint  = NULL;
   vw->selected_waypoints = NULL;
   vw->selected_name      = NULL;
+  // Set highlight thickness
+  vik_viewport_set_highlight_thickness ( vw->viking_vvp, vik_trw_layer_get_property_tracks_line_thickness (vw->containing_vtl) );
 }
 
 gpointer vik_window_get_selected_track ( VikWindow *vw )
@@ -2737,7 +2839,10 @@ void vik_window_set_selected_track ( VikWindow *vw, gpointer *vt, gpointer vtl, 
   vw->selected_tracks    = NULL;
   vw->selected_waypoint  = NULL;
   vw->selected_waypoints = NULL;
+  // Set highlight thickness
+  vik_viewport_set_highlight_thickness ( vw->viking_vvp, vik_trw_layer_get_property_tracks_line_thickness (vw->containing_vtl) );
 }
+
 gpointer vik_window_get_selected_waypoints ( VikWindow *vw )
 {
   return vw->selected_waypoints;

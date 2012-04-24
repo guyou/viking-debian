@@ -175,7 +175,7 @@ static void file_write ( VikAggregateLayer *top, FILE *f, gpointer vp )
   VikLayer *current_layer;
   struct LatLon ll;
   VikViewportDrawMode mode;
-  gchar *modestring;
+  gchar *modestring = NULL;
 
   push(&stack);
   stack->data = (gpointer) vik_aggregate_layer_get_children(VIK_AGGREGATE_LAYER(top));
@@ -565,10 +565,12 @@ static void xfclose ( FILE *f )
  */
 gboolean check_file_magic_vik ( const gchar *filename )
 {
-  gboolean result;
+  gboolean result = FALSE;
   FILE *ff = xfopen ( filename, "r" );
-  result = check_magic ( ff, VIK_MAGIC );
-  xfclose ( ff );
+  if ( ff ) {
+    result = check_magic ( ff, VIK_MAGIC );
+    xfclose ( ff );
+  }
   return result;
 }
 
@@ -595,13 +597,13 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
   }
   else
   {
+    gboolean success = TRUE;
     VikLayer *vtl = vik_layer_create ( VIK_LAYER_TRW, vp, NULL, FALSE );
-    vik_layer_rename ( vtl, a_file_basename ( filename ) );
 
     // In fact both kml & gpx files start the same as they are in xml
     if ( check_file_ext ( filename, ".kml" ) && check_magic ( f, GPX_MAGIC ) ) {
       // Implicit Conversion
-      if ( ! a_babel_convert_from ( VIK_TRW_LAYER(vtl), "-i kml", NULL, filename, NULL ) ) {
+      if ( ! a_babel_convert_from ( VIK_TRW_LAYER(vtl), "-i kml", filename, NULL, NULL ) ) {
 	// Probably want to remove the vtl, but I'm not sure how yet...
 	xfclose(f);
 	return LOAD_TYPE_GPSBABEL_FAILURE;
@@ -611,12 +613,19 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
       a_gpx_read_file ( VIK_TRW_LAYER(vtl), f );
     }
     else
-      a_gpspoint_read_file ( VIK_TRW_LAYER(vtl), f );
+      success = a_gpspoint_read_file ( VIK_TRW_LAYER(vtl), f );
 
+    // Refuse to load file types not supported
+    if ( ! success ) {
+      // free up layer
+      g_object_unref ( vtl );
+      xfclose(f);
+      return LOAD_TYPE_UNSUPPORTED_FAILURE;
+    }
+
+    vik_layer_rename ( vtl, a_file_basename ( filename ) );
     vik_layer_post_read ( vtl, vp, TRUE );
-
     vik_aggregate_layer_add_layer ( top, vtl );
-
     vik_trw_layer_auto_set_view ( VIK_TRW_LAYER(vtl), vp );
 
     xfclose(f);
@@ -702,8 +711,19 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
         case FILE_TYPE_KML:
 	  fclose ( f );
 	  f = NULL;
-          return a_babel_convert_to ( vtl, "-o kml", NULL, filename, NULL );
-          break;
+	  switch ( a_vik_get_kml_export_units () ) {
+	    case VIK_KML_EXPORT_UNITS_STATUTE:
+	      return a_babel_convert_to ( vtl, "-o kml", filename, NULL, NULL );
+	      break;
+	    case VIK_KML_EXPORT_UNITS_NAUTICAL:
+	      return a_babel_convert_to ( vtl, "-o kml,units=n", filename, NULL, NULL );
+	      break;
+	    default:
+	      // VIK_KML_EXPORT_UNITS_METRIC:
+	      return a_babel_convert_to ( vtl, "-o kml,units=m", filename, NULL, NULL );
+	      break;
+	  }
+	  break;
         default:
           g_critical("Houston, we've had a problem. file_type=%d", file_type);
       }

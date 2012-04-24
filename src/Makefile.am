@@ -102,6 +102,7 @@ libviking_a_SOURCES = \
 	garminsymbols.c garminsymbols.h \
 	acquire.c acquire.h \
 	babel.c babel.h \
+	datasource_file.c \
 	datasource_gps.c \
 	datasource_google.c \
 	datasource_gc.c \
@@ -115,6 +116,7 @@ libviking_a_SOURCES = \
 	vikexttools.c vikexttools.h \
 	vikwebtool.c vikwebtool.h \
 	vikwebtoolcenter.c vikwebtoolcenter.h \
+	vikwebtoolbounds.c vikwebtoolbounds.h \
 	dems.c dems.h \
 	srtm_continent.c \
 	uibuilder.c uibuilder.h \
@@ -147,7 +149,8 @@ endif
 if OPENSTREETMAP
 libviking_a_SOURCES += \
 	osm.c osm.h \
-	osm-traces.c osm-traces.h
+	osm-traces.c osm-traces.h \
+	datasource_osm.c
 endif
 
 if BLUEMARBLE
@@ -165,6 +168,15 @@ endif
 libviking_a_SOURCES += \
 	spotmaps.c spotmaps.h
 #endif
+
+if GEOTAG
+libviking_a_SOURCES += \
+	datasource_geotag.c \
+	geotag_exif.c geotag_exif.h \
+	viktrwlayer_geotag.c viktrwlayer_geotag.h \
+	libjpeg/jpeg-data.c libjpeg/jpeg-data.h \
+	libjpeg/jpeg-marker.c libjpeg/jpeg-marker.h
+endif
 
 viking_SOURCES = main.c
 

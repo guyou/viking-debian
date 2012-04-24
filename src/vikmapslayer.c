@@ -509,7 +509,7 @@ static VikMapsLayer *maps_layer_new ( VikViewport *vvp )
   int idx;
   VikMapsLayer *vml = VIK_MAPS_LAYER ( g_object_new ( VIK_MAPS_LAYER_TYPE, NULL ) );
   vik_layer_init ( VIK_LAYER(vml), VIK_LAYER_MAPS );
-  idx = map_uniq_id_to_index(13); /* 13 is id for OSM Mapnik maps */
+  idx = map_uniq_id_to_index(19); /* 19 is id for OSM MapQuest maps */
     vml->maptype = (idx < NUM_MAP_TYPES) ? idx : 0;
   vml->alpha = 255;
   vml->mapzoom_id = 0;
@@ -774,8 +774,6 @@ static void maps_layer_draw_section ( VikMapsLayer *vml, VikViewport *vvp, VikCo
       gdouble xx, yy; gint xx_tmp, yy_tmp;
       gint base_yy, xend, yend;
 
-      GdkGC *black_gc = GTK_WIDGET(vvp)->style->black_gc;
-
       xend = (xinc == 1) ? (xmax+1) : (xmin-1);
       yend = (yinc == 1) ? (ymax+1) : (ymin-1);
 
@@ -798,6 +796,7 @@ static void maps_layer_draw_section ( VikMapsLayer *vml, VikViewport *vvp, VikCo
                      vml->cache_dir, mode,
                      ulm.scale, ulm.z, ulm.x, ulm.y );
             if ( g_file_test ( path_buf, G_FILE_TEST_EXISTS ) == TRUE ) {
+	      GdkGC *black_gc = GTK_WIDGET(vvp)->style->black_gc;
               vik_viewport_draw_line ( vvp, black_gc, xx+tilesize_x_ceil, yy, xx, yy+tilesize_y_ceil );
             }
           } else {
@@ -1010,16 +1009,14 @@ static int map_download_thread ( MapDownloadInfo *mdi, gpointer threaddata )
           continue;
       }
 
-      gdk_threads_enter();
       g_mutex_lock(mdi->mutex);
       if (remove_mem_cache)
           a_mapcache_remove_all_shrinkfactors ( x, y, mdi->mapcoord.z, vik_map_source_get_uniq_id(MAPS_LAYER_NTH_TYPE(mdi->maptype)), mdi->mapcoord.scale );
       if (mdi->refresh_display && mdi->map_layer_alive) {
         /* TODO: check if it's on visible area */
-        vik_layer_emit_update ( VIK_LAYER(mdi->vml) );
+        vik_layer_emit_update ( VIK_LAYER(mdi->vml), TRUE ); // Yes update display from background
       }
       g_mutex_unlock(mdi->mutex);
-      gdk_threads_leave();
       mdi->mapcoord.x = mdi->mapcoord.y = 0; /* we're temporarily between downloads */
 
     }

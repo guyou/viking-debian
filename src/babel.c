@@ -20,9 +20,12 @@
  *
  */
 
-/* babel.c: running external programs and redirecting to TRWLayers.
+/**
+ * SECTION:babel
+ * @short_description: running external programs and redirecting to TRWLayers.
+ *
  * GPSBabel may not be necessary for everything -- for instance,
- *   use a_babel_convert_from_shellcommand with input_file_type == NULL
+ *   use a_babel_convert_from_shellcommand() with input_file_type == %NULL
  *   for an external program that outputs GPX.
  */
 
@@ -40,17 +43,51 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#include <string.h>
 #include <glib.h>
 #include <glib/gstdio.h>
 
-/* in the future we could have support for other shells (change command strings), or not use a shell at all */
+/* TODO in the future we could have support for other shells (change command strings), or not use a shell at all */
 #define BASH_LOCATION "/bin/bash"
 
+/**
+ * Path to gpsbabel
+ */
+static gchar *gpsbabel_loc = NULL;
+
+/**
+ * Path to unbuffer
+ */
+static gchar *unbuffer_loc = NULL;
+
+/**
+ * List of file formats supported by gpsbabel.
+ */
+GList *a_babel_file_list;
+
+/**
+ * List of device supported by gpsbabel.
+ */
+GList *a_babel_device_list;
+
+/**
+ * a_babel_convert:
+ * @vt:        The TRW layer to modify. All data will be deleted, and replaced by what gpsbabel outputs.
+ * @babelargs: A string containing gpsbabel command line filter options. No file types or names should
+ *             be specified.
+ * @cb:        A callback function.
+ *
+ * This function modifies data in a trw layer using gpsbabel filters.  This routine is synchronous;
+ * that is, it will block the calling program until the conversion is done. To avoid blocking, call
+ * this routine from a worker thread.
+ *
+ * Returns: %TRUE on success
+ */
 gboolean a_babel_convert( VikTrwLayer *vt, const char *babelargs, BabelStatusFunc cb, gpointer user_data )
 {
   int fd_src;
   FILE *f;
-  gchar *name_src;
+  gchar *name_src = NULL;
   gboolean ret = FALSE;
   gchar *bargs = g_strconcat(babelargs, " -i gpx", NULL);
 
@@ -59,28 +96,17 @@ gboolean a_babel_convert( VikTrwLayer *vt, const char *babelargs, BabelStatusFun
     a_gpx_write_file(vt, f);
     fclose(f);
     f = NULL;
-    ret = a_babel_convert_from ( vt, bargs, cb, name_src, user_data );
+    ret = a_babel_convert_from ( vt, bargs, name_src, cb, user_data );
+    g_remove(name_src);
+    g_free(name_src);
   }
 
   g_free(bargs);
-  g_remove(name_src);
-  g_free(name_src);
   return ret;
 }
 
-/* Runs args[0] with the arguments and uses the GPX module
- * to import the GPX data into layer vt. Assumes that upon
- * running the command, the data will appear in the (usually
- * temporary) file name_dst.
- *
- * cb: callback that is run upon new data from STDOUT (?)
- *     (TODO: STDERR would be nice since we usually redirect STDOUT)
- * user_data: passed along to cb
- *
- * returns TRUE on success
- */
 #ifdef WINDOWS
-gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb, gchar **args, const gchar *name_dst, gpointer user_data )
+static gboolean babel_general_convert( BabelStatusFunc cb, gchar **args, gpointer user_data )
 {
   gboolean ret;
   FILE *f;
@@ -90,7 +116,6 @@ gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb, gchar 
   STARTUPINFO si;
   PROCESS_INFORMATION pi;
 
-  
   ZeroMemory( &si, sizeof(si) );
   ZeroMemory( &pi, sizeof(pi) );
   si.cb = sizeof(si);
@@ -118,7 +143,7 @@ gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb, gchar 
         &si,                    // Pointer to STARTUPINFO structure.
         &pi )                   // Pointer to PROCESS_INFORMATION structure.
     ){
-    g_warning( "CreateProcess failed");
+    g_error ( "CreateProcess failed" );
     ret = FALSE;
   }
   else {
@@ -131,9 +156,6 @@ gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb, gchar 
     if ( cb )
       cb(BABEL_DONE, NULL, user_data);
     
-    f = g_fopen(name_dst, "r");
-    a_gpx_read_file( vt, f );
-    fclose(f);
     ret = TRUE;
   }
 
@@ -145,23 +167,18 @@ gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb, gchar 
 /* Windows */
 #else
 /* Posix */
-gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb, gchar **args, const gchar *name_dst, gpointer user_data )
+static gboolean babel_general_convert( BabelStatusFunc cb, gchar **args, gpointer user_data )
 {
   gboolean ret = FALSE;
   GPid pid;
   GError *error = NULL;
   gint babel_stdout;
-  FILE *f;
-
 
   if (!g_spawn_async_with_pipes (NULL, args, NULL, 0, NULL, NULL, &pid, NULL, &babel_stdout, NULL, &error)) {
-    g_warning("Error : %s", error->message);
+    g_error("Async command failed: %s", error->message);
     g_error_free(error);
     ret = FALSE;
   } else {
-    /* No data required */
-    if ( vt == NULL )
-      return TRUE;
 
     gchar line[512];
     FILE *diag;
@@ -179,6 +196,42 @@ gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb, gchar 
     waitpid(pid, NULL, 0);
     g_spawn_close_pid(pid);
 
+    ret = TRUE;
+  }
+    
+  return ret;
+}
+#endif /* Posix */
+
+/**
+ * babel_general_convert_from:
+ * @vtl: The TrackWaypoint Layer to save the data into
+ *   If it is null it signifies that no data is to be processed,
+ *    however the gpsbabel command is still ran as it can be for non-data related options eg:
+ *    for use with the power off command - 'command_off'
+ * @cb: callback that is run upon new data from STDOUT (?)
+ *     (TODO: STDERR would be nice since we usually redirect STDOUT)
+ * @user_data: passed along to cb
+ *
+ * Runs args[0] with the arguments and uses the GPX module
+ * to import the GPX data into layer vt. Assumes that upon
+ * running the command, the data will appear in the (usually
+ * temporary) file name_dst.
+ *
+ * Returns: %TRUE on success
+ */
+static gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb, gchar **args, const gchar *name_dst, gpointer user_data )
+{
+  gboolean ret = FALSE;
+  FILE *f = NULL;
+    
+  if (babel_general_convert(cb, args, user_data)) {
+
+    /* No data actually required but still need to have run gpsbabel anyway
+       - eg using the device power command_off */
+    if ( vt == NULL )
+      return TRUE;
+
     f = g_fopen(name_dst, "r");
     if (f) {
       a_gpx_read_file ( vt, f );
@@ -190,24 +243,32 @@ gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb, gchar 
     
   return ret;
 }
-#endif /* Posix */
 
-gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, BabelStatusFunc cb, const char *from, gpointer user_data )
+/**
+ * a_babel_convert_from:
+ * @vt:        The TRW layer to place data into. Duplicate items will be overwritten.
+ * @babelargs: A string containing gpsbabel command line options. In addition to any filters, this string
+ *             must include the input file type (-i) option.
+ * @cb:	       Optional callback function. Same usage as in a_babel_convert().
+ *
+ * Loads data into a trw layer from a file, using gpsbabel.  This routine is synchronous;
+ * that is, it will block the calling program until the conversion is done. To avoid blocking, call
+ * this routine from a worker thread.
+ *
+ * Returns: %TRUE on success
+ */
+gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, const char *from, BabelStatusFunc cb, gpointer user_data )
 {
   int i,j;
   int fd_dst;
-  gchar *name_dst;
+  gchar *name_dst = NULL;
   gboolean ret = FALSE;
   gchar *args[64];
 
   if ((fd_dst = g_file_open_tmp("tmp-viking.XXXXXX", &name_dst, NULL)) >= 0) {
-    gchar *gpsbabel_loc;
     close(fd_dst);
 
-    gpsbabel_loc = g_find_program_in_path("gpsbabel");
-
     if (gpsbabel_loc ) {
-      gchar *unbuffer_loc = g_find_program_in_path("unbuffer");
       gchar **sub_args = g_strsplit(babelargs, " ", 0);
 
       i = 0;
@@ -229,35 +290,37 @@ gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, BabelStat
 
       ret = babel_general_convert_from ( vt, cb, args, name_dst, user_data );
 
-      g_free ( unbuffer_loc );
       g_strfreev(sub_args);
     } else
-      g_warning("gpsbabel not found in PATH");
-    g_free(gpsbabel_loc);
+      g_error("gpsbabel not found in PATH");
+    g_remove(name_dst);
+    g_free(name_dst);
   }
 
-  g_remove(name_dst);
-  g_free(name_dst);
   return ret;
 }
 
-/* Runs the input command in a shell (bash) and optionally uses GPSBabel to convert from input_file_type.
- * If input_file_type is NULL, doesn't use GPSBabel. Input must be GPX (or Geocaching *.loc)
+/**
+ * a_babel_convert_from_shellcommand:
  *
- * Uses babel_general_convert_from to actually run the command. This function
+ * Runs the input command in a shell (bash) and optionally uses GPSBabel to convert from input_file_type.
+ * If input_file_type is %NULL, doesn't use GPSBabel. Input must be GPX (or Geocaching *.loc)
+ *
+ * Uses babel_general_convert_from() to actually run the command. This function
  * prepares the command and temporary file, and sets up the arguments for bash.
  */
 gboolean a_babel_convert_from_shellcommand ( VikTrwLayer *vt, const char *input_cmd, const char *input_file_type, BabelStatusFunc cb, gpointer user_data )
 {
   int fd_dst;
-  gchar *name_dst;
+  gchar *name_dst = NULL;
   gboolean ret = FALSE;
   gchar **args;  
 
   if ((fd_dst = g_file_open_tmp("tmp-viking.XXXXXX", &name_dst, NULL)) >= 0) {
     gchar *shell_command;
     if ( input_file_type )
-      shell_command = g_strdup_printf("%s | gpsbabel -i %s -f - -o gpx -F %s", input_cmd, input_file_type, name_dst);
+      shell_command = g_strdup_printf("%s | %s -i %s -f - -o gpx -F %s",
+        input_cmd, gpsbabel_loc, input_file_type, name_dst);
     else
       shell_command = g_strdup_printf("%s > %s", input_cmd, name_dst);
 
@@ -273,10 +336,10 @@ gboolean a_babel_convert_from_shellcommand ( VikTrwLayer *vt, const char *input_
     ret = babel_general_convert_from ( vt, cb, args, name_dst, user_data );
     g_free ( args );
     g_free ( shell_command );
+    g_remove(name_dst);
+    g_free(name_dst);
   }
 
-  g_remove(name_dst);
-  g_free(name_dst);
   return ret;
 }
 
@@ -286,8 +349,8 @@ gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char
   gint fd_src;
   int fetch_ret;
   gboolean ret = FALSE;
-  gchar *name_src;
-  gchar *babelargs;
+  gchar *name_src = NULL;
+  gchar *babelargs = NULL;
 
   g_debug("%s: input_type=%s url=%s", __FUNCTION__, input_type, url);
 
@@ -299,7 +362,7 @@ gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char
 
     fetch_ret = a_http_download_get_url(url, "", name_src, &options, NULL);
     if (fetch_ret == 0)
-      ret = a_babel_convert_from( vt, babelargs, NULL, name_src, NULL);
+      ret = a_babel_convert_from( vt, babelargs, name_src, NULL, NULL);
  
     g_remove(name_src);
     g_free(babelargs);
@@ -309,129 +372,28 @@ gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char
   return ret;
 }
 
-#ifdef WINDOWS
-gboolean babel_general_convert_to( VikTrwLayer *vt, BabelStatusFunc cb, gchar **args, const gchar *name_src, gpointer user_data )
+static gboolean babel_general_convert_to( VikTrwLayer *vt, BabelStatusFunc cb, gchar **args, const gchar *name_src, gpointer user_data )
 {
-  gboolean ret;
-  gchar *cmd;
-  gchar **args2;
-  
   if (!a_file_export(vt, name_src, FILE_TYPE_GPX, NULL)) {
-    g_warning("%s(): error exporting to %s", __FUNCTION__, name_src);
-    return(FALSE);
+    g_error("Error exporting to %s", name_src);
+    return FALSE;
   }
        
-  STARTUPINFO si;
-  PROCESS_INFORMATION pi;
-
-  ZeroMemory( &si, sizeof(si) );
-  ZeroMemory( &pi, sizeof(pi) );
-  si.cb = sizeof(si);
-  si.dwFlags = STARTF_USESHOWWINDOW;
-  si.wShowWindow = SW_HIDE;
-  
-  
-  cmd = g_strjoinv( " ", args);
-  args2 = g_strsplit(cmd, "\\", 0);
-  cmd = g_strjoinv( "\\\\", args2);
-  g_free(args2);
-       args2 = g_strsplit(cmd, "/", 0);
-       g_free(cmd);
-       cmd = g_strjoinv( "\\\\", args2);
-       
-  if( !CreateProcess(
-             NULL,                   // No module name (use command line).
-        (LPTSTR)cmd,           // Command line.
-        NULL,                   // Process handle not inheritable.
-        NULL,                   // Thread handle not inheritable.
-        FALSE,                  // Set handle inheritance to FALSE.
-        0,                      // No creation flags.
-        NULL,                   // Use parent's environment block.
-        NULL,                   // Use parent's starting directory.
-        &si,                    // Pointer to STARTUPINFO structure.
-        &pi )                   // Pointer to PROCESS_INFORMATION structure.
-    ){
-    g_warning( "CreateProcess failed" );
-    ret = FALSE;
-  }
-  else {
-    
-    WaitForSingleObject(pi.hProcess, INFINITE);
-    WaitForSingleObject(pi.hThread, INFINITE);
-    
-    CloseHandle(pi.hThread);
-    CloseHandle(pi.hProcess);
-
-    if ( cb )
-      cb(BABEL_DONE, NULL, user_data);
-    
-    ret = TRUE;
-  }
-  
-  g_strfreev(args2);
-  g_free( cmd );
-  
-  return ret;
+  return babel_general_convert (cb, args, user_data);
 }
-/* Windows */
-#else
-/* Posix */
-gboolean babel_general_convert_to( VikTrwLayer *vt, BabelStatusFunc cb, gchar **args, const gchar *name_src, gpointer user_data )
-{
-  gboolean ret = FALSE;
-  GPid pid;
-  GError *error = NULL;
-  gint babel_stdout;
 
-  if (!a_file_export(vt, name_src, FILE_TYPE_GPX, NULL)) {
-    g_warning("%s(): error exporting to %s", __FUNCTION__, name_src);
-    return(FALSE);
-  }
-
-  if (!g_spawn_async_with_pipes (NULL, args, NULL, 0, NULL, NULL, &pid, NULL, &babel_stdout, NULL, &error)) {
-    g_warning("Error : %s", error->message);
-    g_error_free(error);
-    ret = FALSE;
-  } else {
-    gchar line[512];
-    FILE *diag;
-    diag = fdopen(babel_stdout, "r");
-    setvbuf(diag, NULL, _IONBF, 0);
-
-    while (fgets(line, sizeof(line), diag)) {
-      if ( cb )
-        cb(BABEL_DIAG_OUTPUT, line, user_data);
-    }
-    if ( cb )
-      cb(BABEL_DONE, NULL, user_data);
-    fclose(diag);
-    diag = NULL;
-    waitpid(pid, NULL, 0);
-    g_spawn_close_pid(pid);
-
-    ret = TRUE;
-  }
-    
-  return ret;
-}
-#endif /* Posix */
-
-gboolean a_babel_convert_to( VikTrwLayer *vt, const char *babelargs, BabelStatusFunc cb, const char *to, gpointer user_data )
+gboolean a_babel_convert_to( VikTrwLayer *vt, const char *babelargs, const char *to, BabelStatusFunc cb, gpointer user_data )
 {
   int i,j;
   int fd_src;
-  gchar *name_src;
+  gchar *name_src = NULL;
   gboolean ret = FALSE;
   gchar *args[64];  
 
   if ((fd_src = g_file_open_tmp("tmp-viking.XXXXXX", &name_src, NULL)) >= 0) {
-    gchar *gpsbabel_loc;
     close(fd_src);
 
-    gpsbabel_loc = g_find_program_in_path("gpsbabel");
-
     if (gpsbabel_loc ) {
-      gchar *unbuffer_loc = g_find_program_in_path("unbuffer");
       gchar **sub_args = g_strsplit(babelargs, " ", 0);
 
       i = 0;
@@ -452,14 +414,138 @@ gboolean a_babel_convert_to( VikTrwLayer *vt, const char *babelargs, BabelStatus
 
       ret = babel_general_convert_to ( vt, cb, args, name_src, user_data );
 
-      g_free ( unbuffer_loc );
       g_strfreev(sub_args);
     } else
-      g_warning("gpsbabel not found in PATH");
-    g_free(gpsbabel_loc);
+      g_error("gpsbabel not found in PATH");
+    g_remove(name_src);
+    g_free(name_src);
   }
 
-  g_remove(name_src);
-  g_free(name_src);
   return ret;
+}
+
+static void set_mode(BabelMode mode, gchar *smode)
+{
+  mode.waypointsRead  = smode[0] == 'r';
+  mode.waypointsWrite = smode[1] == 'w';
+  mode.tracksRead     = smode[2] == 'r';
+  mode.tracksWrite    = smode[3] == 'w';
+  mode.routesRead     = smode[4] == 'r';
+  mode.routesWrite    = smode[5] == 'w';
+}
+
+/**
+ * load_feature:
+ * 
+ * Load a single feature stored in the given line.
+ */
+static void load_feature_parse_line (gchar *line)
+{
+  gchar **tokens = g_strsplit ( line, "\t", 0 );
+  if ( tokens != NULL
+       && tokens[0] != NULL ) {
+    if ( strcmp("serial", tokens[0]) == 0 ) {
+      if ( tokens[1] != NULL
+           && tokens[2] != NULL
+           && tokens[3] != NULL
+           && tokens[4] != NULL ) {
+        BabelDevice *device = g_malloc ( sizeof (BabelDevice) );
+        set_mode (device->mode, tokens[1]);
+        device->name = g_strdup (tokens[2]);
+        device->label = g_strdup (tokens[4]);
+        a_babel_device_list = g_list_append (a_babel_device_list, device);
+        g_debug ("New gpsbabel device: %s", device->name);
+      } else {
+        g_warning ( "Unexpected gpsbabel format string: %s", line);
+      }
+    } else if ( strcmp("file", tokens[0]) == 0 ) {
+      if ( tokens[1] != NULL
+           && tokens[2] != NULL
+           && tokens[3] != NULL
+           && tokens[4] != NULL ) {
+        BabelFile *file = g_malloc ( sizeof (BabelFile) );
+        set_mode (file->mode, tokens[1]);
+        file->name = g_strdup (tokens[2]);
+        file->ext = g_strdup (tokens[3]);
+        file->label = g_strdup (tokens[4]);
+        a_babel_file_list = g_list_append (a_babel_file_list, file);
+        g_debug ("New gpsbabel file: %s", file->name);
+      } else {
+        g_warning ( "Unexpected gpsbabel format string: %s", line);
+      }
+    } /* else: ignore */
+  } else {
+    g_warning ( "Unexpected gpsbabel format string: %s", line);
+  }
+  g_strfreev ( tokens );
+}
+
+static void load_feature_cb (BabelProgressCode code, gpointer line, gpointer user_data)
+{
+  if (line != NULL)
+    load_feature_parse_line (line);
+}
+
+static gboolean load_feature ()
+{
+  int i;
+  gboolean ret = FALSE;
+  gchar *args[4];  
+
+  if ( gpsbabel_loc ) {
+    i = 0;
+    if ( unbuffer_loc )
+      args[i++] = unbuffer_loc;
+    args[i++] = gpsbabel_loc;
+    args[i++] = "-^3";
+    args[i] = NULL;
+
+    ret = babel_general_convert (load_feature_cb, args, NULL);
+  } else
+    g_error("gpsbabel not found in PATH");
+
+  return ret;
+}
+
+void a_babel_init ()
+{
+  /* TODO allow to set gpsbabel path via command line */
+  gpsbabel_loc = g_find_program_in_path( "gpsbabel" );
+  if ( !gpsbabel_loc )
+    g_error( "gpsbabel not found in PATH" );
+  unbuffer_loc = g_find_program_in_path( "unbuffer" );
+  if ( !unbuffer_loc )
+    g_warning( "unbuffer not found in PATH" );
+
+  load_feature ();
+}
+
+void a_babel_uninit ()
+{
+  g_free ( gpsbabel_loc );
+  g_free ( unbuffer_loc );
+
+  if ( a_babel_file_list ) {
+    GList *gl;
+    for (gl = a_babel_file_list; gl != NULL; gl = g_list_next(gl)) {
+      BabelFile *file = gl->data;
+      g_free ( file->name );
+      g_free ( file->ext );
+      g_free ( file->label );
+      g_free ( gl->data );
+    }
+    g_list_free ( a_babel_file_list );
+  }
+
+  if ( a_babel_device_list ) {
+    GList *gl;
+    for (gl = a_babel_device_list; gl != NULL; gl = g_list_next(gl)) {
+      BabelDevice *device = gl->data;
+      g_free ( device->name );
+      g_free ( device->label );
+      g_free ( gl->data );
+    }
+    g_list_free ( a_babel_device_list );
+  }
+
 }

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(viking, 1.2.2)
+AC_INIT(viking, 1.3)
 AM_INIT_AUTOMAKE()
 dnl AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
@@ -222,6 +222,20 @@ case $ac_cv_enable_geocaches in
 esac
 AM_CONDITIONAL([GEOCACHES], [test x$ac_cv_enable_geocaches = xyes])
 
+AC_ARG_ENABLE(geotag, AC_HELP_STRING([--enable-geotag],
+	      [enable Geotag Support (default is enable).]),
+              [ac_cv_enable_geotag=$enableval],
+              [ac_cv_enable_geotag=yes])
+AC_CACHE_CHECK([whether to enable Geotag Support],
+               [ac_cv_enable_geotag], [ac_cv_enable_geotag=yes])
+case $ac_cv_enable_geotag in
+  yes)
+    AC_CHECK_LIB(exif,exif_loader_new,,AC_MSG_ERROR([libexif is needed for Geotag features[,] but is not found. The feature can be disabled with --disable-geotag]))
+    AC_DEFINE(VIK_CONFIG_GEOTAG, [], [GEOTAG STUFF])
+    ;;
+esac
+AM_CONDITIONAL([GEOTAG], [test x$ac_cv_enable_geotag = xyes])
+
 AC_ARG_ENABLE(spotmaps, AC_HELP_STRING([--enable-spotmaps],
 	      [enable SPOTMaps map (default is enable).]),
               [ac_cv_enable_spotmaps=$enableval],
@@ -258,18 +272,11 @@ AC_CACHE_CHECK([whether to enable Realtime GPS Tracking stuff],
                [ac_cv_enable_realtimegpstracking], [ac_cv_enable_realtimegpstracking=yes])
 case $ac_cv_enable_realtimegpstracking in
   yes)
-    AC_CHECK_LIB(gps,gps_poll,,AC_MSG_ERROR([libgps is needed for Realtime GPS Tracking feature[,] but not found. The feature can be disable with --disable-realtime-gps-tracking]))
+    AC_CHECK_LIB(gps,gps_close,,AC_MSG_ERROR([libgps is needed for Realtime GPS Tracking feature[,] but not found. The feature can be disable with --disable-realtime-gps-tracking]))
     AC_DEFINE(VIK_CONFIG_REALTIME_GPS_TRACKING, [], [REALTIME GPS TRACKING STUFF])
     ;;
 esac
 AM_CONDITIONAL([REALTIME_GPS_TRACKING], [test x$ac_cv_enable_realtimegpstracking = xyes])
-# Viking supports two incompatibles versions of GPSd: 2.39 and 2.90
-# But GPSd does not provides easy way to test features.
-if test x$ac_cv_enable_realtimegpstracking = xyes
-then
-  AC_CHECK_FUNCS(gps_stream)
-  AC_CHECK_FUNCS(gps_open_r)
-fi
 
 AC_ARG_WITH(search,
             [AC_HELP_STRING([--with-search],
@@ -320,7 +327,7 @@ AC_ARG_WITH(tileage,
              fi],
              [VIK_CONFIG_DEFAULT_TILE_AGE=604800])
 AC_DEFINE_UNQUOTED(VIK_CONFIG_DEFAULT_TILE_AGE, ${VIK_CONFIG_DEFAULT_TILE_AGE},
-                   [Age of tiles before cheking it (in seconds)])
+                   [Age of tiles before checking it (in seconds)])
 
 dnl man pages processing
 DB2MAN_XSL=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl
@@ -342,8 +349,7 @@ AC_CONFIG_FILES([Makefile
                  test/Makefile
                  help/Makefile
                  doc/Makefile
-                 doc/examples/Makefile
-                 doc/dev/Makefile])
+                 doc/examples/Makefile])
 if test x$enable_gtk_doc = xyes; then
 AC_CONFIG_FILES([doc/reference/Makefile])
 fi
@@ -365,7 +371,8 @@ echo "Open Street Map                  : $ac_cv_enable_openstreetmap"
 echo "BlueMarble                       : $ac_cv_enable_bluemarble"
 echo "SPOTMaps                         : $ac_cv_enable_spotmaps"
 echo "Geonames                         : $ac_cv_enable_geonames"
-#echo "Geocaches Acquire                : $ac_cv_enable_geocaches"
+echo "Geocaches Acquire                : $ac_cv_enable_geocaches"
+echo "Geotag Support                   : $ac_cv_enable_geotag"
 echo "USGS 24k DEM                     : $ac_cv_enable_dem24k"
 echo "Realtime GPS Tracking            : $ac_cv_enable_realtimegpstracking"
 echo "Size of map cache (in memory)    : ${VIK_CONFIG_MAPCACHE_SIZE}"

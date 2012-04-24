@@ -24,12 +24,6 @@
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #undef HAVE_GETTEXT
 
-/* Define to 1 if you have the `gps_open_r' function. */
-#undef HAVE_GPS_OPEN_R
-
-/* Define to 1 if you have the `gps_stream' function. */
-#undef HAVE_GPS_STREAM
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -38,6 +32,9 @@
 
 /* Define to 1 if you have a functional curl library. */
 #undef HAVE_LIBCURL
+
+/* Define to 1 if you have the `exif' library (-lexif). */
+#undef HAVE_LIBEXIF
 
 /* Define to 1 if you have the `gps' library (-lgps). */
 #undef HAVE_LIBGPS
@@ -233,7 +230,7 @@
 /* BLUEMARBLE STUFF */
 #undef VIK_CONFIG_BLUEMARBLE
 
-/* Age of tiles before cheking it (in seconds) */
+/* Age of tiles before checking it (in seconds) */
 #undef VIK_CONFIG_DEFAULT_TILE_AGE
 
 /* DEM24K STUFF */
@@ -247,6 +244,9 @@
 
 /* GEONAMES STUFF */
 #undef VIK_CONFIG_GEONAMES
+
+/* GEOTAG STUFF */
+#undef VIK_CONFIG_GEOTAG
 
 /* GOOGLE STUFF */
 #undef VIK_CONFIG_GOOGLE

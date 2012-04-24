@@ -25,12 +25,6 @@
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #define HAVE_GETTEXT 1
 
-/* Define to 1 if you have the `gps_open_r' function. */
-#define HAVE_GPS_OPEN_R 1
-
-/* Define to 1 if you have the `gps_stream' function. */
-#define HAVE_GPS_STREAM 1
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
@@ -39,6 +33,9 @@
 
 /* Define to 1 if you have a functional curl library. */
 #define HAVE_LIBCURL 1
+
+/* Define to 1 if you have the `exif' library (-lexif). */
+#define HAVE_LIBEXIF 1
 
 /* Define to 1 if you have the `gps' library (-lgps). */
 #define HAVE_LIBGPS 1
@@ -208,7 +205,7 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 1.2.2"
+#define PACKAGE_STRING "viking 1.3"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
@@ -217,13 +214,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.2.2"
+#define PACKAGE_VERSION "1.3"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.2.2"
+#define VERSION "1.3"
 
 /* NO ALPHABETIZED TRW */
 #define VIK_CONFIG_ALPHABETIZED_TRW /**/
@@ -234,7 +231,7 @@
 /* BLUEMARBLE STUFF */
 #define VIK_CONFIG_BLUEMARBLE /**/
 
-/* Age of tiles before cheking it (in seconds) */
+/* Age of tiles before checking it (in seconds) */
 #define VIK_CONFIG_DEFAULT_TILE_AGE 604800
 
 /* DEM24K STUFF */
@@ -248,6 +245,9 @@
 
 /* GEONAMES STUFF */
 #define VIK_CONFIG_GEONAMES /**/
+
+/* GEOTAG STUFF */
+#define VIK_CONFIG_GEOTAG /**/
 
 /* GOOGLE STUFF */
 #define VIK_CONFIG_GOOGLE /**/

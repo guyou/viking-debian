@@ -133,14 +133,27 @@ static void treeview_edited_cb (GtkCellRendererText *cell, gchar *path_str, cons
 
 static void treeview_toggled_cb (GtkCellRendererToggle *cell, gchar *path_str, VikTreeview *vt)
 {
-  GtkTreeIter iter;
+  GtkTreeIter iter_toggle;
+  GtkTreeIter iter_selected;
 
   /* get type and data */
-  vik_treeview_get_iter_from_path_str ( vt, &iter, path_str );
-  vt->was_a_toggle = TRUE;
+  vik_treeview_get_iter_from_path_str ( vt, &iter_toggle, path_str );
 
-  g_signal_emit ( G_OBJECT(vt), 
-treeview_signals[VT_ITEM_TOGGLED_SIGNAL], 0, &iter );
+  GtkTreePath *tp_toggle = gtk_tree_model_get_path ( vt->model, &iter_toggle );
+
+  if ( gtk_tree_selection_get_selected ( gtk_tree_view_get_selection ( GTK_TREE_VIEW ( vt ) ), NULL, &iter_selected ) ) {
+    GtkTreePath *tp_selected = gtk_tree_model_get_path ( vt->model, &iter_selected );
+    if ( gtk_tree_path_compare ( tp_toggle, tp_selected ) )
+      // Toggle set on different path
+      // therefore prevent subsequent auto selection (otherwise no action needed)
+      vt->was_a_toggle = TRUE;
+  }
+  else
+    // Toggle set on new path
+    // therefore prevent subsequent auto selection
+    vt->was_a_toggle = TRUE;
+
+  g_signal_emit ( G_OBJECT(vt), treeview_signals[VT_ITEM_TOGGLED_SIGNAL], 0, &iter_toggle );
 }
 
 /* Inspired by GTK+ test
@@ -550,7 +563,7 @@ void vik_treeview_add_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTree
   gtk_tree_store_prepend ( GTK_TREE_STORE(vt->model), iter, parent_iter );
   gtk_tree_store_set ( GTK_TREE_STORE(vt->model), iter, NAME_COLUMN, name, VISIBLE_COLUMN, TRUE, 
     TYPE_COLUMN, VIK_TREEVIEW_TYPE_LAYER, ITEM_PARENT_COLUMN, parent, ITEM_POINTER_COLUMN, item, 
-    ITEM_DATA_COLUMN, data, HAS_VISIBLE_COLUMN, TRUE, EDITABLE_COLUMN, TRUE,
+    ITEM_DATA_COLUMN, data, HAS_VISIBLE_COLUMN, TRUE, EDITABLE_COLUMN, parent == NULL ? FALSE : TRUE,
     ICON_COLUMN, icon_type >= 0 ? vt->layer_type_icons[icon_type] : NULL, -1 );
 }
 
@@ -660,19 +673,16 @@ static void treeview_finalize ( GObject *gob )
 static gboolean treeview_drag_data_received (GtkTreeDragDest *drag_dest, GtkTreePath *dest, GtkSelectionData *selection_data)
 {
   GtkTreeModel *tree_model;
-  GtkTreeStore *tree_store;
   GtkTreeModel *src_model = NULL;
   GtkTreePath *src_path = NULL, *dest_cp = NULL;
   gboolean retval = FALSE;
-  GtkTreeIter src_iter, root_iter, dest_iter, dest_parent;
-  gint *i_src = NULL;
+  GtkTreeIter src_iter, root_iter, dest_parent;
   VikTreeview *vt;
   VikLayer *vl;
 
   g_return_val_if_fail (GTK_IS_TREE_STORE (drag_dest), FALSE);
 
   tree_model = GTK_TREE_MODEL (drag_dest);
-  tree_store = GTK_TREE_STORE (drag_dest);
 
   if (gtk_tree_get_row_drag_data (selection_data, &src_model, &src_path) && src_model == tree_model) {
     /* 
@@ -696,7 +706,6 @@ static gboolean treeview_drag_data_received (GtkTreeDragDest *drag_dest, GtkTree
       goto out;
     }
 
-    i_src = gtk_tree_path_get_indices (src_path);
     dest_cp = gtk_tree_path_copy (dest);
 
     gtk_tree_model_get_iter_first(tree_model, &root_iter);
@@ -707,13 +716,9 @@ static gboolean treeview_drag_data_received (GtkTreeDragDest *drag_dest, GtkTree
     if (gtk_tree_path_get_depth(dest_cp)>1) { /* can't be sibling of top layer */
       VikLayer *vl_src, *vl_dest;
 
-      /* Find the first ancestor that is a full layer, and store in dest_parent. 
-       * In addition, put in dest_iter where Gtk wants us to insert the dragged object.
-       * (Note that this may end up being an invalid iter). 
-       */
+      /* Find the first ancestor that is a full layer, and store in dest_parent. */
       do {
 	gtk_tree_path_up(dest_cp);
-	dest_iter = dest_parent;
 	gtk_tree_model_get_iter (src_model, &dest_parent, dest_cp);
       } while (gtk_tree_path_get_depth(dest_cp)>1 &&
 	       vik_treeview_item_get_type(vt, &dest_parent) != VIK_TREEVIEW_TYPE_LAYER);
