@@ -13,10 +13,8 @@ override_dh_auto_test:
 
 override_dh_auto_clean:
 	dh_auto_clean
-	sed -i 's,gps_close,gps_poll,g' configure
 
 override_dh_auto_configure:
-	sed -i 's,gps_poll,gps_close,g' configure
 	dh_auto_configure
 
 .PHONY: override_dh_auto_test
