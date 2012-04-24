@@ -1,3 +1,11 @@
+viking (1.3-1) unstable; urgency=low
+
+  * [a3f95c12] Imported Upstream version 1.3
+  * [ab0442aa] Drop GPSD-API-v5 patch, applied upstream.
+  * [6890fcb6] Add libexif-dev as build dependency.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 24 Apr 2012 21:44:56 +0200
+
 viking (1.2.2-1) unstable; urgency=low
 
   * [cd56f671] Imported Upstream version 1.2.2 (Closes: #655084)
