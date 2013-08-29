@@ -35,7 +35,7 @@ static const gchar *map_source_get_license (VikMapSource *self);
 static const gchar *map_source_get_license_url (VikMapSource *self);
 static const GdkPixbuf *map_source_get_logo (VikMapSource *self);
 
-static guint8 map_source_get_uniq_id (VikMapSource *self);
+static guint16 map_source_get_uniq_id (VikMapSource *self);
 static const gchar *map_source_get_label (VikMapSource *self);
 static guint16 map_source_get_tilesize_x (VikMapSource *self);
 static guint16 map_source_get_tilesize_y (VikMapSource *self);
@@ -54,7 +54,7 @@ struct _VikMapSourceDefaultPrivate
 	gchar *license_url;
 	GdkPixbuf *logo;
 
-	guint8 uniq_id;
+	guint16 uniq_id;
 	gchar *label;
 	guint16 tilesize_x;
 	guint16 tilesize_y;
@@ -78,7 +78,7 @@ enum
   PROP_LICENSE_URL,
 };
 
-G_DEFINE_TYPE_EXTENDED (VikMapSourceDefault, vik_map_source_default, VIK_TYPE_MAP_SOURCE, (GTypeFlags)G_TYPE_FLAG_ABSTRACT,);
+G_DEFINE_ABSTRACT_TYPE (VikMapSourceDefault, vik_map_source_default, VIK_TYPE_MAP_SOURCE);
 
 static void
 vik_map_source_default_init (VikMapSourceDefault *object)
@@ -268,7 +268,7 @@ vik_map_source_default_class_init (VikMapSourceDefaultClass *klass)
                                0  /* minimum value */,
                                G_MAXUINT16 /* maximum value */,
                                0  /* default value */,
-                               G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
+                               G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_TILESIZE_X, pspec);
 
 	pspec = g_param_spec_uint ("tilesize-y",
@@ -277,7 +277,7 @@ vik_map_source_default_class_init (VikMapSourceDefaultClass *klass)
                                0  /* minimum value */,
                                G_MAXUINT16 /* maximum value */,
                                0  /* default value */,
-                               G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
+                               G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_TILESIZE_Y, pspec);
 
 	pspec = g_param_spec_enum("drawmode",
@@ -359,10 +359,10 @@ map_source_get_logo (VikMapSource *self)
 	return priv->logo;
 }
 
-static guint8
+static guint16
 map_source_get_uniq_id (VikMapSource *self)
 {
-	g_return_val_if_fail (VIK_IS_MAP_SOURCE_DEFAULT(self), (guint8)0);
+	g_return_val_if_fail (VIK_IS_MAP_SOURCE_DEFAULT(self), (guint16)0);
 	
 	VikMapSourceDefaultPrivate *priv = VIK_MAP_SOURCE_DEFAULT_PRIVATE(self);
 

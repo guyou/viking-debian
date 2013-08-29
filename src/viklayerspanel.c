@@ -35,9 +35,6 @@ enum {
   VLP_LAST_SIGNAL
 };
 
-static void layers_panel_class_init ( VikLayersPanelClass *klass );
-static void layers_panel_init ( VikLayersPanel *vlp );
-
 static guint layers_panel_signals[VLP_LAST_SIGNAL] = { 0 };
 
 static GObjectClass *parent_class;
@@ -76,31 +73,9 @@ static void layers_move_item_up ( VikLayersPanel *vlp );
 static void layers_move_item_down ( VikLayersPanel *vlp );
 static void layers_panel_finalize ( GObject *gob );
 
-GType vik_layers_panel_get_type()
-{
-  static GType vlp_type = 0;
+G_DEFINE_TYPE (VikLayersPanel, vik_layers_panel, GTK_TYPE_VBOX)
 
-  if (!vlp_type)
-  {
-    static const GTypeInfo vlp_info = 
-    {
-      sizeof (VikLayersPanelClass),
-      NULL, /* base_init */
-      NULL, /* base_finalize */
-      (GClassInitFunc) layers_panel_class_init,
-      NULL, /* class_finalize */
-      NULL, /* class_data */
-      sizeof (VikLayersPanel),
-      0,
-      (GInstanceInitFunc) layers_panel_init,
-    };
-    vlp_type = g_type_register_static ( GTK_TYPE_VBOX, "VikLayersPanel", &vlp_info, 0 );
-  }
-
-  return vlp_type;
-}
-
-static void layers_panel_class_init ( VikLayersPanelClass *klass )
+static void vik_layers_panel_class_init ( VikLayersPanelClass *klass )
 {
   GObjectClass *object_class;
 
@@ -129,7 +104,7 @@ VikViewport *vik_layers_panel_get_viewport ( VikLayersPanel *vlp )
   return vlp->vvp;
 }
 
-static void layers_panel_init ( VikLayersPanel *vlp )
+static void vik_layers_panel_init ( VikLayersPanel *vlp )
 {
   GtkWidget *hbox;
   GtkWidget *addbutton, *addimage;
@@ -219,13 +194,14 @@ static void layers_panel_init ( VikLayersPanel *vlp )
   gtk_box_pack_start ( GTK_BOX(vlp), hbox, FALSE, FALSE, 0 );
 
   vlp->popup_factory = gtk_item_factory_new ( GTK_TYPE_MENU, "<main>", NULL );
+  gtk_item_factory_set_translate_func (vlp->popup_factory,
+          (GtkTranslateFunc) gettext, NULL, NULL);
   gtk_item_factory_create_items ( vlp->popup_factory, NUM_BASE_ENTRIES, base_entries, vlp );
   for ( i = 0; i < VIK_LAYER_NUM_TYPES; i++ )
   {
     /* TODO: FIXME: if name has a '/' in it it will get all messed up. why not have an itemfactory field with
                     name, icon, shortcut, etc.? */
-    /* Note: we use a temporary label in order to share translation with other codde */
-    gchar *label = g_strdup_printf(_("New %s Layer"), vik_layer_get_interface(i)->name );
+    gchar *label = g_strdup_printf(_("New _%s Layer"), vik_layer_get_interface(i)->name );
     entry.path = g_strdup_printf("%s/%s", base_entries[NUM_BASE_ENTRIES-1].path, label );
     g_free ( label );
     entry.accelerator = NULL;
@@ -245,9 +221,23 @@ static void layers_panel_init ( VikLayersPanel *vlp )
   }
 }
 
-void vik_layers_panel_emit_update ( VikLayersPanel *vlp )
+/**
+ * Invoke the actual drawing via signal method
+ */
+static gboolean idle_draw_panel ( VikLayersPanel *vlp )
 {
   g_signal_emit ( G_OBJECT(vlp), layers_panel_signals[VLP_UPDATE_SIGNAL], 0 );
+  return FALSE; // Nothing else to do
+}
+
+void vik_layers_panel_emit_update ( VikLayersPanel *vlp )
+{
+  // Only ever draw when there is time to do so
+  if ( g_thread_self() != vik_window_get_thread (VIK_WINDOW(VIK_GTK_WINDOW_FROM_WIDGET(vlp))) )
+    // Drawing requested from another (background) thread, so handle via the gdk thread method
+    gdk_threads_add_idle ( (GSourceFunc) idle_draw_panel, vlp );
+  else
+    g_idle_add ( (GSourceFunc) idle_draw_panel, vlp );
 }
 
 static void layers_item_toggled (VikLayersPanel *vlp, GtkTreeIter *iter)
@@ -279,6 +269,14 @@ static void layers_item_toggled (VikLayersPanel *vlp, GtkTreeIter *iter)
 
 static void layers_item_edited (VikLayersPanel *vlp, GtkTreeIter *iter, const gchar *new_text)
 {
+  if ( !new_text )
+    return;
+
+  if ( new_text[0] == '\0' ) {
+    a_dialog_error_msg ( GTK_WINDOW(VIK_WINDOW_FROM_WIDGET(vlp)), _("New name can not be blank.") );
+    return;
+  }
+
   if ( vik_treeview_item_get_type ( vlp->vt, iter ) == VIK_TREEVIEW_TYPE_LAYER )
   {
     VikLayer *l;
@@ -304,7 +302,7 @@ static gboolean layers_button_press_cb ( VikLayersPanel *vlp, GdkEventButton *ev
 {
   if (event->button == 3)
   {
-    GtkTreeIter iter;
+    static GtkTreeIter iter;
     if ( vik_treeview_get_iter_at_pos ( vlp->vt, &iter, event->x, event->y ) )
     {
       layers_popup ( vlp, &iter, 3 );
@@ -521,7 +519,7 @@ gboolean vik_layers_panel_properties ( VikLayersPanel *vlp )
       a_dialog_info_msg ( VIK_GTK_WINDOW_FROM_WIDGET(vlp), _("Aggregate Layers have no settable properties.") );
     VikLayer *layer = VIK_LAYER( vik_treeview_item_get_pointer ( vlp->vt, &iter ) );
     if (vik_layer_properties ( layer, vlp->vvp ))
-      vik_layer_emit_update ( layer, FALSE );
+      vik_layer_emit_update ( layer );
     return TRUE;
   }
   else
@@ -532,12 +530,6 @@ void vik_layers_panel_draw_all ( VikLayersPanel *vlp )
 {
   if ( vlp->vvp && VIK_LAYER(vlp->toplayer)->visible )
     vik_aggregate_layer_draw ( vlp->toplayer, vlp->vvp );
-}
-
-void vik_layers_panel_draw_all_using_viewport ( VikLayersPanel *vlp, VikViewport *vvp )
-{
-  if ( vlp->vvp && VIK_LAYER(vlp->toplayer)->visible )
-    vik_aggregate_layer_draw ( vlp->toplayer, vvp );
 }
 
 void vik_layers_panel_cut_selected ( VikLayersPanel *vlp )

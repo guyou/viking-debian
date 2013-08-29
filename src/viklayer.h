@@ -31,6 +31,8 @@
 #include "viktreeview.h"
 #include "vikviewport.h"
 
+G_BEGIN_DECLS
+
 #define VIK_LAYER_TYPE            (vik_layer_get_type ())
 #define VIK_LAYER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VIK_LAYER_TYPE, VikLayer))
 #define VIK_LAYER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), VIK_LAYER_TYPE, VikLayerClass))
@@ -101,7 +103,7 @@ typedef gboolean (*VikToolKeyFunc) (VikLayer *, GdkEventKey *, gpointer);
 
 typedef struct _VikToolInterface VikToolInterface;
 struct _VikToolInterface {
-  gchar *name;
+  GtkRadioActionEntry radioActionEntry;
   VikToolConstructorFunc create;
   VikToolDestructorFunc destroy;
   VikToolActivationFunc activate;
@@ -109,7 +111,8 @@ struct _VikToolInterface {
   VikToolMouseFunc click;
   VikToolMouseMoveFunc move;
   VikToolMouseFunc release;
-  VikToolKeyFunc key_press; /* return FALSE if we don't use the key press -- should return AFLSE most of the time if we want any shortcuts / UI keybindings to work! use sparingly. */
+  VikToolKeyFunc key_press; /* return FALSE if we don't use the key press -- should return FALSE most of the time if we want any shortcuts / UI keybindings to work! use sparingly. */
+  gboolean pan_handler; // Call click & release funtions even when 'Pan Mode' is on
   GdkCursorType cursor_type;
   const GdkPixdata *cursor_data;
   const GdkCursor *cursor;
@@ -166,7 +169,7 @@ typedef gboolean      (*VikLayerFuncSetParam)              (VikLayer *, guint16,
 typedef VikLayerParamData
                       (*VikLayerFuncGetParam)              (VikLayer *, guint16, gboolean);
 
-typedef void          (*VikLayerFuncReadFileData)          (VikLayer *, FILE *);
+typedef gboolean      (*VikLayerFuncReadFileData)          (VikLayer *, FILE *); // Should report success or failure
 typedef void          (*VikLayerFuncWriteFileData)         (VikLayer *, FILE *);
 
 /* item manipulation */
@@ -201,7 +204,9 @@ typedef struct _VikLayerInterface VikLayerInterface;
 
 /* See vik_layer_* for function parameter names */
 struct _VikLayerInterface {
-  const gchar *                     name;
+  const gchar *                     fixed_layer_name; // Used in .vik files - this should never change to maintain file compatibility
+  const gchar *                     name;             // Translate-able name used for display purposes
+  const gchar *                     accelerator;
   const GdkPixdata *                icon;
 
   VikToolInterface *                tools;
@@ -264,7 +269,7 @@ struct _VikLayerInterface {
 VikLayerInterface *vik_layer_get_interface ( gint type );
 
 
-void vik_layer_init ( VikLayer *vl, gint type );
+void vik_layer_set_type ( VikLayer *vl, gint type );
 void vik_layer_draw ( VikLayer *l, gpointer data );
 void vik_layer_change_coord_mode ( VikLayer *l, VikCoordMode mode );
 void vik_layer_rename ( VikLayer *l, const gchar *new_name );
@@ -273,7 +278,7 @@ const gchar *vik_layer_get_name ( VikLayer *l );
 
 gboolean vik_layer_set_param (VikLayer *layer, guint16 id, VikLayerParamData data, gpointer vp, gboolean is_file_operation);
 
-void vik_layer_emit_update ( VikLayer *vl, gboolean from_background );
+void vik_layer_emit_update ( VikLayer *vl );
 
 /* GUI */
 void vik_layer_set_menu_items_selection(VikLayer *l, guint16 selection);
@@ -309,5 +314,7 @@ GdkPixbuf *vik_layer_load_icon ( gint type );
 VikLayer *vik_layer_get_and_reset_trigger();
 void vik_layer_emit_update_secondary ( VikLayer *vl ); /* to be called by aggregate layer only. doesn't set the trigger */
 void vik_layer_emit_update_although_invisible ( VikLayer *vl );
+
+G_END_DECLS
 
 #endif

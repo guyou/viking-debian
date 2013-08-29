@@ -33,7 +33,6 @@ G_BEGIN_DECLS
 #define VIK_TRW_LAYER_TPWIN_INSERT   5
 #define VIK_TRW_LAYER_TPWIN_DELETE   4
 #define VIK_TRW_LAYER_TPWIN_SPLIT    3
-#define VIK_TRW_LAYER_TPWIN_JOIN     2
 #define VIK_TRW_LAYER_TPWIN_BACK     1
 #define VIK_TRW_LAYER_TPWIN_FORWARD  0
 
@@ -61,5 +60,6 @@ void vik_trw_layer_tpwin_disable_join ( VikTrwLayerTpwin *tpwin );
 void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *track_name );
 void vik_trw_layer_tpwin_set_track_name ( VikTrwLayerTpwin *tpwin, const gchar *track_name );
 
+G_END_DECLS
 
 #endif

@@ -67,8 +67,9 @@ static void clip_get ( GtkClipboard *c, GtkSelectionData *selection_data, guint 
     gtk_selection_data_set ( selection_data, selection_data->target, 8, (void *)vc, sizeof(*vc) + vc->len );
   }
   if ( info == 1 ) {
-    // String
-    gtk_selection_data_set_text ( selection_data, vc->text, -1); // string text is null terminated
+    // Should be a string, but make sure it's something
+    if ( vc->text )
+      gtk_selection_data_set_text ( selection_data, vc->text, -1); // string text is null terminated
   }
 
 }
@@ -348,8 +349,9 @@ void a_clipboard_copy_selected ( VikLayersPanel *vlp )
     if ( vik_layer_get_interface(layer_type)->copy_item) {
       subtype = vik_treeview_item_get_data(sel->vt, &iter);
       vik_layer_get_interface(layer_type)->copy_item(sel, subtype, vik_treeview_item_get_pointer(sel->vt, &iter), &data, &len );
-      name = vik_treeview_item_get_pointer(sel->vt, &iter);
-    }    
+      // This name is used in setting the text representation of the item on the clipboard.
+      name = vik_treeview_item_get_name(sel->vt, &iter);
+    }
   }
   else
   {
@@ -394,3 +396,61 @@ gboolean a_clipboard_paste ( VikLayersPanel *vlp )
   return TRUE;
 }
 
+/**
+ *
+ * Detect our own data types
+ */
+static void clip_determine_viking_type ( GtkClipboard *c, GtkSelectionData *sd, gpointer p )
+{
+  VikClipboardDataType *vdct = p;
+  // Default value
+  *vdct = VIK_CLIPBOARD_DATA_NONE;
+  vik_clipboard_t *vc;
+  if (sd->length == -1) {
+    g_warning ("DETERMINING TYPE: length failure");
+    return;
+  }
+
+  vc = (vik_clipboard_t *)sd->data;
+
+  if ( !vc->type )
+    return;
+
+  if ( vc->type == VIK_CLIPBOARD_DATA_LAYER ) {
+    *vdct = VIK_CLIPBOARD_DATA_LAYER;
+  }
+  else if ( vc->type == VIK_CLIPBOARD_DATA_SUBLAYER ) {
+    *vdct = VIK_CLIPBOARD_DATA_SUBLAYER;
+  }
+  else {
+    g_warning ("DETERMINING TYPE: THIS SHOULD NEVER HAPPEN");
+  }
+}
+
+static void clip_determine_type ( GtkClipboard *c, GdkAtom *a, gint n, gpointer p )
+{
+  gint i;
+  for (i=0; i<n; i++) {
+    // g_print("  ""%s""\n", gdk_atom_name(a[i]));
+    if (!strcmp(gdk_atom_name(a[i]), "application/viking")) {
+      gtk_clipboard_request_contents ( c, gdk_atom_intern("application/viking", TRUE), clip_determine_viking_type, p );
+      break;
+    }
+  }
+}
+
+/**
+ * a_clipboard_type:
+ *
+ * Return the type of data held in the clipboard if any
+ */
+VikClipboardDataType a_clipboard_type ( )
+{
+  GtkClipboard *c = gtk_clipboard_get ( GDK_SELECTION_CLIPBOARD );
+  VikClipboardDataType *vcdt = g_malloc ( sizeof (VikClipboardDataType) );
+
+  gtk_clipboard_request_targets ( c, clip_determine_type, vcdt );
+  gint answer = *vcdt;
+  g_free ( vcdt );
+  return answer;
+}

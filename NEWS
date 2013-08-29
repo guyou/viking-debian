@@ -1,3 +1,118 @@
+Viking 1.4.2.0 (2013-07-26)
+Bug Fix Release
+* Fix menu use of named own Icons since the icons were renamed some time ago.
+* [QA] Fix memory leak in drawing new tracks/routes.
+* [QA] Fix memory leak on deleting TrackWaypoint layers.
+* [QA] Fix large memory leak on viewing Track Properties.
+* [QA] Fix incorrect iterator usage.
+* [QA] Fix memory leaks on reading in Viking files.
+* [QA] Fix memory leak in treeview tooltips and selection.
+* [QA] Fix large memory leak when removing DEM layers.
+* Fix some interpolated values of a trackpoint on insertion between points.
+* Fix handling failed downloads with the My OSM Traces method.
+* SF Bugs#101: Fix Acquire from Google Directions.
+* Fix name search using Google.
+* SF Bugs#100: Fix Crash on viewing Track Properties with extreme gradients.
+* SF Bugs#97: Fix missing redownload settings of some maps in the example config
+* SF Bugs#99: Increase limit for Map IDs
+* Automated check for the latest version. ATM only on Windows systems.
+* Enable getting Viking Version as a number from a string to enable comparisons.
+* SF#3613971: Remove Geofabrik's OpenStreetMap WMS, as it is not for public use.
+* Don't silently fail on attempting to split to a track.
+* Fix background thread statusbar update instability.
+* Fix location of gdk_threads_enter() to be before first window creation.
+* Allow Bing Map source URL to be set via the configuration XML file.
+* SF#3610708: Fix Failing to Load DEM files on Big Endian Systems.
+* Fix incorrect setting to lowest zoom value when clicking away from the statusbar zoom menu.
+* [QA] Improve create zoom menu to use G_N_ELEMENTS to know array bounds.
+
+Viking 1.4.1.0 (2013-04-08)
+Bug Fix Release + updated translations
+* Import Launchpad translation updates [Mainly for large Czech update]
+* Fix using .vik files with 'unusual' track or waypoint names
+* Fix waypoint selection when the waypoint has an image but the images are not being displayed.
+* Fix showing map timestamps on Windows on the map tile info dialog.
+* SF#3608411: Part 2 - Avoid creating command window on Viking start-up.
+* SF#3608411: Part 1 - Avoid warning about unbuffer on Windows Systems.
+* SF#3608264: Improve Statusbar Location Info Maybe Truncated
+* Prevent inputting empty names for layers and sublayers via the layers panel.
+* SF#3608311: Fix crash caused by renaming blank sublayer names
+* Be less strigent in loading Geotagged images without optional GPS tags
+* Fix use of scaled tile image when tile image not present.
+* Enable updating the treeview to allow setting a blank waypoint symbol.
+* Improve the Waypoint tooltip to display the description if there is no comment.
+* Fix datasource acquiring waypoints from geotag images.
+* Updated geo-* scripts to version released on 2013/02/18
+* Fix compilation with --enable-geocaches option.
+* help/Makefile.am: explicitly list figures.
+
+Viking 1.4.0.1 (2013-02-16)
+Windows Only Release.
+* Windows: Add .vik file extension association option in the installer
+
+Viking 1.4 (2013-02-11)
+New features since 1.3.2
+* Support for GPX Route type including transfer to/from GPS Devices.
+** Replaced 'Add Track' tool with 'Create Route' tool. (NB There still is the Create Track tool)
+* Support for GPX 'Description' for tracks, waypoints and routes.
+* Add ability to Acquire My OSM Traces and ability to choose any subset of the available traces.
+* GPS Upload from a track.
+* Enable giving a track a specific colour (drawn in default draw by track mode).
+* Enable drawing all tracks in a specific colour (no longer is Black the only option).
+* Allow option of drawing a direction arrow when drawing a track.
+* Allow configuration of trackpoint size and direction arrow size.
+* Display Waypoint Icons in the layers panel treeview.
+* Restored Route Finding via Google Services. [Was disabled in 1.3.2 due to change in formats supported]
+* Only display sublayer container when there are sublayers.
+* Display map tile source and cached file information in a dialog for a position.
+* Quick zoom level change from the statusbar by clicking on the zoom level to select another level.
+* In the Zoom Tool mode: can select an area to zoom in on (via holding shift key + drag mouse).
+* Mouse Zooming in/out maintains the position focus on the mouse pointer location.
+** (Use the keys Ctrl+Shift and mouse zoom to maintain the centered map location).
+* Improvements in Acquiring Wikipedia Points (allow more points, sortable columns, URL and feature type).
+* Allow opening a URL on a waypoint which has a URL for a comment or description.
+* Re-organized TrackWaypoint Layer menus to group functionality together better with New, View, Combine, Split, Delete, Acquire and Upload submenus.
+* Gradient Graph view on the Track Properties.
+* Allow same named TrackWaypoint sublayer items. i.e. can now have 2 (or more) waypoints with the same name.
+* Add support of a Map type for a local On Disk OSM Tile Format.
+* Revised Draw Track by Speed mode with a simple traffic light colouring scheme to represent slow/average/fast speeds.
+* Enable deletion of track points with the same timestamp.
+* Ability to merge segments of a track.
+* Allow generation of large pixel sized images.
+* Rework image generation to ask for file name first and then only allow supported map zoom levels.
+* Allow control of waypoint text size on the viewport display.
+* Allow control of GPX file saving track order (either Alphabetical or By Time via global preference).
+* Keyboard shortcuts to create layers and enable some tools.
+* Show the bearing and the step distance of the next point when creating a track or route.
+* Improved feedback in reading erroneous files.
+* Improved Help Manual.
+* More translation texts including a Finnish version.
+* Scripts to support the creation of the Windows Executable Installer.
+* Add a python tool to convert the Viking tile cache into a MapBox MBTiles format file.
+* Many internal improvements.
+
+Fixes since 1.3.2
+* Don't accidently overwrite GPX and KML files in the Viking file type.
+* Use the default desktop font for waypoint viewport display text.
+* Ensure when opening multiple .vik files they are each loaded into a new window.
+* Show UTM location in statusbar when in UTM mode.
+* Fix: crash when dealing with non-compressed DEM files
+
+Viking 1.3.2 (2012-09-23)
+Bug Fix Release including:
+* Removed Route Finder Tool as Google Direction service interface has disabled the method Viking interfaced with it.
+* Fix for Debian#685817: Statusbar Update From Thread Instability
+* Fix SF#3564795: Crashing when attempting to create waypoints from EXIF images without enough GPS information.
+* Fix drawing of next potential trackpoint on Windows Systems.
+* Fix GPSBabel Dynamic Device List generation on Windows Systems.
+* Fix crashing when displayed map copyright(s) is longer than the internal buffer.
+* Fix crashing when deleting a GPS layer which has started a realtime tracking.
+* Fix printing of DEBUG message since glib 2.32
+
+Viking 1.3.1 (2012-06-26)
+Bug Fix for Windows Systems Release:
+* Fix crash in Show Picture functionality on Window's Systems.
+
 Viking 1.3 (2012-04-22)
 New features since 1.2.2
 * Be consistent in that track and waypoint list dialogs are always sorted alphabetically.

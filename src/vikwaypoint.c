@@ -25,18 +25,23 @@
 #include "vikcoord.h"
 #include "vikwaypoint.h"
 #include "globals.h"
-
+#include <glib/gi18n.h>
 
 VikWaypoint *vik_waypoint_new()
 {
-  VikWaypoint *wp = g_malloc ( sizeof ( VikWaypoint ) );
+  VikWaypoint *wp = g_malloc0 ( sizeof ( VikWaypoint ) );
   wp->altitude = VIK_DEFAULT_ALTITUDE;
-  wp->comment = NULL;
-  wp->image = NULL;
-  wp->image_width = 0;
-  wp->image_height = 0;
-  wp->symbol = NULL;
+  wp->name = g_strdup(_("Waypoint"));
   return wp;
+}
+
+// Hmmm tempted to put in new constructor
+void vik_waypoint_set_name(VikWaypoint *wp, const gchar *name)
+{
+  if ( wp->name )
+    g_free ( wp->name );
+
+  wp->name = g_strdup(name);
 }
 
 void vik_waypoint_set_comment_no_copy(VikWaypoint *wp, gchar *comment)
@@ -55,6 +60,17 @@ void vik_waypoint_set_comment(VikWaypoint *wp, const gchar *comment)
     wp->comment = g_strdup(comment);
   else
     wp->comment = NULL;
+}
+
+void vik_waypoint_set_description(VikWaypoint *wp, const gchar *description)
+{
+  if ( wp->description )
+    g_free ( wp->description );
+
+  if ( description && description[0] != '\0' )
+    wp->description = g_strdup(description);
+  else
+    wp->description = NULL;
 }
 
 void vik_waypoint_set_image(VikWaypoint *wp, const gchar *image)
@@ -84,6 +100,8 @@ void vik_waypoint_free(VikWaypoint *wp)
 {
   if ( wp->comment )
     g_free ( wp->comment );
+  if ( wp->description )
+    g_free ( wp->description );
   if ( wp->image )
     g_free ( wp->image );
   if ( wp->symbol )
@@ -94,29 +112,39 @@ void vik_waypoint_free(VikWaypoint *wp)
 VikWaypoint *vik_waypoint_copy(const VikWaypoint *wp)
 {
   VikWaypoint *new_wp = vik_waypoint_new();
-  *new_wp = *wp;
-  new_wp->comment = NULL; /* if the waypoint had a comment, FOR CRYING OUT LOUD DON'T FREE IT! This lousy bug took me TWO HOURS to figure out... sigh... */
+  new_wp->coord = wp->coord;
+  new_wp->visible = wp->visible;
+  new_wp->altitude = wp->altitude;
+  vik_waypoint_set_name(new_wp,wp->name);
   vik_waypoint_set_comment(new_wp,wp->comment);
-  new_wp->image = NULL;
+  vik_waypoint_set_description(new_wp,wp->description);
   vik_waypoint_set_image(new_wp,wp->image);
-  new_wp->symbol = NULL;
   vik_waypoint_set_symbol(new_wp,wp->symbol);
   return new_wp;
 }
 
+/*
+ * Take a Waypoint and convert it into a byte array
+ */
 void vik_waypoint_marshall ( VikWaypoint *wp, guint8 **data, guint *datalen)
 {
   GByteArray *b = g_byte_array_new();
   guint len;
 
+  // This creates space for fixed sized members like gints and whatnot
+  //  and copies that amount of data from the waypoint to byte array
   g_byte_array_append(b, (guint8 *)wp, sizeof(*wp));
 
+  // This allocates space for variant sized strings
+  //  and copies that amount of data from the waypoint to byte array
 #define vwm_append(s) \
   len = (s) ? strlen(s)+1 : 0; \
   g_byte_array_append(b, (guint8 *)&len, sizeof(len)); \
   if (s) g_byte_array_append(b, (guint8 *)s, len);
 
+  vwm_append(wp->name);
   vwm_append(wp->comment);
+  vwm_append(wp->description);
   vwm_append(wp->image);
   vwm_append(wp->symbol);
 
@@ -126,13 +154,18 @@ void vik_waypoint_marshall ( VikWaypoint *wp, guint8 **data, guint *datalen)
 #undef vwm_append
 }
 
+/*
+ * Take a byte array and convert it into a Waypoint
+ */
 VikWaypoint *vik_waypoint_unmarshall (guint8 *data, guint datalen)
 {
   guint len;
   VikWaypoint *new_wp = vik_waypoint_new();
+  // This copies the fixed sized elements (i.e. visibility, altitude, image_width, etc...)
   memcpy(new_wp, data, sizeof(*new_wp));
   data += sizeof(*new_wp);
 
+  // Now the variant sized strings...
 #define vwu_get(s) \
   len = *(guint *)data; \
   data += sizeof(len); \
@@ -143,7 +176,9 @@ VikWaypoint *vik_waypoint_unmarshall (guint8 *data, guint datalen)
   } \
   data += len;
 
+  vwu_get(new_wp->name);
   vwu_get(new_wp->comment);
+  vwu_get(new_wp->description);
   vwu_get(new_wp->image); 
   vwu_get(new_wp->symbol);
   

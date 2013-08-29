@@ -3,7 +3,7 @@
 #%% May be redistributed without this notice.
 
 Name:		viking
-Version:	1.3
+Version:	1.4.2
 Release:	1
 
 Summary:	GPS data editor and analyzer
@@ -22,6 +22,7 @@ BuildRequires:	gpsd-devel
 BuildRequires:	gettext perl(XML::Parser)
 BuildRequires:	intltool
 BuildRequires:	libxslt
+BuildRequires:  libexif-devel
 
 %description
 Viking is a free/open source program to manage GPS data.

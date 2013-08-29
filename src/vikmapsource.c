@@ -40,7 +40,7 @@ static void vik_map_source_class_init (VikMapSourceClass *klass);
 
 static gboolean _supports_download_only_new (VikMapSource *object);
 
-G_DEFINE_TYPE_EXTENDED (VikMapSource, vik_map_source, G_TYPE_OBJECT, (GTypeFlags)G_TYPE_FLAG_ABSTRACT,);
+G_DEFINE_ABSTRACT_TYPE (VikMapSource, vik_map_source, G_TYPE_OBJECT);
 
 static void
 vik_map_source_init (VikMapSource *object)
@@ -70,6 +70,7 @@ vik_map_source_class_init (VikMapSourceClass *klass)
 	klass->get_tilesize_x = NULL;
 	klass->get_tilesize_y = NULL;
 	klass->get_drawmode = NULL;
+	klass->is_direct_file_access = NULL;
 	klass->supports_download_only_new = _supports_download_only_new;
 	klass->coord_to_mapcoord = NULL;
 	klass->mapcoord_to_center_coord = NULL;
@@ -95,7 +96,7 @@ _supports_download_only_new (VikMapSource *self)
  * @fct: the callback function to use to return matching copyrights.
  * @data: the user data to use to call the callbaack function.
  *
- * retreive copyright(s) for the corresponding bounding box and zoom level.
+ * Retrieve copyright(s) for the corresponding bounding box and zoom level.
  */
 void
 vik_map_source_get_copyright (VikMapSource *self, LatLonBBox bbox, gdouble zoom, void (*fct)(VikViewport*,const gchar*), void *data)
@@ -149,15 +150,15 @@ vik_map_source_get_logo (VikMapSource *self)
 	return (*klass->get_logo)(self);
 }
 
-guint8
+guint16
 vik_map_source_get_uniq_id (VikMapSource *self)
 {
 	VikMapSourceClass *klass;
-	g_return_val_if_fail (self != NULL, (guint8 )0);
-	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), (guint8 )0);
+	g_return_val_if_fail (self != NULL, (guint16 )0);
+	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), (guint16 )0);
 	klass = VIK_MAP_SOURCE_GET_CLASS(self);
 
-	g_return_val_if_fail (klass->get_uniq_id != NULL, (guint8 )0);
+	g_return_val_if_fail (klass->get_uniq_id != NULL, (guint16 )0);
 
 	return (*klass->get_uniq_id)(self);
 }
@@ -212,6 +213,26 @@ vik_map_source_get_drawmode (VikMapSource *self)
 	g_return_val_if_fail (klass->get_drawmode != NULL, (VikViewportDrawMode )0);
 
 	return (*klass->get_drawmode)(self);
+}
+
+/**
+ * vik_map_source_is_direct_file_access:
+ * @self: the VikMapSource of interest.
+ *
+ *   Return true when we can bypass all this download malarky
+ *   Treat the files as a pre generated data set in OSM tile server layout: <tiledir>/%d/%d/%d.png
+ */
+gboolean
+vik_map_source_is_direct_file_access (VikMapSource * self)
+{
+	VikMapSourceClass *klass;
+	g_return_val_if_fail (self != NULL, 0);
+	g_return_val_if_fail (VIK_IS_MAP_SOURCE (self), 0);
+	klass = VIK_MAP_SOURCE_GET_CLASS(self);
+
+	g_return_val_if_fail (klass->is_direct_file_access != NULL, 0);
+
+	return (*klass->is_direct_file_access)(self);
 }
 
 gboolean

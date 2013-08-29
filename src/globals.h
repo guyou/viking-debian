@@ -24,6 +24,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 #define PROJECT "Viking"
 #define VIKING_VERSION PACKAGE_VERSION
 #define VIKING_VERSION_NAME "This Name For Rent"
@@ -61,17 +63,20 @@
 #define VIK_GTK_WINDOW_FROM_WIDGET(x) GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(x)))
 #define VIK_GTK_WINDOW_FROM_LAYER(x) VIK_GTK_WINDOW_FROM_WIDGET(VIK_LAYER(x)->vt)
 
-#define DEG2RAD 0.017453293
-#define RAD2DEG 57.2957795
+#define DEG2RAD(x) ((x)*(M_PI/180))
+#define RAD2DEG(x) ((x)*(180/M_PI))
 
 /* mercator projection, latitude conversion (degrees) */
-#define MERCLAT(x) (RAD2DEG * log(tan((0.25 * M_PI) + (0.5 * DEG2RAD * (x)))))
-#define DEMERCLAT(x) (RAD2DEG * atan(sinh(DEG2RAD * (x))))
+#define MERCLAT(x) (RAD2DEG(log(tan((0.25 * M_PI) + (0.5 * DEG2RAD(x))))))
+#define DEMERCLAT(x) (RAD2DEG(atan(sinh(DEG2RAD(x)))))
 
 /* Some command line options */
 extern gboolean vik_debug;
 extern gboolean vik_verbose;
 extern gboolean vik_version;
+
+/* Allow comparing versions */
+gint viking_version_to_number ( gchar *version );
 
 /* Global preferences */
 void a_vik_preferences_init ();
@@ -131,6 +136,13 @@ typedef enum {
 
 vik_kml_export_units_t a_vik_get_kml_export_units ( );
 
+typedef enum {
+  VIK_GPX_EXPORT_TRK_SORT_ALPHA,
+  VIK_GPX_EXPORT_TRK_SORT_TIME,
+} vik_gpx_export_trk_sort_t;
+
+vik_gpx_export_trk_sort_t a_vik_get_gpx_export_trk_sort ( );
+
 #ifndef WINDOWS
 /* Windows automatically uses the system defined viewer
    ATM for other systems need to specify the program to use */
@@ -150,5 +162,7 @@ const gchar* a_vik_get_external_gpx_program_2 ( );
 /* AKA Export/External Prefs */
 #define VIKING_PREFERENCES_IO_GROUP_KEY "viking.io"
 #define VIKING_PREFERENCES_IO_NAMESPACE "viking.io."
+
+G_END_DECLS
 
 #endif

@@ -29,6 +29,8 @@
 #include "vikwaypoint.h"
 #include "vikcoord.h"
 
+G_BEGIN_DECLS
+
 /* most of this file is an architechtural flaw. */
 
 #define a_dialog_info_msg(win,info) a_dialog_msg(win,GTK_MESSAGE_INFO,info,NULL)
@@ -55,9 +57,9 @@ gboolean a_dialog_goto_utm ( GtkWindow *parent, struct UTM *utm, const struct UT
     The name to use is returned
    When an existing waypoint the name is shown but is not allowed to be changed and NULL is returned
  */
-gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *wp, GHashTable *waypoints, VikCoordMode coord_mode, gboolean is_new, gboolean *updated );
+gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *wp, VikCoordMode coord_mode, gboolean is_new, gboolean *updated );
 
-gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks, gchar *default_name );
+gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks, gchar *default_name, gboolean is_route );
 
 gboolean a_dialog_yes_or_no ( GtkWindow *parent, const gchar *message, const gchar *extra );
 gboolean a_dialog_custom_zoom ( GtkWindow *parent, gdouble *xmpp, gdouble *ympp );
@@ -76,4 +78,7 @@ gboolean a_dialog_map_n_zoom(GtkWindow *parent, gchar *mapnames[], gint default_
 GList *a_dialog_select_from_list ( GtkWindow *parent, GList *names, gboolean multiple_selection_allowed, const gchar *title, const gchar *msg );
 
 void a_dialog_license ( GtkWindow *parent, const gchar *map, const gchar *license, const gchar *url);
+
+G_END_DECLS
+
 #endif

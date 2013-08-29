@@ -23,6 +23,7 @@
 #include "icons/icons.h"
 
 #include <string.h>
+#include <glib/gi18n.h>
 
 #define DISCONNECT_UPDATE_SIGNAL(vl, val) g_signal_handlers_disconnect_matched(vl, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, val)
 
@@ -33,6 +34,8 @@ static void aggregate_layer_drag_drop_request ( VikAggregateLayer *val_src, VikA
 
 VikLayerInterface vik_aggregate_layer_interface = {
   "Aggregate",
+  N_("Aggregate"),
+  "<control><shift>A",
   &vikaggregatelayer_pixbuf,
 
   NULL,
@@ -187,7 +190,7 @@ static VikAggregateLayer *aggregate_layer_unmarshall( guint8 *data, gint len, Vi
 VikAggregateLayer *vik_aggregate_layer_new ()
 {
   VikAggregateLayer *val = VIK_AGGREGATE_LAYER ( g_object_new ( VIK_AGGREGATE_LAYER_TYPE, NULL ) );
-  vik_layer_init ( VIK_LAYER(val), VIK_LAYER_AGGREGATE );
+  vik_layer_set_type ( VIK_LAYER(val), VIK_LAYER_AGGREGATE );
   val->children = NULL;
   return val;
 }

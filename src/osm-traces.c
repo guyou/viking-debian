@@ -86,12 +86,12 @@ typedef struct _OsmTracesInfo {
   gchar *tags;
   const OsmTraceVis_t *vistype;
   VikTrwLayer *vtl;
-  gchar *track_name;
+  VikTrack *trk;
 } OsmTracesInfo;
 
 static VikLayerParam prefs[] = {
-  { VIKING_OSM_TRACES_PARAMS_NAMESPACE "username", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM username:"), VIK_LAYER_WIDGET_ENTRY },
-  { VIKING_OSM_TRACES_PARAMS_NAMESPACE "password", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM password:"), VIK_LAYER_WIDGET_PASSWORD },
+  { VIKING_OSM_TRACES_PARAMS_NAMESPACE "username", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM username:"), VIK_LAYER_WIDGET_ENTRY, NULL, NULL, NULL },
+  { VIKING_OSM_TRACES_PARAMS_NAMESPACE "password", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM password:"), VIK_LAYER_WIDGET_PASSWORD, NULL, NULL, NULL },
 };
 
 /**
@@ -104,7 +104,6 @@ static void oti_free(OsmTracesInfo *oti)
     g_free(oti->name); oti->name = NULL;
     g_free(oti->description); oti->description = NULL;
     g_free(oti->tags); oti->tags = NULL;
-    g_free(oti->track_name); oti->track_name = NULL;
     
     g_object_unref(oti->vtl); oti->vtl = NULL;
   }
@@ -122,7 +121,7 @@ static const gchar *get_default_user()
   return default_user;
 }
 
-static void set_login(const gchar *user_, const gchar *password_)
+void osm_set_login(const gchar *user_, const gchar *password_)
 {
   /* Allocate mutex */
   if (login_mutex == NULL)
@@ -137,7 +136,7 @@ static void set_login(const gchar *user_, const gchar *password_)
   g_mutex_unlock(login_mutex);
 }
 
-static gchar *get_login()
+gchar *osm_get_login()
 {
   gchar *user_pass = NULL;
   g_mutex_lock(login_mutex);
@@ -183,7 +182,7 @@ static gint osm_traces_upload_file(const char *user,
 
   char *base_url = "http://www.openstreetmap.org/api/0.6/gpx/create";
 
-  gchar *user_pass = get_login();
+  gchar *user_pass = osm_get_login();
 
   gint result = 0; // Default to it worked!
 
@@ -237,7 +236,7 @@ static gint osm_traces_upload_file(const char *user,
       }
     }
     else {
-      g_error(_("curl_easy_getinfo failed: %d"), res);
+      g_critical(_("curl_easy_getinfo failed: %d"), res);
       result = -1;
     }
   }
@@ -259,8 +258,9 @@ static gint osm_traces_upload_file(const char *user,
  */
 static void osm_traces_upload_thread ( OsmTracesInfo *oti, gpointer threaddata )
 {
-  /* Due to OSM limits, we have to enforce ele and time fields */
-  static GpxWritingOptions options = { TRUE, TRUE };
+  /* Due to OSM limits, we have to enforce ele and time fields
+   also don't upload invisible tracks */
+  static GpxWritingOptions options = { TRUE, TRUE, FALSE, FALSE };
   FILE *file = NULL;
   gchar *filename = NULL;
   int fd;
@@ -282,16 +282,15 @@ static void osm_traces_upload_thread ( OsmTracesInfo *oti, gpointer threaddata )
   file = fdopen(fd, "w");
 
   /* writing gpx file */
-  if (oti->track_name != NULL)
+  if (oti->trk != NULL)
   {
     /* Upload only the selected track */
-    VikTrack *track = vik_trw_layer_get_track(oti->vtl, oti->track_name);
-    a_gpx_write_track_file_options(&options, oti->track_name, track, file);
+    a_gpx_write_track_file(oti->trk, file, &options);
   }
   else
   {
     /* Upload the whole VikTrwLayer */
-    a_gpx_write_file_options(&options, oti->vtl, file);
+    a_gpx_write_file(oti->vtl, file, &options);
   }
   
   /* We can close the file */
@@ -327,37 +326,58 @@ static void osm_traces_upload_thread ( OsmTracesInfo *oti, gpointer threaddata )
     if ( ans == 0 ) {
       // Success
       msg = g_strdup_printf ( "%s (@%s)", _("Uploaded to OSM"), timestr );
-      vik_statusbar_set_message ( vik_window_get_statusbar ( (VikWindow *)VIK_GTK_WINDOW_FROM_LAYER(oti->vtl) ), VIK_STATUSBAR_INFO, msg );
     }
     // Use UPPER CASE for bad news :(
     else if ( ans < 0 ) {
       msg = g_strdup_printf ( "%s (@%s)", _("FAILED TO UPLOAD DATA TO OSM - CURL PROBLEM"), timestr );
-      vik_statusbar_set_message ( vik_window_get_statusbar ( (VikWindow *)VIK_GTK_WINDOW_FROM_LAYER(oti->vtl) ), VIK_STATUSBAR_INFO, msg );
-      //a_dialog_error_msg ( VIK_GTK_WINDOW_FROM_LAYER(oti->vtl), msg );
     }
     else {
       msg = g_strdup_printf ( "%s : %s %d (@%s)", _("FAILED TO UPLOAD DATA TO OSM"), _("HTTP response code"), ans, timestr );
-      vik_statusbar_set_message ( vik_window_get_statusbar ( (VikWindow *)VIK_GTK_WINDOW_FROM_LAYER(oti->vtl) ), VIK_STATUSBAR_INFO, msg );
-      //VikTrwLayer *vtl = oti->vtl;
-      // Crashes here - multi-thread issue...
-      //a_dialog_error_msg ( VIK_GTK_WINDOW_FROM_LAYER(vtl), msg );
     }
+    vik_window_statusbar_update ( (VikWindow*)VIK_GTK_WINDOW_FROM_LAYER(oti->vtl), msg, VIK_STATUSBAR_INFO );
     g_free (msg);
   }
   /* Removing temporary file */
   ret = g_unlink(filename);
   if (ret != 0) {
-    g_error(_("failed to unlink temporary file: %s"), strerror(errno));
+    g_critical(_("failed to unlink temporary file: %s"), strerror(errno));
   }
+}
+
+/**
+ *
+ */
+void osm_login_widgets (GtkWidget *user_entry, GtkWidget *password_entry)
+{
+  if (!user_entry || !password_entry)
+    return;
+
+  const gchar *default_user = get_default_user();
+  const gchar *pref_user = a_preferences_get(VIKING_OSM_TRACES_PARAMS_NAMESPACE "username")->s;
+  const gchar *pref_password = a_preferences_get(VIKING_OSM_TRACES_PARAMS_NAMESPACE "password")->s;
+
+  if (user != NULL && user[0] != '\0')
+    gtk_entry_set_text(GTK_ENTRY(user_entry), user);
+  else if (pref_user != NULL && pref_user[0] != '\0')
+    gtk_entry_set_text(GTK_ENTRY(user_entry), pref_user);
+  else if (default_user != NULL)
+    gtk_entry_set_text(GTK_ENTRY(user_entry), default_user);
+
+  if (password != NULL && password[0] != '\0')
+    gtk_entry_set_text(GTK_ENTRY(password_entry), password);
+  else if (pref_password != NULL)
+    gtk_entry_set_text(GTK_ENTRY(password_entry), pref_password);
+  /* This is a password -> invisible */
+  gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
 }
 
 /**
  * Uploading a VikTrwLayer
  *
  * @param vtl VikTrwLayer
- * @param track_name if not null, the name of the track to upload
+ * @param trk if not null, the track to upload
  */
-static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, const gchar *track_name )
+static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
 {
   GtkWidget *dia = gtk_dialog_new_with_buttons (_("OSM upload"),
                                                  VIK_GTK_WINDOW_FROM_LAYER(vtl),
@@ -368,9 +388,6 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, const gchar *track
                                                  GTK_RESPONSE_ACCEPT,
                                                  NULL);
 
-  const gchar *default_user = get_default_user();
-  const gchar *pref_user = a_preferences_get(VIKING_OSM_TRACES_PARAMS_NAMESPACE "username")->s;
-  const gchar *pref_password = a_preferences_get(VIKING_OSM_TRACES_PARAMS_NAMESPACE "password")->s;
   const gchar *name = NULL;
   GtkWidget *user_label, *user_entry;
   GtkWidget *password_label, *password_entry;
@@ -382,12 +399,6 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, const gchar *track
 
   user_label = gtk_label_new(_("Email:"));
   user_entry = gtk_entry_new();
-  if (user != NULL && user[0] != '\0')
-    gtk_entry_set_text(GTK_ENTRY(user_entry), user);
-  else if (pref_user != NULL && pref_user[0] != '\0')
-    gtk_entry_set_text(GTK_ENTRY(user_entry), pref_user);
-  else if (default_user != NULL)
-    gtk_entry_set_text(GTK_ENTRY(user_entry), default_user);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), user_label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), user_entry, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_markup(GTK_WIDGET(user_entry),
@@ -396,22 +407,18 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, const gchar *track
 
   password_label = gtk_label_new(_("Password:"));
   password_entry = gtk_entry_new();
-  if (password != NULL && password[0] != '\0')
-    gtk_entry_set_text(GTK_ENTRY(password_entry), password);
-  else if (pref_password != NULL)
-    gtk_entry_set_text(GTK_ENTRY(password_entry), pref_password);
-  /* This is a password -> invisible */
-  gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), password_label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), password_entry, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_markup(GTK_WIDGET(password_entry),
                         _("The password used to login\n"
                         "<small>Enter the password you use to login into www.openstreetmap.org.</small>"));
 
+  osm_login_widgets ( user_entry, password_entry );
+
   name_label = gtk_label_new(_("File's name:"));
   name_entry = gtk_entry_new();
-  if (track_name != NULL)
-    name = track_name;
+  if (trk != NULL)
+    name = trk->name;
   else
     name = vik_layer_get_name(VIK_LAYER(vtl));
   gtk_entry_set_text(GTK_ENTRY(name_entry), name);
@@ -454,8 +461,8 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, const gchar *track
     gchar *title = NULL;
 
     /* overwrite authentication info */
-    set_login(gtk_entry_get_text(GTK_ENTRY(user_entry)),
-              gtk_entry_get_text(GTK_ENTRY(password_entry)));
+    osm_set_login(gtk_entry_get_text(GTK_ENTRY(user_entry)),
+                  gtk_entry_get_text(GTK_ENTRY(password_entry)));
 
     /* Storing data for the future thread */
     OsmTracesInfo *info = g_malloc(sizeof(OsmTracesInfo));
@@ -465,7 +472,7 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, const gchar *track
     info->tags        = g_strdup(gtk_entry_get_text(GTK_ENTRY(tags_entry)));
     info->vistype     = &OsmTraceVis[gtk_combo_box_get_active(visibility)];
     info->vtl         = VIK_TRW_LAYER(g_object_ref(vtl));
-    info->track_name  = (track_name == NULL) ? NULL : g_strdup(track_name);
+    info->trk         = trk;
 
     title = g_strdup_printf(_("Uploading %s to OSM"), info->name);
 
@@ -493,7 +500,12 @@ void osm_traces_upload_cb ( gpointer layer_and_vlp[2], guint file_type )
 /**
  * Function called by the entry menu of a single track
  */
-void osm_traces_upload_track_cb ( gpointer pass_along[6] )
+// TODO: Fix this dodgy usage of magic 8 ball array sized numbering
+//       At least have some common definition somewhere...
+void osm_traces_upload_track_cb ( gpointer pass_along[8] )
 {
-  osm_traces_upload_viktrwlayer(VIK_TRW_LAYER(pass_along[0]), pass_along[3]);
+  if ( pass_along[7] ) {
+    VikTrack *trk = VIK_TRACK(pass_along[7]);
+    osm_traces_upload_viktrwlayer(VIK_TRW_LAYER(pass_along[0]), trk);
+  }
 }

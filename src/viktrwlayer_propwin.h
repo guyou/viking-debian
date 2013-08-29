@@ -1,3 +1,4 @@
+/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
@@ -25,13 +26,26 @@
 #include <gtk/gtk.h>
 #include "viktrack.h"
 
-/* should this file exist? */
+G_BEGIN_DECLS
 
 #define VIK_TRW_LAYER_PROPWIN_SPLIT 1
 #define VIK_TRW_LAYER_PROPWIN_REVERSE 2
 #define VIK_TRW_LAYER_PROPWIN_DEL_DUP 3
 #define VIK_TRW_LAYER_PROPWIN_SPLIT_MARKER 4
 
-void vik_trw_layer_propwin_run ( GtkWindow *parent, VikTrwLayer *vtl, VikTrack *tr, gpointer vlp, gchar *trackname, VikViewport *vvp );
+void vik_trw_layer_propwin_run ( GtkWindow *parent,
+								 VikTrwLayer *vtl,
+								 VikTrack *tr,
+								 gpointer vlp,
+								 VikViewport *vvp,
+								 gpointer *trk_id );
+
+/**
+ * Update this property dialog
+ * e.g. if the track has been renamed
+ */
+void vik_trw_layer_propwin_update ( VikTrack *trk );
+
+G_END_DECLS
 
 #endif

@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2012, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +38,6 @@
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
 
-/* Relax some dependencies */
-#if ! GLIB_CHECK_VERSION(2,12,0)
-static gboolean return_true (gpointer a, gpointer b, gpointer c) { return TRUE; }
-static g_hash_table_remove_all (GHashTable *ght) { g_hash_table_foreach_remove ( ght, (GHRFunc) return_true, FALSE ); }
-#endif
-
 #define TEST_BOOLEAN(str) (! ((str)[0] == '\0' || (str)[0] == '0' || (str)[0] == 'n' || (str)[0] == 'N' || (str)[0] == 'f' || (str)[0] == 'F') )
 #define VIK_MAGIC "#VIK"
 #define GPX_MAGIC "<?xm"
@@ -53,6 +48,8 @@ static g_hash_table_remove_all (GHashTable *ght) { g_hash_table_foreach_remove (
 #else
 #define FILE_SEP '/'
 #endif
+
+#define VIKING_FILE_VERSION 1
 
 typedef struct _Stack Stack;
 
@@ -99,7 +96,7 @@ static guint16 layer_type_from_string ( const gchar *str )
 {
   guint8 i;
   for ( i = 0; i < VIK_LAYER_NUM_TYPES; i++ )
-    if ( strcasecmp ( str, vik_layer_get_interface(i)->name ) == 0 )
+    if ( strcasecmp ( str, vik_layer_get_interface(i)->fixed_layer_name ) == 0 )
       return i;
   return -1;
 }
@@ -194,7 +191,9 @@ static void file_write ( VikAggregateLayer *top, FILE *f, gpointer vp )
       g_critical("Houston, we've had a problem. mode=%d", mode);
   }
 
-  fprintf ( f, "#VIKING GPS Data file " VIKING_URL "\n\nxmpp=%f\nympp=%f\nlat=%f\nlon=%f\nmode=%s\ncolor=%s\nhighlightcolor=%s\ndrawscale=%s\ndrawcentermark=%s\ndrawhighlight=%s\n",
+  fprintf ( f, "#VIKING GPS Data file " VIKING_URL "\n" );
+  fprintf ( f, "FILE_VERSION=%d\n", VIKING_FILE_VERSION );
+  fprintf ( f, "\nxmpp=%f\nympp=%f\nlat=%f\nlon=%f\nmode=%s\ncolor=%s\nhighlightcolor=%s\ndrawscale=%s\ndrawcentermark=%s\ndrawhighlight=%s\n",
       vik_viewport_get_xmpp ( VIK_VIEWPORT(vp) ), vik_viewport_get_ympp ( VIK_VIEWPORT(vp) ), ll.lat, ll.lon,
       modestring, vik_viewport_get_background_color(VIK_VIEWPORT(vp)),
       vik_viewport_get_highlight_color(VIK_VIEWPORT(vp)),
@@ -208,7 +207,7 @@ static void file_write ( VikAggregateLayer *top, FILE *f, gpointer vp )
   while (stack && stack->data)
   {
     current_layer = VIK_LAYER(((GList *)stack->data)->data);
-    fprintf ( f, "\n~Layer %s\n", vik_layer_get_interface(current_layer->type)->name );
+    fprintf ( f, "\n~Layer %s\n", vik_layer_get_interface(current_layer->type)->fixed_layer_name );
     write_layer_params_and_data ( current_layer, f );
     if ( current_layer->type == VIK_LAYER_AGGREGATE && !vik_aggregate_layer_is_empty(VIK_AGGREGATE_LAYER(current_layer)) )
     {
@@ -266,7 +265,15 @@ static void string_list_set_param (gint i, GList *list, gpointer *layer_and_vp)
   vik_layer_set_param ( VIK_LAYER(layer_and_vp[0]), i, x, layer_and_vp[1], TRUE );
 }
 
-static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
+/**
+ * Read in a Viking file and return how successful the parsing was
+ * ATM this will always work, in that even if there are parsing problems
+ *  then there will be no new values to override the defaults
+ *
+ * TODO flow up line number(s) / error messages of problems encountered...
+ *
+ */
+static gboolean file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
 {
   Stack *stack;
   struct LatLon ll = { 0.0, 0.0 };
@@ -279,6 +286,8 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
   guint8 params_count = 0;
 
   GHashTable *string_lists = g_hash_table_new(g_direct_hash,g_direct_equal);
+
+  gboolean successful_read = TRUE;
 
   push(&stack);
   stack->under = NULL;
@@ -316,6 +325,7 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
         int parent_type = VIK_LAYER(stack->data)->type;
         if ( ( ! stack->data ) || ((parent_type != VIK_LAYER_AGGREGATE) && (parent_type != VIK_LAYER_GPS)) )
         {
+          successful_read = FALSE;
           g_warning ( "Line %ld: Layer command inside non-Aggregate Layer (type %d)", line_num, parent_type );
           push(&stack); /* inside INVALID layer */
           stack->data = NULL;
@@ -327,6 +337,7 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
           push(&stack);
           if ( type == -1 )
           {
+            successful_read = FALSE;
             g_warning ( "Line %ld: Unknown type %s", line_num, line+6 );
             stack->data = NULL;
           }
@@ -346,8 +357,10 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
       }
       else if ( str_starts_with ( line, "EndLayer", 8, FALSE ) )
       {
-        if ( stack->under == NULL )
+        if ( stack->under == NULL ) {
+          successful_read = FALSE;
           g_warning ( "Line %ld: Mismatched ~EndLayer command", line_num );
+        }
         else
         {
           /* add any string lists we've accumulated */
@@ -366,8 +379,10 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
             else if (VIK_LAYER(stack->under->data)->type == VIK_LAYER_GPS) {
               /* TODO: anything else needs to be done here ? */
             }
-            else
+            else {
+              successful_read = FALSE;
               g_warning ( "Line %ld: EndLayer command inside non-Aggregate Layer (type %d)", line_num, VIK_LAYER(stack->data)->type );
+            }
           }
           pop(&stack);
         }
@@ -375,9 +390,11 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
       else if ( str_starts_with ( line, "LayerData", 9, FALSE ) )
       {
         if ( stack->data && vik_layer_get_interface(VIK_LAYER(stack->data)->type)->read_file_data )
-          vik_layer_get_interface(VIK_LAYER(stack->data)->type)->read_file_data ( VIK_LAYER(stack->data), f );
+        {
           /* must read until hits ~EndLayerData */
-
+          if ( ! vik_layer_get_interface(VIK_LAYER(stack->data)->type)->read_file_data ( VIK_LAYER(stack->data), f ) )
+            successful_read = FALSE;
+        }
         else
         { /* simply skip layer data over */
           while ( fgets ( buffer, 4096, f ) )
@@ -399,6 +416,7 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
       }
       else
       {
+        successful_read = FALSE;
         g_warning ( "Line %ld: Unknown tilde command", line_num );
       }
     }
@@ -413,7 +431,14 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
         if ( line[i] == '=' )
           eq_pos = i;
 
-      if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "xmpp", eq_pos ) == 0) /* "hard coded" params: global & for all layer-types */
+      if ( stack->under == NULL && eq_pos == 12 && strncasecmp ( line, "FILE_VERSION", eq_pos ) == 0) {
+        gint version = strtol(line+13, NULL, 10);
+        g_debug ( "%s: reading file version %d", __FUNCTION__, version );
+        if ( version > VIKING_FILE_VERSION )
+          successful_read = FALSE;
+        // However we'll still carry and attempt to read whatever we can
+      }
+      else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "xmpp", eq_pos ) == 0) /* "hard coded" params: global & for all layer-types */
         vik_viewport_set_xmpp ( VIK_VIEWPORT(vp), strtod ( line+5, NULL ) );
       else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "ympp", eq_pos ) == 0)
         vik_viewport_set_ympp ( VIK_VIEWPORT(vp), strtod ( line+5, NULL ) );
@@ -427,10 +452,12 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
         vik_viewport_set_drawmode ( VIK_VIEWPORT(vp), VIK_VIEWPORT_DRAWMODE_EXPEDIA );
       else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "mode", eq_pos ) == 0 && strcasecmp ( line+5, "google" ) == 0)
       {
+        successful_read = FALSE;
         g_warning ( _("Draw mode '%s' no more supported"), "google" );
       }
       else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "mode", eq_pos ) == 0 && strcasecmp ( line+5, "kh" ) == 0)
       {
+        successful_read = FALSE;
         g_warning ( _("Draw mode '%s' no more supported"), "kh" );
       }
       else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "mode", eq_pos ) == 0 && strcasecmp ( line+5, "mercator" ) == 0)
@@ -460,6 +487,7 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
 
         if ( ! params )
         {
+          successful_read = FALSE;
           g_warning ( "Line %ld: No options for this kind of layer", line_num );
           continue;
         }
@@ -492,11 +520,19 @@ static void file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
             found_match = TRUE;
             break;
           }
-        if ( ! found_match )
+        if ( ! found_match ) {
+          // ATM don't flow up this issue because at least one internal parameter has changed from version 1.3
+          //   and don't what to worry users about raising such issues
+          // TODO Maybe hold old values here - compare the line value against them and if a match
+          //       generate a different style of message in the GUI...
+          // successful_read = FALSE;
           g_warning ( "Line %ld: Unknown parameter. Line:\n%s", line_num, line );
+	}
       }
-      else
+      else {
+        successful_read = FALSE;
         g_warning ( "Line %ld: Invalid parameter or parameter outside of layer.", line_num );
+      }
     }
 /* could be:
 [Layer Type=Bla]
@@ -526,6 +562,8 @@ name=this
   /* delete anything we've forgotten about -- should only happen when file ends before an EndLayer */
   g_hash_table_foreach ( string_lists, string_list_delete, NULL );
   g_hash_table_destroy ( string_lists );
+
+  return successful_read;
 }
 
 /*
@@ -576,61 +614,72 @@ gboolean check_file_magic_vik ( const gchar *filename )
 
 VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filename_or_uri )
 {
+  g_return_val_if_fail ( vp != NULL, LOAD_TYPE_READ_FAILURE );
+
   char *filename = (char *)filename_or_uri;
   if (strncmp(filename, "file://", 7) == 0)
     filename = filename + 7;
 
-  gboolean is_gpx_file = check_file_ext ( filename, ".gpx" );
   FILE *f = xfopen ( filename, "r" );
-
-  g_assert ( vp );
 
   if ( ! f )
     return LOAD_TYPE_READ_FAILURE;
 
-  if ( !is_gpx_file && check_magic ( f, VIK_MAGIC ) )
+  VikLoadType_t load_answer = LOAD_TYPE_OTHER_SUCCESS;
+
+  // Attempt loading the primary file type first - our internal .vik file:
+  if ( check_magic ( f, VIK_MAGIC ) )
   {
-    file_read ( top, f, vp );
-    if ( f != stdin )
-      xfclose(f);
-    return LOAD_TYPE_VIK_SUCCESS;
+    if ( file_read ( top, f, vp ) )
+      load_answer = LOAD_TYPE_VIK_SUCCESS;
+    else
+      load_answer = LOAD_TYPE_VIK_FAILURE_NON_FATAL;
   }
   else
   {
-    gboolean success = TRUE;
+	// For all other file types which consist of tracks, routes and/or waypoints,
+	//  must be loaded into a new TrackWaypoint layer (hence it be created)
+    gboolean success = TRUE; // Detect load failures - mainly to remove the layer created as it's not required
+
     VikLayer *vtl = vik_layer_create ( VIK_LAYER_TRW, vp, NULL, FALSE );
 
     // In fact both kml & gpx files start the same as they are in xml
     if ( check_file_ext ( filename, ".kml" ) && check_magic ( f, GPX_MAGIC ) ) {
       // Implicit Conversion
-      if ( ! a_babel_convert_from ( VIK_TRW_LAYER(vtl), "-i kml", filename, NULL, NULL ) ) {
-	// Probably want to remove the vtl, but I'm not sure how yet...
-	xfclose(f);
-	return LOAD_TYPE_GPSBABEL_FAILURE;
+      if ( ! ( success = a_babel_convert_from ( VIK_TRW_LAYER(vtl), "-i kml", filename, NULL, NULL, NULL ) ) ) {
+        load_answer = LOAD_TYPE_GPSBABEL_FAILURE;
       }
     }
-    else if ( is_gpx_file || check_magic ( f, GPX_MAGIC ) ) {
-      a_gpx_read_file ( VIK_TRW_LAYER(vtl), f );
+    // NB use a extension check first, as a GPX file header may have a Byte Order Mark (BOM) in it
+    //    - which currently confuses our check_magic function
+    else if ( check_file_ext ( filename, ".gpx" ) || check_magic ( f, GPX_MAGIC ) ) {
+      if ( ! ( success = a_gpx_read_file ( VIK_TRW_LAYER(vtl), f ) ) ) {
+        load_answer = LOAD_TYPE_GPX_FAILURE;
+      }
     }
-    else
-      success = a_gpspoint_read_file ( VIK_TRW_LAYER(vtl), f );
+    else {
+      // Try final supported file type
+      if ( ! ( success = a_gpspoint_read_file ( VIK_TRW_LAYER(vtl), f ) ) ) {
+		// Failure here means we don't know how to handle the file
+        load_answer = LOAD_TYPE_UNSUPPORTED_FAILURE;
+	  }
+    }
 
-    // Refuse to load file types not supported
+    // Clean up when we can't handle the file
     if ( ! success ) {
       // free up layer
       g_object_unref ( vtl );
-      xfclose(f);
-      return LOAD_TYPE_UNSUPPORTED_FAILURE;
     }
-
-    vik_layer_rename ( vtl, a_file_basename ( filename ) );
-    vik_layer_post_read ( vtl, vp, TRUE );
-    vik_aggregate_layer_add_layer ( top, vtl );
-    vik_trw_layer_auto_set_view ( VIK_TRW_LAYER(vtl), vp );
-
-    xfclose(f);
-    return LOAD_TYPE_OTHER_SUCCESS;
+    else {
+      // Complete the setup from the successful load
+      vik_layer_rename ( vtl, a_file_basename ( filename ) );
+      vik_layer_post_read ( vtl, vp, TRUE );
+      vik_aggregate_layer_add_layer ( top, vtl );
+      vik_trw_layer_auto_set_view ( VIK_TRW_LAYER(vtl), vp );
+    }
   }
+  xfclose(f);
+  return load_answer;
 }
 
 gboolean a_file_save ( VikAggregateLayer *top, gpointer vp, const gchar *filename )
@@ -670,9 +719,9 @@ const gchar *a_file_basename ( const gchar *filename )
 */
 gboolean check_file_ext ( const gchar *filename, const gchar *fileext )
 {
+  g_return_val_if_fail ( filename != NULL, FALSE );
+  g_return_val_if_fail ( fileext && fileext[0]=='.', FALSE );
   const gchar *basename = a_file_basename(filename);
-  g_assert( filename );
-  g_assert( fileext && fileext[0]=='.' );
   if (!basename)
     return FALSE;
 
@@ -683,16 +732,29 @@ gboolean check_file_ext ( const gchar *filename, const gchar *fileext )
   return FALSE;
 }
 
-gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t file_type, const gchar *trackname )
+/**
+ * a_file_export:
+ * @vtl: The TrackWaypoint to export data from
+ * @filename: The name of the file to be written
+ * @file_type: Choose one of the supported file types for the export
+ * @trk: If specified then only export this track rather than the whole layer
+ * @write_hidden: Whether to write invisible items
+ *
+ * A general export command to convert from Viking TRW layer data to an external supported format.
+ * The write_hidden option is provided mainly to be able to transfer selected items when uploading to a GPS
+ */
+gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t file_type, VikTrack *trk, gboolean write_hidden )
 {
+  GpxWritingOptions options = { FALSE, FALSE, write_hidden, FALSE };
   FILE *f = g_fopen ( filename, "w" );
   if ( f )
   {
-    if (trackname) {
-      VikTrack *vt = vik_trw_layer_get_track ( vtl, trackname );
+    if ( trk ) {
       switch ( file_type ) {
         case FILE_TYPE_GPX:
-          a_gpx_write_track_file ( trackname, vt, f );
+          // trk defined so can set the option
+          options.is_route = trk->is_route;
+          a_gpx_write_track_file ( trk, f, &options );
           break;
         default:
           g_critical("Houston, we've had a problem. file_type=%d", file_type);
@@ -703,7 +765,7 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
           a_gpsmapper_write_file ( vtl, f );
           break;
         case FILE_TYPE_GPX:
-          a_gpx_write_file ( vtl, f );
+          a_gpx_write_file ( vtl, f, &options );
           break;
         case FILE_TYPE_GPSPOINT:
           a_gpspoint_write_file ( vtl, f );
@@ -713,14 +775,14 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
 	  f = NULL;
 	  switch ( a_vik_get_kml_export_units () ) {
 	    case VIK_KML_EXPORT_UNITS_STATUTE:
-	      return a_babel_convert_to ( vtl, "-o kml", filename, NULL, NULL );
+	      return a_babel_convert_to ( vtl, NULL, "-o kml", filename, NULL, NULL );
 	      break;
 	    case VIK_KML_EXPORT_UNITS_NAUTICAL:
-	      return a_babel_convert_to ( vtl, "-o kml,units=n", filename, NULL, NULL );
+	      return a_babel_convert_to ( vtl, NULL, "-o kml,units=n", filename, NULL, NULL );
 	      break;
 	    default:
 	      // VIK_KML_EXPORT_UNITS_METRIC:
-	      return a_babel_convert_to ( vtl, "-o kml,units=m", filename, NULL, NULL );
+	      return a_babel_convert_to ( vtl, NULL, "-o kml,units=m", filename, NULL, NULL );
 	      break;
 	  }
 	  break;
@@ -735,36 +797,3 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
   return FALSE;
 }
 
-const gchar *a_get_viking_dir()
-{
-  static gchar *viking_dir = NULL;
-
-  // TODO: use g_get_user_config_dir ?
-
-  if (!viking_dir) {
-    const gchar *home = g_getenv("HOME");
-    if (!home || g_access(home, W_OK))
-      home = g_get_home_dir ();
-#ifdef HAVE_MKDTEMP
-    if (!home || g_access(home, W_OK))
-    {
-      static gchar temp[] = {"/tmp/vikXXXXXX"};
-      home = mkdtemp(temp);
-    }
-#endif
-    if (!home || g_access(home, W_OK))
-      /* Fatal error */
-      g_critical("Unable to find a base directory");
-
-    /* Build the name of the directory */
-#ifdef __APPLE__
-    viking_dir = g_build_filename(home, "/Library/Application Support/Viking", NULL);
-#else
-    viking_dir = g_build_filename(home, ".viking", NULL);
-#endif
-    if (g_file_test(viking_dir, G_FILE_TEST_EXISTS) == FALSE)
-      g_mkdir(viking_dir, 0755);
-  }
-
-  return viking_dir;
-}

@@ -33,6 +33,7 @@
 #include "preferences.h"
 #include "globals.h"
 #include "vikmapslayer.h"
+#include "util.h"
 
 #ifdef VIK_CONFIG_GEOCACHES
 void a_datasource_gc_init();
@@ -50,8 +51,6 @@ void a_datasource_gc_init();
 
 #include "modules.h"
 
-#define MAX_WINDOWS 1024
-
 /* FIXME LOCALEDIR must be configured by ./configure --localedir */
 /* But something does not work actually. */
 /* So, we need to redefine this variable on windows. */
@@ -60,13 +59,20 @@ void a_datasource_gc_init();
 #define LOCALEDIR "locale"
 #endif
 
-static guint window_count = 0;
+#ifdef HAVE_X11_XLIB_H
+#include "X11/Xlib.h"
+#endif
 
-static VikWindow *new_window ();
-static void open_window ( VikWindow *vw, GSList *files );
-static void destroy( GtkWidget *widget,
-                     gpointer   data );
-
+#if GLIB_CHECK_VERSION (2, 32, 0)
+/* Callback to log message */
+static void log_debug(const gchar *log_domain,
+                      GLogLevelFlags log_level,
+                      const gchar *message,
+                      gpointer user_data)
+{
+  g_print("** (viking): DEBUG: %s\n", message);
+}
+#else
 /* Callback to mute log message */
 static void mute_log(const gchar *log_domain,
                      GLogLevelFlags log_level,
@@ -75,57 +81,21 @@ static void mute_log(const gchar *log_domain,
 {
   /* Nothing to do, we just want to mute */
 }
+#endif
 
-/* Another callback */
-static void destroy( GtkWidget *widget,
-                     gpointer   data )
+#if HAVE_X11_XLIB_H
+static int myXErrorHandler(Display *display, XErrorEvent *theEvent)
 {
-    if ( ! --window_count )
-      gtk_main_quit ();
+  g_fprintf (stderr,
+             _("Ignoring Xlib error: error code %d request code %d\n"),
+             theEvent->error_code,
+             theEvent->request_code);
+  // No exit on X errors!
+  //  mainly to handle out of memory error when requesting large pixbuf from user request
+  //  see vikwindow.c::save_image_file ()
+  return 0;
 }
-
-static VikWindow *new_window ()
-{
-  if ( window_count < MAX_WINDOWS )
-  {
-    VikWindow *vw = vik_window_new ();
-
-    g_signal_connect (G_OBJECT (vw), "destroy",
-		      G_CALLBACK (destroy), NULL);
-    g_signal_connect (G_OBJECT (vw), "newwindow",
-		      G_CALLBACK (new_window), NULL);
-    g_signal_connect (G_OBJECT (vw), "openwindow",
-		      G_CALLBACK (open_window), NULL);
-
-    gtk_widget_show_all ( GTK_WIDGET(vw) );
-
-    window_count++;
-
-    return vw;
-  }
-  return NULL;
-}
-
-static void open_window ( VikWindow *vw, GSList *files )
-{
-  gboolean change_fn = (g_slist_length(files) == 1); /* only change fn if one file */
-  GSList *cur_file = files;
-  while ( cur_file ) {
-    // Only open a new window if a viking file
-    gchar *file_name = cur_file->data;
-    if (vw != NULL && check_file_magic_vik ( file_name ) ) {
-      VikWindow *newvw = new_window();
-      if (newvw)
-	vik_window_open_file ( newvw, file_name, change_fn );
-    }
-    else {
-      vik_window_open_file ( vw, file_name, change_fn );
-    }
-    g_free (file_name);
-    cur_file = g_slist_next (cur_file);
-  }
-  g_slist_free (files);
-}
+#endif
 
 /* Options */
 static GOptionEntry entries[] = 
@@ -174,12 +144,21 @@ int main( int argc, char *argv[] )
    
   if (vik_version)
   {
-    g_printf ("%s %s\nCopyright (c) 2003-2008 Evan Battaglia\nCopyright (c) 2008-2010 Viking's contributors\n", PACKAGE_NAME, PACKAGE_VERSION);
+    g_printf ("%s %s\nCopyright (c) 2003-2008 Evan Battaglia\nCopyright (c) 2008-2012 Viking's contributors\n", PACKAGE_NAME, PACKAGE_VERSION);
     return EXIT_SUCCESS;
   }
 
+#if GLIB_CHECK_VERSION (2, 32, 0)
+  if (vik_debug)
+    g_log_set_handler (NULL, G_LOG_LEVEL_DEBUG, log_debug, NULL);
+#else
   if (!vik_debug)
     g_log_set_handler (NULL, G_LOG_LEVEL_DEBUG, mute_log, NULL);
+#endif
+
+#if HAVE_X11_XLIB_H
+  XSetErrorHandler(myXErrorHandler);
+#endif
 
   a_preferences_init ();
 
@@ -205,15 +184,28 @@ int main( int argc, char *argv[] )
   main_icon = gdk_pixbuf_from_pixdata(&viking_pixbuf, FALSE, NULL);
   gtk_window_set_default_icon(main_icon);
 
-  /* Create the first window */
-  first_window = new_window();
-
   gdk_threads_enter ();
+
+  /* Create the first window */
+  first_window = vik_window_new_window();
+
+  check_latest_version ( GTK_WINDOW(first_window) );
+
   while ( ++i < argc ) {
     if ( strcmp(argv[i],"--") == 0 && !dashdash_already )
       dashdash_already = TRUE; /* hack to open '-' */
-    else
-      vik_window_open_file ( first_window, argv[i], argc == 2 );
+    else {
+      VikWindow *newvw = first_window;
+      gboolean change_filename = (i == 1);
+
+      // Open any subsequent .vik files in their own window
+      if ( i > 1 && check_file_magic_vik ( argv[i] ) ) {
+        newvw = vik_window_new_window ();
+        change_filename = TRUE;
+      }
+
+      vik_window_open_file ( newvw, argv[i], change_filename );
+    }
   }
 
   gtk_main ();

@@ -15,7 +15,6 @@ authors.h: $(top_srcdir)/AUTHORS
 	echo "NULL};" >> $@
 
 if HAVE_XSLTPROC
-XP=@XP@
 documenters.h: $(top_srcdir)/help/C/viking.xml
 	$(XP) $(srcdir)/docbook2documenters.xsl $(top_srcdir)/help/C/viking.xml > $@
 else
@@ -60,6 +59,7 @@ libviking_a_SOURCES = \
 	coords.c coords.h \
 	gpsmapper.c gpsmapper.h \
 	gpspoint.c gpspoint.h \
+	dir.c dir.h \
 	file.c file.h \
 	authors.h \
 	documenters.h \
@@ -103,10 +103,11 @@ libviking_a_SOURCES = \
 	acquire.c acquire.h \
 	babel.c babel.h \
 	datasource_file.c \
-	datasource_gps.c \
+	datasource_gps.c datasource_gps.h \
 	datasource_google.c \
 	datasource_gc.c \
 	datasource_bfilter.c \
+	datasource_wikipedia.c \
 	datasources.h \
 	googlesearch.c googlesearch.h \
 	dem.c dem.h \
@@ -132,7 +133,7 @@ endif
 
 if GOOGLE
 libviking_a_SOURCES += \
-	google.c google.h
+       google.c google.h
 endif
 
 if TERRASERVER
@@ -150,6 +151,7 @@ if OPENSTREETMAP
 libviking_a_SOURCES += \
 	osm.c osm.h \
 	osm-traces.c osm-traces.h \
+	datasource_osm_my_traces.c \
 	datasource_osm.c
 endif
 
@@ -181,12 +183,12 @@ endif
 viking_SOURCES = main.c
 
 LDADD           = libviking.a $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ icons/libicons.a
-if REALTIME_GPS_TRACKING
-LDADD           += -lgps
-endif
 AM_CFLAGS		= -Wall -g -D_GNU_SOURCE \
 	$(PACKAGE_CFLAGS) \
 	@EXPAT_CFLAGS@ @LIBCURL_CPPFLAGS@
+AM_CPPFLAGS		= \
+	-DVIKING_DATADIR=\""$(pkgdatadir)"\" \
+	-DVIKING_SYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"
 
 @INTLTOOL_DESKTOP_RULE@
 

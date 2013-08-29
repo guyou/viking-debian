@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
  * Copyright (C) 2011, Rob Norris <rw_norris@hotmail.com>
+ * Copyright (C) 2012, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,17 @@
    NB as of gtk 2.18 there are 'info bars' that could be useful... */
 #include <gtk/gtk.h>
 
+#include <glib/gi18n.h>
+
+#include <math.h>
+
 #include "vikstatus.h"
+
+enum
+{
+  CLICKED,
+  LAST_SIGNAL
+};
 
 struct _VikStatusbar {
   GtkHBox hbox;
@@ -32,52 +43,71 @@ struct _VikStatusbar {
   gboolean empty[VIK_STATUSBAR_NUM_TYPES];
 };
 
-GType vik_statusbar_get_type (void)
+G_DEFINE_TYPE (VikStatusbar, vik_statusbar, GTK_TYPE_HBOX)
+
+static guint vik_statusbar_signals[LAST_SIGNAL] = { 0 };
+
+static gint
+forward_signal (GtkObject *object, gpointer user_data)
 {
-  static GType vs_type = 0;
+    gint item = GPOINTER_TO_INT (gtk_object_get_data ( object, "type" ));
+    VikStatusbar *vs = VIK_STATUSBAR (user_data);
 
-  if (!vs_type)
-  {
-    static const GTypeInfo vs_info = 
-    {
-      sizeof (VikStatusbarClass),
-      NULL, /* base_init */
-      NULL, /* base_finalize */
-      NULL, /* class init */
-      NULL, /* class_finalize */
-      NULL, /* class_data */
-      sizeof (VikStatusbar),
-      0,
-      NULL /* instance init */
-    };
-    vs_type = g_type_register_static ( GTK_TYPE_HBOX, "VikStatusbar", &vs_info, 0 );
-  }
+    g_signal_emit (G_OBJECT (vs),
+                   vik_statusbar_signals[CLICKED], 0,
+                   item);
 
-  return vs_type;
+    return TRUE;
 }
 
-VikStatusbar *vik_statusbar_new ()
+static void
+vik_statusbar_class_init (VikStatusbarClass *klass)
 {
-  VikStatusbar *vs = VIK_STATUSBAR ( g_object_new ( VIK_STATUSBAR_TYPE, NULL ) );
+  vik_statusbar_signals[CLICKED] =
+    g_signal_new ("clicked",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (VikStatusbarClass, clicked),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__INT,
+                  G_TYPE_NONE, 1,
+                  G_TYPE_INT);
+
+  klass->clicked = NULL;
+}
+
+static void
+vik_statusbar_init (VikStatusbar *vs)
+{
   gint i;
 
   for ( i = 0; i < VIK_STATUSBAR_NUM_TYPES; i++ ) {
     vs->empty[i] = TRUE;
-    vs->status[i] = gtk_statusbar_new();
-    gtk_statusbar_set_has_resize_grip ( GTK_STATUSBAR(vs->status[i]), FALSE );
+    
+    if (i == VIK_STATUSBAR_ZOOM)
+      vs->status[i] = gtk_button_new();
+    else
+    {
+      vs->status[i] = gtk_statusbar_new();
+      gtk_statusbar_set_has_resize_grip ( GTK_STATUSBAR(vs->status[i]), FALSE );
+    }
+    gtk_object_set_data (GTK_OBJECT (vs->status[i]), "type", GINT_TO_POINTER(i));
   }
 
   gtk_box_pack_start ( GTK_BOX(vs), vs->status[VIK_STATUSBAR_TOOL], FALSE, FALSE, 1);
-  gtk_widget_set_size_request ( vs->status[VIK_STATUSBAR_TOOL], 150, -1 );
+  gtk_widget_set_size_request ( vs->status[VIK_STATUSBAR_TOOL], 125, -1 );
 
   gtk_box_pack_start ( GTK_BOX(vs), vs->status[VIK_STATUSBAR_ITEMS], FALSE, FALSE, 1);
   gtk_widget_set_size_request ( vs->status[VIK_STATUSBAR_ITEMS], 100, -1 );
 
+  g_signal_connect ( G_OBJECT(vs->status[VIK_STATUSBAR_ZOOM]), "clicked", G_CALLBACK (forward_signal), vs);
+  gtk_button_set_relief ( GTK_BUTTON(vs->status[VIK_STATUSBAR_ZOOM]), GTK_RELIEF_NONE );
+  gtk_widget_set_tooltip_text (GTK_WIDGET (vs->status[VIK_STATUSBAR_ZOOM]), _("Current zoom level. Click to select a new one."));
   gtk_box_pack_start ( GTK_BOX(vs), vs->status[VIK_STATUSBAR_ZOOM], FALSE, FALSE, 1);
   gtk_widget_set_size_request ( vs->status[VIK_STATUSBAR_ZOOM], 100, -1 );
 
   gtk_box_pack_start ( GTK_BOX(vs), vs->status[VIK_STATUSBAR_POSITION], FALSE, FALSE, 1);
-  gtk_widget_set_size_request ( vs->status[VIK_STATUSBAR_POSITION], 250, -1 );
+  gtk_widget_set_size_request ( vs->status[VIK_STATUSBAR_POSITION], 275, -1 );
 
   gtk_box_pack_end ( GTK_BOX(vs), vs->status[VIK_STATUSBAR_INFO], TRUE, TRUE, 1);
 
@@ -85,14 +115,42 @@ VikStatusbar *vik_statusbar_new ()
   //  otherwise the individual size_requests above create an implicit overall size,
   //  and so one can't downsize horizontally as much as may be desired when the statusbar is on
   gtk_widget_set_size_request ( GTK_WIDGET(vs), 50, -1 );
+}
+
+/**
+ * vik_statusbar_new:
+ *
+ * Creates a new #VikStatusbar widget.
+ *
+ * Return value: the new #VikStatusbar widget.
+ **/
+VikStatusbar *
+vik_statusbar_new ()
+{
+  VikStatusbar *vs = VIK_STATUSBAR ( g_object_new ( VIK_STATUSBAR_TYPE, NULL ) );
 
   return vs;
 }
 
-void vik_statusbar_set_message ( VikStatusbar *vs, vik_statusbar_type_t field, const gchar *message )
+/**
+ * vik_statusbar_set_message:
+ * @vs: the #VikStatusbar itself
+ * @field: the field to update
+ * @message: the message to use
+ *
+ * Update the message of the given field.
+ **/
+void
+vik_statusbar_set_message ( VikStatusbar *vs, vik_statusbar_type_t field, const gchar *message )
 {
   if ( field >= 0 && field < VIK_STATUSBAR_NUM_TYPES )
   {
+    if ( field == VIK_STATUSBAR_ZOOM )
+    {
+      gtk_button_set_label ( GTK_BUTTON(vs->status[field]), message);
+    }
+    else
+    {
     GtkStatusbar *gsb = GTK_STATUSBAR(vs->status[field]);
 
     if ( !vs->empty[field] )
@@ -101,5 +159,6 @@ void vik_statusbar_set_message ( VikStatusbar *vs, vik_statusbar_type_t field, c
       vs->empty[field] = FALSE;
 
     gtk_statusbar_push ( gsb, 0, message );
+    }
   }
 }

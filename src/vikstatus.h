@@ -40,6 +40,9 @@ typedef struct _VikStatusbarClass VikStatusbarClass;
 struct _VikStatusbarClass
 {
   GtkStatusbarClass statusbar_class;
+
+  void (* clicked)  (VikStatusbar *vs,
+                     gint          item);
 };
 
 GType vik_statusbar_get_type ();
@@ -57,5 +60,6 @@ typedef enum {
 VikStatusbar *vik_statusbar_new ();
 void vik_statusbar_set_message ( VikStatusbar *vs, vik_statusbar_type_t field, const gchar *message );
 
+G_END_DECLS
 
 #endif

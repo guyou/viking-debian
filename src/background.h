@@ -25,7 +25,9 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#include "vikstatus.h"
+#include "vikwindow.h"
+
+G_BEGIN_DECLS
 
 typedef void(*vik_thr_free_func)(gpointer);
 typedef void(*vik_thr_func)(gpointer,gpointer);
@@ -37,7 +39,9 @@ int a_background_testcancel ( gpointer callbackdata );
 void a_background_show_window ();
 void a_background_init ();
 void a_background_uninit ();
-void a_background_add_status(VikStatusbar *vs);
-void a_background_remove_status(VikStatusbar *vs);
+void a_background_add_window (VikWindow *vw);
+void a_background_remove_window (VikWindow *vw);
+
+G_END_DECLS
 
 #endif

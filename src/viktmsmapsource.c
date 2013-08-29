@@ -46,7 +46,8 @@
 
 static gboolean _coord_to_mapcoord ( VikMapSource *self, const VikCoord *src, gdouble xzoom, gdouble yzoom, MapCoord *dest );
 static void _mapcoord_to_center_coord ( VikMapSource *self, MapCoord *src, VikCoord *dest );
-static gboolean _supports_download_only_new (VikMapSource *self );
+static gboolean _supports_download_only_new ( VikMapSource *self );
+static gboolean _is_direct_file_access ( VikMapSource *self );
 
 static gchar *_get_uri( VikMapSourceDefault *self, MapCoord *src );
 static gchar *_get_hostname( VikMapSourceDefault *self );
@@ -206,6 +207,7 @@ vik_tms_map_source_class_init (VikTmsMapSourceClass *klass)
 	grandparent_class->coord_to_mapcoord =        _coord_to_mapcoord;
 	grandparent_class->mapcoord_to_center_coord = _mapcoord_to_center_coord;
 	grandparent_class->supports_download_only_new = _supports_download_only_new;
+	grandparent_class->is_direct_file_access = _is_direct_file_access;
 	
 	parent_class->get_uri = _get_uri;
 	parent_class->get_hostname = _get_hostname;
@@ -281,8 +283,14 @@ static gint tms_zoom ( gdouble mpp ) {
   return 255;
 }
 
-gboolean
-_supports_download_only_new (VikMapSource *self)
+static gboolean
+_is_direct_file_access ( VikMapSource *self )
+{
+	return FALSE;
+}
+
+static gboolean
+_supports_download_only_new ( VikMapSource *self )
 {
 	g_return_val_if_fail (VIK_IS_TMS_MAP_SOURCE(self), FALSE);
 	
@@ -372,7 +380,7 @@ _get_download_options( VikMapSourceDefault *self )
 }
 
 VikTmsMapSource *
-vik_tms_map_source_new_with_id (guint8 id, const gchar *label, const gchar *hostname, const gchar *url)
+vik_tms_map_source_new_with_id (guint16 id, const gchar *label, const gchar *hostname, const gchar *url)
 {
 	return g_object_new(VIK_TYPE_TMS_MAP_SOURCE,
 	                    "id", id, "label", label, "hostname", hostname, "url", url, NULL);

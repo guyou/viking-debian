@@ -19,9 +19,6 @@
 /* Define to 1 if you have the `floor' function. */
 /* #undef HAVE_FLOOR */
 
-/* Define to 1 if you have the `gethostbyname' function. */
-#define HAVE_GETHOSTBYNAME 1
-
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #define HAVE_GETTEXT 1
 
@@ -42,6 +39,9 @@
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
+
+/* Define to 1 if you have the `X11' library (-lX11). */
+#define HAVE_LIBX11 1
 
 /* Define to 1 if you have the `z' library (-lz). */
 #define HAVE_LIBZ 1
@@ -64,20 +64,11 @@
 /* Define to 1 if you have the `mkdtemp' function. */
 #define HAVE_MKDTEMP 1
 
-/* Define to 1 if you have the <netdb.h> header file. */
-#define HAVE_NETDB_H 1
-
-/* Define to 1 if you have the <netinet/in.h> header file. */
-#define HAVE_NETINET_IN_H 1
-
 /* Define to 1 if you have the `pow' function. */
 /* #undef HAVE_POW */
 
 /* Define to 1 if you have the `realpath' function. */
 #define HAVE_REALPATH 1
-
-/* Define to 1 if you have the `socket' function. */
-#define HAVE_SOCKET 1
 
 /* Define to 1 if you have the `sqrt' function. */
 /* #undef HAVE_SQRT */
@@ -119,23 +110,20 @@
 /* Define to 1 if you have the <sys/param.h> header file. */
 #define HAVE_SYS_PARAM_H 1
 
-/* Define to 1 if you have the <sys/socket.h> header file. */
-#define HAVE_SYS_SOCKET_H 1
-
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
 
-/* Define to 1 if you have the <sys/wait.h> header file. */
-#define HAVE_SYS_WAIT_H 1
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
 /* Define to 1 if you have the <utime.h> header file. */
 #define HAVE_UTIME_H 1
+
+/* Define to 1 if you have the <X11/Xlib.h> header file. */
+#define HAVE_X11_XLIB_H 1
 
 /* Defined if libcurl supports AsynchDNS */
 /* #undef LIBCURL_FEATURE_ASYNCHDNS */
@@ -205,7 +193,7 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 1.3"
+#define PACKAGE_STRING "viking 1.4.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
@@ -214,13 +202,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.3"
+#define PACKAGE_VERSION "1.4.2"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.3"
+#define VERSION "1.4.2"
 
 /* NO ALPHABETIZED TRW */
 #define VIK_CONFIG_ALPHABETIZED_TRW /**/
@@ -253,7 +241,7 @@
 #define VIK_CONFIG_GOOGLE /**/
 
 /* Size of the map cache */
-#define VIK_CONFIG_MAPCACHE_SIZE 50331648
+#define VIK_CONFIG_MAPCACHE_SIZE 128
 
 /* OPENSTREETMAP STUFF */
 #define VIK_CONFIG_OPENSTREETMAP /**/

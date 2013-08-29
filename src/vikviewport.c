@@ -53,8 +53,6 @@ static gdouble EASTING_OFFSET = 500000.0;
 
 static gint PAD = 10;
 
-static void viewport_class_init ( VikViewportClass *klass );
-static void viewport_init ( VikViewport *vvp );
 static void viewport_finalize ( GObject *gob );
 static void viewport_utm_zone_check ( VikViewport *vvp );
 
@@ -100,12 +98,6 @@ struct _VikViewport {
   /* subset of coord types. lat lon can be plotted in 2 ways, google or exp. */
   VikViewportDrawMode drawmode;
 
-  /* handy conversion factors which make google plotting extremely fast */
-  gdouble google_calcx_fact;
-  gdouble google_calcy_fact;
-  gdouble google_calcx_rev_fact;
-  gdouble google_calcy_rev_fact;
-
   /* trigger stuff */
   gpointer trigger;
   GdkPixmap *snapshot_buffer;
@@ -131,31 +123,10 @@ viewport_utm_zone_width ( VikViewport *vvp )
     return 0.0;
 }
 
+G_DEFINE_TYPE (VikViewport, vik_viewport, GTK_TYPE_DRAWING_AREA)
 
-GType vik_viewport_get_type (void)
-{
-  static GType vvp_type = 0;
-
-  if (!vvp_type)
-  {
-    static const GTypeInfo vvp_info = 
-    {
-      sizeof (VikViewportClass),
-      NULL, /* base_init */
-      NULL, /* base_finalize */
-      (GClassInitFunc) viewport_class_init,
-      NULL, /* class_finalize */
-      NULL, /* class_data */
-      sizeof (VikViewport),
-      0,
-      (GInstanceInitFunc) viewport_init,
-    };
-    vvp_type = g_type_register_static ( GTK_TYPE_DRAWING_AREA, "VikViewport", &vvp_info, 0 );
-  }
-  return vvp_type;
-}
-
-static void viewport_class_init ( VikViewportClass *klass )
+static void
+vik_viewport_class_init ( VikViewportClass *klass )
 {
   /* Destructor */
   GObjectClass *object_class;
@@ -173,7 +144,8 @@ VikViewport *vik_viewport_new ()
   return vv;
 }
 
-static void viewport_init ( VikViewport *vvp )
+static void
+vik_viewport_init ( VikViewport *vvp )
 {
   viewport_init_ra();
 
@@ -436,7 +408,6 @@ void vik_viewport_draw_scale ( VikViewport *vvp )
     VikCoord left, right;
     gdouble unit, base, diff, old_unit, old_diff, ratio;
     gint odd, len, SCSIZE = 5, HEIGHT=10;
-    PangoFontDescription *pfd;
     PangoLayout *pl;
     gchar s[128];
 
@@ -505,9 +476,7 @@ void vik_viewport_draw_scale ( VikViewport *vvp )
       }
     }
     pl = gtk_widget_create_pango_layout (GTK_WIDGET(&vvp->drawing_area), NULL); 
-    pfd = pango_font_description_from_string ("Sans 8"); // FIXME: settable option? global variable?
-    pango_layout_set_font_description (pl, pfd);
-    pango_font_description_free (pfd);
+    pango_layout_set_font_description (pl, GTK_WIDGET(&vvp->drawing_area)->style->font_desc);
 
     switch (dist_units) {
     case VIK_UNITS_DISTANCE_KILOMETRES:
@@ -544,37 +513,47 @@ void vik_viewport_draw_copyright ( VikViewport *vvp )
 {
   g_return_if_fail ( vvp != NULL );
 
-  PangoFontDescription *pfd;
   PangoLayout *pl;
   PangoRectangle ink_rect, logical_rect;
   gchar s[128] = "";
 
   /* compute copyrights string */
   guint len = g_slist_length ( vvp->copyrights );
+
   int i;
   for (i = 0 ; i < len ; i++)
   {
+    // Stop when buffer is full
+    int slen = strlen ( s );
+    if ( slen >= 127 )
+      break;
+
     gchar *copyright = g_slist_nth_data ( vvp->copyrights, i );
-    strcat ( s, copyright );
+
+    // Only use part of this copyright that fits in the available space left
+    //  remembering 1 character is left available for the appended space
+    int clen = strlen ( copyright );
+    if ( slen + clen > 126 ) {
+      clen = 126 - slen;
+    }
+
+    strncat ( s, copyright, clen );
     strcat ( s, " " );
   }
 
   /* create pango layout */
   pl = gtk_widget_create_pango_layout (GTK_WIDGET(&vvp->drawing_area), NULL); 
-  pfd = pango_font_description_from_string ("Sans 8"); // FIXME: settable option? global variable?
-  pango_layout_set_font_description (pl, pfd);
-  pango_font_description_free (pfd);
-  pfd = NULL;
+  pango_layout_set_font_description (pl, GTK_WIDGET(&vvp->drawing_area)->style->font_desc);
   pango_layout_set_alignment ( pl, PANGO_ALIGN_RIGHT );
 
   /* Set the text */
   pango_layout_set_text(pl, s, -1);
 
   /* Use maximum of half the viewport width */
-  pango_layout_set_width ( pl, ( vvp->width / 2 - PAD ) * PANGO_SCALE );
+  pango_layout_set_width ( pl, ( vvp->width / 2 ) * PANGO_SCALE );
   pango_layout_get_pixel_extents(pl, &ink_rect, &logical_rect);
   vik_viewport_draw_layout(vvp, GTK_WIDGET(&vvp->drawing_area)->style->black_gc,
-			   vvp->width / 2, vvp->height - PAD - logical_rect.height, pl);
+			   vvp->width / 2, vvp->height - logical_rect.height, pl);
 
   /* Free memory */
   g_object_unref(pl);
@@ -628,7 +607,6 @@ void vik_viewport_draw_logo ( VikViewport *vvp )
 {
   g_return_if_fail ( vvp != NULL );
 
-  /* compute copyrights string */
   guint len = g_slist_length ( vvp->logos );
   gint x = vvp->width - PAD;
   gint y = PAD;
@@ -989,7 +967,8 @@ void vik_viewport_draw_line ( VikViewport *vvp, GdkGC *gc, gint x1, gint y1, gin
 
 void vik_viewport_draw_rectangle ( VikViewport *vvp, GdkGC *gc, gboolean filled, gint x1, gint y1, gint x2, gint y2 )
 {
-  if ( x1 > -10 && x1 < vvp->width + 10 && y1 > -10 && y1 < vvp->height + 10 )
+  // Using 32 as half the default waypoint image size, so this draws ensures the highlight gets done
+  if ( x1 > -32 && x1 < vvp->width + 32 && y1 > -32 && y1 < vvp->height + 32 )
     gdk_draw_rectangle ( vvp->scr_buffer, gc, filled, x1, y1, x2, y2);
 }
 
@@ -1087,14 +1066,14 @@ static gboolean calcxy_rev(double *lg, double *lt, gint x, gint y, double zero_l
   lon =
     zero_long -
     px / (Ra *
-         cos (lat * DEG2RAD));
+         cos (DEG2RAD(lat)));
 
-  dif = lat * (1 - (cos ((fabs (lon - zero_long)) * DEG2RAD)));
+  dif = lat * (1 - (cos (DEG2RAD(fabs (lon - zero_long)))));
   lat = lat - dif / 1.5;
   lon =
     zero_long -
     px / (Ra *
-              cos (lat * DEG2RAD));
+              cos (DEG2RAD(lat)));
 
   *lt = lat;
   *lg = lon;
@@ -1114,9 +1093,9 @@ static gboolean calcxy(double *x, double *y, double lg, double lt, double zero_l
 //    lt *= rad2deg;
     Ra = Radius[90+(gint)lt];
     *x = Ra *
-         cos (lt*DEG2RAD) * (lg - zero_long);
+         cos (DEG2RAD(lt)) * (lg - zero_long);
     *y = Ra * (lt - zero_lat);
-    dif = Ra * RAD2DEG * (1 - (cos ((DEG2RAD * (lg - zero_long)))));
+    dif = Ra * RAD2DEG(1 - (cos ((DEG2RAD(lg - zero_long)))));
     *y = *y + dif / 1.85;
     *x = *x / pixelfact_x;
     *y = *y / pixelfact_y;
@@ -1134,7 +1113,7 @@ static void viewport_init_ra()
   {
     gint i;
     for ( i = -90; i <= 90; i++)
-      Radius[i+90] = calcR ( (double)i ) * DEG2RAD;
+      Radius[i+90] = calcR ( DEG2RAD((double)i) );
     done_before = TRUE;
   }
 }
@@ -1158,7 +1137,7 @@ double calcR (double lat)
      * = 0.081082 Eccentricity
      */
 
-    lat = lat * DEG2RAD;
+    lat = DEG2RAD(lat);
     sc = sin (lat);
     x = a * (1.0 - e2);
     z = 1.0 - e2 * sc * sc;
@@ -1297,7 +1276,7 @@ void vik_viewport_add_copyright ( VikViewport *vp, const gchar *copyright )
   g_return_if_fail ( vp != NULL );
   if ( copyright )
   {
-    gchar *found = (gchar*)g_slist_find_custom ( vp->copyrights, copyright, (GCompareFunc)strcmp );
+    GSList *found = g_slist_find_custom ( vp->copyrights, copyright, (GCompareFunc)strcmp );
     if ( found == NULL )
     {
       gchar *duple = g_strdup ( copyright );
@@ -1325,4 +1304,47 @@ void vik_viewport_add_logo ( VikViewport *vp, const GdkPixbuf *logo )
       vp->logos = g_slist_prepend ( vp->logos, (gpointer)logo );
     }
   }
+}
+
+/**
+ * vik_viewport_compute_bearing:
+ * @vp: self object
+ * @x1: screen coord
+ * @y1: screen coord
+ * @x2: screen coord
+ * @y2: screen coord
+ * @angle: bearing in Radian (output)
+ * @baseangle: UTM base angle in Radian (output)
+ * 
+ * Compute bearing.
+ */
+void vik_viewport_compute_bearing ( VikViewport *vp, gint x1, gint y1, gint x2, gint y2, gdouble *angle, gdouble *baseangle )
+{
+  gdouble len = sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+  gdouble dx = (x2-x1)/len*10;
+  gdouble dy = (y2-y1)/len*10;
+
+  *angle = atan2(dy, dx) + M_PI_2;
+
+  if ( vik_viewport_get_drawmode ( vp ) == VIK_VIEWPORT_DRAWMODE_UTM) {
+    VikCoord test;
+    struct LatLon ll;
+    struct UTM u;
+    gint tx, ty;
+
+    vik_viewport_screen_to_coord ( vp, x1, y1, &test );
+    vik_coord_to_latlon ( &test, &ll );
+    ll.lat += vik_viewport_get_ympp ( vp ) * vik_viewport_get_height ( vp ) / 11000.0; // about 11km per degree latitude
+    a_coords_latlon_to_utm ( &ll, &u );
+    vik_coord_load_from_utm ( &test, VIK_VIEWPORT_DRAWMODE_UTM, &u );
+    vik_viewport_coord_to_screen ( vp, &test, &tx, &ty );
+
+    *baseangle = M_PI - atan2(tx-x1, ty-y1);
+    *angle -= *baseangle;
+  }
+
+  if (*angle < 0)
+    *angle += 2*M_PI;
+  if (*angle > 2*M_PI)
+    *angle -= 2*M_PI;
 }

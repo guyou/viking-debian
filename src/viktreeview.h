@@ -60,6 +60,7 @@ GtkWidget *vik_treeview_get_widget ( VikTreeview *vt );
 
 gint vik_treeview_item_get_data ( VikTreeview *vt, GtkTreeIter *iter );
 gint vik_treeview_item_get_type ( VikTreeview *vt, GtkTreeIter *iter );
+gchar *vik_treeview_item_get_name ( VikTreeview *vt, GtkTreeIter *iter );
 gpointer vik_treeview_item_get_pointer ( VikTreeview *vt, GtkTreeIter *iter );
 void vik_treeview_item_set_pointer ( VikTreeview *vt, GtkTreeIter *iter, gpointer pointer );
 
@@ -68,6 +69,7 @@ gpointer vik_treeview_item_get_parent ( VikTreeview *vt, GtkTreeIter *iter );
 void vik_treeview_select_iter ( VikTreeview *vt, GtkTreeIter *iter, gboolean view_all );
 gboolean vik_treeview_get_selected_iter ( VikTreeview *vt, GtkTreeIter *iter );
 
+void vik_treeview_item_set_icon ( VikTreeview *vt, GtkTreeIter *iter, const GdkPixbuf *icon );
 void vik_treeview_item_set_name ( VikTreeview *vt, GtkTreeIter *iter, const gchar *to );
 void vik_treeview_item_set_visible ( VikTreeview *vt, GtkTreeIter *iter, gboolean to );
 void vik_treeview_item_delete ( VikTreeview *vt, GtkTreeIter *iter );

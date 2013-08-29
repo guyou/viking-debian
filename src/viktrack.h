@@ -28,6 +28,8 @@
 
 #include "vikcoord.h"
 
+G_BEGIN_DECLS
+
 /* todo important: put these in their own header file, maybe.probably also rename */
 
 #define VIK_TRACK(x) ((VikTrack *)(x))
@@ -53,20 +55,33 @@ struct _VikTrackpoint {
   gdouble pdop;     /* VIK_DEFAULT_DOP if data unavailable */
 };
 
+// Instead of having a separate VikRoute type, routes are considered tracks
+//  Thus all track operations must cope with a 'route' version
+//  [track functions handle having no timestamps anyway - so there is no practical difference in most cases]
+//  This is simpler than having to rewrite particularly every track function for route version
+//   given that they do the same things
+//  Mostly this matters in the display in deciding where and how they are shown
 typedef struct _VikTrack VikTrack;
 struct _VikTrack {
   GList *trackpoints;
   gboolean visible;
+  gboolean is_route;
   gchar *comment;
+  gchar *description;
   guint8 ref_count;
+  gchar *name;
   GtkWidget *property_dialog;
+  gboolean has_color;
+  GdkColor color;
 };
 
 VikTrack *vik_track_new();
-void vik_track_set_comment(VikTrack *wp, const gchar *comment);
+void vik_track_set_name(VikTrack *tr, const gchar *name);
+void vik_track_set_comment(VikTrack *tr, const gchar *comment);
+void vik_track_set_description(VikTrack *tr, const gchar *description);
 void vik_track_ref(VikTrack *tr);
 void vik_track_free(VikTrack *tr);
-VikTrack *vik_track_copy ( const VikTrack *tr );
+VikTrack *vik_track_copy ( const VikTrack *tr, gboolean copy_points );
 void vik_track_set_comment_no_copy(VikTrack *tr, gchar *comment);
 VikTrackpoint *vik_trackpoint_new();
 void vik_trackpoint_free(VikTrackpoint *tp);
@@ -76,10 +91,15 @@ gdouble vik_track_get_length_including_gaps(const VikTrack *tr);
 gulong vik_track_get_tp_count(const VikTrack *tr);
 guint vik_track_get_segment_count(const VikTrack *tr);
 VikTrack **vik_track_split_into_segments(VikTrack *tr, guint *ret_len);
+guint vik_track_merge_segments(VikTrack *tr);
 void vik_track_reverse(VikTrack *tr);
 
 gulong vik_track_get_dup_point_count ( const VikTrack *vt );
-void vik_track_remove_dup_points ( VikTrack *vt );
+gulong vik_track_remove_dup_points ( VikTrack *vt );
+gulong vik_track_get_same_time_point_count ( const VikTrack *vt );
+gulong vik_track_remove_same_time_points ( VikTrack *vt );
+
+void vik_track_to_routepoints ( VikTrack *tr );
 
 gdouble vik_track_get_max_speed(const VikTrack *tr);
 gdouble vik_track_get_average_speed(const VikTrack *tr);
@@ -93,6 +113,7 @@ VikTrackpoint *vik_track_get_closest_tp_by_percentage_time ( VikTrack *tr, gdoub
 VikTrackpoint *vik_track_get_tp_by_max_speed ( const VikTrack *tr );
 VikTrackpoint *vik_track_get_tp_by_max_alt ( const VikTrack *tr );
 VikTrackpoint *vik_track_get_tp_by_min_alt ( const VikTrack *tr );
+gdouble *vik_track_make_gradient_map ( const VikTrack *tr, guint16 num_chunks );
 gdouble *vik_track_make_speed_map ( const VikTrack *tr, guint16 num_chunks );
 gdouble *vik_track_make_distance_map ( const VikTrack *tr, guint16 num_chunks );
 gdouble *vik_track_make_elevation_time_map ( const VikTrack *tr, guint16 num_chunks );
@@ -102,21 +123,15 @@ void vik_track_marshall ( VikTrack *tr, guint8 **data, guint *len);
 VikTrack *vik_track_unmarshall (guint8 *data, guint datalen);
 
 void vik_track_apply_dem_data ( VikTrack *tr);
-/*
- * Apply DEM data (if available) - to only the last trackpoint
- */
 void vik_track_apply_dem_data_last_trackpoint ( VikTrack *tr );
 
-/* appends t2 to t1, leaving t2 with no trackpoints */
 void vik_track_steal_and_append_trackpoints ( VikTrack *t1, VikTrack *t2 );
 
-/* starting at the end, looks backwards for the last "double point", a duplicate trackpoint.
- * If there is no double point, deletes all the trackpoints.
- * Returns the new end of the track (or the start if there are no double points
- */
 VikCoord *vik_track_cut_back_to_double_point ( VikTrack *tr );
 
 void vik_track_set_property_dialog(VikTrack *tr, GtkWidget *dialog);
 void vik_track_clear_property_dialog(VikTrack *tr);
+
+G_END_DECLS
 
 #endif

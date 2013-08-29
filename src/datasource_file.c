@@ -52,22 +52,22 @@ static int last_type = 0;
 
 static gpointer datasource_file_init( );
 static void datasource_file_add_setup_widgets ( GtkWidget *dialog, VikViewport *vvp, gpointer user_data );
-static void datasource_file_get_cmd_string ( datasource_file_widgets_t *widgets, gchar **cmd, gchar **input_file_type );	
+static void datasource_file_get_cmd_string ( datasource_file_widgets_t *widgets, gchar **cmd, gchar **input_file_type, gpointer not_used );
 static void datasource_file_cleanup ( gpointer data );
 
 VikDataSourceInterface vik_datasource_file_interface = {
   N_("Import file with GPSBabel"),
   N_("Imported file"),
-  VIK_DATASOURCE_GPSBABEL_DIRECT,
   VIK_DATASOURCE_ADDTOLAYER,
   VIK_DATASOURCE_INPUTTYPE_NONE,
+  TRUE,
   TRUE,
   TRUE,
   (VikDataSourceInitFunc)		datasource_file_init,
   (VikDataSourceCheckExistenceFunc)	NULL,
   (VikDataSourceAddSetupWidgetsFunc)	datasource_file_add_setup_widgets,
   (VikDataSourceGetCmdStringFunc)	datasource_file_get_cmd_string,
-  (VikDataSourceProcessFunc)		NULL,
+  (VikDataSourceProcessFunc)        a_babel_convert_from,
   (VikDataSourceProgressFunc)		NULL,
   (VikDataSourceAddProgressWidgetsFunc)	NULL,
   (VikDataSourceCleanupFunc)		datasource_file_cleanup,
@@ -163,12 +163,10 @@ static void datasource_file_add_setup_widgets ( GtkWidget *dialog, VikViewport *
 }
 
 /* See VikDataSourceInterface */
-static void datasource_file_get_cmd_string ( datasource_file_widgets_t *widgets, gchar **cmd, gchar **input_file )
+static void datasource_file_get_cmd_string ( datasource_file_widgets_t *widgets, gchar **cmd, gchar **input_file, gpointer not_used )
 {
-  gchar *filename, *type;
-
   /* Retrieve the file selected */
-  filename = gtk_file_chooser_get_filename ( GTK_FILE_CHOOSER(widgets->file) );
+  gchar *filename = gtk_file_chooser_get_filename ( GTK_FILE_CHOOSER(widgets->file) );
 
   /* Memorize the directory for later use */
   g_free (last_folder_uri);
@@ -180,8 +178,10 @@ static void datasource_file_get_cmd_string ( datasource_file_widgets_t *widgets,
   last_file_filter = g_object_get_data ( G_OBJECT(filter), "Babel" );
 
   /* Retrieve and memorize file format selected */
+  gchar *type = NULL;
   last_type = gtk_combo_box_get_active ( GTK_COMBO_BOX (widgets->type) );
-  type = ((BabelFile*)g_list_nth_data (a_babel_file_list, last_type))->name;
+  if ( a_babel_file_list )
+    type = ((BabelFile*)g_list_nth_data (a_babel_file_list, last_type))->name;
 
   /* Build the string */
   *cmd = g_strdup_printf( "-i %s", type);

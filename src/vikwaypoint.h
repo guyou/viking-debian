@@ -24,6 +24,7 @@
 
 #include "vikcoord.h"
 
+G_BEGIN_DECLS
 /* todo important: put these in their own header file, maybe.probably also rename */
 
 #define VIK_WAYPOINT(x) ((VikWaypoint *)(x))
@@ -34,7 +35,9 @@ struct _VikWaypoint {
   VikCoord coord;
   gboolean visible;
   gdouble altitude;
+  gchar *name;
   gchar *comment;
+  gchar *description;
   gchar *image;
   /* a rather misleading, ugly hack needed for trwlayer's click image.
    * these are the height at which the thumbnail is being drawn, not the 
@@ -45,7 +48,9 @@ struct _VikWaypoint {
 };
 
 VikWaypoint *vik_waypoint_new();
+void vik_waypoint_set_name(VikWaypoint *wp, const gchar *name);
 void vik_waypoint_set_comment(VikWaypoint *wp, const gchar *comment);
+void vik_waypoint_set_description(VikWaypoint *wp, const gchar *description);
 void vik_waypoint_set_image(VikWaypoint *wp, const gchar *image);
 void vik_waypoint_set_symbol(VikWaypoint *wp, const gchar *symname);
 void vik_waypoint_free(VikWaypoint * wp);
@@ -53,5 +58,7 @@ VikWaypoint *vik_waypoint_copy(const VikWaypoint *wp);
 void vik_waypoint_set_comment_no_copy(VikWaypoint *wp, gchar *comment);
 void vik_waypoint_marshall ( VikWaypoint *wp, guint8 **data, guint *len);
 VikWaypoint *vik_waypoint_unmarshall (guint8 *data, guint datalen);
+
+G_END_DECLS
 
 #endif

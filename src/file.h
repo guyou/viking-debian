@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2012, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@
 #include "viktrwlayer.h"
 #include "vikviewport.h"
 
+G_BEGIN_DECLS
+
 typedef enum {
 FILE_TYPE_GPSPOINT=1,
 FILE_TYPE_GPSMAPPER=2,
@@ -46,18 +49,20 @@ gboolean check_file_magic_vik ( const gchar *filename );
 typedef enum {
   LOAD_TYPE_READ_FAILURE,
   LOAD_TYPE_GPSBABEL_FAILURE,
+  LOAD_TYPE_GPX_FAILURE,
   LOAD_TYPE_UNSUPPORTED_FAILURE,
+  LOAD_TYPE_VIK_FAILURE_NON_FATAL,
   LOAD_TYPE_VIK_SUCCESS,
   LOAD_TYPE_OTHER_SUCCESS,
 } VikLoadType_t;
 
 VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filename );
 gboolean a_file_save ( VikAggregateLayer *top, gpointer vp, const gchar *filename );
-/* Only need to define VikTrack and trackname if the file type is FILE_TYPE_GPX_TRACK */
-gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t file_type, const gchar *trackname );
-const gchar *a_get_viking_dir();
+/* Only need to define VikTrack if the file type is FILE_TYPE_GPX_TRACK */
+gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t file_type, VikTrack *trk, gboolean write_hidden );
 
 void file_write_layer_param ( FILE *f, const gchar *name, guint8 type, VikLayerParamData data );
 
+G_END_DECLS
 
 #endif
