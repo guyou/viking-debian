@@ -13,6 +13,7 @@ Package: viking
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gpsbabel
 Suggests: gpsd
+Recommends: expect-dev
 Description: GPS data editor, analyzer and viewer
  Viking aims to be easy to use, yet powerful in accomplishing a wide
  variety of GPS related tasks. It uses a hierarchical layering system
