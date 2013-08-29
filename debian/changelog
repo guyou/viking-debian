@@ -1,3 +1,15 @@
+viking (1.4.2-1) unstable; urgency=low
+
+  * [953c9042] Imported Upstream version 1.4.2 (Closes: #690981)
+  * [4a6b0d90] Refreshing patches.
+  * [7d8b6307] Depend on gpsbabel.
+    Thanks to Celelibi (Closes: #684061)
+  * [a078d2bb] Recommend expect-dev for unbuffer.
+    Thanks to Uwe Storbeck (Closes: #685085)
+    [e62f66ae] Depend on newer automake versions.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Thu, 29 Aug 2013 22:25:07 +0200
+
 viking (1.3-1) unstable; urgency=low
 
   * [a3f95c12] Imported Upstream version 1.3
