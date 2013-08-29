@@ -24,6 +24,7 @@ Description: GPS data editor, analyzer and viewer
  .
   * Uploading and downloading waypoints, tracks to/from GPS.
   * Realtime GPS tracking and track recording.
+  * Import and export of gpx files.
   * Preparing tracks and waypoints for trips using maps from services
     such as OpenStreetmap and Terraserver. You only need to upload the data
     to your GPS before you leave. The maps together with your tracks
