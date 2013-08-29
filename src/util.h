@@ -27,10 +27,18 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 void open_url(GtkWindow *parent, const gchar * url);
 void new_email(GtkWindow *parent, const gchar * address);
 
 gchar *uri_escape(gchar *str);
+
+GList * str_array_to_glist(gchar* data[]);
+
+void check_latest_version ( GtkWindow *window );
+
+G_END_DECLS
 
 #endif
 

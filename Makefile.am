@@ -1,4 +1,8 @@
-SUBDIRS = src test doc po help
+# Optionally build documentation bits
+if VIKING_DOC
+	DO_DOCS = "doc"
+endif
+SUBDIRS = src test data po win32 help $(DO_DOCS)
 
 INTLTOOL = \
 	intltool-extract.in \
@@ -10,10 +14,10 @@ full:
 	make
 
 EXTRA_DIST = \
-	     gnome-doc-utils.make \
-		 ChangeLog.0 \
-	     viking.spec \
-	     $(INTLTOOL)
+	gnome-doc-utils.make \
+	ChangeLog.0 \
+	viking.spec \
+	$(INTLTOOL)
 
 .PHONY: generate-changelog
 generate-changelog:
@@ -25,8 +29,10 @@ generate-changelog:
 dist-hook: viking.spec generate-changelog
 	cp $(top_builddir)/viking.spec $(distdir)
 
+MAINTAINERCLEANFILES = \
+	gnome-doc-utils.make
+
 DISTCLEANFILES = \
-	gnome-doc-utils.make \
 	intltool-extract \
 	intltool-merge \
 	intltool-update
@@ -35,3 +41,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 DISTCHECK_CONFIGURE_FLAGS = \
 	--disable-scrollkeeper
+
+# Ignore gtk theme cache files on distcheck
+distuninstallcheck_listfiles = find . -type f -print | grep -v 'icon-theme.cache'

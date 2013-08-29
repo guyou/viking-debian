@@ -194,7 +194,7 @@ static void symbol_entry_changed_cb(GtkWidget *combo, GtkListStore *store)
    When an existing waypoint the default name is shown but is not allowed to be changed and NULL is returned
  */
 /* todo: less on this side, like add track */
-gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *wp, GHashTable *waypoints, VikCoordMode coord_mode, gboolean is_new, gboolean *updated )
+gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *wp, VikCoordMode coord_mode, gboolean is_new, gboolean *updated )
 {
   GtkWidget *dialog = gtk_dialog_new_with_buttons (_("Waypoint Properties"),
                                                    parent,
@@ -205,8 +205,8 @@ gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *
                                                    GTK_RESPONSE_ACCEPT,
                                                    NULL);
   struct LatLon ll;
-  GtkWidget *latlabel, *lonlabel, *namelabel, *latentry, *lonentry, *altentry, *altlabel, *nameentry=NULL, *commentlabel, 
-    *commententry, *imagelabel, *imageentry, *symbollabel, *symbolentry;
+  GtkWidget *latlabel, *lonlabel, *namelabel, *latentry, *lonentry, *altentry, *altlabel, *nameentry=NULL;
+  GtkWidget *commentlabel, *commententry, *descriptionlabel, *descriptionentry, *imagelabel, *imageentry, *symbollabel, *symbolentry;
   GtkListStore *store;
 
   gchar *lat, *lon, *alt;
@@ -266,9 +266,13 @@ gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *
   commentlabel = gtk_label_new (_("Comment:"));
   commententry = gtk_entry_new ();
   gchar *cmt =  NULL;
+  // Auto put in some kind of 'name' as a comment if one previously 'goto'ed this exact location
   cmt = a_vik_goto_get_search_string_for_this_place(VIK_WINDOW(parent));
   if (cmt)
     gtk_entry_set_text(GTK_ENTRY(commententry), cmt);
+
+  descriptionlabel = gtk_label_new (_("Description:"));
+  descriptionentry = gtk_entry_new ();
 
   imagelabel = gtk_label_new (_("Image:"));
   imageentry = vik_file_entry_new (GTK_FILE_CHOOSER_ACTION_OPEN);
@@ -318,6 +322,9 @@ gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *
   if ( !is_new && wp->comment )
     gtk_entry_set_text ( GTK_ENTRY(commententry), wp->comment );
 
+  if ( !is_new && wp->description )
+    gtk_entry_set_text ( GTK_ENTRY(descriptionentry), wp->description );
+
   if ( !is_new && wp->image )
     vik_file_entry_set_filename ( VIK_FILE_ENTRY(imageentry), wp->image );
 
@@ -330,6 +337,8 @@ gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), altentry, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), commentlabel, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), commententry, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), descriptionlabel, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), descriptionentry, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), imagelabel, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), imageentry, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), symbollabel, FALSE, FALSE, 0);
@@ -343,55 +352,48 @@ gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *
   {
     if ( is_new )
     {
-      const gchar *entered_name = gtk_entry_get_text ( GTK_ENTRY(nameentry) );
-      if ( strlen(entered_name) == 0 ) /* TODO: other checks (isalpha or whatever ) */
+      if ( strlen((gchar*)gtk_entry_get_text ( GTK_ENTRY(nameentry) )) == 0 ) /* TODO: other checks (isalpha or whatever ) */
         a_dialog_info_msg ( parent, _("Please enter a name for the waypoint.") );
       else {
+	// NB: No check for unique names - this allows generation of same named entries.
+        gchar *entered_name = g_strdup ( (gchar*)gtk_entry_get_text ( GTK_ENTRY(nameentry) ) );
 
-        gchar *use_name = g_strdup ( entered_name );
+	/* Do It */
+	ll.lat = convert_dms_to_dec ( gtk_entry_get_text ( GTK_ENTRY(latentry) ) );
+	ll.lon = convert_dms_to_dec ( gtk_entry_get_text ( GTK_ENTRY(lonentry) ) );
+	vik_coord_load_from_latlon ( &(wp->coord), coord_mode, &ll );
+	// Always store in metres
+	switch (height_units) {
+	case VIK_UNITS_HEIGHT_METRES:
+	  wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
+	  break;
+	case VIK_UNITS_HEIGHT_FEET:
+	  wp->altitude = VIK_FEET_TO_METERS(atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) ));
+	  break;
+	default:
+	  wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
+	  g_critical("Houston, we've had a problem. height=%d", height_units);
+	}
+	vik_waypoint_set_comment ( wp, gtk_entry_get_text ( GTK_ENTRY(commententry) ) );
+	vik_waypoint_set_description ( wp, gtk_entry_get_text ( GTK_ENTRY(descriptionentry) ) );
+	vik_waypoint_set_image ( wp, vik_file_entry_get_filename ( VIK_FILE_ENTRY(imageentry) ) );
+	if ( wp->image && *(wp->image) && (!a_thumbnails_exists(wp->image)) )
+	  a_thumbnails_create ( wp->image );
 
-        if ( g_hash_table_lookup ( waypoints, use_name ) && !a_dialog_yes_or_no ( parent, _("The waypoint \"%s\" exists, do you want to overwrite it?"), use_name ) )
-          g_free ( use_name );
-        else
-        {
-          /* Do It */
-          ll.lat = convert_dms_to_dec ( gtk_entry_get_text ( GTK_ENTRY(latentry) ) );
-          ll.lon = convert_dms_to_dec ( gtk_entry_get_text ( GTK_ENTRY(lonentry) ) );
-          vik_coord_load_from_latlon ( &(wp->coord), coord_mode, &ll );
-	  // Always store in metres
-	  switch (height_units) {
-	  case VIK_UNITS_HEIGHT_METRES:
-	    wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
-	    break;
-	  case VIK_UNITS_HEIGHT_FEET:
-	    wp->altitude = VIK_FEET_TO_METERS(atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) ));
-	    break;
-	  default:
-	    wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
-	    g_critical("Houston, we've had a problem. height=%d", height_units);
-	  }
-          vik_waypoint_set_comment ( wp, gtk_entry_get_text ( GTK_ENTRY(commententry) ) );
-          vik_waypoint_set_image ( wp, vik_file_entry_get_filename ( VIK_FILE_ENTRY(imageentry) ) );
-          if ( wp->image && *(wp->image) && (!a_thumbnails_exists(wp->image)) )
-            a_thumbnails_create ( wp->image );
+	GtkTreeIter iter, first;
+	gtk_tree_model_get_iter_first ( GTK_TREE_MODEL(store), &first );
+	if ( !gtk_combo_box_get_active_iter ( GTK_COMBO_BOX(symbolentry), &iter ) || !memcmp(&iter, &first, sizeof(GtkTreeIter)) ) {
+	  vik_waypoint_set_symbol ( wp, NULL );
+	} else {
+	  gchar *sym;
+	  gtk_tree_model_get ( GTK_TREE_MODEL(store), &iter, 0, (void *)&sym, -1 );
+	  vik_waypoint_set_symbol ( wp, sym );
+	  g_free(sym);
+	}
 
-	  {
-	    GtkTreeIter iter, first;
-	    gtk_tree_model_get_iter_first ( GTK_TREE_MODEL(store), &first );
-	    if ( !gtk_combo_box_get_active_iter ( GTK_COMBO_BOX(symbolentry), &iter ) || !memcmp(&iter, &first, sizeof(GtkTreeIter)) ) {
-	      vik_waypoint_set_symbol ( wp, NULL );
-	    } else {
-	      gchar *sym;
-	      gtk_tree_model_get ( GTK_TREE_MODEL(store), &iter, 0, (void *)&sym, -1 );
-	      vik_waypoint_set_symbol ( wp, sym );
-	      g_free(sym);
-	    }
-	  }		
-
-          gtk_widget_destroy ( dialog );
-          return use_name;
-        }
-      } /* else (valid name) */
+	gtk_widget_destroy ( dialog );
+	return entered_name;
+      }
     }
     else
     {
@@ -411,6 +413,8 @@ gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *
       }
       if ( (! wp->comment) || strcmp ( wp->comment, gtk_entry_get_text ( GTK_ENTRY(commententry) ) ) != 0 )
         vik_waypoint_set_comment ( wp, gtk_entry_get_text ( GTK_ENTRY(commententry) ) );
+      if ( (! wp->description) || strcmp ( wp->description, gtk_entry_get_text ( GTK_ENTRY(descriptionentry) ) ) != 0 )
+        vik_waypoint_set_description ( wp, gtk_entry_get_text ( GTK_ENTRY(descriptionentry) ) );
       if ( (! wp->image) || strcmp ( wp->image, vik_file_entry_get_filename ( VIK_FILE_ENTRY ( imageentry ) ) ) != 0 )
       {
         vik_waypoint_set_image ( wp, vik_file_entry_get_filename ( VIK_FILE_ENTRY(imageentry) ) );
@@ -489,9 +493,12 @@ GList *a_dialog_select_from_list ( GtkWindow *parent, GList *names, gboolean mul
   renderer = gtk_cell_renderer_text_new();
   // Use the column header to display the message text,
   // this makes the overall widget allocation simple as treeview takes up all the space
-  gtk_tree_view_insert_column_with_attributes( GTK_TREE_VIEW(view), -1, msg, renderer, "text", 0, NULL);
+  GtkTreeViewColumn *column;
+  column = gtk_tree_view_column_new_with_attributes (msg, renderer, "text", 0, NULL );
+  gtk_tree_view_column_set_sort_column_id (column, 0);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
+
   gtk_tree_view_set_model(GTK_TREE_VIEW(view), GTK_TREE_MODEL(store));
-  gtk_tree_view_set_headers_visible( GTK_TREE_VIEW(view), TRUE);
   gtk_tree_selection_set_mode( gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
       multiple_selection_allowed ? GTK_SELECTION_MULTIPLE : GTK_SELECTION_BROWSE );
   g_object_unref(store);
@@ -525,9 +532,9 @@ GList *a_dialog_select_from_list ( GtkWindow *parent, GList *names, gboolean mul
   return NULL;
 }
 
-gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks, gchar *default_name )
+gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks, gchar *default_name, gboolean is_route )
 {
-  GtkWidget *dialog = gtk_dialog_new_with_buttons (_("Add Track"),
+  GtkWidget *dialog = gtk_dialog_new_with_buttons ( is_route ? _("Add Route") : _("Add Track"),
                                                   parent,
                                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                                   GTK_STOCK_CANCEL,
@@ -535,7 +542,7 @@ gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks, gchar *defaul
                                                   GTK_STOCK_OK,
                                                   GTK_RESPONSE_ACCEPT,
                                                   NULL);
-  GtkWidget *label = gtk_label_new ( _("Track Name:") );
+  GtkWidget *label = gtk_label_new ( is_route ? _("Route Name:") : _("Track Name:") );
   GtkWidget *entry = gtk_entry_new ();
 
   if (default_name)
@@ -558,16 +565,8 @@ gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks, gchar *defaul
       a_dialog_info_msg ( parent, _("Please enter a name for the track.") );
     else {
       gchar *name = g_strdup ( constname );
-
-      if ( g_hash_table_lookup( tracks, name ) && !a_dialog_yes_or_no ( parent, _("The track \"%s\" exists, do you want to overwrite it?"), gtk_entry_get_text ( GTK_ENTRY(entry) ) ) )
-      {
-        g_free ( name );
-      }
-      else
-      {
-        gtk_widget_destroy ( dialog );
-        return name;
-      }
+      gtk_widget_destroy ( dialog );
+      return name;
     }
   }
   gtk_widget_destroy ( dialog );

@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2013, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,6 @@
 
 /************************ FILTER LIST *******************/
 // extern VikDataSourceInterface vik_datasource_gps_interface;
-// extern VikDataSourceInterface vik_datasource_google_interface;
 
 /*** Input is TRWLayer ***/
 extern VikDataSourceInterface vik_datasource_bfilter_simplify_interface;
@@ -56,7 +56,6 @@ const VikDataSourceInterface *filters[] = {
 const guint N_FILTERS = sizeof(filters) / sizeof(filters[0]);
 
 VikTrack *filter_track = NULL;
-gchar *filter_track_name = NULL;
 
 /********************************************************/
 
@@ -65,6 +64,9 @@ typedef struct {
   acq_dialog_widgets_t *w;
   gchar *cmd;
   gchar *extra;
+  gboolean creating_new_layer;
+  VikTrwLayer *vtl;
+  gpointer options;
 } w_and_interface_t;
 
 
@@ -74,20 +76,62 @@ typedef struct {
 
 static void progress_func ( BabelProgressCode c, gpointer data, acq_dialog_widgets_t *w )
 {
-  gdk_threads_enter ();
-  if (!w->ok) {
-    if ( w->source_interface->cleanup_func )
-      w->source_interface->cleanup_func( w->user_data );
-    g_free ( w );
-    gdk_threads_leave();
-    g_thread_exit ( NULL );
+  if ( w->source_interface->is_thread ) {
+    gdk_threads_enter ();
+    if ( !w->running ) {
+      if ( w->source_interface->cleanup_func )
+        w->source_interface->cleanup_func ( w->user_data );
+      gdk_threads_leave ();
+      g_thread_exit ( NULL );
+    }
+    gdk_threads_leave ();
   }
-  gdk_threads_leave ();
 
   if ( w->source_interface->progress_func )
-    w->source_interface->progress_func ( (gpointer) c, data, w );
+    w->source_interface->progress_func ( c, data, w );
 }
 
+/**
+ * Some common things to do on completion of a datasource process
+ *  . Update layer
+ *  . Update dialog info
+ *  . Update main dsisplay
+ */
+static void on_complete_process (w_and_interface_t *wi)
+{
+  if (wi->w->running) {
+    gtk_label_set_text ( GTK_LABEL(wi->w->status), _("Done.") );
+    if ( wi->creating_new_layer ) {
+      /* Only create the layer if it actually contains anything useful */
+      // TODO: create function for this operation to hide detail:
+      if ( g_hash_table_size (vik_trw_layer_get_tracks(wi->vtl)) ||
+           g_hash_table_size (vik_trw_layer_get_waypoints(wi->vtl)) ||
+           g_hash_table_size (vik_trw_layer_get_routes(wi->vtl)) ) {
+        vik_layer_post_read ( VIK_LAYER(wi->vtl), wi->w->vvp, TRUE );
+        vik_aggregate_layer_add_layer( vik_layers_panel_get_top_layer(wi->w->vlp), VIK_LAYER(wi->vtl));
+      }
+      else
+        gtk_label_set_text ( GTK_LABEL(wi->w->status), _("No data.") );
+    }
+    /* View this data if available and is desired */
+    if ( wi->vtl && wi->w->source_interface->autoview ) {
+      vik_trw_layer_auto_set_view ( wi->vtl, vik_layers_panel_get_viewport(wi->w->vlp) );
+    }
+    if ( wi->w->source_interface->keep_dialog_open ) {
+      gtk_dialog_set_response_sensitive ( GTK_DIALOG(wi->w->dialog), GTK_RESPONSE_ACCEPT, TRUE );
+      gtk_dialog_set_response_sensitive ( GTK_DIALOG(wi->w->dialog), GTK_RESPONSE_REJECT, FALSE );
+    } else {
+      gtk_dialog_response ( GTK_DIALOG(wi->w->dialog), GTK_RESPONSE_ACCEPT );
+    }
+    // Main display update
+    if ( wi->vtl )
+      vik_layers_panel_emit_update ( wi->w->vlp );
+  } else {
+    /* cancelled */
+    if ( wi->creating_new_layer )
+      g_object_unref(wi->vtl);
+  }
+}
 
 /* this routine is the worker thread.  there is only one simultaneous download allowed */
 static void get_from_anything ( w_and_interface_t *wi )
@@ -95,100 +139,41 @@ static void get_from_anything ( w_and_interface_t *wi )
   gchar *cmd = wi->cmd;
   gchar *extra = wi->extra;
   gboolean result = TRUE;
-  VikTrwLayer *vtl = NULL;
 
-  gboolean creating_new_layer = TRUE;
-
-  acq_dialog_widgets_t *w = wi->w;
   VikDataSourceInterface *source_interface = wi->w->source_interface;
-  g_free ( wi );
-  wi = NULL;
 
-  gdk_threads_enter();
-  if (source_interface->mode == VIK_DATASOURCE_ADDTOLAYER) {
-    VikLayer *current_selected = vik_layers_panel_get_selected ( w->vlp );
-    if ( IS_VIK_TRW_LAYER(current_selected) ) {
-      vtl = VIK_TRW_LAYER(current_selected);
-      creating_new_layer = FALSE;
-    }
-  }
-  if ( creating_new_layer ) {
-    vtl = VIK_TRW_LAYER ( vik_layer_create ( VIK_LAYER_TRW, w->vvp, NULL, FALSE ) );
-    vik_layer_rename ( VIK_LAYER ( vtl ), _(source_interface->layer_title) );
-    gtk_label_set_text ( GTK_LABEL(w->status), _("Working...") );
-  }
-  gdk_threads_leave();
-
-  // TODO consider removing 'type' and make everything run via the specficied process function
-  switch ( source_interface->type ) {
-  case VIK_DATASOURCE_GPSBABEL_DIRECT:
-    result = a_babel_convert_from (vtl, cmd, extra, (BabelStatusFunc) progress_func, w);
-    break;
-  case VIK_DATASOURCE_URL:
-    result = a_babel_convert_from_url (vtl, cmd, extra, (BabelStatusFunc) progress_func, w);
-    break;
-  case VIK_DATASOURCE_SHELL_CMD:
-    result = a_babel_convert_from_shellcommand ( vtl, cmd, extra, (BabelStatusFunc) progress_func, w);
-    break;
-  case VIK_DATASOURCE_INTERNAL:
-    if ( source_interface->process_func )
-      result = source_interface->process_func ( vtl, cmd, extra, (BabelStatusFunc) progress_func, w );
-    break;
-  default:
-    g_critical("Houston, we've had a problem.");
-  }
+  if ( source_interface->process_func )
+    result = source_interface->process_func ( wi->vtl, cmd, extra, (BabelStatusFunc) progress_func, wi->w, wi->options );
 
   g_free ( cmd );
   g_free ( extra );
+  g_free ( wi->options );
 
-  if (!result) {
+  if (wi->w->running && !result) {
     gdk_threads_enter();
-    gtk_label_set_text ( GTK_LABEL(w->status), _("Error: acquisition failed.") );
-    if ( creating_new_layer )
-      g_object_unref ( G_OBJECT ( vtl ) );
+    gtk_label_set_text ( GTK_LABEL(wi->w->status), _("Error: acquisition failed.") );
+    if ( wi->creating_new_layer )
+      g_object_unref ( G_OBJECT ( wi->vtl ) );
     gdk_threads_leave();
   } 
   else {
     gdk_threads_enter();
-    if (w->ok) {
-      gtk_label_set_text ( GTK_LABEL(w->status), _("Done.") );
-      if ( creating_new_layer ) {
-	/* Only create the layer if it actually contains anything useful */
-	if ( g_hash_table_size (vik_trw_layer_get_tracks(vtl)) ||
-	     g_hash_table_size (vik_trw_layer_get_waypoints(vtl)) ) {
-	  vik_layer_post_read ( VIK_LAYER(vtl), w->vvp, TRUE );
-	  vik_aggregate_layer_add_layer( vik_layers_panel_get_top_layer(w->vlp), VIK_LAYER(vtl));
-	}
-	else
-	  gtk_label_set_text ( GTK_LABEL(w->status), _("No data.") );
-      }
-      /* View this data if available and is desired */
-      if ( vtl && source_interface->autoview ) {
-	vik_trw_layer_auto_set_view ( vtl, vik_layers_panel_get_viewport(w->vlp) );
-	vik_layers_panel_emit_update (w->vlp);
-      }
-      if ( source_interface->keep_dialog_open ) {
-        gtk_dialog_set_response_sensitive ( GTK_DIALOG(w->dialog), GTK_RESPONSE_ACCEPT, TRUE );
-        gtk_dialog_set_response_sensitive ( GTK_DIALOG(w->dialog), GTK_RESPONSE_REJECT, FALSE );
-      } else {
-        gtk_dialog_response ( GTK_DIALOG(w->dialog), GTK_RESPONSE_ACCEPT );     
-      }
-    } else {
-      /* canceled */
-      if ( creating_new_layer )
-	g_object_unref(vtl);
-    }
+    on_complete_process ( wi );
+    gdk_threads_leave();
   }
+
   if ( source_interface->cleanup_func )
-    source_interface->cleanup_func ( w->user_data );
+    source_interface->cleanup_func ( wi->w->user_data );
 
-  if ( w->ok ) {
-    w->ok = FALSE;
-  } else {
-    g_free ( w );
+  if ( wi->w->running ) {
+    wi->w->running = FALSE;
+  }
+  else {
+    g_free ( wi->w );
+    g_free ( wi );
+    wi = NULL;
   }
 
-  gdk_threads_leave();
   g_thread_exit ( NULL );
 }
 
@@ -199,8 +184,9 @@ static gchar *write_tmp_trwlayer ( VikTrwLayer *vtl )
   gchar *name_src;
   FILE *f;
   g_assert ((fd_src = g_file_open_tmp("tmp-viking.XXXXXX", &name_src, NULL)) >= 0);
+  g_debug ("%s: temporary file: %s", __FUNCTION__, name_src);
   f = fdopen(fd_src, "w");
-  a_gpx_write_file(vtl, f);
+  a_gpx_write_file(vtl, f, NULL);
   fclose(f);
   f = NULL;
   return name_src;
@@ -213,8 +199,9 @@ static gchar *write_tmp_track ( VikTrack *track )
   gchar *name_src;
   FILE *f;
   g_assert ((fd_src = g_file_open_tmp("tmp-viking.XXXXXX", &name_src, NULL)) >= 0);
+  g_debug ("%s: temporary file: %s", __FUNCTION__, name_src);
   f = fdopen(fd_src, "w");
-  a_gpx_write_track_file("track", track, f); /* Thank you Guilhem! Just when I needed this function... -- Evan */
+  a_gpx_write_track_file(track, f, NULL); /* Thank you Guilhem! Just when I needed this function... -- Evan */
   fclose(f);
   f = NULL;
   return name_src;
@@ -237,6 +224,7 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   gchar *extra_off = NULL;
   acq_dialog_widgets_t *w;
   gpointer user_data;
+  gpointer options = NULL;
 
   /* for UI builder */
   gpointer pass_along_data;
@@ -324,7 +312,7 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
 
     g_free ( name_src_track );
   } else if ( source_interface->get_cmd_string_func )
-      source_interface->get_cmd_string_func ( pass_along_data, &cmd, &extra );
+    source_interface->get_cmd_string_func ( pass_along_data, &cmd, &extra, &options );
 
   /* Get data for Off command */
   if ( source_interface->off_func ) {
@@ -339,29 +327,28 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
     a_uibuilder_free_paramdatas ( paramdatas, source_interface->params, source_interface->params_count );
   }
 
-  /*** LET'S DO IT! ***/
-
-  if ( ! cmd )
-    return;
-
   w = g_malloc(sizeof(*w));
   wi = g_malloc(sizeof(*wi));
   wi->w = w;
   wi->w->source_interface = source_interface;
   wi->cmd = cmd;
   wi->extra = extra; /* usually input data type (?) */
+  wi->options = options;
+  wi->vtl = vtl;
+  wi->creating_new_layer = (!vtl);
 
   dialog = gtk_dialog_new_with_buttons ( "", GTK_WINDOW(vw), 0, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL );
   gtk_dialog_set_response_sensitive ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT, FALSE );
   gtk_window_set_title ( GTK_WINDOW(dialog), _(source_interface->window_title) );
 
-
   w->dialog = dialog;
-  w->ok = TRUE;
-  status = gtk_label_new (_("Status: detecting gpsbabel"));
+  w->running = TRUE;
+  status = gtk_label_new (_("Working..."));
   gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), status, FALSE, FALSE, 5 );
   gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
-  gtk_widget_show_all(status);
+  // May not want to see the dialog at all
+  if ( source_interface->is_thread || source_interface->keep_dialog_open )
+    gtk_widget_show_all(dialog);
   w->status = status;
 
   w->vw = vw;
@@ -372,22 +359,81 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   }
   w->user_data = user_data;
 
-
-  g_thread_create((GThreadFunc)get_from_anything, wi, FALSE, NULL );
-
-  gtk_dialog_run ( GTK_DIALOG(dialog) );
-  if ( w->ok )
-    w->ok = FALSE; /* tell thread to stop. TODO: add mutex */
-  else {
-    if ( cmd_off ) {
-      /* Turn off */
-      a_babel_convert_from (NULL, cmd_off, extra_off, NULL, NULL);
+  if (source_interface->mode == VIK_DATASOURCE_ADDTOLAYER) {
+    VikLayer *current_selected = vik_layers_panel_get_selected ( w->vlp );
+    if ( IS_VIK_TRW_LAYER(current_selected) ) {
+      wi->vtl = VIK_TRW_LAYER(current_selected);
+      wi->creating_new_layer = FALSE;
     }
-    g_free ( w ); /* thread has finished; free w */
   }
+  else if ( source_interface->mode == VIK_DATASOURCE_MANUAL_LAYER_MANAGEMENT ) {
+    // Don't create in acquire - as datasource will perform the necessary actions
+    wi->creating_new_layer = FALSE;
+    VikLayer *current_selected = vik_layers_panel_get_selected ( w->vlp );
+    if ( IS_VIK_TRW_LAYER(current_selected) )
+      wi->vtl = VIK_TRW_LAYER(current_selected);
+  }
+  if ( wi->creating_new_layer ) {
+    wi->vtl = VIK_TRW_LAYER ( vik_layer_create ( VIK_LAYER_TRW, w->vvp, NULL, FALSE ) );
+    vik_layer_rename ( VIK_LAYER ( wi->vtl ), _(source_interface->layer_title) );
+  }
+
+  if ( source_interface->is_thread ) {
+    if ( cmd ) {
+      g_thread_create((GThreadFunc)get_from_anything, wi, FALSE, NULL );
+      gtk_dialog_run ( GTK_DIALOG(dialog) );
+      if (w->running) {
+        // Cancel and mark for thread to finish
+        w->running = FALSE;
+        // NB Thread will free memory
+      } else {
+        if ( cmd_off ) {
+          /* Turn off */
+          a_babel_convert_from (NULL, cmd_off, extra_off, NULL, NULL, NULL);
+          g_free ( cmd_off );
+        }
+        if ( extra_off )
+          g_free ( extra_off );
+
+        // Thread finished by normal completion - free memory
+        g_free ( w );
+        g_free ( wi );
+      }
+    }
+    else {
+      // This shouldn't happen...
+      gtk_label_set_text ( GTK_LABEL(w->status), _("Unable to create command\nAcquire method failed.") );
+      gtk_dialog_run (GTK_DIALOG (dialog));
+    }
+  }
+  else {
+    // bypass thread method malarkly - you'll just have to wait...
+    if ( source_interface->process_func ) {
+      gboolean result = source_interface->process_func ( wi->vtl, cmd, extra, (BabelStatusFunc) progress_func, w, options );
+      if ( !result )
+        a_dialog_msg ( GTK_WINDOW(vw), GTK_MESSAGE_ERROR, _("Error: acquisition failed."), NULL );
+    }
+    g_free ( cmd );
+    g_free ( extra );
+    g_free ( options );
+
+    on_complete_process ( wi );
+    // Actually show it if necessary
+    if ( wi->w->source_interface->keep_dialog_open )
+      gtk_dialog_run ( GTK_DIALOG(dialog) );
+
+    g_free ( w );
+    g_free ( wi );
+  }
+
   gtk_widget_destroy ( dialog );
 }
 
+/**
+ * a_acquire:
+ *
+ * Process the given VikDataSourceInterface for sources with no input data.
+ */
 void a_acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikDataSourceInterface *source_interface ) {
   acquire ( vw, vlp, vvp, source_interface, NULL, NULL );
 }
@@ -438,17 +484,31 @@ static GtkWidget *acquire_build_menu ( VikWindow *vw, VikLayersPanel *vlp, VikVi
   return menu_item;
 }
 
+/**
+ * a_acquire_trwlayer_menu:
+ *
+ * Create a sub menu intended for rightclicking on a TRWLayer's menu called "Filter".
+ * 
+ * Returns: %NULL if no filters.
+ */
 GtkWidget *a_acquire_trwlayer_menu (VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikTrwLayer *vtl)
 {
-  return acquire_build_menu ( vw, vlp, vvp, vtl, NULL, "_Filter", VIK_DATASOURCE_INPUTTYPE_TRWLAYER );
+  return acquire_build_menu ( vw, vlp, vvp, vtl, NULL, _("_Filter"), VIK_DATASOURCE_INPUTTYPE_TRWLAYER );
 }
 
+/**
+ * a_acquire_trwlayer_track_menu:
+ *
+ * Create a sub menu intended for rightclicking on a TRWLayer's menu called "Filter with Track "TRACKNAME"...".
+ * 
+ * Returns: %NULL if no filters or no filter track has been set.
+ */
 GtkWidget *a_acquire_trwlayer_track_menu (VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikTrwLayer *vtl)
 {
   if ( filter_track == NULL )
     return NULL;
   else {
-    gchar *menu_title = g_strdup_printf ( "Filter with %s", filter_track_name );
+    gchar *menu_title = g_strdup_printf ( _("Filter with %s"), filter_track->name );
     GtkWidget *rv = acquire_build_menu ( vw, vlp, vvp, vtl, filter_track,
 			menu_title, VIK_DATASOURCE_INPUTTYPE_TRWLAYER_TRACK );
     g_free ( menu_title );
@@ -456,20 +516,28 @@ GtkWidget *a_acquire_trwlayer_track_menu (VikWindow *vw, VikLayersPanel *vlp, Vi
   }
 }
 
+/**
+ * a_acquire_track_menu:
+ *
+ * Create a sub menu intended for rightclicking on a track's menu called "Filter".
+ * 
+ * Returns: %NULL if no applicable filters
+ */
 GtkWidget *a_acquire_track_menu (VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikTrack *tr)
 {
-  return acquire_build_menu ( vw, vlp, vvp, NULL, tr, "Filter", VIK_DATASOURCE_INPUTTYPE_TRACK );
+  return acquire_build_menu ( vw, vlp, vvp, NULL, tr, _("Filter"), VIK_DATASOURCE_INPUTTYPE_TRACK );
 }
 
-void a_acquire_set_filter_track ( VikTrack *tr, const gchar *name )
+/**
+ * a_acquire_set_filter_track:
+ *
+ * Sets application-wide track to use with filter. references the track.
+ */
+void a_acquire_set_filter_track ( VikTrack *tr )
 {
   if ( filter_track )
     vik_track_free ( filter_track );
-  if ( filter_track_name )
-    g_free ( filter_track_name );
 
   filter_track = tr;
   vik_track_ref ( tr );
-
-  filter_track_name = g_strdup(name);
 }

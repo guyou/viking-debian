@@ -48,6 +48,11 @@
 #include "dem.h"
 #include "file.h"
 
+/* Compatibility */
+#if ! GLIB_CHECK_VERSION(2,22,0)
+#define g_mapped_file_unref g_mapped_file_free
+#endif
+
 #define DEM_BLOCK_SIZE 1024
 #define GET_COLUMN(dem,n) ((VikDEMColumn *)g_ptr_array_index( (dem)->columns, (n) ))
 
@@ -298,17 +303,19 @@ static void *unzip_hgt_file(gchar *zip_file, gulong *unzip_size)
 
 
 	local_file_header = (struct _lfh *) zip_file;
-	if (local_file_header->sig != 0x04034b50) {
+	if (GUINT32_FROM_LE(local_file_header->sig) != 0x04034b50) {
 		g_warning("%s(): wrong format", __PRETTY_FUNCTION__);
 		g_free(unzip_data);
 		goto end;
 	}
 
-	zip_data = zip_file + sizeof(struct _lfh) + local_file_header->filename_len + local_file_header->extra_field_len;
-	unzip_data = g_malloc(local_file_header->uncompressed_size);
-	gulong uncompressed_size = local_file_header->uncompressed_size;
+	zip_data = zip_file + sizeof(struct _lfh)
+		+ GUINT16_FROM_LE(local_file_header->filename_len)
+		+ GUINT16_FROM_LE(local_file_header->extra_field_len);
+	gulong uncompressed_size = GUINT32_FROM_LE(local_file_header->uncompressed_size);
+	unzip_data = g_malloc(uncompressed_size);
 
-	if (!(*unzip_size = uncompress_data(unzip_data, uncompressed_size, zip_data, local_file_header->compressed_size))) {
+	if (!(*unzip_size = uncompress_data(unzip_data, uncompressed_size, zip_data, GUINT32_FROM_LE(local_file_header->compressed_size)))) {
 		g_free(unzip_data);
 		unzip_data = NULL;
 		goto end;
@@ -352,7 +359,7 @@ static VikDEM *vik_dem_read_srtm_hgt(const gchar *file_name, const gchar *basena
   dem->n_columns = 0;
 
   if ((mf = g_mapped_file_new(file_name, FALSE, &error)) == NULL) {
-    g_error(_("Couldn't map file %s: %s"), file_name, error->message);
+    g_critical(_("Couldn't map file %s: %s"), file_name, error->message);
     g_error_free(error);
     g_free(dem);
     return NULL;
@@ -365,7 +372,8 @@ static VikDEM *vik_dem_read_srtm_hgt(const gchar *file_name, const gchar *basena
     gulong ucsize;
 
     if ((unzip_mem = unzip_hgt_file(dem_file, &ucsize)) == NULL) {
-      g_mapped_file_free(mf);
+      g_mapped_file_unref(mf);
+      g_ptr_array_foreach ( dem->columns, (GFunc)g_free, NULL );
       g_ptr_array_free(dem->columns, TRUE);
       g_free(dem);
       return NULL;
@@ -374,6 +382,8 @@ static VikDEM *vik_dem_read_srtm_hgt(const gchar *file_name, const gchar *basena
     dem_mem = unzip_mem;
     file_size = ucsize;
   }
+  else
+    dem_mem = (gint16 *)dem_file;
 
   if (file_size == (num_rows_3sec * num_rows_3sec * sizeof(gint16)))
     arcsec = 3;
@@ -381,7 +391,7 @@ static VikDEM *vik_dem_read_srtm_hgt(const gchar *file_name, const gchar *basena
     arcsec = 1;
   else {
     g_warning("%s(): file %s does not have right size", __PRETTY_FUNCTION__, basename);
-    g_mapped_file_free(mf);
+    g_mapped_file_unref(mf);
     g_free(dem);
     return NULL;
   }
@@ -409,7 +419,7 @@ static VikDEM *vik_dem_read_srtm_hgt(const gchar *file_name, const gchar *basena
 
   if (zip)
     g_free(dem_mem);
-  g_mapped_file_free(mf);
+  g_mapped_file_unref(mf);
   return dem;
 }
 
@@ -499,6 +509,7 @@ void vik_dem_free ( VikDEM *dem )
   guint i;
   for ( i = 0; i < dem->n_columns; i++)
     g_free ( GET_COLUMN(dem, i)->points );
+  g_ptr_array_foreach ( dem->columns, (GFunc)g_free, NULL );
   g_ptr_array_free ( dem->columns, TRUE );
   g_free ( dem );
 }

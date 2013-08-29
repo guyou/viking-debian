@@ -23,15 +23,45 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
 
 #include <glib/gi18n.h>
 
 #include "globals.h"
 #include "preferences.h"
+#include "math.h"
 
 gboolean vik_debug = FALSE;
 gboolean vik_verbose = FALSE;
 gboolean vik_version = FALSE;
+
+/**
+ * viking_version_to_number:
+ * @version:  The string of the Viking version.
+ *            This should be in the form of N.N.N.N, where the 3rd + 4th numbers are optional
+ *            Often you'll want to pass in VIKING_VERSION
+ *
+ * Returns: a single number useful for comparison
+ */
+gint viking_version_to_number ( gchar *version )
+{
+  // Basic method, probably can be improved
+  gint version_number = 0;
+  gchar** parts = g_strsplit ( version, ".", 0 );
+  gint part_num = 0;
+  gchar *part = parts[part_num];
+  // Allow upto 4 parts to the version number
+  while ( part && part_num < 4 ) {
+    // Allow each part to have upto 100
+    version_number = version_number + ( atol(part) * pow(100, 3-part_num) );
+    part_num++;
+    part = parts[part_num];
+  }
+  g_strfreev ( parts );
+  return version_number;
+}
 
 static gchar * params_degree_formats[] = {"DDD", "DMM", "DMS", NULL};
 static gchar * params_units_distance[] = {"Kilometres", "Miles", NULL};
@@ -41,55 +71,59 @@ static VikLayerParamScale params_scales_lat[] = { {-90.0, 90.0, 0.05, 2} };
 static VikLayerParamScale params_scales_long[] = { {-180.0, 180.0, 0.05, 2} };
  
 static VikLayerParam prefs1[] = {
-  { VIKING_PREFERENCES_NAMESPACE "degree_format", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Degree format:"), VIK_LAYER_WIDGET_COMBOBOX, params_degree_formats, NULL },
+  { VIKING_PREFERENCES_NAMESPACE "degree_format", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Degree format:"), VIK_LAYER_WIDGET_COMBOBOX, params_degree_formats, NULL, NULL },
 };
 
 static VikLayerParam prefs2[] = {
-  { VIKING_PREFERENCES_NAMESPACE "units_distance", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Distance units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_distance, NULL },
+  { VIKING_PREFERENCES_NAMESPACE "units_distance", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Distance units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_distance, NULL, NULL },
 };
 
 static VikLayerParam prefs3[] = {
-  { VIKING_PREFERENCES_NAMESPACE "units_speed", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Speed units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_speed, NULL },
+  { VIKING_PREFERENCES_NAMESPACE "units_speed", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Speed units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_speed, NULL, NULL },
 };
 
 static VikLayerParam prefs4[] = {
-  { VIKING_PREFERENCES_NAMESPACE "units_height", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Height units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_height, NULL },
+  { VIKING_PREFERENCES_NAMESPACE "units_height", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Height units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_height, NULL, NULL },
 };
 
 static VikLayerParam prefs5[] = {
-  { VIKING_PREFERENCES_NAMESPACE "use_large_waypoint_icons", VIK_LAYER_PARAM_BOOLEAN, VIK_LAYER_GROUP_NONE, N_("Use large waypoint icons:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL },
+  { VIKING_PREFERENCES_NAMESPACE "use_large_waypoint_icons", VIK_LAYER_PARAM_BOOLEAN, VIK_LAYER_GROUP_NONE, N_("Use large waypoint icons:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL, NULL },
 };
 
 static VikLayerParam prefs6[] = {
-  { VIKING_PREFERENCES_NAMESPACE "default_latitude", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Default latitude:"),  VIK_LAYER_WIDGET_SPINBUTTON, params_scales_lat, NULL },
+  { VIKING_PREFERENCES_NAMESPACE "default_latitude", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Default latitude:"),  VIK_LAYER_WIDGET_SPINBUTTON, params_scales_lat, NULL, NULL },
 };
 static VikLayerParam prefs7[] = {
-  { VIKING_PREFERENCES_NAMESPACE "default_longitude", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Default longitude:"),  VIK_LAYER_WIDGET_SPINBUTTON, params_scales_long, NULL },
+  { VIKING_PREFERENCES_NAMESPACE "default_longitude", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Default longitude:"),  VIK_LAYER_WIDGET_SPINBUTTON, params_scales_long, NULL, NULL },
 };
 
 /* External/Export Options */
 
 static gchar * params_kml_export_units[] = {"Metric", "Statute", "Nautical", NULL};
+static gchar * params_gpx_export_trk_sort[] = {N_("Alphabetical"), N_("Time"), NULL};
 
 static VikLayerParam io_prefs[] = {
-  { VIKING_PREFERENCES_IO_NAMESPACE "kml_export_units", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("KML File Export Units:"), VIK_LAYER_WIDGET_COMBOBOX, params_kml_export_units, NULL },
+  { VIKING_PREFERENCES_IO_NAMESPACE "kml_export_units", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("KML File Export Units:"), VIK_LAYER_WIDGET_COMBOBOX, params_kml_export_units, NULL, NULL },
+  { VIKING_PREFERENCES_IO_NAMESPACE "gpx_export_track_sort", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("GPX Track Order:"), VIK_LAYER_WIDGET_COMBOBOX, params_gpx_export_trk_sort, NULL, NULL },
 };
 
 #ifndef WINDOWS
 static VikLayerParam io_prefs_non_windows[] = {
-  { VIKING_PREFERENCES_IO_NAMESPACE "image_viewer", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("Image Viewer:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL },
+  { VIKING_PREFERENCES_IO_NAMESPACE "image_viewer", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("Image Viewer:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL, NULL },
 };
 #endif
 
 static VikLayerParam io_prefs_external_gpx[] = {
-  { VIKING_PREFERENCES_IO_NAMESPACE "external_gpx_1", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("External GPX Program 1:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL },
-  { VIKING_PREFERENCES_IO_NAMESPACE "external_gpx_2", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("External GPX Program 2:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL },
+  { VIKING_PREFERENCES_IO_NAMESPACE "external_gpx_1", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("External GPX Program 1:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL, NULL },
+  { VIKING_PREFERENCES_IO_NAMESPACE "external_gpx_2", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("External GPX Program 2:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL, NULL },
 };
 
 /* End of Options static stuff */
 
 void a_vik_preferences_init ()
 {
+  g_debug ( "VIKING VERSION as number: %d", viking_version_to_number (VIKING_VERSION) );
+
   // Defaults for the options are setup here
   a_preferences_register_group ( VIKING_PREFERENCES_GROUP_KEY, _("General") );
 
@@ -121,12 +155,15 @@ void a_vik_preferences_init ()
   tmp.u = VIK_KML_EXPORT_UNITS_METRIC;
   a_preferences_register(&io_prefs[0], tmp, VIKING_PREFERENCES_IO_GROUP_KEY);
 
+  tmp.u = VIK_GPX_EXPORT_TRK_SORT_TIME;
+  a_preferences_register(&io_prefs[1], tmp, VIKING_PREFERENCES_IO_GROUP_KEY);
+
 #ifndef WINDOWS
   tmp.s = "xdg-open";
   a_preferences_register(&io_prefs_non_windows[0], tmp, VIKING_PREFERENCES_IO_GROUP_KEY);
 #endif
 
-  // JOSM for OSM editing around a GPX tracj
+  // JOSM for OSM editing around a GPX track
   tmp.s = "josm";
   a_preferences_register(&io_prefs_external_gpx[0], tmp, VIKING_PREFERENCES_IO_GROUP_KEY);
   // Add a second external program - another OSM editor by default
@@ -188,8 +225,15 @@ gdouble a_vik_get_default_long ( )
 vik_kml_export_units_t a_vik_get_kml_export_units ( )
 {
   vik_kml_export_units_t units;
-  units = a_preferences_get(VIKING_PREFERENCES_NAMESPACE "kml_export_units")->u;
+  units = a_preferences_get(VIKING_PREFERENCES_IO_NAMESPACE "kml_export_units")->u;
   return units;
+}
+
+vik_gpx_export_trk_sort_t a_vik_get_gpx_export_trk_sort ( )
+{
+  vik_gpx_export_trk_sort_t sort;
+  sort = a_preferences_get(VIKING_PREFERENCES_IO_NAMESPACE "gpx_export_track_sort")->u;
+  return sort;
 }
 
 #ifndef WINDOWS

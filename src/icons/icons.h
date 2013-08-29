@@ -2,7 +2,7 @@
 extern const GdkPixdata viking_pixbuf;
 extern const GdkPixdata bing_maps_pixbuf;
 extern const GdkPixdata addtr_18_pixbuf;
-extern const GdkPixdata begintr_18_pixbuf;
+extern const GdkPixdata vik_new_route_18_pixbuf;
 extern const GdkPixdata addwp_18_pixbuf;
 extern const GdkPixdata edtr_18_pixbuf;
 extern const GdkPixdata edwp_18_pixbuf;
@@ -222,7 +222,7 @@ extern const GdkPixdata wp_wrecker_large_pixbuf;
 extern const GdkPixdata wp_wreck_large_pixbuf;
 extern const GdkPixdata wp_zoo_large_pixbuf;
 extern const GdkPixdata cursor_addtr_pixbuf;
-extern const GdkPixdata cursor_begintr_pixbuf;
+extern const GdkPixdata cursor_new_route_pixbuf;
 extern const GdkPixdata cursor_edtr_pixbuf;
 extern const GdkPixdata cursor_geozoom_pixbuf;
 extern const GdkPixdata cursor_ruler_pixbuf;

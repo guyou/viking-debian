@@ -36,8 +36,8 @@ G_BEGIN_DECLS
 #define VIK_VIEWPORT_TYPE            (vik_viewport_get_type ())
 #define VIK_VIEWPORT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VIK_VIEWPORT_TYPE, VikViewport))
 #define VIK_VIEWPORT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), VIK_VIEWPORT_TYPE, VikViewportClass))
-#define IS_VIK_VIEWPORT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VIK_VIEWPORT_TYPE))
-#define IS_VIK_VIEWPORT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), VIK_VIEWPORT_TYPE))
+#define VIK_IS_VIEWPORT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), VIK_VIEWPORT_TYPE))
+#define VIK_IS_VIEWPORT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), VIK_VIEWPORT_TYPE))
 
 #define VIK_VIEWPORT_MAX_ZOOM 32768.0
 #define VIK_VIEWPORT_MIN_ZOOM 0.125
@@ -179,7 +179,8 @@ void vik_viewport_draw_arc ( VikViewport *vvp, GdkGC *gc, gboolean filled, gint 
 void vik_viewport_draw_polygon ( VikViewport *vvp, GdkGC *gc, gboolean filled, GdkPoint *points, gint npoints );
 void vik_viewport_draw_layout ( VikViewport *vvp, GdkGC *gc, gint x, gint y, PangoLayout *layout );
 
-
+/* Utilities */
+void vik_viewport_compute_bearing ( VikViewport *vp, gint x1, gint y1, gint x2, gint y2, gdouble *angle, gdouble *baseangle );
 
 G_END_DECLS
 

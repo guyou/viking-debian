@@ -45,12 +45,14 @@ struct _VikWindowClass
 {
   GtkWindowClass window_class;
   void (* newwindow) (VikWindow *vw);
-  void (* openwindow) (VikWindow *vw, const gchar *filename);
+  void (* openwindow) (VikWindow *vw, GSList *filenames);
 };
 
 GType vik_window_get_type ();
 
-VikWindow *vik_window_new ();
+// To call from main to start things off:
+VikWindow *vik_window_new_window ();
+
 GtkWidget *vik_window_get_drawmode_button ( VikWindow *vw, VikViewportDrawMode mode );
 gboolean vik_window_get_pan_move ( VikWindow *vw );
 void vik_window_open_file ( VikWindow *vw, const gchar *filename, gboolean changefilename );
@@ -60,25 +62,28 @@ struct _VikViewport * vik_window_viewport(VikWindow *vw);
 struct _VikLayersPanel * vik_window_layers_panel(VikWindow *vw);
 struct _VikStatusbar * vik_window_get_statusbar(VikWindow *vw);
 
+void vik_window_statusbar_update (VikWindow *vw, const gchar* message, vik_statusbar_type_t vs_type);
+
 void vik_window_set_redraw_trigger(struct _VikLayer *vl);
 
 void vik_window_enable_layer_tool ( VikWindow *vw, gint layer_id, gint tool_id );
 
 gpointer vik_window_get_selected_trw_layer ( VikWindow *vw ); /* return type VikTrwLayer */
 void vik_window_set_selected_trw_layer ( VikWindow *vw, gpointer vtl ); /* input VikTrwLayer */
-gpointer vik_window_get_selected_tracks ( VikWindow *vw ); /* return type GList */
-void vik_window_set_selected_tracks ( VikWindow *vw, gpointer gl, gpointer vtl ); /* input GList, VikTrwLayer */
+GHashTable *vik_window_get_selected_tracks ( VikWindow *vw );
+void vik_window_set_selected_tracks ( VikWindow *vw, GHashTable *ght, gpointer vtl ); /* gpointer is a VikTrwLayer */
 gpointer vik_window_get_selected_track ( VikWindow *vw ); /* return type VikTrack */
-void vik_window_set_selected_track ( VikWindow *vw, gpointer *vt, gpointer vtl, gpointer name ); /* input VikTrack, VikTrwLayer */
-gpointer vik_window_get_selected_waypoints ( VikWindow *vw ); /* return type GList */
-void vik_window_set_selected_waypoints ( VikWindow *vw, gpointer gl, gpointer vtl ); /* input GList, VikTrwLayer */
+void vik_window_set_selected_track ( VikWindow *vw, gpointer *vt, gpointer vtl ); /* gpointer is a VikTrwLayer */
+GHashTable *vik_window_get_selected_waypoints ( VikWindow *vw );
+void vik_window_set_selected_waypoints ( VikWindow *vw, GHashTable *ght, gpointer vtl ); /* gpointer is a VikTrwLayer */
 gpointer vik_window_get_selected_waypoint ( VikWindow *vw ); /* return type VikWaypoint */
-void vik_window_set_selected_waypoint ( VikWindow *vw, gpointer *vwp, gpointer vtl, gpointer name ); /* input VikWaypoint, VikTrwLayer */
+void vik_window_set_selected_waypoint ( VikWindow *vw, gpointer *vwp, gpointer vtl ); /* input VikWaypoint, VikTrwLayer */
 /* Return the VikTrwLayer of the selected track(s) or waypoint(s) are in (maybe NULL) */
 gpointer vik_window_get_containing_trw_layer ( VikWindow *vw );
-gpointer vik_window_get_selected_name ( VikWindow *vw );
 /* return indicates if a redraw is necessary */
 gboolean vik_window_clear_highlight ( VikWindow *vw );
+
+GThread *vik_window_get_thread ( VikWindow *vw );
 
 typedef struct {
   VikWindow *vw;

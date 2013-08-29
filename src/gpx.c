@@ -5,6 +5,7 @@
  * Copyright (C) 2007, Quy Tonthat <qtonthat@gmail.com>
  * Copyright (C) 2008, Hein Ragas <viking@ragas.nl>
  * Copyright (C) 2009, Tal B <tal.bav@gmail.com>
+ * Copyright (c) 2012, Rob Norris <rw_norris@hotmail.com>
  *
  * Some of the code adapted from GPSBabel 1.2.7
  * http://gpsbabel.sf.net/
@@ -49,6 +50,7 @@ typedef enum {
         tt_gpx,
 
         tt_wpt,
+        tt_wpt_cmt,
         tt_wpt_desc,
         tt_wpt_name,
         tt_wpt_ele,
@@ -56,8 +58,11 @@ typedef enum {
         tt_wpt_link,            /* New in GPX 1.1 */
 
         tt_trk,
+        tt_trk_cmt,
         tt_trk_desc,
         tt_trk_name,
+
+        tt_rte,
 
         tt_trk_trkseg,
         tt_trk_trkseg_trkpt,
@@ -104,18 +109,18 @@ tag_mapping tag_path_map[] = {
 
         { tt_wpt_ele, "/gpx/wpt/ele" },
         { tt_wpt_name, "/gpx/wpt/name" },
+        { tt_wpt_cmt, "/gpx/wpt/cmt" },
         { tt_wpt_desc, "/gpx/wpt/desc" },
         { tt_wpt_sym, "/gpx/wpt/sym" },
         { tt_wpt_sym, "/loc/waypoint/type" },
         { tt_wpt_link, "/gpx/wpt/link" },                    /* GPX 1.1 */
 
         { tt_trk, "/gpx/trk" },
-        { tt_trk, "/gpx/rte" },
         { tt_trk_name, "/gpx/trk/name" },
+        { tt_trk_cmt, "/gpx/trk/cmt" },
         { tt_trk_desc, "/gpx/trk/desc" },
         { tt_trk_trkseg, "/gpx/trk/trkseg" },
         { tt_trk_trkseg_trkpt, "/gpx/trk/trkseg/trkpt" },
-        { tt_trk_trkseg_trkpt, "/gpx/rte/rtept" },
         { tt_trk_trkseg_trkpt_ele, "/gpx/trk/trkseg/trkpt/ele" },
         { tt_trk_trkseg_trkpt_time, "/gpx/trk/trkseg/trkpt/time" },
 	/* extended */
@@ -127,6 +132,15 @@ tag_mapping tag_path_map[] = {
         { tt_trk_trkseg_trkpt_hdop, "/gpx/trk/trkseg/trkpt/hdop" },
         { tt_trk_trkseg_trkpt_vdop, "/gpx/trk/trkseg/trkpt/vdop" },
         { tt_trk_trkseg_trkpt_pdop, "/gpx/trk/trkseg/trkpt/pdop" },
+
+        { tt_rte, "/gpx/rte" },
+        // NB Route reuses track point feature tags
+        { tt_trk_name, "/gpx/rte/name" },
+        { tt_trk_cmt, "/gpx/rte/cmt" },
+        { tt_trk_desc, "/gpx/rte/desc" },
+        { tt_trk_trkseg_trkpt, "/gpx/rte/rtept" },
+        { tt_trk_trkseg_trkpt_ele, "/gpx/rte/rtept/ele" },
+
         {0}
 };
 
@@ -196,17 +210,21 @@ static void gpx_start(VikTrwLayer *vtl, const char *el, const char **attr)
      case tt_wpt:
        if ( set_c_ll( attr ) ) {
          c_wp = vik_waypoint_new ();
-         if ( ! get_attr ( attr, "hidden" ) )
-           c_wp->visible = TRUE;
+         c_wp->visible = TRUE;
+         if ( get_attr ( attr, "hidden" ) )
+           c_wp->visible = FALSE;
 
          vik_coord_load_from_latlon ( &(c_wp->coord), vik_trw_layer_get_coord_mode ( vtl ), &c_ll );
        }
        break;
 
      case tt_trk:
+     case tt_rte:
        c_tr = vik_track_new ();
-       if ( ! get_attr ( attr, "hidden" ) )
-         c_tr->visible = TRUE;
+       c_tr->is_route = (current_tag == tt_rte) ? TRUE : FALSE;
+       c_tr->visible = TRUE;
+       if ( get_attr ( attr, "hidden" ) )
+         c_tr->visible = FALSE;
        break;
 
      case tt_trk_trkseg:
@@ -227,10 +245,12 @@ static void gpx_start(VikTrwLayer *vtl, const char *el, const char **attr)
 
      case tt_trk_trkseg_trkpt_ele:
      case tt_trk_trkseg_trkpt_time:
+     case tt_wpt_cmt:
      case tt_wpt_desc:
      case tt_wpt_name:
      case tt_wpt_ele:
      case tt_wpt_link:
+     case tt_trk_cmt:
      case tt_trk_desc:
      case tt_trk_name:
        g_string_erase ( c_cdata, 0, -1 ); /* clear the cdata buffer */
@@ -278,6 +298,7 @@ static void gpx_end(VikTrwLayer *vtl, const char *el)
        break;
 
      case tt_trk:
+     case tt_rte:
        if ( ! c_tr_name )
          c_tr_name = g_strdup_printf("VIKING_TR%d", unnamed_tracks++);
        vik_trw_layer_filein_add_track ( vtl, c_tr_name, c_tr );
@@ -312,6 +333,11 @@ static void gpx_end(VikTrwLayer *vtl, const char *el)
 
      case tt_waypoint_name: /* .loc name is really description. */
      case tt_wpt_desc:
+       vik_waypoint_set_description ( c_wp, c_cdata->str );
+       g_string_erase ( c_cdata, 0, -1 );
+       break;
+
+     case tt_wpt_cmt:
        vik_waypoint_set_comment ( c_wp, c_cdata->str );
        g_string_erase ( c_cdata, 0, -1 );
        break;
@@ -330,6 +356,11 @@ static void gpx_end(VikTrwLayer *vtl, const char *el)
        }
 
      case tt_trk_desc:
+       vik_track_set_description ( c_tr, c_cdata->str );
+       g_string_erase ( c_cdata, 0, -1 );
+       break;
+
+     case tt_trk_cmt:
        vik_track_set_comment ( c_tr, c_cdata->str );
        g_string_erase ( c_cdata, 0, -1 );
        break;
@@ -395,9 +426,11 @@ static void gpx_cdata(void *dta, const XML_Char *s, int len)
     case tt_trk_name:
     case tt_wpt_ele:
     case tt_trk_trkseg_trkpt_ele:
+    case tt_wpt_cmt:
     case tt_wpt_desc:
     case tt_wpt_sym:
     case tt_wpt_link:
+    case tt_trk_cmt:
     case tt_trk_desc:
     case tt_trk_trkseg_trkpt_time:
     case tt_trk_trkseg_trkpt_course:
@@ -418,9 +451,10 @@ static void gpx_cdata(void *dta, const XML_Char *s, int len)
 // make like a "stack" of tag names
 // like gpspoint's separated like /gpx/wpt/whatever
 
-void a_gpx_read_file( VikTrwLayer *vtl, FILE *f ) {
+gboolean a_gpx_read_file( VikTrwLayer *vtl, FILE *f ) {
   XML_Parser parser = XML_ParserCreate(NULL);
   int done=0, len;
+  enum XML_Status status = XML_STATUS_ERROR;
 
   XML_SetElementHandler(parser, (XML_StartElementHandler) gpx_start, (XML_EndElementHandler) gpx_end);
   XML_SetUserData(parser, vtl); /* in the future we could remove all global variables */
@@ -439,12 +473,14 @@ void a_gpx_read_file( VikTrwLayer *vtl, FILE *f ) {
   while (!done) {
     len = fread(buf, 1, sizeof(buf)-7, f);
     done = feof(f) || !len;
-    XML_Parse(parser, buf, len, done);
+    status = XML_Parse(parser, buf, len, done);
   }
  
   XML_ParserFree (parser);
   g_string_free ( xpath, TRUE );
   g_string_free ( c_cdata, TRUE );
+
+  return status != XML_STATUS_ERROR;
 }
 
 /**** entitize from GPSBabel ****/
@@ -616,8 +652,12 @@ entitize(const char * str)
 
 /* export GPX */
 
-static void gpx_write_waypoint ( const gchar *name, VikWaypoint *wp, GpxWritingContext *context ) 
+static void gpx_write_waypoint ( VikWaypoint *wp, GpxWritingContext *context )
 {
+  // Don't write invisible waypoints when specified
+  if (context->options && !context->options->hidden && !wp->visible)
+    return;
+
   FILE *f = context->file;
   static struct LatLon ll;
   gchar *s_lat,*s_lon;
@@ -625,12 +665,19 @@ static void gpx_write_waypoint ( const gchar *name, VikWaypoint *wp, GpxWritingC
   vik_coord_to_latlon ( &(wp->coord), &ll );
   s_lat = a_coords_dtostr( ll.lat );
   s_lon = a_coords_dtostr( ll.lon );
+  // NB 'hidden' is not part of any GPX standard - this appears to be a made up Viking 'extension'
+  //  luckily most other GPX processing software ignores things they don't understand
   fprintf ( f, "<wpt lat=\"%s\" lon=\"%s\"%s>\n",
                s_lat, s_lon, wp->visible ? "" : " hidden=\"hidden\"" );
   g_free ( s_lat );
   g_free ( s_lon );
 
-  tmp = entitize ( name );
+  // Sanity clause
+  if ( wp->name )
+    tmp = entitize ( wp->name );
+  else
+    tmp = g_strdup ("waypoint");
+
   fprintf ( f, "  <name>%s</name>\n", tmp );
   g_free ( tmp);
 
@@ -643,6 +690,12 @@ static void gpx_write_waypoint ( const gchar *name, VikWaypoint *wp, GpxWritingC
   if ( wp->comment )
   {
     tmp = entitize(wp->comment);
+    fprintf ( f, "  <cmt>%s</cmt>\n", tmp );
+    g_free ( tmp );
+  }
+  if ( wp->description )
+  {
+    tmp = entitize(wp->description);
     fprintf ( f, "  <desc>%s</desc>\n", tmp );
     g_free ( tmp );
   }
@@ -670,12 +723,13 @@ static void gpx_write_trackpoint ( VikTrackpoint *tp, GpxWritingContext *context
   gchar *time_iso8601;
   vik_coord_to_latlon ( &(tp->coord), &ll );
 
-  if ( tp->newsegment )
+  // No such thing as a rteseg! So make sure we don't put them in
+  if ( context->options && !context->options->is_route && tp->newsegment )
     fprintf ( f, "  </trkseg>\n  <trkseg>\n" );
 
   s_lat = a_coords_dtostr( ll.lat );
   s_lon = a_coords_dtostr( ll.lon );
-  fprintf ( f, "  <trkpt lat=\"%s\" lon=\"%s\">\n", s_lat, s_lon );
+  fprintf ( f, "  <%spt lat=\"%s\" lon=\"%s\">\n", (context->options && context->options->is_route) ? "rte" : "trk", s_lat, s_lon );
   g_free ( s_lat ); s_lat = NULL;
   g_free ( s_lon ); s_lon = NULL;
 
@@ -754,29 +808,51 @@ static void gpx_write_trackpoint ( VikTrackpoint *tp, GpxWritingContext *context
     fprintf ( f, "    <pdop>%s</pdop>\n", s_dop );
   g_free ( s_dop ); s_dop = NULL;
 
-
-  fprintf ( f, "  </trkpt>\n" );
+  fprintf ( f, "  </%spt>\n", (context->options && context->options->is_route) ? "rte" : "trk" );
 }
 
 
-static void gpx_write_track ( const gchar *name, VikTrack *t, GpxWritingContext *context )
+static void gpx_write_track ( VikTrack *t, GpxWritingContext *context )
 {
+  // Don't write invisible tracks when specified
+  if (context->options && !context->options->hidden && !t->visible)
+    return;
+
   FILE *f = context->file;
   gchar *tmp;
   gboolean first_tp_is_newsegment = FALSE; /* must temporarily make it not so, but we want to restore state. not that it matters. */
 
-  tmp = entitize ( name );
-  fprintf ( f, "<trk%s>\n  <name>%s</name>\n", t->visible ? "" : " hidden=\"hidden\"", tmp );
+  // Sanity clause
+  if ( t->name )
+    tmp = entitize ( t->name );
+  else
+    tmp = g_strdup ("track");
+
+  // NB 'hidden' is not part of any GPX standard - this appears to be a made up Viking 'extension'
+  //  luckily most other GPX processing software ignores things they don't understand
+  fprintf ( f, "<%s%s>\n  <name>%s</name>\n",
+	    t->is_route ? "rte" : "trk",
+	    t->visible ? "" : " hidden=\"hidden\"",
+	    tmp );
   g_free ( tmp );
 
   if ( t->comment )
   {
     tmp = entitize ( t->comment );
+    fprintf ( f, "  <cmt>%s</cmt>\n", tmp );
+    g_free ( tmp );
+  }
+
+  if ( t->description )
+  {
+    tmp = entitize ( t->description );
     fprintf ( f, "  <desc>%s</desc>\n", tmp );
     g_free ( tmp );
   }
 
-  fprintf ( f, "  <trkseg>\n" );
+  /* No such thing as a rteseg! */
+  if ( !t->is_route )
+    fprintf ( f, "  <trkseg>\n" );
 
   if ( t->trackpoints && t->trackpoints->data ) {
     first_tp_is_newsegment = VIK_TRACKPOINT(t->trackpoints->data)->newsegment;
@@ -785,7 +861,11 @@ static void gpx_write_track ( const gchar *name, VikTrack *t, GpxWritingContext 
     VIK_TRACKPOINT(t->trackpoints->data)->newsegment = first_tp_is_newsegment; /* restore state */
   }
 
-  fprintf ( f, "</trkseg>\n</trk>\n" );
+  /* NB apparently no such thing as a rteseg! */
+  if (!t->is_route)
+    fprintf ( f, "  </trkseg>\n");
+
+  fprintf ( f, "</%s>\n", t->is_route ? "rte" : "trk" );
 }
 
 static void gpx_write_header( FILE *f )
@@ -802,130 +882,111 @@ static void gpx_write_footer( FILE *f )
   fprintf(f, "</gpx>\n");
 }
 
-
-
-typedef struct {
-  VikWaypoint *wp;
-  const gchar *name;
-} gpx_waypoint_and_name;
-
-typedef struct {
-  gpx_waypoint_and_name *wps;
-  guint i;
-  guint n_wps;
-} gpx_gather_waypoints_passalong_t;
-
-/* Type to hold name of track and timestamp of first trackpoint */
-typedef struct {
-  time_t first_timestamp;
-  const gchar *name;
-} gpx_track_and_timestamp;
-
-typedef struct {
-  gpx_track_and_timestamp *trks;
-  guint i;
-  guint n_trks;
-} gpx_gather_tracks_passalong_t;
-
-static void gpx_collect_waypoint ( const gchar *name, VikWaypoint *wp, gpx_gather_waypoints_passalong_t *passalong )
+static int gpx_waypoint_compare(const void *x, const void *y)
 {
-  if ( passalong->i < passalong->n_wps ) {
-    passalong->wps[passalong->i].name = name;
-    passalong->wps[passalong->i].wp = wp;
-    passalong->i++;
-  }
+  VikWaypoint *a = (VikWaypoint *)x;
+  VikWaypoint *b = (VikWaypoint *)y;
+  return strcmp(a->name,b->name);
 }
 
-/* Function to collect a track and the first timestamp in the list */
-static void gpx_collect_track (const gchar *name, VikTrack *track, gpx_gather_tracks_passalong_t *passalong)
+static int gpx_track_compare_name(const void *x, const void *y)
 {
-  if (passalong->i < passalong->n_trks)
-  {
-    passalong->trks[passalong->i].name = name;
-    if (track && track->trackpoints && track->trackpoints->data)
-    {
-      VikTrackpoint *first_point = (VikTrackpoint *)track->trackpoints->data;
-      passalong->trks[passalong->i].first_timestamp = first_point->timestamp;
-    }
-    else
-    {
-      passalong->trks[passalong->i].first_timestamp = 0;
-    }
-    passalong->i++;
-  }
-}
-
-static int gpx_waypoint_and_name_compar(const void *x, const void *y)
-{
-  gpx_waypoint_and_name *a = (gpx_waypoint_and_name *)x;
-  gpx_waypoint_and_name *b = (gpx_waypoint_and_name *)y;
+  VikTrack *a = (VikTrack *)x;
+  VikTrack *b = (VikTrack *)y;
   return strcmp(a->name,b->name);
 }
 
 /* Function to compare two tracks by their first timestamp */
-static int gpx_track_and_timestamp_compar(const void *x, const void *y)
+static int gpx_track_compare_timestamp (const void *x, const void *y)
 {
-  gpx_track_and_timestamp *a = (gpx_track_and_timestamp *)x;
-  gpx_track_and_timestamp *b = (gpx_track_and_timestamp *)y;
-  if (a->first_timestamp < b->first_timestamp)
-  {
-    return -1;
+  VikTrack *a = (VikTrack *)x;
+  VikTrack *b = (VikTrack *)y;
+
+  VikTrackpoint *tpa = NULL;
+  VikTrackpoint *tpb = NULL;
+
+  if ( a->trackpoints )
+    tpa = VIK_TRACKPOINT(g_list_first(a->trackpoints)->data);
+
+  if ( b->trackpoints )
+    tpb = VIK_TRACKPOINT(g_list_first(b->trackpoints)->data);
+
+  if ( tpa && tpb ) {
+    if ( tpa->timestamp < tpb->timestamp )
+      return -1;
+    if ( tpa->timestamp > tpb->timestamp )
+      return 1;
   }
-  if (a->first_timestamp > b->first_timestamp)
-  {
+
+  if ( tpa && !tpb )
     return 1;
-  }
+
+  if ( !tpa && tpb )
+    return -1;
+
   return 0;
 }
 
-void a_gpx_write_file( VikTrwLayer *vtl, FILE *f )
-{
-	a_gpx_write_file_options(NULL, vtl, f);
-}
-
-void a_gpx_write_file_options ( GpxWritingOptions *options, VikTrwLayer *vtl, FILE *f )
+void a_gpx_write_file ( VikTrwLayer *vtl, FILE *f, GpxWritingOptions *options )
 {
   GpxWritingContext context = { options, f };
-  int i;
 
   gpx_write_header ( f );
 
+  // gather waypoints in a list, then sort
+  // g_hash_table_get_values: glib 2.14+
+  GList *gl = g_hash_table_get_values ( vik_trw_layer_get_waypoints ( vtl ) );
+  gl = g_list_sort ( gl, gpx_waypoint_compare );
 
-  gpx_gather_waypoints_passalong_t passalong;
-  passalong.n_wps = g_hash_table_size ( vik_trw_layer_get_waypoints ( vtl ) );
-  passalong.i = 0;
-  passalong.wps = g_new(gpx_waypoint_and_name,passalong.n_wps);
-  g_hash_table_foreach ( vik_trw_layer_get_waypoints ( vtl ), (GHFunc) gpx_collect_waypoint, &passalong );
-  /* gather waypoints in a list, then sort */
-  qsort(passalong.wps, passalong.n_wps, sizeof(gpx_waypoint_and_name), gpx_waypoint_and_name_compar);
-  for ( i = 0; i < passalong.n_wps; i++ )
-    gpx_write_waypoint ( passalong.wps[i].name, passalong.wps[i].wp, &context);
-  g_free ( passalong.wps );
-
-  gpx_gather_tracks_passalong_t passalong_tracks;
-  passalong_tracks.n_trks = g_hash_table_size ( vik_trw_layer_get_tracks (vtl) );
-  passalong_tracks.i = 0;
-  passalong_tracks.trks = g_new(gpx_track_and_timestamp,passalong_tracks.n_trks);
-  g_hash_table_foreach (vik_trw_layer_get_tracks(vtl), (GHFunc) gpx_collect_track, &passalong_tracks);
-  /* Sort by timestamp */
-  qsort(passalong_tracks.trks, passalong_tracks.n_trks, sizeof(gpx_track_and_timestamp), gpx_track_and_timestamp_compar);
-  for (i=0;i<passalong_tracks.n_trks; i++)
-  {
-    gpx_write_track(passalong_tracks.trks[i].name, (VikTrack *)g_hash_table_lookup(vik_trw_layer_get_tracks(vtl), passalong_tracks.trks[i].name), &context);
+  GList *iter;
+  for (iter = g_list_first (gl); iter != NULL; iter = g_list_next (iter)) {
+    gpx_write_waypoint ( (VikWaypoint*)iter->data, &context );
   }
-  g_free ( passalong_tracks.trks );
+
+  g_list_free ( gl );
+
+  gl = g_hash_table_get_values ( vik_trw_layer_get_tracks ( vtl ) );
+  // Sort method determined by preference
+  if ( a_vik_get_gpx_export_trk_sort() == VIK_GPX_EXPORT_TRK_SORT_TIME )
+    gl = g_list_sort ( gl, gpx_track_compare_timestamp );
+  else
+    gl = g_list_sort ( gl, gpx_track_compare_name );
+
+  // Routes sorted by name
+  GList *glrte = g_hash_table_get_values ( vik_trw_layer_get_routes ( vtl ) );
+  glrte = g_list_sort ( glrte, gpx_track_compare_name );
+
+  // g_list_concat doesn't copy memory properly
+  // so process each list separately
+
+  GpxWritingContext context_tmp = context;
+  GpxWritingOptions opt_tmp = { FALSE, FALSE, FALSE };
+  // Force trackpoints on tracks
+  if ( !context.options )
+    context_tmp.options = &opt_tmp;
+  context_tmp.options->is_route = FALSE;
+
+  // Loop around each list and write each one
+  for (iter = g_list_first (gl); iter != NULL; iter = g_list_next (iter)) {
+    gpx_write_track ( (VikTrack*)iter->data, &context_tmp );
+  }
+
+  // Routes (to get routepoints)
+  context_tmp.options->is_route = TRUE;
+  for (iter = g_list_first (glrte); iter != NULL; iter = g_list_next (iter)) {
+    gpx_write_track ( (VikTrack*)iter->data, &context_tmp );
+  }
+
+  g_list_free ( gl );
+  g_list_free ( glrte );
+
   gpx_write_footer ( f );
 }
 
-void a_gpx_write_track_file ( const gchar *name, VikTrack *t, FILE *f )
-{
-  a_gpx_write_track_file_options ( NULL, name, t, f );
-}
-
-void a_gpx_write_track_file_options ( GpxWritingOptions *options, const gchar *name, VikTrack *t, FILE *f )
+void a_gpx_write_track_file ( VikTrack *trk, FILE *f, GpxWritingOptions *options )
 {
   GpxWritingContext context = {options, f};
   gpx_write_header ( f );
-  gpx_write_track ( name, t, &context );
+  gpx_write_track ( trk, &context );
   gpx_write_footer ( f );
 }

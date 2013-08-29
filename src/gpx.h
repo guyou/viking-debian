@@ -24,18 +24,22 @@
 
 #include "viktrwlayer.h"
 
+G_BEGIN_DECLS
+
 /**
  * Options adapting GPX writing.
  */
 typedef struct {
 	gboolean force_ele; /// Force ele field
 	gboolean force_time; /// Force time field
+	gboolean hidden; /// Write invisible tracks/waypoints (default is yes)
+	gboolean is_route; /// For internal convience
 } GpxWritingOptions;
 
-void a_gpx_read_file ( VikTrwLayer *trw, FILE *f );
-void a_gpx_write_file ( VikTrwLayer *trw, FILE *f );
-void a_gpx_write_file_options ( GpxWritingOptions *options, VikTrwLayer *trw, FILE *f );
-void a_gpx_write_track_file ( const gchar *name, VikTrack *track, FILE *f );
-void a_gpx_write_track_file_options ( GpxWritingOptions *options, const gchar *name, VikTrack *t, FILE *f );
+gboolean a_gpx_read_file ( VikTrwLayer *trw, FILE *f );
+void a_gpx_write_file ( VikTrwLayer *trw, FILE *f, GpxWritingOptions *options );
+void a_gpx_write_track_file ( VikTrack *trk, FILE *f, GpxWritingOptions *options );
+
+G_END_DECLS
 
 #endif

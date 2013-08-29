@@ -25,16 +25,12 @@
 
 #include "vikgototool.h"
 #include "util.h"
-#include "curl_download.h"
 
 #include <string.h>
 
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
-
-static void goto_tool_class_init ( VikGotoToolClass *klass );
-static void goto_tool_init ( VikGotoTool *vlp );
 
 static GObjectClass *parent_class;
 
@@ -54,29 +50,7 @@ struct _VikGotoToolPrivate
                                     VIK_GOTO_TOOL_TYPE,          \
                                     VikGotoToolPrivate))
 
-GType vik_goto_tool_get_type()
-{
-  static GType w_type = 0;
-
-  if (!w_type)
-  {
-    static const GTypeInfo w_info = 
-    {
-      sizeof (VikGotoToolClass),
-      NULL, /* base_init */
-      NULL, /* base_finalize */
-      (GClassInitFunc) goto_tool_class_init,
-      NULL, /* class_finalize */
-      NULL, /* class_data */
-      sizeof (VikGotoTool),
-      0,
-      (GInstanceInitFunc) goto_tool_init,
-    };
-    w_type = g_type_register_static ( G_TYPE_OBJECT, "VikGotoTool", &w_info, G_TYPE_FLAG_ABSTRACT );
-  }
-
-  return w_type;
-}
+G_DEFINE_ABSTRACT_TYPE (VikGotoTool, vik_goto_tool, G_TYPE_OBJECT)
 
 enum
 {
@@ -141,7 +115,7 @@ goto_tool_get_property (GObject    *object,
     }
 }
 
-static void goto_tool_class_init ( VikGotoToolClass *klass )
+static void vik_goto_tool_class_init ( VikGotoToolClass *klass )
 {
   GObjectClass *gobject_class;
   GParamSpec *pspec;
@@ -184,7 +158,7 @@ VikGotoTool *vik_goto_tool_new ()
   return VIK_GOTO_TOOL ( g_object_new ( VIK_GOTO_TOOL_TYPE, NULL ) );
 }
 
-static void goto_tool_init ( VikGotoTool *self )
+static void vik_goto_tool_init ( VikGotoTool *self )
 {
   VikGotoToolPrivate *priv = GOTO_TOOL_GET_PRIVATE (self);
   priv->label = NULL;
@@ -232,8 +206,6 @@ gboolean vik_goto_tool_parse_file_for_latlon (VikGotoTool *self, gchar *filename
 
 int vik_goto_tool_get_coord ( VikGotoTool *self, VikWindow *vw, VikViewport *vvp, gchar *srch_str, VikCoord *coord )
 {
-  FILE *tmp_file;
-  int tmp_fd;
   gchar *tmpname;
   gchar *uri;
   gchar *escaped_srch_str;
@@ -246,24 +218,10 @@ int vik_goto_tool_get_coord ( VikGotoTool *self, VikWindow *vw, VikViewport *vvp
 
   g_debug("%s: escaped goto: %s", __FUNCTION__, escaped_srch_str);
 
-  if ((tmp_fd = g_file_open_tmp ("vikgoto.XXXXXX", &tmpname, NULL)) == -1) {
-    g_critical(_("couldn't open temp file"));
-    return -1;
-  }
-  
-  tmp_file = fdopen(tmp_fd, "r+");
   uri = g_strdup_printf(vik_goto_tool_get_url_format(self), escaped_srch_str);
 
-  /* TODO: curl may not be available */
-  if (curl_download_uri(uri, tmp_file, vik_goto_tool_get_download_options(self), 0, NULL)) {  /* error */
-    fclose(tmp_file);
-    tmp_file = NULL;
-    ret = -1;
-    goto done;
-  }
+  tmpname = a_download_uri_to_tmp_file ( uri, vik_goto_tool_get_download_options(self) );
 
-  fclose(tmp_file);
-  tmp_file = NULL;
   g_debug("%s: %s", __FILE__, tmpname);
   if (!vik_goto_tool_parse_file_for_latlon(self, tmpname, &ll)) {
     ret = -1;

@@ -22,9 +22,9 @@
 #ifndef _VIKING_AGGREGATELAYER_H
 #define _VIKING_AGGREGATELAYER_H
 
-#include <time.h>
-
 #include "viklayer.h"
+
+G_BEGIN_DECLS
 
 #define VIK_AGGREGATE_LAYER_TYPE            (vik_aggregate_layer_get_type ())
 #define VIK_AGGREGATE_LAYER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), VIK_AGGREGATE_LAYER_TYPE, VikAggregateLayer))
@@ -63,5 +63,6 @@ gboolean vik_aggregate_layer_is_empty ( VikAggregateLayer *val );
 const GList *vik_aggregate_layer_get_children ( VikAggregateLayer *val );
 GList *vik_aggregate_layer_get_all_layers_of_type(VikAggregateLayer *val, GList *layers, gint type, gboolean include_invisible);
 
+G_END_DECLS
 
 #endif

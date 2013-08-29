@@ -23,11 +23,16 @@
 
 #include "acquire.h"
 
+G_BEGIN_DECLS
+
 extern VikDataSourceInterface vik_datasource_gps_interface;
 extern VikDataSourceInterface vik_datasource_file_interface;
+#ifdef VIK_CONFIG_GOOGLE
 extern VikDataSourceInterface vik_datasource_google_interface;
+#endif
 #ifdef VIK_CONFIG_OPENSTREETMAP
 extern VikDataSourceInterface vik_datasource_osm_interface;
+extern VikDataSourceInterface vik_datasource_osm_my_traces_interface;
 #endif
 #ifdef VIK_CONFIG_GEOCACHES
 extern VikDataSourceInterface vik_datasource_gc_interface;
@@ -35,4 +40,10 @@ extern VikDataSourceInterface vik_datasource_gc_interface;
 #ifdef VIK_CONFIG_GEOTAG
 extern VikDataSourceInterface vik_datasource_geotag_interface;
 #endif
+#ifdef VIK_CONFIG_GEONAMES
+extern VikDataSourceInterface vik_datasource_wikipedia_interface;
+#endif
+
+G_BEGIN_DECLS
+
 #endif

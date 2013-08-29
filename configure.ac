@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(viking, 1.3)
-AM_INIT_AUTOMAKE()
+AC_INIT(viking, 1.4.2)
+AM_INIT_AUTOMAKE([dist-bzip2 dist-zip])
 dnl AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
 GTK_DOC_CHECK(1.0)
@@ -33,18 +33,19 @@ AC_SUBST(ACLOCAL_AMFLAGS)
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([malloc.h netdb.h netinet/in.h stdlib.h string.h sys/param.h sys/socket.h sys/types.h sys/wait.h unistd.h math.h utime.h])
+AC_CHECK_HEADERS([malloc.h stdlib.h string.h sys/param.h sys/types.h unistd.h math.h utime.h X11/Xlib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_MODE_T
 
-# Checks for library functions.
+# Checks for library functions or symbols
 AC_FUNC_STAT
 AC_FUNC_STRTOD
-AC_CHECK_FUNCS([floor gethostbyname memset mkdtemp pow realpath socket sqrt strcasecmp strchr strdup strncasecmp strtol strtoul])
+AC_CHECK_FUNCS([floor memset mkdtemp pow realpath sqrt strcasecmp strchr strdup strncasecmp strtol strtoul])
 AC_CHECK_LIB(m, tan)
 AC_CHECK_LIB(z, inflate)
+AC_CHECK_LIB(X11, XSetErrorHandler)
 
 # Expat
 AM_WITH_EXPAT
@@ -64,7 +65,7 @@ dnl | Pkgconfig checks |---------------------------------------
 dnl  ------------------
 
 PKG_CHECK_MODULES(PACKAGE, [
-        glib-2.0          >= 2.12
+        glib-2.0          >= 2.14
         gthread-2.0       >= 2.2
         gtk+-2.0          >= 2.12
         gio-2.0           >= 2.12
@@ -302,15 +303,15 @@ AC_DEFINE_UNQUOTED(VIK_CONFIG_SEARCH, ${VIK_CONFIG_SEARCH},
 
 AC_ARG_WITH(mapcache,
             [AC_HELP_STRING([--with-mapcache],
-                            [specify the size of the map cache (default is 50331648)])],
+                            [specify the size of the map cache in MB (default is 128)])],
             [if test "x$withval" = "xno"; then
                 VIK_CONFIG_MAPCACHE_SIZE=0;
              elif test "x$withval" = "xyes"; then
-                AC_MSG_ERROR([Please, set a value for size of the map cache])
+                AC_MSG_ERROR([Please, set a value for size of the map cache in MB])
              else
                 VIK_CONFIG_MAPCACHE_SIZE=${withval}
              fi],
-             [VIK_CONFIG_MAPCACHE_SIZE=50331648])
+             [VIK_CONFIG_MAPCACHE_SIZE=128])
 AC_DEFINE_UNQUOTED(VIK_CONFIG_MAPCACHE_SIZE, ${VIK_CONFIG_MAPCACHE_SIZE},
                    [Size of the map cache])
 
@@ -341,18 +342,27 @@ dnl correct flags to aclocal.
 ACLOCAL_AMFLAGS="\${ACLOCAL_FLAGS}"
 AC_SUBST(ACLOCAL_AMFLAGS)
 
+AM_CONDITIONAL([VIKING_DOC], test x${enable_gtk_doc} = xyes)
+
 # Configuration
-AC_CONFIG_FILES([Makefile
-                 src/Makefile
-                 src/icons/Makefile
-		 po/Makefile.in
-                 test/Makefile
-                 help/Makefile
-                 doc/Makefile
-                 doc/examples/Makefile])
-if test x$enable_gtk_doc = xyes; then
-AC_CONFIG_FILES([doc/reference/Makefile])
-fi
+AC_CONFIG_FILES([
+		Makefile
+		src/Makefile
+		src/icons/Makefile
+		po/Makefile.in
+		data/Makefile
+		test/Makefile
+		help/Makefile
+		win32/Makefile
+		win32/installer/Makefile
+		win32/installer/pixmaps/Makefile
+		win32/installer/translations/Makefile])
+AM_COND_IF([VIKING_DOC],
+	[AC_CONFIG_FILES([
+		doc/Makefile
+		doc/reference/Makefile
+		doc/examples/Makefile])])
+
 AC_OUTPUT([
 	   viking.spec
 	   ])
@@ -364,7 +374,7 @@ echo "$PACKAGE $VERSION"
 echo "-------------------------------------------"
 echo "Alphabetized track & waypoints   : $ac_cv_enable_alpha_trw"
 echo "Bing Maps                        : $ac_cv_enable_bing"
-echo "Google Maps                      : $ac_cv_enable_google"
+echo "Google                           : $ac_cv_enable_google"
 echo "Terraserver Maps                 : $ac_cv_enable_terraserver"
 echo "Expedia Maps                     : $ac_cv_enable_expedia"
 echo "Open Street Map                  : $ac_cv_enable_openstreetmap"
@@ -377,6 +387,7 @@ echo "USGS 24k DEM                     : $ac_cv_enable_dem24k"
 echo "Realtime GPS Tracking            : $ac_cv_enable_realtimegpstracking"
 echo "Size of map cache (in memory)    : ${VIK_CONFIG_MAPCACHE_SIZE}"
 echo "Age of tiles (in seconds)        : ${VIK_CONFIG_DEFAULT_TILE_AGE}"
+echo "Documentation (+HTML)            : ${enable_gtk_doc} (HTML: ${enable_gtk_doc_html})"
 echo "-------------------------------------------"
 echo ""
 echo "Configure finished, type 'make' to build."

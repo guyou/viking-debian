@@ -43,9 +43,9 @@ static VikLayerParamScale param_scales[] = {
 };
 
 static VikLayerParam coord_layer_params[] = {
-  { "color", VIK_LAYER_PARAM_COLOR, VIK_LAYER_GROUP_NONE, N_("Color:"), VIK_LAYER_WIDGET_COLOR, 0 },
-  { "min_inc", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Minutes Width:"), VIK_LAYER_WIDGET_SPINBUTTON, param_scales + 0 },
-  { "line_thickness", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Line Thickness:"), VIK_LAYER_WIDGET_SPINBUTTON, param_scales + 1 },
+  { "color", VIK_LAYER_PARAM_COLOR, VIK_LAYER_GROUP_NONE, N_("Color:"), VIK_LAYER_WIDGET_COLOR, NULL, NULL, NULL },
+  { "min_inc", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Minutes Width:"), VIK_LAYER_WIDGET_SPINBUTTON, &param_scales[0], NULL, NULL },
+  { "line_thickness", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Line Thickness:"), VIK_LAYER_WIDGET_SPINBUTTON, &param_scales[1], NULL, NULL },
 };
 
 
@@ -53,6 +53,8 @@ enum { PARAM_COLOR = 0, PARAM_MIN_INC, PARAM_LINE_THICKNESS, NUM_PARAMS };
 
 VikLayerInterface vik_coord_layer_interface = {
   "Coord",
+  N_("Coordinate"),
+  NULL,
   &vikcoordlayer_pixbuf,
 
   NULL,
@@ -198,7 +200,7 @@ VikCoordLayer *vik_coord_layer_new ( )
   GdkColor InitColor;
   
   VikCoordLayer *vcl = VIK_COORD_LAYER ( g_object_new ( VIK_COORD_LAYER_TYPE, NULL ) );
-  vik_layer_init ( VIK_LAYER(vcl), VIK_LAYER_COORD );
+  vik_layer_set_type ( VIK_LAYER(vcl), VIK_LAYER_COORD );
 
   InitColor.pixel = 0;
   InitColor.red = 65535;

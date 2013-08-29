@@ -22,9 +22,6 @@
 
 /*
  * This uses EXIF information from images to create waypoints at those positions
- * TODO: allow writing of image location:
- *  . Via correlation with a track (c.f. gpscorrelate) (multiple images)
- *  . Via screen position (individual image) on an existing waypoint
  *
  * For the implementation I have chosen to use libexif, which keeps Viking a pure C program
  * For an alternative implementation (a la gpscorrelate), one could use libeviv2 but it appears to be C++ only.
@@ -159,18 +156,6 @@ VikWaypoint* a_geotag_create_waypoint_from_file ( const gchar *filename, VikCoor
 	//if ( ! ( ee->data[0] == 2 && ee->data[2] == 0 && ee->data[3] == 0 ) )
 	//	goto MyReturn;
 
-
-	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_MAP_DATUM);
-	if ( ! ( ee && ee->components > 0 && ee->format == EXIF_FORMAT_ASCII ) )
-		goto MyReturn;
-
-	// If map datum specified - only deal in WGS-84 - the defacto standard
-	if ( ee && ee->components > 0 ) {
-		exif_entry_get_value ( ee, str, 128 );
-		if ( strncmp (str, "WGS-84", 6) )
-			goto MyReturn;
-	}
-
 	//
 	// Lat & Long is necessary to form a waypoint.
 	//
@@ -250,21 +235,26 @@ MyReturn:
 }
 
 /**
- * a_geotag_create_waypoint_positioned:
+ * a_geotag_waypoint_positioned:
  * @filename: The image file to process
  * @coord:    The location for positioning the Waypoint
  * @name:     Returns a name for the Waypoint (can be NULL)
+ * @waypoint: An existing waypoint to update (can be NULL to generate a new waypoint)
  *
- * Returns: An allocated Waypoint or NULL if Waypoint could not be generated
+ * Returns: An allocated waypoint if the input waypoint is NULL,
+ *  otherwise the passed in waypoint is updated
  *
  *  Here EXIF processing is used to get non position related information (i.e. just the comment)
  *
  */
-VikWaypoint* a_geotag_create_waypoint_positioned ( const gchar *filename, VikCoord coord, gdouble alt, gchar **name )
+VikWaypoint* a_geotag_waypoint_positioned ( const gchar *filename, VikCoord coord, gdouble alt, gchar **name, VikWaypoint *wp )
 {
 	*name = NULL;
-	VikWaypoint *wp = vik_waypoint_new();
-	wp->visible = TRUE;
+	if ( wp == NULL ) {
+		// Need to create waypoint
+		wp = vik_waypoint_new();
+		wp->visible = TRUE;
+	}
 	wp->coord = coord;
 	wp->altitude = alt;
 
@@ -289,7 +279,6 @@ VikWaypoint* a_geotag_create_waypoint_positioned ( const gchar *filename, VikCoo
 
 	vik_waypoint_set_image ( wp, filename );
 
-
 	return wp;
 }
 
@@ -306,6 +295,7 @@ VikWaypoint* a_geotag_create_waypoint_positioned ( const gchar *filename, VikCoo
 gchar* a_geotag_get_exif_date_from_file ( const gchar *filename, gboolean *has_GPS_info )
 {
 	gchar* datetime = NULL;
+	*has_GPS_info = FALSE;
 
 	ExifData *ed = exif_data_new_from_file ( filename );
 
@@ -323,12 +313,21 @@ gchar* a_geotag_get_exif_date_from_file ( const gchar *filename, gboolean *has_G
 	}
 
 	// Check GPS Info
-	*has_GPS_info = FALSE;
-	
+
 	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_VERSION_ID);
 	// Confirm this has a GPS Id - normally "2.0.0.0" or "2.2.0.0"
 	if ( ee && ee->components == 4 )
 		*has_GPS_info = TRUE;
+
+	// Check other basic GPS fields exist too
+	// I have encountered some images which have just the EXIF_TAG_GPS_VERSION_ID but nothing else
+	// So to confirm check more EXIF GPS TAGS:
+	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LATITUDE);
+	if ( !ee )
+		*has_GPS_info = FALSE;
+	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LONGITUDE);
+	if ( !ee )
+		*has_GPS_info = FALSE;
 
 	exif_data_free ( ed );
 

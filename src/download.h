@@ -25,6 +25,8 @@
 
 #include <stdio.h>
 
+G_BEGIN_DECLS
+
 /* File content check */
 typedef gboolean (*VikFileContentCheckerFunc) (FILE*);
 gboolean a_check_map_file(FILE*);
@@ -60,6 +62,12 @@ typedef struct {
    */
   VikFileContentCheckerFunc check_file;
 
+  /**
+   * If need to authenticate on download
+   *  format: 'username:password'
+   */
+  gchar *user_pass;
+
 } DownloadMapOptions;
 
 typedef struct {
@@ -86,9 +94,13 @@ int a_ftp_download_get_url ( const char *hostname, const char *uri, const char *
 void *a_download_handle_init ();
 void a_download_handle_cleanup ( void *handle );
 
+gchar *a_download_uri_to_tmp_file ( const gchar *uri, DownloadMapOptions *options );
+
 /* Error messages returned by download functions */
 enum { DOWNLOAD_NO_ERROR = 0,
        DOWNLOAD_NO_NEWER_FILE,
        DOWNLOAD_ERROR };
+
+G_END_DECLS
 
 #endif
