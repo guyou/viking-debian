@@ -11,8 +11,7 @@ Vcs-Browser: http://git.debian.org/?p=collab-maint/viking.git
 
 Package: viking
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: gpsbabel
+Depends: ${shlibs:Depends}, ${misc:Depends}, gpsbabel
 Suggests: gpsd
 Description: GPS data editor, analyzer and viewer
  Viking aims to be easy to use, yet powerful in accomplishing a wide
