@@ -6,11 +6,9 @@ Subject: [PATCH] disable-po-check
  po/Makefile.in.in |    8 ++------
  1 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/po/Makefile.in.in b/po/Makefile.in.in
-index 402a25f..be8996d 100644
 --- a/po/Makefile.in.in
 +++ b/po/Makefile.in.in
-@@ -141,12 +141,8 @@ uninstall:
+@@ -146,12 +146,8 @@ uninstall:
  	  rm -f $(DESTDIR)$(itlocaledir)/$$lang/LC_MESSAGES/$(GETTEXT_PACKAGE).mo.m; \
  	done
  
@@ -25,4 +23,3 @@ index 402a25f..be8996d 100644
  
  mostlyclean:
  	rm -f *.pox $(GETTEXT_PACKAGE).pot *.old.po cat-id-tbl.tmp
--- 

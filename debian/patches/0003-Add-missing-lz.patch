@@ -8,12 +8,12 @@ Subject: [PATCH] Add missing -lz.
 
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -168,7 +168,7 @@ libviking_a_SOURCES += \
+@@ -182,7 +182,7 @@ endif
  
  viking_SOURCES = main.c
  
 -LDADD           = libviking.a $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ icons/libicons.a
-+LDADD           = libviking.a $(PACKAGE_LIBS) -lz @EXPAT_LIBS@ @LIBCURL@ icons/libicons.a
- if REALTIME_GPS_TRACKING
- LDADD           += -lgps
- endif
++LDADD           = libviking.a $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ icons/libicons.a -lz
+ AM_CFLAGS		= -Wall -g -D_GNU_SOURCE \
+ 	$(PACKAGE_CFLAGS) \
+ 	@EXPAT_CFLAGS@ @LIBCURL_CPPFLAGS@
