@@ -1,0 +1,15 @@
+Description: exec in subdirectories
+Forwarded: no
+Last-Update: 2013-10-23
+
+--- viking-1.4.2.orig/configure.ac
++++ viking-1.4.2/configure.ac
+@@ -3,7 +3,7 @@
+ 
+ AC_PREREQ(2.59)
+ AC_INIT(viking, 1.4.2)
+-AM_INIT_AUTOMAKE([dist-bzip2 dist-zip])
++AM_INIT_AUTOMAKE([dist-bzip2 dist-zip subdir-objects])
+ dnl AC_CONFIG_SRCDIR([src/main.c])
+ AC_CONFIG_HEADERS([src/config.h])
+ GTK_DOC_CHECK(1.0)

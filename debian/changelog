@@ -1,3 +1,18 @@
+viking (1.4.2-1.1) unstable; urgency=low
+
+  [ Hideki Yamane ]
+  * debian/rules
+    - add autoreconf to dh to fix FTBFS (Closes: #725529)
+    - not dh --with quilt but use source format 3.0
+  * debian/control
+    - add "Build-Depends: dh-autoreconf"
+  * set debian/source/format as "3.0 (quilt)"
+  * debian/patches
+    - add set_subdir-objects.patch
+    - add no_doc-dir.patch
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sat, 23 Nov 2013 14:18:04 +0100
+
 viking (1.4.2-1) unstable; urgency=low
 
   * [953c9042] Imported Upstream version 1.4.2 (Closes: #690981)
