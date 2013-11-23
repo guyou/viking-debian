@@ -1,4 +1,4 @@
-viking (1.4.2-1.1) unstable; urgency=low
+viking (1.4.2-2) unstable; urgency=low
 
   [ Hideki Yamane ]
   * debian/rules
@@ -11,7 +11,10 @@ viking (1.4.2-1.1) unstable; urgency=low
     - add set_subdir-objects.patch
     - add no_doc-dir.patch
 
- -- Bernd Zeimetz <bzed@debian.org>  Sat, 23 Nov 2013 14:18:04 +0100
+  [ Bernd Zeimetz ]
+  * Applying patch from Hideki Yamane. Thanks a lot!
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sat, 23 Nov 2013 14:20:32 +0100
 
 viking (1.4.2-1) unstable; urgency=low
 
