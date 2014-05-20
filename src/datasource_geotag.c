@@ -41,7 +41,7 @@ typedef struct {
 /* The last used directory */
 static gchar *last_folder_uri = NULL;
 
-static gpointer datasource_geotag_init( );
+static gpointer datasource_geotag_init ( acq_vik_t *avt );
 static void datasource_geotag_add_setup_widgets ( GtkWidget *dialog, VikViewport *vvp, gpointer user_data );
 static void datasource_geotag_get_cmd_string ( gpointer user_data, gchar **babelargs_or_shellcmd, gchar **inputfile_or_inputtype, gpointer not_used );
 static gboolean datasource_geotag_process ( VikTrwLayer *vtl, const gchar *cmd, const gchar *extra, BabelStatusFunc status_cb, acq_dialog_widgets_t *adw, gpointer not_used );
@@ -73,7 +73,7 @@ VikDataSourceInterface vik_datasource_geotag_interface = {
 };
 
 /* See VikDataSourceInterface */
-static gpointer datasource_geotag_init ( )
+static gpointer datasource_geotag_init ( acq_vik_t *avt )
 {
 	datasource_geotag_user_data_t *user_data = g_malloc(sizeof(datasource_geotag_user_data_t));
 	user_data->filelist = NULL;
@@ -119,7 +119,8 @@ static void datasource_geotag_add_setup_widgets ( GtkWidget *dialog, VikViewport
 	//  However not much point since these will have images associated with them!
 
 	/* Packing all widgets */
-	gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), userdata->files, TRUE, TRUE, 0 );
+	GtkBox *box = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
+	gtk_box_pack_start ( box, userdata->files, TRUE, TRUE, 0 );
 
 	gtk_widget_show_all ( dialog );
 }

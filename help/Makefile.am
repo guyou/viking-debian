@@ -22,6 +22,9 @@ DOC_FIGURES = \
     figures/edwp_18.png \
     figures/geomove_18.png \
     figures/geozoom_18.png \
+    figures/LayersTracksList.png \
+    figures/LayersTracksStatistics.png \
+    figures/Maps_download_region_dialog.png \
     figures/map_tile_info_dialog.png \
     figures/mapdl_18.png \
     figures/mover_22.png \
@@ -31,9 +34,32 @@ DOC_FIGURES = \
     figures/ruler_18.png \
     figures/select_18.png \
     figures/showpic_18.png \
+    figures/Trackpoint_edit_dialog.png \
+    figures/Track_elevation_graph.png \
+    figures/Track_properties.png \
+    figures/Track_statistics.png \
     figures/trw_statusbar.png \
     figures/vik_new_route_18.png \
+    figures/WaypointsList.png \
     figures/zoom_18.png \
     figures/zoom_status_popup.png \
-    figures/Viking-OSM-CycleMap-ManyTracks.jpg
+    figures/Viking-OSM-CycleMap-ManyTracks.jpg \
+    figures/DEM_file_info_dialog.png
 DOC_LINGUAS =
+
+EXTRA_DIST = viking.xml
+
+CLEANFILES=
+# man pages processing
+# TODO conditional processing
+# (availability of docbook stylesheet and xsltproc)
+if GEN_MANPAGES
+MANPAGES=viking.1
+man_MANS = $(MANPAGES)
+CLEANFILES+=$(MANPAGES)
+endif
+DB2MAN=@DB2MAN_XSL@
+XP=@XP@ -''-nonet
+
+%.1: %.xml
+	$(XP) -o $@ $(DB2MAN) $<

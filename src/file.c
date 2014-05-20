@@ -34,20 +34,19 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef WINDOWS
+#define realpath(X,Y) _fullpath(Y,X,MAX_PATH)
+#endif
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
+
+#include "file.h"
 
 #define TEST_BOOLEAN(str) (! ((str)[0] == '\0' || (str)[0] == '0' || (str)[0] == 'n' || (str)[0] == 'N' || (str)[0] == 'f' || (str)[0] == 'F') )
 #define VIK_MAGIC "#VIK"
 #define GPX_MAGIC "<?xm"
 #define VIK_MAGIC_LEN 4
-
-#ifdef WINDOWS
-#define FILE_SEP '\\'
-#else
-#define FILE_SEP '/'
-#endif
 
 #define VIKING_FILE_VERSION 1
 
@@ -92,16 +91,7 @@ static gboolean str_starts_with ( const gchar *haystack, const gchar *needle, gu
   return FALSE;
 }
 
-static guint16 layer_type_from_string ( const gchar *str )
-{
-  guint8 i;
-  for ( i = 0; i < VIK_LAYER_NUM_TYPES; i++ )
-    if ( strcasecmp ( str, vik_layer_get_interface(i)->fixed_layer_name ) == 0 )
-      return i;
-  return -1;
-}
-
-void file_write_layer_param ( FILE *f, const gchar *name, guint8 type, VikLayerParamData data ) {
+void file_write_layer_param ( FILE *f, const gchar *name, VikLayerParamType type, VikLayerParamData data ) {
       /* string lists are handled differently. We get a GList (that shouldn't
        * be freed) back for get_param and if it is null we shouldn't write
        * anything at all (otherwise we'd read in a list with an empty string,
@@ -129,8 +119,9 @@ void file_write_layer_param ( FILE *f, const gchar *name, guint8 type, VikLayerP
           case VIK_LAYER_PARAM_UINT: fprintf ( f, "%d\n", data.u ); break;
           case VIK_LAYER_PARAM_INT: fprintf ( f, "%d\n", data.i ); break;
           case VIK_LAYER_PARAM_BOOLEAN: fprintf ( f, "%c\n", data.b ? 't' : 'f' ); break;
-          case VIK_LAYER_PARAM_STRING: fprintf ( f, "%s\n", data.s ); break;
+          case VIK_LAYER_PARAM_STRING: fprintf ( f, "%s\n", data.s ? data.s : "" ); break;
           case VIK_LAYER_PARAM_COLOR: fprintf ( f, "#%.2x%.2x%.2x\n", (int)(data.c.red/256),(int)(data.c.green/256),(int)(data.c.blue/256)); break;
+          default: break;
         }
       }
 }
@@ -333,9 +324,9 @@ static gboolean file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
         }
         else
         {
-          gint16 type = layer_type_from_string ( line+6 );
+          VikLayerTypeEnum type = vik_layer_type_from_string ( line+6 );
           push(&stack);
-          if ( type == -1 )
+          if ( type == VIK_LAYER_NUM_TYPES )
           {
             successful_read = FALSE;
             g_warning ( "Line %ld: Unknown type %s", line_num, line+6 );
@@ -373,7 +364,7 @@ static gboolean file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
           if ( stack->data && stack->under->data )
           {
             if (VIK_LAYER(stack->under->data)->type == VIK_LAYER_AGGREGATE) {
-              vik_aggregate_layer_add_layer ( VIK_AGGREGATE_LAYER(stack->under->data), VIK_LAYER(stack->data) );
+              vik_aggregate_layer_add_layer ( VIK_AGGREGATE_LAYER(stack->under->data), VIK_LAYER(stack->data), FALSE );
               vik_layer_post_read ( VIK_LAYER(stack->data), vp, TRUE );
             }
             else if (VIK_LAYER(stack->under->data)->type == VIK_LAYER_GPS) {
@@ -547,7 +538,7 @@ name=this
   {
     if ( stack->under && stack->under->data && stack->data )
     {
-      vik_aggregate_layer_add_layer ( VIK_AGGREGATE_LAYER(stack->under->data), VIK_LAYER(stack->data) );
+      vik_aggregate_layer_add_layer ( VIK_AGGREGATE_LAYER(stack->under->data), VIK_LAYER(stack->data), FALSE );
       vik_layer_post_read ( VIK_LAYER(stack->data), vp, TRUE );
     }
     pop(&stack);
@@ -617,9 +608,13 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
   g_return_val_if_fail ( vp != NULL, LOAD_TYPE_READ_FAILURE );
 
   char *filename = (char *)filename_or_uri;
-  if (strncmp(filename, "file://", 7) == 0)
+  if (strncmp(filename, "file://", 7) == 0) {
+    // Consider replacing this with:
+    // filename = g_filename_from_uri ( entry, NULL, NULL );
+    // Since this doesn't support URIs properly (i.e. will failure if is it has %20 characters in it)
     filename = filename + 7;
-
+    g_debug ( "Loading file %s from URI %s", filename, filename_or_uri );
+  }
   FILE *f = xfopen ( filename, "r" );
 
   if ( ! f )
@@ -630,10 +625,28 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
   // Attempt loading the primary file type first - our internal .vik file:
   if ( check_magic ( f, VIK_MAGIC ) )
   {
+    // Enables relative paths in a .vik file to work
+    gchar *cwd = g_get_current_dir();
+    gchar *dir = g_path_get_dirname ( filename );
+    if ( dir ) {
+      if ( g_chdir ( dir ) ) {
+        g_warning ( "Could not change directory to %s", dir );
+      }
+      g_free (dir);
+    }
+
     if ( file_read ( top, f, vp ) )
       load_answer = LOAD_TYPE_VIK_SUCCESS;
     else
       load_answer = LOAD_TYPE_VIK_FAILURE_NON_FATAL;
+
+    // Restore previous working directory
+    if ( cwd ) {
+      if ( g_chdir ( cwd ) ) {
+        g_warning ( "Could not return to directory %s", cwd );
+      }
+      g_free (cwd);
+    }
   }
   else
   {
@@ -674,7 +687,7 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
       // Complete the setup from the successful load
       vik_layer_rename ( vtl, a_file_basename ( filename ) );
       vik_layer_post_read ( vtl, vp, TRUE );
-      vik_aggregate_layer_add_layer ( top, vtl );
+      vik_aggregate_layer_add_layer ( top, vtl, FALSE );
       vik_trw_layer_auto_set_view ( VIK_TRW_LAYER(vtl), vp );
     }
   }
@@ -694,7 +707,25 @@ gboolean a_file_save ( VikAggregateLayer *top, gpointer vp, const gchar *filenam
   if ( ! f )
     return FALSE;
 
+  // Enable relative paths in .vik files to work
+  gchar *cwd = g_get_current_dir();
+  gchar *dir = g_path_get_dirname ( filename );
+  if ( dir ) {
+    if ( g_chdir ( dir ) ) {
+      g_warning ( "Could not change directory to %s", dir );
+    }
+    g_free (dir);
+  }
+
   file_write ( top, f, vp );
+
+  // Restore previous working directory
+  if ( cwd ) {
+    if ( g_chdir ( cwd ) ) {
+      g_warning ( "Could not return to directory %s", cwd );
+    }
+    g_free (cwd);
+  }
 
   fclose(f);
   f = NULL;
@@ -702,17 +733,6 @@ gboolean a_file_save ( VikAggregateLayer *top, gpointer vp, const gchar *filenam
   return TRUE;
 }
 
-
-const gchar *a_file_basename ( const gchar *filename )
-{
-  const gchar *t = filename + strlen(filename) - 1;
-  while ( --t > filename )
-    if ( *(t-1) == FILE_SEP )
-      break;
-  if ( t >= filename )
-    return t;
-  return filename;
-}
 
 /* example: 
      gboolean is_gpx = check_file_ext ( "a/b/c.gpx", ".gpx" );
@@ -797,3 +817,129 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
   return FALSE;
 }
 
+/**
+ * Just a wrapper around realpath, which itself is platform dependent
+ */
+char *file_realpath ( const char *path, char *real )
+{
+  return realpath ( path, real );
+}
+
+/**
+ * Permission granted to use this code after personal correspondance
+ * Slightly reworked for better cross platform use, glibisms, function rename and a compacter format
+ *
+ * FROM http://www.codeguru.com/cpp/misc/misc/fileanddirectorynaming/article.php/c263
+ */
+
+// GetRelativeFilename(), by Rob Fisher.
+// rfisher@iee.org
+// http://come.to/robfisher
+
+// defines
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 1024
+#endif
+// The number of characters at the start of an absolute filename.  e.g. in DOS,
+// absolute filenames start with "X:\" so this value should be 3, in UNIX they start
+// with "\" so this value should be 1.
+#ifdef WINDOWS
+#define ABSOLUTE_NAME_START 3
+#else
+#define ABSOLUTE_NAME_START 1
+#endif
+
+// Given the absolute current directory and an absolute file name, returns a relative file name.
+// For example, if the current directory is C:\foo\bar and the filename C:\foo\whee\text.txt is given,
+// GetRelativeFilename will return ..\whee\text.txt.
+
+const gchar *file_GetRelativeFilename ( gchar *currentDirectory, gchar *absoluteFilename )
+{
+  gint afMarker = 0, rfMarker = 0;
+  gint cdLen = 0, afLen = 0;
+  gint i = 0;
+  gint levels = 0;
+  static gchar relativeFilename[MAXPATHLEN+1];
+
+  cdLen = strlen(currentDirectory);
+  afLen = strlen(absoluteFilename);
+
+  // make sure the names are not too long or too short
+  if (cdLen > MAXPATHLEN || cdLen < ABSOLUTE_NAME_START+1 ||
+      afLen > MAXPATHLEN || afLen < ABSOLUTE_NAME_START+1) {
+    return NULL;
+  }
+
+  // Handle DOS names that are on different drives:
+  if (currentDirectory[0] != absoluteFilename[0]) {
+    // not on the same drive, so only absolute filename will do
+    strcpy(relativeFilename, absoluteFilename);
+    return relativeFilename;
+  }
+
+  // they are on the same drive, find out how much of the current directory
+  // is in the absolute filename
+  i = ABSOLUTE_NAME_START;
+  while (i < afLen && i < cdLen && currentDirectory[i] == absoluteFilename[i]) {
+    i++;
+  }
+
+  if (i == cdLen && (absoluteFilename[i] == G_DIR_SEPARATOR || absoluteFilename[i-1] == G_DIR_SEPARATOR)) {
+    // the whole current directory name is in the file name,
+    // so we just trim off the current directory name to get the
+    // current file name.
+    if (absoluteFilename[i] == G_DIR_SEPARATOR) {
+      // a directory name might have a trailing slash but a relative
+      // file name should not have a leading one...
+      i++;
+    }
+
+    strcpy(relativeFilename, &absoluteFilename[i]);
+    return relativeFilename;
+  }
+
+  // The file is not in a child directory of the current directory, so we
+  // need to step back the appropriate number of parent directories by
+  // using "..\"s.  First find out how many levels deeper we are than the
+  // common directory
+  afMarker = i;
+  levels = 1;
+
+  // count the number of directory levels we have to go up to get to the
+  // common directory
+  while (i < cdLen) {
+    i++;
+    if (currentDirectory[i] == G_DIR_SEPARATOR) {
+      // make sure it's not a trailing slash
+      i++;
+      if (currentDirectory[i] != '\0') {
+	levels++;
+      }
+    }
+  }
+
+  // move the absolute filename marker back to the start of the directory name
+  // that it has stopped in.
+  while (afMarker > 0 && absoluteFilename[afMarker-1] != G_DIR_SEPARATOR) {
+    afMarker--;
+  }
+
+  // check that the result will not be too long
+  if (levels * 3 + afLen - afMarker > MAXPATHLEN) {
+    return NULL;
+  }
+
+  // add the appropriate number of "..\"s.
+  rfMarker = 0;
+  for (i = 0; i < levels; i++) {
+    relativeFilename[rfMarker++] = '.';
+    relativeFilename[rfMarker++] = '.';
+    relativeFilename[rfMarker++] = G_DIR_SEPARATOR;
+  }
+
+  // copy the rest of the filename into the result string
+  strcpy(&relativeFilename[rfMarker], &absoluteFilename[afMarker]);
+
+  return relativeFilename;
+}
+/* END http://www.codeguru.com/cpp/misc/misc/fileanddirectorynaming/article.php/c263 */

@@ -37,6 +37,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 #include <libexif/exif-data.h>
 #include "libjpeg/jpeg-data.h"
 

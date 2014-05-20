@@ -22,6 +22,8 @@
 #ifndef _VIKING_AGGREGATELAYER_H
 #define _VIKING_AGGREGATELAYER_H
 
+#include <glib.h>
+
 #include "viklayer.h"
 
 G_BEGIN_DECLS
@@ -43,10 +45,10 @@ GType vik_aggregate_layer_get_type ();
 typedef struct _VikAggregateLayer VikAggregateLayer;
 
 VikAggregateLayer *vik_aggregate_layer_new ();
-void vik_aggregate_layer_add_layer ( VikAggregateLayer *val, VikLayer *l );
+void vik_aggregate_layer_add_layer ( VikAggregateLayer *val, VikLayer *l, gboolean allow_reordering );
 void vik_aggregate_layer_insert_layer ( VikAggregateLayer *val, VikLayer *l, GtkTreeIter *replace_layer );
 void vik_aggregate_layer_move_layer ( VikAggregateLayer *val, GtkTreeIter *child_iter, gboolean up );
-void vik_aggregate_layer_draw ( VikAggregateLayer *val, gpointer data );
+void vik_aggregate_layer_draw ( VikAggregateLayer *val, VikViewport *vp );
 void vik_aggregate_layer_free ( VikAggregateLayer *val );
 void vik_aggregate_layer_clear ( VikAggregateLayer *val );
 gboolean vik_aggregate_layer_delete ( VikAggregateLayer *val, GtkTreeIter *iter );
@@ -55,13 +57,13 @@ VikAggregateLayer *vik_aggregate_layer_create (VikViewport *vp);
 /* returns: 0 = success, 1 = none appl. found, 2 = found but rejected */
 // guint vik_aggregate_layer_tool ( VikAggregateLayer *val, guint16 layer_type, VikToolInterfaceFunc tool_func, GdkEventButton *event, VikViewport *vvp);
 
-VikLayer *vik_aggregate_layer_get_top_visible_layer_of_type ( VikAggregateLayer *val, gint type );
+VikLayer *vik_aggregate_layer_get_top_visible_layer_of_type ( VikAggregateLayer *val, VikLayerTypeEnum type );
 void vik_aggregate_layer_realize ( VikAggregateLayer *val, VikTreeview *vt, GtkTreeIter *layer_iter );
 gboolean vik_aggregate_layer_load_layers ( VikAggregateLayer *val, FILE *f, gpointer vp );
 gboolean vik_aggregate_layer_is_empty ( VikAggregateLayer *val );
 
 const GList *vik_aggregate_layer_get_children ( VikAggregateLayer *val );
-GList *vik_aggregate_layer_get_all_layers_of_type(VikAggregateLayer *val, GList *layers, gint type, gboolean include_invisible);
+GList *vik_aggregate_layer_get_all_layers_of_type(VikAggregateLayer *val, GList *layers, VikLayerTypeEnum type, gboolean include_invisible);
 
 G_END_DECLS
 

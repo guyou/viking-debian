@@ -28,6 +28,7 @@
 #include "coords.h"
 #include "vikwaypoint.h"
 #include "vikcoord.h"
+#include "viktrwlayer.h"
 
 G_BEGIN_DECLS
 
@@ -40,7 +41,7 @@ G_BEGIN_DECLS
 #define a_dialog_info_msg_extra(win,info,extra) a_dialog_msg(win,GTK_MESSAGE_INFO,info,extra)
 #define a_dialog_error_msg_extra(win,info,extra) a_dialog_msg(win,GTK_MESSAGE_ERROR,info,extra)
 
-GtkWidget *a_dialog_create_label_vbox ( gchar **texts, int label_count );
+GtkWidget *a_dialog_create_label_vbox ( gchar **texts, int label_count, gint spacing, gint padding );
 
 void a_dialog_msg ( GtkWindow *parent, gint type, const gchar *info, const gchar *extra );
 
@@ -57,18 +58,14 @@ gboolean a_dialog_goto_utm ( GtkWindow *parent, struct UTM *utm, const struct UT
     The name to use is returned
    When an existing waypoint the name is shown but is not allowed to be changed and NULL is returned
  */
-gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikWaypoint *wp, VikCoordMode coord_mode, gboolean is_new, gboolean *updated );
+gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikTrwLayer *vtl, VikWaypoint *wp, VikCoordMode coord_mode, gboolean is_new, gboolean *updated );
 
-gchar *a_dialog_new_track ( GtkWindow *parent, GHashTable *tracks, gchar *default_name, gboolean is_route );
+gchar *a_dialog_new_track ( GtkWindow *parent, gchar *default_name, gboolean is_route );
 
 gboolean a_dialog_yes_or_no ( GtkWindow *parent, const gchar *message, const gchar *extra );
 gboolean a_dialog_custom_zoom ( GtkWindow *parent, gdouble *xmpp, gdouble *ympp );
 gboolean a_dialog_time_threshold ( GtkWindow *parent, gchar *title_text, gchar *label_text, guint *thr );
 
-/**
- * Dialog to return a positive number via a spinbox within the supplied limits
- * A return value of zero indicates the dialog was cancelled
- */
 guint a_dialog_get_positive_number ( GtkWindow *parent, gchar *title_text, gchar *label_text, guint default_num, guint min, guint max, guint step );
 
 void a_dialog_choose_dir ( GtkWidget *entry );

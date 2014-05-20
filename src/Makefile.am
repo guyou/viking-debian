@@ -49,6 +49,7 @@ libviking_a_SOURCES = \
 	bbox.h \
 	modules.h modules.c \
 	curl_download.c curl_download.h \
+	compression.c compression.h \
 	menu.xml.h \
     degrees_converters.c degrees_converters.h \
 	globals.c globals.h \
@@ -61,6 +62,7 @@ libviking_a_SOURCES = \
 	gpspoint.c gpspoint.h \
 	dir.c dir.h \
 	file.c file.h \
+	fileutils.c fileutils.h \
 	authors.h \
 	documenters.h \
 	dialog.c dialog.h \
@@ -85,11 +87,19 @@ libviking_a_SOURCES = \
 	vikgoto.c vikgoto.h \
 	viktrwlayer_tpwin.c viktrwlayer_tpwin.h \
 	viktrwlayer_propwin.c viktrwlayer_propwin.h \
+	viktrwlayer_analysis.c viktrwlayer_analysis.h \
+	viktrwlayer_tracklist.c viktrwlayer_tracklist.h \
+	viktrwlayer_waypointlist.c viktrwlayer_waypointlist.h \
+	vikrouting.c vikrouting.h \
+	vikroutingengine.c vikroutingengine.h \
+	vikroutingwebengine.c vikroutingwebengine.h \
+	vikutils.c vikutils.h \
 	thumbnails.c thumbnails.h \
 	background.c background.h \
 	vikradiogroup.c vikradiogroup.h \
 	vikcoord.c vikcoord.h \
 	mapcache.c mapcache.h \
+	maputils.c maputils.h \
 	vikmapsource.c vikmapsource.h \
 	vikmapsourcedefault.c vikmapsourcedefault.h \
 	vikmapslayer.c vikmapslayer.h \
@@ -104,10 +114,11 @@ libviking_a_SOURCES = \
 	babel.c babel.h \
 	datasource_file.c \
 	datasource_gps.c datasource_gps.h \
-	datasource_google.c \
+	datasource_routing.c \
 	datasource_gc.c \
 	datasource_bfilter.c \
 	datasource_wikipedia.c \
+	datasource_url.c \
 	datasources.h \
 	googlesearch.c googlesearch.h \
 	dem.c dem.h \
@@ -118,11 +129,15 @@ libviking_a_SOURCES = \
 	vikwebtool.c vikwebtool.h \
 	vikwebtoolcenter.c vikwebtoolcenter.h \
 	vikwebtoolbounds.c vikwebtoolbounds.h \
+	vikexttool_datasources.c vikexttool_datasources.h \
+	vikwebtool_datasource.c vikwebtool_datasource.h \
 	dems.c dems.h \
 	srtm_continent.c \
 	uibuilder.c uibuilder.h \
 	print-preview.c print-preview.h \
 	print.c print.h \
+	viklayer_defaults.c viklayer_defaults.h \
+	settings.c settings.h \
 	preferences.c preferences.h
 
 if BING
@@ -183,6 +198,11 @@ endif
 viking_SOURCES = main.c
 
 LDADD           = libviking.a $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ icons/libicons.a
+if WINDOWS
+LDADD += \
+	../win32/installer/pixmaps/viking_icon.o
+endif
+
 AM_CFLAGS		= -Wall -g -D_GNU_SOURCE \
 	$(PACKAGE_CFLAGS) \
 	@EXPAT_CFLAGS@ @LIBCURL_CPPFLAGS@

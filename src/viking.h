@@ -42,6 +42,7 @@
 #include "vikviewport.h"
 #include "viktreeview.h"
 #include "viklayer.h"
+#include "viklayer_defaults.h"
 #include "vikaggregatelayer.h"
 #include "viklayerspanel.h"
 #include "vikcoordlayer.h"
@@ -53,8 +54,10 @@
 #include "clipboard.h"
 #include "dialog.h"
 #include "file.h"
+#include "fileutils.h"
 #include "vikwindow.h"
 #include "gpspoint.h"
 #include "gpsmapper.h"
+#include "settings.h"
 
 #endif

@@ -1,3 +1,58 @@
+Viking 1.5.1.0 (2013-03-16)
+Bug Fix Release
+* [WINDOWS] Ensure an icon is embedded in the executable.
+* [WINDOWS] Fix opening URLs in Windows build only.
+* Shift code around to reduce dependencies required for DEM access.
+* SF Bugs#105: Fix Display of Lines (Clipping) at High Zoom Levels.
+* Remove built in OpenStreetBugs datasource as this service is being phased out.
+* Isolate Viking specific code in otherwise reusable code.
+* Fix DEM layer URL reference output.
+* Remove mistaken need to change directory.
+* Remove repeating of built in types in data files.
+* External tools don't use ids
+* Skip etag files in mbtile converter tool
+* Fix crashing when copying layers with null strings as parameters.
+* Fix translatable string with variable argument
+* Fix 'export_to_common' dialog
+* Fix needing to calculate bounds of *both* tracks when a track is split via the marker.
+* Fix vik_track_get_length_to_trackpoint() so with the first track point it returns zero, not the entire track length!
+* Fix opening files on command line in different directories.
+* Move man files from doc to help directory so they will be included in the output from make distcheck.
+* Update spec file
+* [QA] Remove build references to things that don't exist anymore.
+* SF Bugs #104: Fix GStatBuf not available on Glib < 2.26
+* Fix the display of speed in statusbar output.
+
+Viking 1.5 (2013-10-13)
+New features since 1.4.2
+* Startup preferences for ease of use.
+* Multi layer/track statistics.
+* Multi layer/track or waypoint detailed lists.
+* Control sorting of layers and quick show/hide all options.
+* Configurable layer defaults.
+* Optimizations when loading and drawing large numbers of tracks.
+* Allow higher zoom levels up to 1/32 (OSM z22 equivalent but maps only requested up to z19).
+* Retain internal options across sessions.
+* Selectable online router service provider (now including OSRM)
+* 'Via' points online route refining.
+* Download a file directly from an URL.
+* Datasource acquiring files from URLs related to the current view.
+* Support timestamps (read only) in waypoints.
+* Support naming trackpoints.
+* Request downloading a region of maps over multiple zoom levels.
+* Support Compressed My OSM Traces files (requires libbz2 and libmagic).
+* Support opening files drag and drop on to the viewport.
+* Support relative paths in Viking files.
+* Add support for OSM Humanitarian (HOT) Style Map.
+* Advanced preferences.
+* Optional track labelling on the viewport.
+* Translations for the Basque language.
+* Improved Help Manual.
+* Many internal improvements.
+
+Fixes since 1.4.2
+* Fix crashing if attempting to Extend a Route via the Route Finder when the route has no points.
+
 Viking 1.4.2.0 (2013-07-26)
 Bug Fix Release
 * Fix menu use of named own Icons since the icons were renamed some time ago.

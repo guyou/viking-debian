@@ -104,18 +104,12 @@ static void on_complete_process (w_and_interface_t *wi)
     if ( wi->creating_new_layer ) {
       /* Only create the layer if it actually contains anything useful */
       // TODO: create function for this operation to hide detail:
-      if ( g_hash_table_size (vik_trw_layer_get_tracks(wi->vtl)) ||
-           g_hash_table_size (vik_trw_layer_get_waypoints(wi->vtl)) ||
-           g_hash_table_size (vik_trw_layer_get_routes(wi->vtl)) ) {
+      if ( ! vik_trw_layer_is_empty ( wi->vtl ) ) {
         vik_layer_post_read ( VIK_LAYER(wi->vtl), wi->w->vvp, TRUE );
-        vik_aggregate_layer_add_layer( vik_layers_panel_get_top_layer(wi->w->vlp), VIK_LAYER(wi->vtl));
+        vik_aggregate_layer_add_layer ( vik_layers_panel_get_top_layer(wi->w->vlp), VIK_LAYER(wi->vtl), TRUE );
       }
       else
         gtk_label_set_text ( GTK_LABEL(wi->w->status), _("No data.") );
-    }
-    /* View this data if available and is desired */
-    if ( wi->vtl && wi->w->source_interface->autoview ) {
-      vik_trw_layer_auto_set_view ( wi->vtl, vik_layers_panel_get_viewport(wi->w->vlp) );
     }
     if ( wi->w->source_interface->keep_dialog_open ) {
       gtk_dialog_set_response_sensitive ( GTK_DIALOG(wi->w->dialog), GTK_RESPONSE_ACCEPT, TRUE );
@@ -124,8 +118,14 @@ static void on_complete_process (w_and_interface_t *wi)
       gtk_dialog_response ( GTK_DIALOG(wi->w->dialog), GTK_RESPONSE_ACCEPT );
     }
     // Main display update
-    if ( wi->vtl )
+    if ( wi->vtl ) {
+      vik_layer_post_read ( VIK_LAYER(wi->vtl), wi->w->vvp, TRUE );
+      // View this data if desired - must be done after post read (so that the bounds are known)
+      if ( wi->w->source_interface->autoview ) {
+	vik_trw_layer_auto_set_view ( wi->vtl, vik_layers_panel_get_viewport(wi->w->vlp) );
+      }
       vik_layers_panel_emit_update ( wi->w->vlp );
+    }
   } else {
     /* cancelled */
     if ( wi->creating_new_layer )
@@ -213,7 +213,7 @@ static gchar *write_tmp_track ( VikTrack *track )
  * the other can be NULL.
  */
 static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikDataSourceInterface *source_interface,
-		      VikTrwLayer *vtl, VikTrack *track )
+		      VikTrwLayer *vtl, VikTrack *track, gpointer userdata, VikDataSourceCleanupFunc cleanup_function )
 {
   /* for manual dialogs */
   GtkWidget *dialog = NULL;
@@ -226,6 +226,12 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   gpointer user_data;
   gpointer options = NULL;
 
+  acq_vik_t avt;
+  avt.vlp = vlp;
+  avt.vvp = vvp;
+  avt.vw = vw;
+  avt.userdata = userdata;
+
   /* for UI builder */
   gpointer pass_along_data;
   VikLayerParamData *paramdatas = NULL;
@@ -234,7 +240,7 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
 
   /*** INIT AND CHECK EXISTENCE ***/
   if ( source_interface->init_func )
-    user_data = source_interface->init_func();
+    user_data = source_interface->init_func(&avt);
   else
     user_data = NULL;
   pass_along_data = user_data;
@@ -344,7 +350,7 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   w->dialog = dialog;
   w->running = TRUE;
   status = gtk_label_new (_("Working..."));
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), status, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), status, FALSE, FALSE, 5 );
   gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
   // May not want to see the dialog at all
   if ( source_interface->is_thread || source_interface->keep_dialog_open )
@@ -380,7 +386,11 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
 
   if ( source_interface->is_thread ) {
     if ( cmd ) {
-      g_thread_create((GThreadFunc)get_from_anything, wi, FALSE, NULL );
+#if GLIB_CHECK_VERSION (2, 32, 0)
+      g_thread_try_new ( "get_from_anything", (GThreadFunc)get_from_anything, wi, NULL );
+#else
+      g_thread_create ( (GThreadFunc)get_from_anything, wi, FALSE, NULL );
+#endif
       gtk_dialog_run ( GTK_DIALOG(dialog) );
       if (w->running) {
         // Cancel and mark for thread to finish
@@ -427,15 +437,26 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   }
 
   gtk_widget_destroy ( dialog );
+
+  if ( cleanup_function )
+    cleanup_function ( source_interface );
 }
 
 /**
  * a_acquire:
+ * @vw: The #VikWindow to work with
+ * @vlp: The #VikLayersPanel in which a #VikTrwLayer layer may be created/appended
+ * @vvp: The #VikViewport defining the current view
+ * @source_interface: The #VikDataSourceInterface determining how and what actions to take
+ * @userdata: External data to be passed into the #VikDataSourceInterface
+ * @cleanup_function: The function to dispose the #VikDataSourceInterface if necessary
  *
  * Process the given VikDataSourceInterface for sources with no input data.
  */
-void a_acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikDataSourceInterface *source_interface ) {
-  acquire ( vw, vlp, vvp, source_interface, NULL, NULL );
+void a_acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikDataSourceInterface *source_interface,
+                 gpointer userdata, VikDataSourceCleanupFunc cleanup_function )
+{
+  acquire ( vw, vlp, vvp, source_interface, NULL, NULL, userdata, cleanup_function );
 }
 
 static void acquire_trwlayer_callback ( GObject *menuitem, gpointer *pass_along )
@@ -447,7 +468,7 @@ static void acquire_trwlayer_callback ( GObject *menuitem, gpointer *pass_along 
   VikTrwLayer *vtl =	pass_along[3];
   VikTrack *tr =	pass_along[4];
 
-  acquire ( vw, vlp, vvp, iface, vtl, tr );
+  acquire ( vw, vlp, vvp, iface, vtl, tr, NULL, NULL );
 }
 
 static GtkWidget *acquire_build_menu ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp,

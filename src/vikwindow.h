@@ -53,6 +53,8 @@ GType vik_window_get_type ();
 // To call from main to start things off:
 VikWindow *vik_window_new_window ();
 
+void vik_window_new_window_finish ( VikWindow *vw );
+
 GtkWidget *vik_window_get_drawmode_button ( VikWindow *vw, VikViewportDrawMode mode );
 gboolean vik_window_get_pan_move ( VikWindow *vw );
 void vik_window_open_file ( VikWindow *vw, const gchar *filename, gboolean changefilename );
@@ -84,6 +86,9 @@ gpointer vik_window_get_containing_trw_layer ( VikWindow *vw );
 gboolean vik_window_clear_highlight ( VikWindow *vw );
 
 GThread *vik_window_get_thread ( VikWindow *vw );
+
+void vik_window_set_busy_cursor ( VikWindow *vw );
+void vik_window_clear_busy_cursor ( VikWindow *vw );
 
 typedef struct {
   VikWindow *vw;

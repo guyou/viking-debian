@@ -9,6 +9,9 @@
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 #undef HAVE_BIND_TEXTDOMAIN_CODESET
 
+/* Define to 1 if you have the <bzlib.h> header file. */
+#undef HAVE_BZLIB_H
+
 /* Define to 1 if you have the `dcgettext' function. */
 #undef HAVE_DCGETTEXT
 
@@ -27,6 +30,9 @@
 /* Define if your <locale.h> file defines LC_MESSAGES. */
 #undef HAVE_LC_MESSAGES
 
+/* Define to 1 if you have the `bz2' library (-lbz2). */
+#undef HAVE_LIBBZ2
+
 /* Define to 1 if you have a functional curl library. */
 #undef HAVE_LIBCURL
 
@@ -39,6 +45,9 @@
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
+/* Define to 1 if you have the `magic' library (-lmagic). */
+#undef HAVE_LIBMAGIC
+
 /* Define to 1 if you have the `X11' library (-lX11). */
 #undef HAVE_LIBX11
 
@@ -47,6 +56,9 @@
 
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
+
+/* Define to 1 if you have the <magic.h> header file. */
+#undef HAVE_MAGIC_H
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
@@ -120,6 +132,9 @@
 
 /* Define to 1 if you have the <utime.h> header file. */
 #undef HAVE_UTIME_H
+
+/* Enable Viking specifics in otherwise reusable code */
+#undef HAVE_VIKING
 
 /* Define to 1 if you have the <X11/Xlib.h> header file. */
 #undef HAVE_X11_XLIB_H
@@ -208,9 +223,6 @@
 
 /* Version number of package */
 #undef VERSION
-
-/* NO ALPHABETIZED TRW */
-#undef VIK_CONFIG_ALPHABETIZED_TRW
 
 /* BING STUFF */
 #undef VIK_CONFIG_BING

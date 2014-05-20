@@ -2,7 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
- * Copyright (c) 2011, Rob Norris <rw_norris@hotmail.com>
+ * Copyright (c) 2011-2013, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +81,8 @@ gboolean vik_trw_layer_find_center ( VikTrwLayer *vtl, VikCoord *dest );
 GHashTable *vik_trw_layer_get_tracks ( VikTrwLayer *l );
 GHashTable *vik_trw_layer_get_routes ( VikTrwLayer *l );
 GHashTable *vik_trw_layer_get_waypoints ( VikTrwLayer *l );
+gboolean vik_trw_layer_is_empty ( VikTrwLayer *vtl );
+
 gboolean vik_trw_layer_new_waypoint ( VikTrwLayer *vtl, GtkWindow *w, const VikCoord *def_coord );
 
 VikCoordMode vik_trw_layer_get_coord_mode ( VikTrwLayer *vtl );
@@ -92,13 +94,64 @@ void vik_trw_layer_delete_all_tracks ( VikTrwLayer *vtl );
 void vik_trw_layer_delete_all_routes ( VikTrwLayer *vtl );
 void trw_layer_cancel_tps_of_track ( VikTrwLayer *vtl, VikTrack *trk );
 
+void vik_trw_layer_reset_waypoints ( VikTrwLayer *vtl );
+
+// For creating a list of tracks with the corresponding layer it is in
+//  (thus a selection of tracks may be from differing layers)
+typedef struct {
+  VikTrack *trk;
+  VikTrwLayer *vtl;
+} vik_trw_track_list_t;
+
+typedef GList* (*VikTrwlayerGetTracksAndLayersFunc) (VikLayer*, gpointer);
+GList *vik_trw_layer_build_track_list_t ( VikTrwLayer *vtl, GList *tracks );
+
+// For creating a list of waypoints with the corresponding layer it is in
+//  (thus a selection of waypoints may be from differing layers)
+typedef struct {
+  VikWaypoint *wpt;
+  VikTrwLayer *vtl;
+} vik_trw_waypoint_list_t;
+
+typedef GList* (*VikTrwlayerGetWaypointsAndLayersFunc) (VikLayer*, gpointer);
+GList *vik_trw_layer_build_waypoint_list_t ( VikTrwLayer *vtl, GList *waypoints );
+
+GdkPixbuf* get_wp_sym_small ( gchar *symbol );
+
 /* Exposed Layer Interface function definitions */
 // Intended only for use by other trw_layer subwindows
 void trw_layer_verify_thumbnails ( VikTrwLayer *vtl, GtkWidget *vp );
 // Other functions only for use by other trw_layer subwindows
 gchar *trw_layer_new_unique_sublayer_name ( VikTrwLayer *vtl, gint sublayer_type, const gchar *name );
+void trw_layer_waypoint_rename ( VikTrwLayer *vtl, VikWaypoint *wp, const gchar *new_name );
+void trw_layer_waypoint_reset_icon ( VikTrwLayer *vtl, VikWaypoint *wp );
+void trw_layer_calculate_bounds_waypoints ( VikTrwLayer *vtl );
 
-void trw_layer_update_treeview ( VikTrwLayer *vtl, VikTrack *trk, gpointer *trk_id );
+gboolean vik_trw_layer_get_tracks_visibility ( VikTrwLayer *vtl );
+gboolean vik_trw_layer_get_routes_visibility ( VikTrwLayer *vtl );
+gboolean vik_trw_layer_get_waypoints_visibility ( VikTrwLayer *vtl );
+
+void trw_layer_update_treeview ( VikTrwLayer *vtl, VikTrack *trk );
+
+void trw_layer_dialog_shift ( VikTrwLayer *vtl, GtkWindow *dialog, VikCoord *coord, gboolean vertical );
+
+typedef struct {
+  VikTrack *trk; // input
+  gpointer uuid; // output
+} trku_udata;
+gboolean trw_layer_track_find_uuid ( const gpointer id, const VikTrack *trk, gpointer udata );
+
+typedef struct {
+  VikWaypoint *wp; // input
+  gpointer uuid;   // output
+} wpu_udata;
+gboolean trw_layer_waypoint_find_uuid ( const gpointer id, const VikWaypoint *wp, gpointer udata );
+
+void trw_layer_zoom_to_show_latlons ( VikTrwLayer *vtl, VikViewport *vvp, struct LatLon maxmin[2] );
+
+GHashTable *vik_trw_layer_get_tracks_iters ( VikTrwLayer *vtl );
+GHashTable *vik_trw_layer_get_routes_iters ( VikTrwLayer *vtl );
+GHashTable *vik_trw_layer_get_waypoints_iters ( VikTrwLayer *vtl );
 
 G_END_DECLS
 

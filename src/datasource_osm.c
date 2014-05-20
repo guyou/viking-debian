@@ -43,7 +43,7 @@ typedef struct {
 
 static gdouble last_page_number = 0;
 
-static gpointer datasource_osm_init( );
+static gpointer datasource_osm_init ( acq_vik_t *avt );
 static void datasource_osm_add_setup_widgets ( GtkWidget *dialog, VikViewport *vvp, gpointer user_data );
 static void datasource_osm_get_cmd_string ( datasource_osm_widgets_t *widgets, gchar **cmd, gchar **input_file_type, DownloadMapOptions *options );
 static void datasource_osm_cleanup ( gpointer data );
@@ -67,9 +67,11 @@ VikDataSourceInterface vik_datasource_osm_interface = {
   (VikDataSourceOffFunc)                NULL,
 };
 
-static gpointer datasource_osm_init ( )
+static gpointer datasource_osm_init ( acq_vik_t *avt )
 {
   datasource_osm_widgets_t *widgets = g_malloc(sizeof(*widgets));
+  /* Keep reference to viewport */
+  widgets->vvp = avt->vvp;
   return widgets;
 }
 
@@ -80,11 +82,12 @@ static void datasource_osm_add_setup_widgets ( GtkWidget *dialog, VikViewport *v
   page_number_label = gtk_label_new (_("Page number:"));
   widgets->page_number = gtk_spin_button_new_with_range(0, 100, 1);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(widgets->page_number), last_page_number);
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), page_number_label, FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), widgets->page_number, FALSE, FALSE, 5 );
+  
+  /* Packing all widgets */
+  GtkBox *box = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
+  gtk_box_pack_start ( box, page_number_label, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( box, widgets->page_number, FALSE, FALSE, 5 );
   gtk_widget_show_all(dialog);
-  /* Keep reference to viewport */
-  widgets->vvp = vvp;
 }
 
 static void datasource_osm_get_cmd_string ( datasource_osm_widgets_t *widgets, gchar **cmd, gchar **input_file_type, DownloadMapOptions *options )

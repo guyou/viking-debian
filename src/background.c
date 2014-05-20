@@ -23,6 +23,7 @@
 #include <glib/gi18n.h>
 
 #include "background.h"
+#include "settings.h"
 
 static GThreadPool *thread_pool = NULL;
 static gboolean stop_all_threads = FALSE;
@@ -218,6 +219,8 @@ static void bgwindow_response (GtkDialog *dialog, gint arg1 )
     gtk_widget_hide ( bgwindow );
 }
 
+#define VIK_SETTINGS_BACKGROUND_MAX_THREADS "background_max_threads"
+
 /**
  * a_background_init:
  *
@@ -226,8 +229,11 @@ static void bgwindow_response (GtkDialog *dialog, gint arg1 )
 void a_background_init()
 {
   /* initialize thread pool */
-  /* TODO parametrize this via preference and/or command line arg */
   gint max_threads = 10;  /* limit maximum number of threads running at one time */
+  gint maxt;
+  if ( a_settings_get_integer ( VIK_SETTINGS_BACKGROUND_MAX_THREADS, &maxt ) )
+    max_threads = maxt;
+
   thread_pool = g_thread_pool_new ( (GFunc) thread_helper, NULL, max_threads, FALSE, NULL );
 
   GtkCellRenderer *renderer;
@@ -263,7 +269,7 @@ void a_background_init()
 #if GTK_CHECK_VERSION (2, 20, 0)
   response_w = gtk_dialog_get_widget_for_response ( GTK_DIALOG(bgwindow), GTK_RESPONSE_ACCEPT );
 #endif
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(bgwindow)->vbox), scrolled_window, TRUE, TRUE, 0 );
+  gtk_box_pack_start ( GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(bgwindow))), scrolled_window, TRUE, TRUE, 0 );
   gtk_window_set_default_size ( GTK_WINDOW(bgwindow), 400, 400 );
   gtk_window_set_title ( GTK_WINDOW(bgwindow), _("Viking Background Jobs") );
   if ( response_w )
@@ -285,6 +291,11 @@ void a_background_uninit()
   /* wait until all running threads stop */
   stop_all_threads = TRUE;
   g_thread_pool_free ( thread_pool, TRUE, TRUE );
+
+  gtk_list_store_clear ( bgstore );
+  g_object_unref ( bgstore );
+
+  gtk_widget_destroy ( bgwindow );
 }
 
 void a_background_add_window (VikWindow *vw)

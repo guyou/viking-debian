@@ -23,6 +23,8 @@
 
 #include "uibuilder.h"
 
+G_BEGIN_DECLS
+
 // TODO IMPORTANT!!!! add REGISTER_GROUP !!! OR SOMETHING!!! CURRENTLY GROUPLESS!!!
 
 void a_preferences_init();
@@ -47,8 +49,9 @@ VikLayerParamData *a_preferences_get(const gchar *key);
 /* Allow preferences to be manipulated externally */
 void a_preferences_run_setparam ( VikLayerParamData data, VikLayerParam *params );
 
-/* TRUE on success */
 gboolean a_preferences_save_to_file();
 
+
+G_END_DECLS
 
 #endif

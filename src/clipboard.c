@@ -64,7 +64,7 @@ static void clip_get ( GtkClipboard *c, GtkSelectionData *selection_data, guint 
   if ( info == 0 ) {
     // Viking Data Type
     //    g_print("clip_get: vc = %p, size = %d\n", vc, sizeof(*vc) + vc->len);
-    gtk_selection_data_set ( selection_data, selection_data->target, 8, (void *)vc, sizeof(*vc) + vc->len );
+    gtk_selection_data_set ( selection_data, gtk_selection_data_get_target(selection_data), 8, (void *)vc, sizeof(*vc) + vc->len );
   }
   if ( info == 1 ) {
     // Should be a string, but make sure it's something
@@ -91,17 +91,17 @@ static void clip_receive_viking ( GtkClipboard *c, GtkSelectionData *sd, gpointe
 {
   VikLayersPanel *vlp = p;
   vik_clipboard_t *vc;
-  if (sd->length == -1) {
+  if (gtk_selection_data_get_length(sd) == -1) {
     g_warning ( _("paste failed") );
     return;
   } 
-  //  g_print("clip receive: target = %s, type = %s\n", gdk_atom_name(sd->target), gdk_atom_name(sd->type));
-  g_assert(!strcmp(gdk_atom_name(sd->target), target_table[0].target));
+  //  g_print("clip receive: target = %s, type = %s\n", gdk_atom_name(gtk_selection_data_get_target(sd), gdk_atom_name(sd->type));
+  //g_assert(!strcmp(gdk_atom_name(gtk_selection_data_get_target(sd)), target_table[0].target));
 
-  vc = (vik_clipboard_t *)sd->data;
+  vc = (vik_clipboard_t *)gtk_selection_data_get_data(sd);
   //  g_print("  sd->data = %p, sd->length = %d, vc->len = %d\n", sd->data, sd->length, vc->len);
 
-  if (sd->length != sizeof(*vc) + vc->len) {
+  if (gtk_selection_data_get_length(sd) != sizeof(*vc) + vc->len) {
     g_warning ( _("wrong clipboard data size") );
     return;
   }
@@ -240,8 +240,23 @@ static void clip_add_wp(VikLayersPanel *vlp, struct LatLon *coord)
 static void clip_receive_text (GtkClipboard *c, const gchar *text, gpointer p)
 {
   VikLayersPanel *vlp = p;
+
+  g_debug ( "got text: %s", text );
+
+  VikLayer *sel = vik_layers_panel_get_selected ( vlp );
+  if ( sel && vik_treeview_get_editing ( sel->vt ) ) {
+    GtkTreeIter iter;
+    if ( vik_treeview_get_selected_iter ( sel->vt, &iter ) ) {
+      // Try to sanitize input:
+      gchar *name = g_strescape ( text, NULL );
+      vik_layer_rename ( sel, name );
+      vik_treeview_item_set_name ( sel->vt, &iter, name );
+      g_free ( name );
+    }
+    return;
+  }
+
   struct LatLon coord;
-  //  g_print("got text: %s\n", text);
   if (clip_parse_latlon(text, &coord)) {
     clip_add_wp(vlp, &coord);
   }
@@ -256,15 +271,15 @@ static void clip_receive_html ( GtkClipboard *c, GtkSelectionData *sd, gpointer 
   gint tag = 0, i;
   struct LatLon coord;
 
-  if (sd->length == -1) {
+  if (gtk_selection_data_get_length(sd) == -1) {
     return;
   } 
 
   /* - copying from Mozilla seems to give html in UTF-16. */
-  if (!(s =  g_convert ( (gchar *)sd->data, sd->length, "UTF-8", "UTF-16", &r, &w, &err))) {
+  if (!(s =  g_convert ( (gchar *)gtk_selection_data_get_data(sd), gtk_selection_data_get_length(sd), "UTF-8", "UTF-16", &r, &w, &err))) {
     return;
   }
-  //  g_print("html is %d bytes long: %s\n", sd->length, s);
+  //  g_print("html is %d bytes long: %s\n", gtk_selection_data_get_length(sd), s);
 
   /* scrape a coordinate pasted from a geocaching.com page: look for a 
    * telltale tag if possible, and then remove tags 
@@ -302,19 +317,26 @@ void clip_receive_targets ( GtkClipboard *c, GdkAtom *a, gint n, gpointer p )
   gint i;
 
   for (i=0; i<n; i++) {
-    // g_print("  ""%s""\n", gdk_atom_name(a[i]));
-    if (!strcmp(gdk_atom_name(a[i]), "text/html")) {
+    gchar* name = gdk_atom_name(a[i]);
+    //g_print("  ""%s""\n", name);
+    gboolean breaktime = FALSE;
+    if (!g_strcmp0(name, "text/html")) {
       gtk_clipboard_request_contents ( c, gdk_atom_intern("text/html", TRUE), clip_receive_html, vlp );
-      break;
+      breaktime = TRUE;
     }
     if (a[i] == GDK_TARGET_STRING) {
       gtk_clipboard_request_text ( c, clip_receive_text, vlp );
-      break;
+      breaktime = TRUE;
     }
-    if (!strcmp(gdk_atom_name(a[i]), "application/viking")) {
+    if (!g_strcmp0(name, "application/viking")) {
       gtk_clipboard_request_contents ( c, gdk_atom_intern("application/viking", TRUE), clip_receive_viking, vlp );
-      break;
+      breaktime = TRUE;
     }
+
+    g_free ( name );
+
+    if ( breaktime )
+      break;
   }
 }
 
@@ -331,11 +353,11 @@ void a_clipboard_copy_selected ( VikLayersPanel *vlp )
 {
   VikLayer *sel = vik_layers_panel_get_selected ( vlp );
   GtkTreeIter iter;
-  VikClipboardDataType type;
+  VikClipboardDataType type = VIK_CLIPBOARD_DATA_NONE;
   guint16 layer_type = 0;
   gint subtype = 0;
   guint8 *data = NULL;
-  guint len;
+  guint len = 0;
   const gchar *name = NULL;
 
   if ( ! sel )
@@ -344,27 +366,33 @@ void a_clipboard_copy_selected ( VikLayersPanel *vlp )
   vik_treeview_get_selected_iter ( sel->vt, &iter );
   layer_type = sel->type;
 
-  if ( vik_treeview_item_get_type ( sel->vt, &iter ) == VIK_TREEVIEW_TYPE_SUBLAYER ) {
-    type = VIK_CLIPBOARD_DATA_SUBLAYER;
-    if ( vik_layer_get_interface(layer_type)->copy_item) {
-      subtype = vik_treeview_item_get_data(sel->vt, &iter);
-      vik_layer_get_interface(layer_type)->copy_item(sel, subtype, vik_treeview_item_get_pointer(sel->vt, &iter), &data, &len );
-      // This name is used in setting the text representation of the item on the clipboard.
-      name = vik_treeview_item_get_name(sel->vt, &iter);
+  // Since we intercept copy and paste keyboard operations, this is called even when a cell is being edited
+  if ( vik_treeview_get_editing ( sel->vt ) ) {
+    type = VIK_CLIPBOARD_DATA_TEXT;
+    //  I don't think we can access what is actually selected (internal to GTK) so we go for the name of the item
+    // At least this is better than copying the layer data - which is even further away from what the user would be expecting...
+    name = vik_treeview_item_get_name ( sel->vt, &iter );
+    len = 0;
+  }
+  else {
+    if ( vik_treeview_item_get_type ( sel->vt, &iter ) == VIK_TREEVIEW_TYPE_SUBLAYER ) {
+      type = VIK_CLIPBOARD_DATA_SUBLAYER;
+      if ( vik_layer_get_interface(layer_type)->copy_item) {
+        subtype = vik_treeview_item_get_data(sel->vt, &iter);
+        vik_layer_get_interface(layer_type)->copy_item(sel, subtype, vik_treeview_item_get_pointer(sel->vt, &iter), &data, &len );
+        // This name is used in setting the text representation of the item on the clipboard.
+        name = vik_treeview_item_get_name(sel->vt, &iter);
+      }
+    }
+    else {
+      gint ilen;
+      type = VIK_CLIPBOARD_DATA_LAYER;
+      vik_layer_marshall ( sel, &data, &ilen );
+      len = ilen;
+      name = vik_layer_get_name ( vik_treeview_item_get_pointer(sel->vt, &iter) );
     }
   }
-  else
-  {
-    gint ilen;
-    type = VIK_CLIPBOARD_DATA_LAYER;
-    vik_layer_marshall ( sel, &data, &ilen );
-    len = ilen;
-    name = vik_layer_get_name ( vik_treeview_item_get_pointer(sel->vt, &iter) );
-  }
-
-  if (data) {
-    a_clipboard_copy( type, layer_type, subtype, len, name, data);
-  }
+  a_clipboard_copy ( type, layer_type, subtype, len, name, data );
 }
 
 void a_clipboard_copy( VikClipboardDataType type, guint16 layer_type, gint subtype, guint len, const gchar* text, guint8 * data)
@@ -377,10 +405,17 @@ void a_clipboard_copy( VikClipboardDataType type, guint16 layer_type, gint subty
   vc->subtype = subtype;
   vc->len = len;
   vc->text = g_strdup (text);
-  memcpy(vc->data, data, len);
-  g_free(data);
+  if ( data ) {
+    memcpy(vc->data, data, len);
+    g_free(data);
+  }
   vc->pid = getpid();
-  gtk_clipboard_set_with_data ( c, target_table, G_N_ELEMENTS(target_table), clip_get, clip_clear, vc );
+
+  // Simple clipboard copy when necessary
+  if ( type == VIK_CLIPBOARD_DATA_TEXT )
+    gtk_clipboard_set_text ( c, text, -1 );
+  else
+    gtk_clipboard_set_with_data ( c, target_table, G_N_ELEMENTS(target_table), clip_get, clip_clear, vc );
 }
 
 /**
@@ -406,12 +441,12 @@ static void clip_determine_viking_type ( GtkClipboard *c, GtkSelectionData *sd, 
   // Default value
   *vdct = VIK_CLIPBOARD_DATA_NONE;
   vik_clipboard_t *vc;
-  if (sd->length == -1) {
+  if (gtk_selection_data_get_length(sd) == -1) {
     g_warning ("DETERMINING TYPE: length failure");
     return;
   }
 
-  vc = (vik_clipboard_t *)sd->data;
+  vc = (vik_clipboard_t *)gtk_selection_data_get_data(sd);
 
   if ( !vc->type )
     return;
@@ -431,11 +466,18 @@ static void clip_determine_type ( GtkClipboard *c, GdkAtom *a, gint n, gpointer 
 {
   gint i;
   for (i=0; i<n; i++) {
-    // g_print("  ""%s""\n", gdk_atom_name(a[i]));
-    if (!strcmp(gdk_atom_name(a[i]), "application/viking")) {
+    gchar *name = gdk_atom_name(a[i]);
+    // g_print("  ""%s""\n", name);
+    gboolean breaktime = FALSE;
+    if (!g_strcmp0(name, "application/viking")) {
       gtk_clipboard_request_contents ( c, gdk_atom_intern("application/viking", TRUE), clip_determine_viking_type, p );
-      break;
+      breaktime = TRUE;
     }
+
+    g_free ( name );
+
+    if ( breaktime )
+      break;
   }
 }
 

@@ -11,13 +11,15 @@ static const char *menu_xml =
 	"      <menuitem action='Append'/>"
 	"      <menuitem action='Save'/>"
 	"      <menuitem action='SaveAs'/>"
+	"      <menuitem action='FileProperties'/>"
 	"      <separator/>"
+	"      <menu action='Export'>"
+	"        <menuitem action='ExportGPX'/>"
+	"      </menu>"
 	"      <menu action='Acquire'>"
 	"        <menuitem action='AcquireGPS'/>"
 	"        <menuitem action='AcquireGPSBabel'/>"
-#ifdef VIK_CONFIG_GOOGLE
-	"        <menuitem action='AcquireGoogle'/>"
-#endif
+	"        <menuitem action='AcquireRouting'/>"
 #ifdef VIK_CONFIG_OPENSTREETMAP
 	"        <menuitem action='AcquireOSM'/>"
 	"        <menuitem action='AcquireMyOSM'/>"
@@ -28,6 +30,7 @@ static const char *menu_xml =
 #ifdef VIK_CONFIG_GEOTAG
 	"        <menuitem action='AcquireGeotag'/>"
 #endif
+	"        <menuitem action='AcquireURL'/>"
 #ifdef VIK_CONFIG_GEONAMES
 	"        <menuitem action='AcquireWikipedia'/>"
 #endif
@@ -52,6 +55,7 @@ static const char *menu_xml =
 	"      <menuitem action='MapCacheFlush'/>"
 	"      <menuitem action='SetDefaultLocation'/>"
 	"      <menuitem action='Preferences'/>"
+	"      <menu action='LayerDefaults'/>"
 	"    </menu>"
 	"    <menu action='View'>"
 	"      <menuitem action='ModeUTM'/>"

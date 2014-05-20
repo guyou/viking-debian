@@ -22,8 +22,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include <string.h>
-#include <limits.h>
 
 #include <glib/gprintf.h>
 #include <glib/gi18n.h>
@@ -35,8 +33,6 @@
 #include "gpx.h"
 #include "acquire.h"
 #include "osm-traces.h"
-#include "preferences.h"
-#include "curl_download.h"
 #include "datasource_gps.h"
 #include "bbox.h"
 
@@ -53,7 +49,7 @@ typedef struct {
 	VikViewport *vvp;
 } datasource_osm_my_traces_t;
 
-static gpointer datasource_osm_my_traces_init( );
+static gpointer datasource_osm_my_traces_init ( acq_vik_t *avt );
 static void datasource_osm_my_traces_add_setup_widgets ( GtkWidget *dialog, VikViewport *vvp, gpointer user_data );
 static void datasource_osm_my_traces_get_cmd_string ( gpointer user_data, gchar **args, gchar **extra, DownloadMapOptions *options );
 static gboolean datasource_osm_my_traces_process  ( VikTrwLayer *vtl, const gchar *cmd, const gchar *extra, BabelStatusFunc status_cb, acq_dialog_widgets_t *adw, DownloadMapOptions *options_unused );
@@ -84,7 +80,7 @@ VikDataSourceInterface vik_datasource_osm_my_traces_interface = {
   0
 };
 
-static gpointer datasource_osm_my_traces_init ( )
+static gpointer datasource_osm_my_traces_init ( acq_vik_t *avt )
 {
   datasource_osm_my_traces_t *data = g_malloc(sizeof(*data));
   // Reuse GPS functions
@@ -108,18 +104,21 @@ static void datasource_osm_my_traces_add_setup_widgets ( GtkWidget *dialog, VikV
 	user_label = gtk_label_new(_("Username:"));
 	data->user_entry = gtk_entry_new();
 
-	gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), user_label, FALSE, FALSE, 0 );
-	gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), data->user_entry, FALSE, FALSE, 0 );
+	gtk_box_pack_start ( GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), user_label, FALSE, FALSE, 0 );
+	gtk_box_pack_start ( GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), data->user_entry, FALSE, FALSE, 0 );
 	gtk_widget_set_tooltip_markup ( GTK_WIDGET(data->user_entry), _("The email or username used to login to OSM") );
 
 	password_label = gtk_label_new ( _("Password:") );
 	data->password_entry = gtk_entry_new ();
 
-	gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), password_label, FALSE, FALSE, 0 );
-	gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), data->password_entry, FALSE, FALSE, 0 );
 	gtk_widget_set_tooltip_markup ( GTK_WIDGET(data->password_entry), _("The password used to login to OSM") );
 
 	osm_login_widgets (data->user_entry, data->password_entry);
+
+	/* Packing all widgets */
+	GtkBox *box = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
+	gtk_box_pack_start ( box, password_label, FALSE, FALSE, 0 );
+	gtk_box_pack_start ( box, data->password_entry, FALSE, FALSE, 0 );
 	gtk_widget_show_all ( dialog );
 
 	/* Keep reference to viewport */
@@ -461,8 +460,8 @@ static GList *select_from_list (GtkWindow *parent, GList *list, const gchar *tit
 	gtk_scrolled_window_set_policy ( GTK_SCROLLED_WINDOW(scrolledwindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC );
 	gtk_container_add ( GTK_CONTAINER(scrolledwindow), view );
 
-	gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX(GTK_DIALOG(dialog)->vbox), scrolledwindow, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), label, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), scrolledwindow, TRUE, TRUE, 0);
 
 	// Ensure a reasonable number of items are shown, but let the width be automatically sized
 	gtk_widget_set_size_request ( dialog, -1, 400) ;
@@ -495,6 +494,7 @@ static GList *select_from_list (GtkWindow *parent, GList *list, const gchar *tit
 						}
 						list_runner = g_list_next ( list_runner );
 					}
+					g_free ( name );
 				}
 			}
 			while ( gtk_tree_model_iter_next ( GTK_TREE_MODEL(store), &iter ) );
@@ -518,7 +518,7 @@ static void none_found ( GtkWindow *gw )
 	gtk_window_set_title(GTK_WINDOW(dialog), _("GPS Traces"));
 
 	GtkWidget *search_label = gtk_label_new(_("None found!"));
-	gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), search_label, FALSE, FALSE, 5 );
+	gtk_box_pack_start ( GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), search_label, FALSE, FALSE, 5 );
 	gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
 	gtk_widget_show_all(dialog);
 
@@ -568,7 +568,8 @@ static gboolean datasource_osm_my_traces_process ( VikTrwLayer *vtl, const gchar
 
 	gchar *user_pass = osm_get_login();
 
-	DownloadMapOptions options = { FALSE, FALSE, NULL, 2, NULL, user_pass }; // Allow a couple of redirects
+	// Support .zip + bzip2 files directly
+	DownloadMapOptions options = { FALSE, FALSE, NULL, 2, NULL, user_pass, a_try_decompress_file }; // Allow a couple of redirects
 
 	xml_data *xd = g_malloc ( sizeof (xml_data) );
 	//xd->xpath = g_string_new ( "" );
@@ -603,6 +604,10 @@ static gboolean datasource_osm_my_traces_process ( VikTrwLayer *vtl, const gchar
     if (vik_datasource_osm_my_traces_interface.is_thread) gdk_threads_enter();
 	GList *selected = select_from_list ( GTK_WINDOW(adw->vw), xd->list_of_gpx_meta_data, "Select GPS Traces", "Select the GPS traces you want to add." );
     if (vik_datasource_osm_my_traces_interface.is_thread) gdk_threads_leave();
+
+	// If non thread - show program is 'doing something...'
+	if ( !vik_datasource_osm_my_traces_interface.is_thread )
+		vik_window_set_busy_cursor ( adw->vw );
 
 	// If passed in on an existing layer - we will create everything into that.
 	//  thus with many differing gpx's - this will combine all waypoints into this single layer!
@@ -642,11 +647,12 @@ static gboolean datasource_osm_my_traces_process ( VikTrwLayer *vtl, const gchar
 			// TODO feedback to UI to inform which traces failed
 			if ( !result )
 				g_warning ( _("Unable to get trace: %s"), url );
+			g_free ( url );
 		}
 
 		if ( result ) {
 			// Can use the layer
-			vik_aggregate_layer_add_layer ( vik_layers_panel_get_top_layer (adw->vlp), VIK_LAYER(vtlX) );
+			vik_aggregate_layer_add_layer ( vik_layers_panel_get_top_layer (adw->vlp), VIK_LAYER(vtlX), TRUE );
 			// Move to area of the track
 			vik_layer_post_read ( VIK_LAYER(vtlX), vik_window_viewport(adw->vw), TRUE );
 			vik_trw_layer_auto_set_view ( vtlX, vik_window_viewport(adw->vw) );
@@ -680,6 +686,9 @@ static gboolean datasource_osm_my_traces_process ( VikTrwLayer *vtl, const gchar
 	else
 		// Process was cancelled but need to return that it proceeded as expected
 		result = TRUE;
+
+	if ( !vik_datasource_osm_my_traces_interface.is_thread )
+		vik_window_clear_busy_cursor ( adw->vw );
 
 	return result;
 }

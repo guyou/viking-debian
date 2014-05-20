@@ -17,12 +17,12 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
+ /*
+  * Ideally dependencies should just be on Glib, Gtk,
+  * see vikutils for things that further depend on other Viking types
+  */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
-
-#ifdef WINDOWS
-#include <windows.h>
 #endif
 
 #include <glib/gstdio.h>
@@ -31,9 +31,12 @@
 
 #include "util.h"
 #include "dialog.h"
-#include "globals.h"
-#include "download.h"
 
+#ifdef WINDOWS
+#include <windows.h>
+#endif
+
+/*
 #ifndef WINDOWS
 static gboolean spawn_command_line_async(const gchar * cmd,
                                          const gchar * arg)
@@ -51,53 +54,45 @@ static gboolean spawn_command_line_async(const gchar * cmd,
   return status;
 }
 #endif
+*/
+
+// Annoyingly gtk_show_uri() doesn't work so resort to ShellExecute method
+//   (non working at least in our Windows build with GTK+2.24.10 on Windows 7)
 
 void open_url(GtkWindow *parent, const gchar * url)
 {
 #ifdef WINDOWS
   ShellExecute(NULL, NULL, (char *) url, NULL, ".\\", 0);
-#else /* WINDOWS */
-  const gchar *browsers[] = {
-    "xdg-open", "gnome-open", "kfmclient openURL",
-    "sensible-browser", "firefox", "epiphany",
-    "iceweasel", "seamonkey", "galeon", "mozilla",
-    "opera", "konqueror", "netscape", "links -g",
-    "chromium-browser", "chromium", "chrome",
-    "safari", "camino", "omniweb", "icab",
-    NULL
-  };
-  gint i=0;
-  
-  const gchar *browser = g_getenv("BROWSER");
-  if (browser == NULL || browser[0] == '\0') {
-    /* $BROWSER not set -> use first entry */
-    browser = browsers[i++];
+#else
+  GError *error = NULL;
+  gtk_show_uri ( gtk_widget_get_screen (GTK_WIDGET(parent)), url, GDK_CURRENT_TIME, &error );
+  if ( error ) {
+    a_dialog_error_msg_extra ( parent, _("Could not launch web browser. %s"), error->message );
+    g_error_free ( error );
   }
-  do {
-    if (spawn_command_line_async(browser, url)) {
-      return;
-    }
-
-    browser = browsers[i++];
-  } while(browser);
-  
-  a_dialog_error_msg ( parent, _("Could not launch web browser.") );
-#endif /* WINDOWS */
+#endif
 }
 
 void new_email(GtkWindow *parent, const gchar * address)
 {
   gchar *uri = g_strdup_printf("mailto:%s", address);
+  GError *error = NULL;
+  gtk_show_uri ( gtk_widget_get_screen (GTK_WIDGET(parent)), uri, GDK_CURRENT_TIME, &error );
+  if ( error ) {
+    a_dialog_error_msg_extra ( parent, _("Could not create new email. %s"), error->message );
+    g_error_free ( error );
+  }
+  /*
 #ifdef WINDOWS
   ShellExecute(NULL, NULL, (char *) uri, NULL, ".\\", 0);
-#else /* WINDOWS */
+#else
   if (!spawn_command_line_async("xdg-email", uri))
     a_dialog_error_msg ( parent, _("Could not create new email.") );
-#endif /* WINDOWS */
+#endif
+  */
   g_free(uri);
   uri = NULL;
 }
-
 gchar *uri_escape(gchar *str)
 {
   gchar *esc_str = g_malloc(3*strlen(str));
@@ -129,81 +124,48 @@ GList * str_array_to_glist(gchar* data[])
   return g_list_reverse(gl);
 }
 
-typedef struct {
-  GtkWindow *window; // Layer needed for redrawing
-  gchar *version;     // Image list
-} new_version_thread_data;
-
-static gboolean new_version_available_message ( new_version_thread_data *nvtd )
-{
-  // Only a simple goto website option is offered
-  // Trying to do an installation update is platform specific
-  if ( a_dialog_yes_or_no ( nvtd->window,
-                            _("There is a newer version of Viking available: %s\n\nDo you wish to go to Viking's website now?"), nvtd->version ) )
-    // NB 'VIKING_URL' redirects to the Wiki, here we want to go the main site.
-    open_url ( nvtd->window, "http://sourceforge.net/projects/viking/" );
-  //else
-  //  increase amount of time between performing version checks
-  g_free ( nvtd->version );
-  g_free ( nvtd );
-  return FALSE;
-}
-
-static void latest_version_thread ( GtkWindow *window )
-{
-  // Need to allow a few of redirects, as SF file is often served from different server
-  DownloadMapOptions options = { FALSE, FALSE, NULL, 5, NULL, NULL };
-  gchar *filename = a_download_uri_to_tmp_file ( "http://sourceforge.net/projects/viking/files/VERSION", &options );
-  //gchar *filename = g_strdup ( "VERSION" );
-  if ( !filename ) {
-    return;
-  }
-
-  GMappedFile *mf = g_mapped_file_new ( filename, FALSE, NULL );
-  if ( !mf )
-    return;
-
-  gchar *text = g_mapped_file_get_contents ( mf );
-
-  gint latest_version = viking_version_to_number ( text );
-  gint my_version = viking_version_to_number ( VIKING_VERSION );
-
-  g_debug ( "The lastest version is: %s", text );
-
-  if ( my_version < latest_version ) {
-    new_version_thread_data *nvtd = g_malloc ( sizeof(new_version_thread_data) );
-    nvtd->window = window;
-    nvtd->version = g_strdup ( text );
-    gdk_threads_add_idle ( (GSourceFunc) new_version_available_message, nvtd );
-  }
-  else
-    g_debug ( "Running the lastest version: %s", VIKING_VERSION );
-
-  g_mapped_file_unref ( mf );
-  if ( filename ) {
-    g_remove ( filename );
-    g_free ( filename );
-  }
-}
-
-/*
- * check_latest_version:
- * @window: Somewhere where we may need use the display to inform the user about the version status
+/**
+ * split_string_from_file_on_equals:
  *
- * Periodically checks the released latest VERSION file on the website to compare with the running version
+ * @buf: the input string
+ * @key: newly allocated string that is before the '='
+ * @val: newly allocated string after the '='
  *
- * ATM the plan is for a 1.4.2 release to be always on *just* for Windows platforms
- * Then in 1.5.X it will made entirely optional (default on for Windows)
- *  with a longer periodic check (enabled via state saving using the soon to be released 'settings' code)
+ * Designed for file line processing, so it ignores strings beginning with special
+ *  characters, such as '#'; returns false in such situations.
+ * Also returns false if no equals character is found
  *
+ * e.g. if buf = "GPS.parameter=42"
+ *   key = "GPS.parameter"
+ *   val = "42"
  */
-void check_latest_version ( GtkWindow *window )
+gboolean split_string_from_file_on_equals ( const gchar *buf, gchar **key, gchar **val )
 {
-#ifdef WINDOWS
-#if GLIB_CHECK_VERSION (2, 32, 0)
-  g_thread_try_new ( "latest_version_thread", (GThreadFunc)latest_version_thread, window, NULL );
-#else
-  g_thread_create ( (GThreadFunc)latest_version_thread, window, FALSE, NULL );
-#endif
-#endif
+  // comments, special characters in viking file format
+  if ( buf == NULL || buf[0] == '\0' || buf[0] == '~' || buf[0] == '=' || buf[0] == '#' )
+    return FALSE;
+
+  if ( ! strchr ( buf, '=' ) )
+    return FALSE;
+
+  gchar **strv = g_strsplit ( buf, "=", 2 );
+
+  gint gi = 0;
+  gchar *str = strv[gi];
+  while ( str ) {
+	if ( gi == 0 )
+	  *key = g_strdup ( str );
+	else
+	  *val = g_strdup ( str );
+    gi++;
+    str = strv[gi];
+  }
+
+  g_strfreev ( strv );
+
+  // Remove newline from val and also any other whitespace
+  *key = g_strstrip ( *key );
+  *val = g_strstrip ( *val );
+
+  return TRUE;
 }

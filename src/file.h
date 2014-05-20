@@ -38,7 +38,6 @@ FILE_TYPE_GPX=3,
 FILE_TYPE_KML=4,
 } VikFileType_t;
 
-const gchar *a_file_basename ( const gchar *filename );
 gboolean check_file_ext ( const gchar *filename, const gchar *fileext );
 
 /*
@@ -61,7 +60,11 @@ gboolean a_file_save ( VikAggregateLayer *top, gpointer vp, const gchar *filenam
 /* Only need to define VikTrack if the file type is FILE_TYPE_GPX_TRACK */
 gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t file_type, VikTrack *trk, gboolean write_hidden );
 
-void file_write_layer_param ( FILE *f, const gchar *name, guint8 type, VikLayerParamData data );
+void file_write_layer_param ( FILE *f, const gchar *name, VikLayerParamType type, VikLayerParamData data );
+
+char *file_realpath ( const char *path, char *real );
+
+const gchar *file_GetRelativeFilename ( gchar *currentDirectory, gchar *absoluteFilename );
 
 G_END_DECLS
 

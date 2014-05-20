@@ -78,6 +78,8 @@ static gchar *line_name;
 static gchar *line_comment;
 static gchar *line_description;
 static gchar *line_color;
+static gint line_name_label = 0;
+static gint line_dist_label = 0;
 static gchar *line_image;
 static gchar *line_symbol;
 static gboolean line_newsegment = FALSE;
@@ -220,6 +222,8 @@ gboolean a_gpspoint_read_file(VikTrwLayer *trw, FILE *f ) {
       VikWaypoint *wp = vik_waypoint_new();
       wp->visible = line_visible;
       wp->altitude = line_altitude;
+      wp->has_timestamp = line_has_timestamp;
+      wp->timestamp = line_timestamp;
 
       vik_coord_load_from_latlon ( &(wp->coord), coord_mode, &line_latlon );
 
@@ -243,6 +247,8 @@ gboolean a_gpspoint_read_file(VikTrwLayer *trw, FILE *f ) {
     {
       have_read_something = TRUE;
       VikTrack *pl = vik_track_new();
+      // NB don't set defaults here as all properties are stored in the GPS_POINT format
+      //vik_track_set_defaults ( pl );
 
       /* Thanks to Peter Jones for this Fix */
       if (!line_name) line_name = g_strdup("UNK");
@@ -262,6 +268,9 @@ gboolean a_gpspoint_read_file(VikTrwLayer *trw, FILE *f ) {
         pl->has_color = TRUE;
       }
 
+      pl->draw_name_mode = line_name_label;
+      pl->max_number_dist_labels = line_dist_label;
+
       pl->trackpoints = NULL;
       vik_trw_layer_filein_add_track ( trw, line_name, pl );
       g_free ( line_name );
@@ -278,6 +287,7 @@ gboolean a_gpspoint_read_file(VikTrwLayer *trw, FILE *f ) {
       tp->has_timestamp = line_has_timestamp;
       tp->timestamp = line_timestamp;
       tp->altitude = line_altitude;
+      vik_trackpoint_set_name ( tp, line_name );
       if (line_extended) {
         tp->speed = line_speed;
         tp->course = line_course;
@@ -318,6 +328,8 @@ gboolean a_gpspoint_read_file(VikTrwLayer *trw, FILE *f ) {
     line_course = NAN;
     line_sat = 0;
     line_fix = 0;
+    line_name_label = 0;
+    line_dist_label = 0;
   }
 
   return have_read_something;
@@ -416,6 +428,14 @@ static void gpspoint_process_key_and_value ( const gchar *key, gint key_len, con
     if (line_color == NULL)
       line_color = deslashndup ( value, value_len );
   }
+  else if (key_len == 14 && strncasecmp( key, "draw_name_mode", key_len ) == 0 && value != NULL)
+  {
+    line_name_label = atoi(value);
+  }
+  else if (key_len == 18 && strncasecmp( key, "number_dist_labels", key_len ) == 0 && value != NULL)
+  {
+    line_dist_label = atoi(value);
+  }
   else if (key_len == 5 && strncasecmp( key, "image", key_len ) == 0 && value != NULL)
   {
     if (line_image == NULL)
@@ -495,6 +515,8 @@ static void a_gpspoint_write_waypoint ( const gpointer id, const VikWaypoint *wp
     fprintf ( f, " altitude=\"%s\"", s_alt );
     g_free(s_alt);
   }
+  if ( wp->has_timestamp )
+    fprintf ( f, " unixtime=\"%ld\"", wp->timestamp );
   if ( wp->comment )
   {
     gchar *tmp_comment = slashdup(wp->comment);
@@ -509,13 +531,33 @@ static void a_gpspoint_write_waypoint ( const gpointer id, const VikWaypoint *wp
   }
   if ( wp->image )
   {
-    gchar *tmp_image = slashdup(wp->image);
-    fprintf ( f, " image=\"%s\"", tmp_image );
+    gchar *tmp_image = NULL;
+    gchar *cwd = NULL;
+    if ( a_vik_get_file_ref_format() == VIK_FILE_REF_FORMAT_RELATIVE ) {
+      cwd = g_get_current_dir();
+      if ( cwd )
+        tmp_image = g_strdup ( file_GetRelativeFilename ( cwd, wp->image ) );
+    }
+
+    // if cwd not available - use image filename as is
+    // this should be an absolute path as set in thumbnails
+    if ( !cwd )
+      tmp_image = slashdup(wp->image);
+
+    if ( tmp_image )
+      fprintf ( f, " image=\"%s\"", tmp_image );
+
+    g_free ( cwd );
     g_free ( tmp_image );
   }
   if ( wp->symbol )
   {
-    fprintf ( f, " symbol=\"%s\"", wp->symbol );
+    // Due to changes in garminsymbols - the symbol name is now in Title Case
+    // However to keep newly generated .vik files better compatible with older Viking versions
+    //   The symbol names will always be lowercase
+    gchar *tmp_symbol = g_utf8_strdown(wp->symbol, -1);
+    fprintf ( f, " symbol=\"%s\"", tmp_symbol );
+    g_free ( tmp_symbol );
   }
   if ( ! wp->visible )
     fprintf ( f, " visible=\"n\"" );
@@ -537,6 +579,12 @@ static void a_gpspoint_write_trackpoint ( VikTrackpoint *tp, TP_write_info_type 
   fprintf ( f, "type=\"%spoint\" latitude=\"%s\" longitude=\"%s\"", write_info->is_route ? "route" : "track", s_lat, s_lon );
   g_free ( s_lat ); 
   g_free ( s_lon );
+
+  if ( tp->name ) {
+    gchar *name = slashdup(tp->name);
+    fprintf ( f, " name=\"%s\"", name );
+    g_free(name);
+  }
 
   if ( tp->altitude != VIK_DEFAULT_ALTITUDE ) {
     gchar *s_alt = a_coords_dtostr(tp->altitude);
@@ -596,6 +644,12 @@ static void a_gpspoint_write_track ( const gpointer id, const VikTrack *trk, FIL
   if ( trk->has_color ) {
     fprintf ( f, " color=#%.2x%.2x%.2x", (int)(trk->color.red/256),(int)(trk->color.green/256),(int)(trk->color.blue/256));
   }
+
+  if ( trk->draw_name_mode > 0 )
+    fprintf ( f, " draw_name_mode=\"%d\"", trk->draw_name_mode );
+
+  if ( trk->max_number_dist_labels > 0 )
+    fprintf ( f, " number_dist_labels=\"%d\"", trk->max_number_dist_labels );
 
   if ( ! trk->visible ) {
     fprintf ( f, " visible=\"n\"" );

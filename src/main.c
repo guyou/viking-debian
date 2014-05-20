@@ -31,9 +31,11 @@
 #include "babel.h"
 #include "curl_download.h"
 #include "preferences.h"
+#include "viklayer_defaults.h"
 #include "globals.h"
 #include "vikmapslayer.h"
-#include "util.h"
+#include "vikrouting.h"
+#include "vikutils.h"
 
 #ifdef VIK_CONFIG_GEOCACHES
 void a_datasource_gc_init();
@@ -119,7 +121,9 @@ int main( int argc, char *argv[] )
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
   textdomain (GETTEXT_PACKAGE);
 
+#if ! GLIB_CHECK_VERSION (2, 32, 0)
   g_thread_init ( NULL );
+#endif
   gdk_threads_init ();
 
   gui_initialized = gtk_init_with_args (&argc, &argv, "files+", entries, NULL, &error);
@@ -160,9 +164,15 @@ int main( int argc, char *argv[] )
   XSetErrorHandler(myXErrorHandler);
 #endif
 
+  // Discover if this is the very first run
+  a_vik_very_first_run ();
+
+  a_settings_init ();
   a_preferences_init ();
 
   a_vik_preferences_init ();
+
+  a_layer_defaults_init ();
 
   a_download_init();
   curl_download_init();
@@ -180,16 +190,21 @@ int main( int argc, char *argv[] )
   a_datasource_gc_init();
 #endif
 
+  vik_routing_prefs_init();
+
   /* Set the icon */
   main_icon = gdk_pixbuf_from_pixdata(&viking_pixbuf, FALSE, NULL);
   gtk_window_set_default_icon(main_icon);
 
   gdk_threads_enter ();
 
+  // Ask for confirmation of default settings on first run
+  vu_set_auto_features_on_first_run ();
+
   /* Create the first window */
   first_window = vik_window_new_window();
 
-  check_latest_version ( GTK_WINDOW(first_window) );
+  vu_check_latest_version ( GTK_WINDOW(first_window) );
 
   while ( ++i < argc ) {
     if ( strcmp(argv[i],"--") == 0 && !dashdash_already )
@@ -208,6 +223,8 @@ int main( int argc, char *argv[] )
     }
   }
 
+  vik_window_new_window_finish ( first_window );
+
   gtk_main ();
   gdk_threads_leave ();
 
@@ -216,7 +233,9 @@ int main( int argc, char *argv[] )
   a_background_uninit ();
   a_mapcache_uninit ();
   a_dems_uninit ();
+  a_layer_defaults_uninit ();
   a_preferences_uninit ();
+  a_settings_uninit ();
 
   curl_download_uninit();
 
