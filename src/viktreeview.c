@@ -67,6 +67,7 @@ struct _VikTreeview {
   GdkPixbuf *layer_type_icons[VIK_LAYER_NUM_TYPES];
 
   gboolean was_a_toggle;
+  gboolean editing;
 };
 
 /* TODO: find, make "static" and put up here all non-"a_" functions */
@@ -77,6 +78,39 @@ static gboolean vik_treeview_drag_data_received ( GtkTreeDragDest *drag_dest, Gt
 static gboolean vik_treeview_drag_data_delete ( GtkTreeDragSource *drag_source, GtkTreePath *path );
 
 G_DEFINE_TYPE (VikTreeview, vik_treeview, GTK_TYPE_TREE_VIEW)
+
+static void vik_cclosure_marshal_VOID__POINTER_POINTER ( GClosure     *closure,
+                                                         GValue       *return_value,
+                                                         guint         n_param_vals,
+                                                         const GValue *param_values,
+                                                         gpointer      invocation_hint,
+                                                         gpointer      marshal_data )
+{
+  typedef gboolean (*VikMarshalFunc_VOID__POINTER_POINTER) ( gpointer      data1,
+                                                             gconstpointer arg_1,
+                                                             gconstpointer arg_2,
+                                                             gpointer      data2 );
+
+  register VikMarshalFunc_VOID__POINTER_POINTER callback;
+  register GCClosure* cc = (GCClosure*) closure;
+  register gpointer data1, data2;
+
+  g_return_if_fail (n_param_vals == 3);
+
+  if (G_CCLOSURE_SWAP_DATA(closure)) {
+    data1 = closure->data;
+    data2 = g_value_peek_pointer (param_values + 0);
+  }
+  else {
+    data1 = g_value_peek_pointer (param_values + 0);
+    data2 = closure->data;
+  }
+  callback = (VikMarshalFunc_VOID__POINTER_POINTER) (marshal_data ? marshal_data : cc->callback);
+  callback ( data1,
+             g_value_get_pointer(param_values + 1),
+             g_value_get_pointer(param_values + 2),
+             data2 );
+}
 
 static void vik_treeview_class_init ( VikTreeviewClass *klass )
 {
@@ -90,21 +124,31 @@ static void vik_treeview_class_init ( VikTreeviewClass *klass )
   parent_class = g_type_class_peek_parent (klass);
 
   treeview_signals[VT_ITEM_EDITED_SIGNAL] = g_signal_new ( "item_edited", G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION, G_STRUCT_OFFSET (VikTreeviewClass, item_edited), NULL, NULL, 
-    gtk_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2, GTK_TYPE_POINTER, G_TYPE_POINTER);
-  /* VOID__UINT_POINTER: kinda hack-ish, but it works. */
+    vik_cclosure_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
 
   treeview_signals[VT_ITEM_TOGGLED_SIGNAL] = g_signal_new ( "item_toggled", G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION, G_STRUCT_OFFSET (VikTreeviewClass, item_toggled), NULL, NULL,
-    g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1, GTK_TYPE_POINTER );
+    g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1, G_TYPE_POINTER );
 }
 
 static void vik_treeview_edited_cb (GtkCellRendererText *cell, gchar *path_str, const gchar *new_name, VikTreeview *vt)
 {
+  vt->editing = FALSE;
   GtkTreeIter iter;
 
   /* get type and data */
   vik_treeview_get_iter_from_path_str ( vt, &iter, path_str );
 
   g_signal_emit ( G_OBJECT(vt), treeview_signals[VT_ITEM_EDITED_SIGNAL], 0, &iter, new_name );
+}
+
+static void vik_treeview_edit_start_cb (GtkCellRenderer *cell, GtkCellEditable *editable, gchar *path, VikTreeview *vt)
+{
+  vt->editing = TRUE;
+}
+
+static void vik_treeview_edit_stop_cb (GtkCellRenderer *cell, VikTreeview *vt)
+{
+  vt->editing = FALSE;
 }
 
 static void vik_treeview_toggled_cb (GtkCellRendererToggle *cell, gchar *path_str, VikTreeview *vt)
@@ -263,6 +307,9 @@ static void vik_treeview_add_columns ( VikTreeview *vt )
   g_signal_connect (renderer, "edited",
 		    G_CALLBACK (vik_treeview_edited_cb), vt);
 
+  g_signal_connect (renderer, "editing-started", G_CALLBACK (vik_treeview_edit_start_cb), vt);
+  g_signal_connect (renderer, "editing-canceled", G_CALLBACK (vik_treeview_edit_stop_cb), vt);
+
   g_object_set (G_OBJECT (renderer), "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 
   col_offset = gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (vt),
@@ -391,9 +438,8 @@ static gboolean vik_treeview_selection_filter(GtkTreeSelection *selection, GtkTr
 
 void vik_treeview_init ( VikTreeview *vt )
 {
-  guint16 i;
-
   vt->was_a_toggle = FALSE;
+  vt->editing = FALSE;
 
   vt->model = GTK_TREE_MODEL(gtk_tree_store_new ( NUM_COLUMNS, G_TYPE_STRING, G_TYPE_BOOLEAN, GDK_TYPE_PIXBUF, G_TYPE_INT, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN ));
 
@@ -402,6 +448,11 @@ void vik_treeview_init ( VikTreeview *vt )
 
   gtk_tree_view_set_model ( GTK_TREE_VIEW(vt), vt->model );
   vik_treeview_add_columns ( vt );
+
+  // Can not specify 'auto' sort order with a 'GtkTreeSortable' on the name since we want to control the ordering of layers
+  // Thus need to create special sort to operate on a subsection of treeview (i.e. from a specific child either a layer or sublayer)
+  // see vik_treeview_sort_children()
+
   g_object_unref (vt->model);
 
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (vt), TRUE);
@@ -423,6 +474,7 @@ void vik_treeview_init ( VikTreeview *vt )
     idest->drag_data_received = vik_treeview_drag_data_received;
   }      
 
+  VikLayerTypeEnum i;
   for ( i = 0; i < VIK_LAYER_NUM_TYPES; i++ )
     vt->layer_type_icons[i] = vik_layer_load_icon ( i ); /* if icon can't be loaded, it will be null and simply not be shown. */
 
@@ -507,6 +559,14 @@ gboolean vik_treeview_get_selected_iter ( VikTreeview *vt, GtkTreeIter *iter )
   return gtk_tree_selection_get_selected ( gtk_tree_view_get_selection ( GTK_TREE_VIEW ( vt ) ), NULL, iter );
 }
 
+gboolean vik_treeview_get_editing ( VikTreeview *vt )
+{
+  // Don't know how to get cell for the selected item
+  //return GPOINTER_TO_INT(g_object_get_data ( G_OBJECT(cell), "editing" ));
+  // Instead maintain our own value applying to the whole tree
+  return vt->editing;
+}
+
 void vik_treeview_item_delete ( VikTreeview *vt, GtkTreeIter *iter )
 {
   gtk_tree_store_remove ( GTK_TREE_STORE(vt->model), iter );
@@ -532,6 +592,15 @@ void vik_treeview_item_set_visible ( VikTreeview *vt, GtkTreeIter *iter, gboolea
   gtk_tree_store_set ( GTK_TREE_STORE(vt->model), iter, VISIBLE_COLUMN, to, -1 );
 }
 
+void vik_treeview_item_toggle_visible ( VikTreeview *vt, GtkTreeIter *iter )
+{
+  g_return_if_fail ( iter != NULL );
+  gboolean to;
+  TREEVIEW_GET ( vt->model, iter, VISIBLE_COLUMN, &to );
+  to = !to;
+  gtk_tree_store_set ( GTK_TREE_STORE(vt->model), iter, VISIBLE_COLUMN, to, -1 );
+}
+
 void vik_treeview_expand ( VikTreeview *vt, GtkTreeIter *iter )
 {
   GtkTreePath *path;
@@ -550,33 +619,40 @@ void vik_treeview_item_unselect ( VikTreeview *vt, GtkTreeIter *iter )
   gtk_tree_selection_unselect_iter ( gtk_tree_view_get_selection ( GTK_TREE_VIEW ( vt ) ), iter );
 }
 
-void vik_treeview_add_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent,
-                              gpointer item, gint data, gint icon_type )
+void vik_treeview_add_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent, gboolean above,
+                              gpointer item, gint data, VikLayerTypeEnum layer_type )
 {
   g_assert ( iter != NULL );
-  g_assert ( icon_type < VIK_LAYER_NUM_TYPES );
-  gtk_tree_store_prepend ( GTK_TREE_STORE(vt->model), iter, parent_iter );
+  if ( above )
+    gtk_tree_store_prepend ( GTK_TREE_STORE(vt->model), iter, parent_iter );
+  else
+    gtk_tree_store_append ( GTK_TREE_STORE(vt->model), iter, parent_iter );
   gtk_tree_store_set ( GTK_TREE_STORE(vt->model), iter, NAME_COLUMN, name, VISIBLE_COLUMN, TRUE, 
     TYPE_COLUMN, VIK_TREEVIEW_TYPE_LAYER, ITEM_PARENT_COLUMN, parent, ITEM_POINTER_COLUMN, item, 
     ITEM_DATA_COLUMN, data, HAS_VISIBLE_COLUMN, TRUE, EDITABLE_COLUMN, parent == NULL ? FALSE : TRUE,
-    ICON_COLUMN, icon_type >= 0 ? vt->layer_type_icons[icon_type] : NULL, -1 );
+    ICON_COLUMN, layer_type >= 0 ? vt->layer_type_icons[layer_type] : NULL, -1 );
 }
 
-void vik_treeview_insert_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent,
-                              gpointer item, gint data, gint icon_type, GtkTreeIter *sibling )
+void vik_treeview_insert_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent, gboolean above,
+                              gpointer item, gint data, VikLayerTypeEnum layer_type, GtkTreeIter *sibling )
 {
   g_assert ( iter != NULL );
-  g_assert ( icon_type < VIK_LAYER_NUM_TYPES );
   if (sibling) {
-    gtk_tree_store_insert_before ( GTK_TREE_STORE(vt->model), iter, parent_iter, sibling );
+    if (above)
+      gtk_tree_store_insert_before ( GTK_TREE_STORE(vt->model), iter, parent_iter, sibling );
+    else
+      gtk_tree_store_insert_after ( GTK_TREE_STORE(vt->model), iter, parent_iter, sibling );
   } else {
-    gtk_tree_store_append ( GTK_TREE_STORE(vt->model), iter, parent_iter );
+    if (above)
+      gtk_tree_store_append ( GTK_TREE_STORE(vt->model), iter, parent_iter );
+    else
+      gtk_tree_store_prepend ( GTK_TREE_STORE(vt->model), iter, parent_iter );
   }
-    
+
   gtk_tree_store_set ( GTK_TREE_STORE(vt->model), iter, NAME_COLUMN, name, VISIBLE_COLUMN, TRUE, 
     TYPE_COLUMN, VIK_TREEVIEW_TYPE_LAYER, ITEM_PARENT_COLUMN, parent, ITEM_POINTER_COLUMN, item, 
     ITEM_DATA_COLUMN, data, HAS_VISIBLE_COLUMN, TRUE, EDITABLE_COLUMN, TRUE,
-    ICON_COLUMN, icon_type >= 0 ? vt->layer_type_icons[icon_type] : NULL, -1 );
+    ICON_COLUMN, layer_type >= 0 ? vt->layer_type_icons[layer_type] : NULL, -1 );
 }
 
 void vik_treeview_add_sublayer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent, gpointer item,
@@ -584,80 +660,106 @@ void vik_treeview_add_sublayer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkT
 {
   g_assert ( iter != NULL );
 
-  gtk_tree_store_prepend ( GTK_TREE_STORE(vt->model), iter, parent_iter );
+  gtk_tree_store_append ( GTK_TREE_STORE(vt->model), iter, parent_iter );
   gtk_tree_store_set ( GTK_TREE_STORE(vt->model), iter, NAME_COLUMN, name, VISIBLE_COLUMN, TRUE, TYPE_COLUMN, VIK_TREEVIEW_TYPE_SUBLAYER, ITEM_PARENT_COLUMN, parent, ITEM_POINTER_COLUMN, item, ITEM_DATA_COLUMN, data, HAS_VISIBLE_COLUMN, has_visible, EDITABLE_COLUMN, editable, ICON_COLUMN, icon, -1 );
 }
 
-
-#ifdef VIK_CONFIG_ALPHABETIZED_TRW
-
-void vik_treeview_sublayer_realphabetize ( VikTreeview *vt, GtkTreeIter *iter, const gchar *newname )
+// Inspired by the internals of GtkTreeView sorting itself
+typedef struct _SortTuple
 {
-  GtkTreeIter search_iter, parent_iter;
-  gchar *search_name = NULL;
-  g_assert ( iter != NULL );
+  gint offset;
+  gchar *name;
+} SortTuple;
 
-  gtk_tree_model_iter_parent ( vt->model, &parent_iter, iter );
-
-  g_assert ( gtk_tree_model_iter_children ( vt->model, &search_iter, &parent_iter ) );
-
-  do {
-    gtk_tree_model_get ( vt->model, &search_iter, NAME_COLUMN, &search_name, -1 );
-    if ( strcmp ( search_name, newname ) > 0 ) /* not >= or would trip on itself */
-    {
-      gtk_tree_store_move_before ( GTK_TREE_STORE(vt->model), iter, &search_iter );
-      g_free (search_name);
-      search_name = NULL;
-      return;
-    }
-    g_free (search_name);
-    search_name = NULL;
-  } while ( gtk_tree_model_iter_next ( vt->model, &search_iter ) );
-
-  gtk_tree_store_move_before ( GTK_TREE_STORE(vt->model), iter, NULL );
-}
-
-void vik_treeview_add_sublayer_alphabetized
-                 ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent, gpointer item,
-                   gint data, GdkPixbuf *icon, gboolean has_visible, gboolean editable )
+/**
+ * If order is true sort ascending, otherwise a descending sort
+ */
+static gint sort_tuple_compare ( gconstpointer a, gconstpointer b, gpointer order )
 {
-  GtkTreeIter search_iter;
-  gchar *search_name = NULL;
-  g_assert ( iter != NULL );
+  SortTuple *sa = (SortTuple *)a;
+  SortTuple *sb = (SortTuple *)b;
 
-  if ( gtk_tree_model_iter_children ( vt->model, &search_iter, parent_iter ) )
-  {
-    gboolean found_greater_string = FALSE;
-    do {
-      gtk_tree_model_get ( vt->model, &search_iter, NAME_COLUMN, &search_name, -1 );
-      if ( strcmp ( search_name, name ) >= 0 )
-      {
-        gtk_tree_store_insert_before ( GTK_TREE_STORE(vt->model), iter, parent_iter, &search_iter );
-        found_greater_string = TRUE;
-        g_free (search_name);
-        search_name = NULL;
-        break;
-      }
-      g_free (search_name);
-      search_name = NULL;
-    } while ( gtk_tree_model_iter_next ( vt->model, &search_iter ) );
+  // Default ascending order
+  gint answer = g_strcmp0 ( sa->name, sb->name );
 
-    if ( ! found_greater_string )
-      gtk_tree_store_append ( GTK_TREE_STORE(vt->model), iter, parent_iter );
+  if ( !GPOINTER_TO_INT(order) ) {
+    // Invert sort order for descending order
+    answer = -answer;
   }
-  else
-    gtk_tree_store_prepend ( GTK_TREE_STORE(vt->model), iter, parent_iter );
 
-  gtk_tree_store_set ( GTK_TREE_STORE(vt->model), iter, NAME_COLUMN, name, VISIBLE_COLUMN, TRUE, TYPE_COLUMN, VIK_TREEVIEW_TYPE_SUBLAYER, ITEM_PARENT_COLUMN, parent, ITEM_POINTER_COLUMN, item, ITEM_DATA_COLUMN, data, HAS_VISIBLE_COLUMN, has_visible, EDITABLE_COLUMN, editable, ICON_COLUMN, icon, -1 );
+  return answer;
 }
 
-#endif
+/**
+ * Note: I don't believe we can sensibility use built in model sort gtk_tree_model_sort_new_with_model() on the name,
+ * since that would also sort the layers - but that needs to be user controlled for ordering, such as which maps get drawn on top.
+ *
+ * vik_treeview_sort_children:
+ * @vt:     The treeview to operate on
+ * @parent: The level within the treeview to sort
+ * @order:  How the items should be sorted
+ *
+ * Use the gtk_tree_store_reorder method as it very quick
+ *
+ * This ordering can be performed on demand and works for any parent iterator (i.e. both sublayer and layer levels)
+ *
+ * It should be called whenever an individual sublayer item is added or renamed (or after a group of sublayer items have been added).
+ *
+ * Previously with insertion sort on every sublayer addition: adding 10,000 items would take over 30 seconds!
+ * Now sorting after simply adding all tracks takes 1 second.
+ * For a KML file with over 10,000 tracks (3Mb zipped) - See 'UK Hampshire Rights of Way'
+ * http://www3.hants.gov.uk/row/row-maps.htm
+ */
+void vik_treeview_sort_children ( VikTreeview *vt, GtkTreeIter *parent, vik_layer_sort_order_t order )
+{
+  if ( order == VL_SO_NONE )
+    // Nothing to do
+    return;
+
+  GtkTreeModel *model = vt->model;
+  GtkTreeIter child;
+  if ( !gtk_tree_model_iter_children ( model, &child, parent ) )
+    return;
+
+  guint length = gtk_tree_model_iter_n_children ( model, parent );
+
+  // Create an array to store the position offsets
+  SortTuple *sort_array;
+  sort_array = g_new ( SortTuple, length );
+
+  guint ii = 0;
+  do {
+    sort_array[ii].offset = ii;
+    gtk_tree_model_get ( model, &child, NAME_COLUMN, &(sort_array[ii].name), -1 );
+    ii++;
+  } while ( gtk_tree_model_iter_next (model, &child) );
+
+  gboolean sort_order = (order == VL_SO_ALPHABETICAL_ASCENDING );
+
+  // Sort list...
+  g_qsort_with_data (sort_array,
+                     length,
+                     sizeof (SortTuple),
+                     sort_tuple_compare,
+                     GINT_TO_POINTER(sort_order));
+
+  // As the sorted list contains the reordered position offsets, extract this and then apply to the treeview
+  gint *positions = g_malloc ( sizeof(gdouble) * length );
+  for ( ii = 0; ii < length; ii++ ) {
+    positions[ii] = sort_array[ii].offset;
+    g_free ( sort_array[ii].name );
+  }
+  g_free ( sort_array );
+
+  // This is extremely fast compared to the old alphabetical insertion
+  gtk_tree_store_reorder ( GTK_TREE_STORE(model), parent, positions );
+  g_free ( positions );
+}
 
 static void vik_treeview_finalize ( GObject *gob )
 {
   VikTreeview *vt = VIK_TREEVIEW ( gob );
-  guint16 i;
-
+  VikLayerTypeEnum i;
   for ( i = 0; i < VIK_LAYER_NUM_TYPES; i++ )
     if ( vt->layer_type_icons[i] != NULL )
       g_object_unref ( G_OBJECT(vt->layer_type_icons[i]) );

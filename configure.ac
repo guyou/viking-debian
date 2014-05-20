@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(viking, 1.4.2)
+AC_INIT(viking, 1.5.1, , viking, http://viking.sf.net/)
 AM_INIT_AUTOMAKE([dist-bzip2 dist-zip])
 dnl AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
@@ -47,6 +47,20 @@ AC_CHECK_LIB(m, tan)
 AC_CHECK_LIB(z, inflate)
 AC_CHECK_LIB(X11, XSetErrorHandler)
 
+# ATM not running automake under Windows
+#AC_CHECK_PROG(USE_WINDOWS, cmd.exe, yes, no)
+#AM_CONDITIONAL([WINDOWS], [test x$USE_WINDOWS = xyes])
+# So pass in as an option instead
+# This is only to perform slightly different build steps
+#  (the code uses standard WINDOWS defines for any specific different behaviour)
+AC_ARG_ENABLE(windows, AC_HELP_STRING([--enable-windows],
+              [Perform specific Windows build steps (default is no)]),
+              [ac_cv_enable_windows=$enableval],
+              [ac_cv_enable_windows=no])
+AC_CACHE_CHECK([whether to enable Windows build steps],
+               [ac_cv_enable_windows], [ac_cv_enable_windows=no])
+AM_CONDITIONAL([WINDOWS], [test x$ac_cv_enable_windows = xyes])
+
 # Expat
 AM_WITH_EXPAT
 
@@ -65,9 +79,9 @@ dnl | Pkgconfig checks |---------------------------------------
 dnl  ------------------
 
 PKG_CHECK_MODULES(PACKAGE, [
-        glib-2.0          >= 2.14
+        glib-2.0          >= 2.16
         gthread-2.0       >= 2.2
-        gtk+-2.0          >= 2.12
+        gtk+-2.0          >= 2.14
         gio-2.0           >= 2.12
 ])
 
@@ -104,18 +118,6 @@ if test "x$ac_cv_enable_deprecations" = "xyes"; then
 fi
 
 # Options
-AC_ARG_ENABLE(alphabetized-trw, AC_HELP_STRING([--enable-alphabetized-trw],
-              [enable alphabetized track & waypoints (default is enable)]),
-              [ac_cv_enable_alpha_trw=$enableval],
-              [ac_cv_enable_alpha_trw=yes])
-AC_CACHE_CHECK([whether to enable alphabetized track & waypoint],
-               [ac_cv_enable_alpha_trw], [ac_cv_enable_alpha_trw=yes])
-case $ac_cv_enable_alpha_trw in
-  yes)
-    AC_DEFINE(VIK_CONFIG_ALPHABETIZED_TRW, [], [NO ALPHABETIZED TRW])
-    ;;
-esac
-
 AC_ARG_ENABLE(bing, AC_HELP_STRING([--enable-bing],
               [enable Bing stuff (default is enable)]),
               [ac_cv_enable_bing=$enableval],
@@ -279,6 +281,38 @@ case $ac_cv_enable_realtimegpstracking in
 esac
 AM_CONDITIONAL([REALTIME_GPS_TRACKING], [test x$ac_cv_enable_realtimegpstracking = xyes])
 
+# BZIP2
+AC_ARG_ENABLE(bz2, AC_HELP_STRING([--enable-bzip2],
+	      [enable bzip2 Support (default is enable).]),
+              [ac_cv_enable_bzip2=$enableval],
+              [ac_cv_enable_bzip2=yes])
+AC_CACHE_CHECK([whether to enable bzip2 Support],
+               [ac_cv_enable_bzip2], [ac_cv_enable_bzip2=yes])
+case $ac_cv_enable_bzip2 in
+  yes)
+    AC_CHECK_HEADERS([bzlib.h],[],[AC_MSG_ERROR([bzlib.h is needed but not found - you will need to install package 'libbz2-dev' or similar. The feature can be disabled with --disable-bzip2])])
+    AC_CHECK_LIB(bz2, BZ2_bzBuffToBuffDecompress, [], [AC_MSG_ERROR([libbz2 is needed but not found.])])
+    ;;
+esac
+AM_CONDITIONAL([BZIP2], [test x$ac_cv_enable_bzip2 = xyes])
+
+# FILE MAGIC
+AC_ARG_ENABLE(magic, AC_HELP_STRING([--enable-magic],
+	      [enable File Magic support via libmagic (default is enable).]),
+              [ac_cv_enable_magic=$enableval],
+              [ac_cv_enable_magic=yes])
+AC_CACHE_CHECK([whether to enable Magic Support],
+               [ac_cv_enable_magic], [ac_cv_enable_magic=yes])
+case $ac_cv_enable_magic in
+  yes)
+    AC_CHECK_HEADERS([magic.h],[],[AC_MSG_ERROR([magic.h is needed but not found - you will need to install package 'libmagic-dev' or similar. The feature can be disabled with --disable-magic])])
+    AC_CHECK_LIB(magic, magic_open, [], [AC_MSG_ERROR([libmagic is needed but not found.])])
+    ;;
+esac
+AM_CONDITIONAL([MAGIC], [test x$ac_cv_enable_magic = xyes])
+
+###
+
 AC_ARG_WITH(search,
             [AC_HELP_STRING([--with-search],
                             [specify google or geonames for searching (default is google)])],
@@ -329,6 +363,7 @@ AC_ARG_WITH(tileage,
              [VIK_CONFIG_DEFAULT_TILE_AGE=604800])
 AC_DEFINE_UNQUOTED(VIK_CONFIG_DEFAULT_TILE_AGE, ${VIK_CONFIG_DEFAULT_TILE_AGE},
                    [Age of tiles before checking it (in seconds)])
+AC_DEFINE(HAVE_VIKING, 1, [Enable Viking specifics in otherwise reusable code])
 
 dnl man pages processing
 DB2MAN_XSL=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl
@@ -372,7 +407,6 @@ echo ""
 echo "==========================================="
 echo "$PACKAGE $VERSION"
 echo "-------------------------------------------"
-echo "Alphabetized track & waypoints   : $ac_cv_enable_alpha_trw"
 echo "Bing Maps                        : $ac_cv_enable_bing"
 echo "Google                           : $ac_cv_enable_google"
 echo "Terraserver Maps                 : $ac_cv_enable_terraserver"
@@ -385,6 +419,8 @@ echo "Geocaches Acquire                : $ac_cv_enable_geocaches"
 echo "Geotag Support                   : $ac_cv_enable_geotag"
 echo "USGS 24k DEM                     : $ac_cv_enable_dem24k"
 echo "Realtime GPS Tracking            : $ac_cv_enable_realtimegpstracking"
+echo "bzip2 Support                    : $ac_cv_enable_bzip2"
+echo "File Magic Support               : $ac_cv_enable_magic"
 echo "Size of map cache (in memory)    : ${VIK_CONFIG_MAPCACHE_SIZE}"
 echo "Age of tiles (in seconds)        : ${VIK_CONFIG_DEFAULT_TILE_AGE}"
 echo "Documentation (+HTML)            : ${enable_gtk_doc} (HTML: ${enable_gtk_doc_html})"

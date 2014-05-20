@@ -5,7 +5,7 @@
  * 
  * viking is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or
+ * Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  * 
  * viking is distributed in the hope that it will be useful, but
@@ -47,6 +47,7 @@
 #include <gdk-pixbuf/gdk-pixdata.h>
 #include "globals.h"
 #include "bingmapsource.h"
+#include "maputils.h"
 #include "bbox.h"
 #include "background.h"
 #include "icons/icons.h"
@@ -291,7 +292,7 @@ _get_copyright(VikMapSource * self, LatLonBBox bbox, gdouble zoom, void (*fct)(V
 
 	BingMapSourcePrivate *priv = BING_MAP_SOURCE_GET_PRIVATE(self);
 
-	int level = vik_slippy_map_source_zoom_to_scale (zoom);
+	int level = map_utils_mpp_to_scale (zoom);
 
 	/* Loop over all known attributions */
 	GList *attribution = priv->attributions;

@@ -3,9 +3,9 @@
 "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY appname          "Viking">
   <!ENTITY app "<application>Viking</application>">
-  <!ENTITY appversion   "1.4">
-  <!ENTITY manrevision  "1.4">
-  <!ENTITY date "February 2013">
+  <!ENTITY appversion   "1.5">
+  <!ENTITY manrevision  "1.5">
+  <!ENTITY date "October 2013">
 ]>
 <!--
       (Do not remove this comment block.)
@@ -188,9 +188,9 @@ View, create and update Geotagged Images (using EXIF data).
 </section>
 
 <section><title>General Concepts</title>
-<section><title>Layers</title>
+<section id="gc_layers" xreflabel="Layers"><title>Layers</title>
 <para>
-'Layers' is concept one may know from powerful graphics editors such as <application>Photoshop</application> or <application>GIMP</application>.
+<emphasis>Layers</emphasis> is concept one may know from powerful graphics editors such as <application>Photoshop</application> or <application>GIMP</application>.
 Instead of putting all the data on the same level, it is stacked (i.e. layered) with different data over one another.
 This can be useful for analysis and general handling of various sets of data.
 </para>
@@ -203,12 +203,12 @@ to create the appearance of partial transparency.
 By controlling this value one can see data below it in the layer heirarchy for interesting effects.
 </para>
 </section>
-<section><title>Layers Panel</title>
+<section id="gc_layers_panel" xreflabel="Layers Panel"><title>Layers Panel</title>
 <para>
 The panel on the left is called the <emphasis role="bold">layers panel</emphasis>.
 It determines which layers and sublayers (such as tracks and waypoints)
-are shown, and the order in which they are drawn. Layers list on the
-top of the layers panel are drawn last. You can change the order by
+are shown, and the order in which they are drawn. Layers on the
+top of the layers panel list are drawn last. You can change the order by
 drag and drop, or by selecting a layer and using the up and down
 buttons at the bottom of the layers panel.
 </para>
@@ -344,7 +344,7 @@ For these combinations see the menu entry themselves.
 In theory a route is path you are planning to follow and a track of where you have actually been. The GPX specification splits these into two separate catergories, although tracks contain everything route may have.
 </para>
 <para>
-Q. When planning a 'route' what difference does it make if it's a route or a track?
+Q. When planning a <emphasis>route</emphasis> what difference does it make if it's a route or a track?
 </para>
 <para>
 A. One difference is in how a GPS device navigates following the route or track.
@@ -388,7 +388,7 @@ Besides it's own file type, &appname; can open (and save to via export methods) 
 </para>
 </note>
 <para>
-By default &appname; opens a default blank window centered on the home location.
+By default &appname; opens a default blank window centered on the home location. This behaviour can be changed by the <xref linkend="prefs_startup"/>.
 Each window contains menus, a toolbar, a viewport, layers panel and a statusbar.
 Each section (apart from the viewport) can be hidden using the <xref linkend="shortcut_keys"/> or from the
 <menuchoice><guimenu>View</guimenu><guisubmenu>Show</guisubmenu></menuchoice> choices.
@@ -543,8 +543,34 @@ If the image files have geotag information in them, then a <xref linkend="TrackW
 <menuchoice><guimenu>File</guimenu><guimenuitem>Acquire</guimenuitem><guimenuitem>From Wikipedia Waypoints</guimenuitem></menuchoice>
 </para>
 <para>
-This gets 'interesting' points from Wikipedia for the specified view: either within the extent of layer bounds or within the current viewport boundary.
+This gets <emphasis>interesting</emphasis> points from Wikipedia for the specified view: either within the extent of layer bounds or within the current viewport boundary.
 </para>
+</section>
+
+<section>
+<title>From Routing</title>
+<para>
+<menuchoice><guimenu>File</guimenu><guimenuitem>Acquire</guimenuitem><guimenuitem>From Directions</guimenuitem></menuchoice>
+</para>
+<para>
+This gets a route from given directions.
+</para>
+</section>
+
+<section>
+<title>From URL</title>
+<para>
+<menuchoice><guimenu>File</guimenu><guimenuitem>Acquire</guimenuitem><guimenuitem>From URL</guimenuitem></menuchoice>
+</para>
+<para>
+This gets a file from the entered URL.
+File formats that can be opened are those supported by GPSBabel.
+</para>
+<note>
+<para>
+You need to select the type of the file that is going to be returned, since there is no automatic detection of the file kind.
+</para>
+</note>
 </section>
 
 </section> <!-- End Acquire -->
@@ -590,9 +616,11 @@ For instance the largest successful image generated on my (RN) Debian system is 
 <para>
 Located on the <menuchoice><guimenu>File</guimenu><guisubmenu>Generate Directory of Images</guisubmenu></menuchoice> menu only.
 </para>
+<note>
 <para>
 This is only available in UTM mode.
 </para>
+</note>
 </section>
 
 </section> <!-- End File Types -->
@@ -632,6 +660,9 @@ The cut/copy/paste options can be accessed in a variety of ways once the layer h
 <listitem><para>Buttons at the bottom of the Layers Panel</para></listitem>
 </itemizedlist>
 <para>
+Default values used for each layer's properties can be altered via the <menuchoice><guimenu>Edit</guimenu><guisubmenu>Layer Defaults</guisubmenu></menuchoice> menu options.
+</para>
+<para>
 See the individual section for detail about each layer.
 </para>
 </section>
@@ -646,7 +677,7 @@ geocaches, and paste it into an active TrackWaypoint layer. &appname; can
 automatically recognize several variations of the lat/lon format.
 </para>
 <para>
-By right-clicking on tracks, routes or waypoints in the layers panel, you can access many commands on them.
+By right-clicking on tracks, routes or waypoints in the <xref linkend="gc_layers_panel"/>, you can access many commands on them.
 You can easily find a specific track, route or waypoint by expanding the appropriate containing Tracks, Routes or Waypoints sublayer in the
 layers panel to show all the individual items and then typing the name of the track, route or waypoint.
 </para>
@@ -666,7 +697,7 @@ By default routes are coloured red. Tracks are automatically assigned a spread o
 </para>
 
 <para>
-Most operations are available on tracks are available on routes, except for functionality that relies on having timestamps - since routes by definition have no timing information. Thus for example, uploading a route to OpenStreetMap Traces is not available nor is Geotagging on a route.
+Most operations available on tracks are available on routes, except for functionality that relies on having timestamps - since routes by definition have no timing information. Thus for example, uploading a route to OpenStreetMap Traces is not available nor is Geotagging on a route.
 It is possible to convert between Tracks and Routes, although converting from a Track to a Route may involve a loss of information (hence you are required to confirm this operation before it happens).
 </para>
 
@@ -732,9 +763,13 @@ Version1.1+: An individual track can be exported to a GPX file via the track men
 
 <section id="finish_track"><title>Finish Track or Route</title>
 <para>
-This is only available when a track or route is being created by the <xref linkend="track_create"/> or <xref linkend="route_create"/> tools.
 Selecting this option ends the creation of that individual track or route.
 </para>
+<note>
+<para>
+This is only available when a track or route is being created by the <xref linkend="track_create"/> or <xref linkend="route_create"/> tools.
+</para>
+</note>
 </section>
 
 <section><title>New</title>
@@ -861,6 +896,18 @@ See <link linkend="geotagging">Geotagging</link> for further detail.
 </para>
 </section>
 
+<section><title>List Tracks or Routes</title>
+<para>
+Opens a new dialog with the list. As described in the Aggregrate layer <xref linkend="track_list"/>
+</para>
+</section>
+
+<section><title>List Waypoints</title>
+<para>
+Opens a new dialog with the list. As described in the Aggregrate layer <xref linkend="waypoint_list"/>
+</para>
+</section>
+
 </section><!-- End TRW Layer Options -->
 
 <section><title>Track and Route Sublayer Options</title>
@@ -871,24 +918,57 @@ See <link linkend="geotagging">Geotagging</link> for further detail.
 <listitem><para>View All Tracks or Routes. Same as the layer <link linkend="track_view_all">View All Tracks</link> or <link linkend="route_view_all">View All Routes</link></para></listitem>
 <listitem><para>Delete All Tracks or Routes. Same as the layer <link linkend="delete_all_tracks">Delete All Tracks</link> or <link linkend="delete_all_routes">Delete All Routes</link></para></listitem>
 <listitem><para>Delete Tracks or Routes from Selection. Same as the layer <link linkend="delete_selection_tracks">Delete Tracks from Selection</link> or <link linkend="delete_selection_routes">Delete Routes from Selection</link></para></listitem>
+<listitem><para>List Tracks or Routes. Opens a new dialog with the list. As described in the Aggregrate layer <xref linkend="track_list"/></para></listitem>
+</itemizedlist>
+<para>Also gives other options for handling multiple items:</para>
+<itemizedlist>
+<listitem><para>Sort. Gives the ability to sort the items in the treeview alphabetically</para></listitem>
+<listitem><para>Visibility. Offers options to quickly control the visibility of all items within the sublayer, as per <xref linkend="vis_options"/></para></listitem>
 </itemizedlist>
 </section>
 
-<section><title>Track and Route Properties</title>
+<section xreflabel="Track and Route Properties"><title>Track and Route Properties</title>
 <para>
-Show many useful statistics about a track or a route, including a
-elevation-distance graph and a speed-time graph (if data is available).
-You can click these graphs to jump to the point in the track. You can
-also reverse it, delete duplicates, and split a track from its
-component segments (discontinuous breaks in a track) into separate
-tracks.
+This shows several tabs for properties and useful statistics about a track or a route, including elevation-distance and speed-time graphs (if data is available).
+Moving the mouse pointer over the graph displays values related to that point along the track.
+You can click on these graphs to jump to the point in the track.
+You can reverse it, delete duplicates, split at marked position or split a track from its component segments (discontinuous breaks in a track) into separate tracks.
+</para>
+<section id='track_properties' xreflabel="Track and Route Properties"><title>Track and Route Properties Tab</title>
+<para>
+<figure>
+<title>Properties Tab: Example</title>
+<screenshot>
+  <graphic format="PNG" fileref="figures/Track_properties.png"/>
+</screenshot>
+</figure>
+</para>
+</section>
+<section id='track_statistics' xreflabel="Track and Route Statistics"><title>Track and Route Statistics Tab</title>
+<para>
+<figure>
+<title>Statistics Tab: Example</title>
+<screenshot>
+  <graphic format="PNG" fileref="figures/Track_statistics.png"/>
+</screenshot>
+</figure>
+</para>
+</section>
+<section id='track_elev_graphs' xreflabel="Track Elevation Graph"><title>Track Elevation Graph</title>
+<para>
+<figure>
+<title>Elevation Distance Tab: Example</title>
+<screenshot>
+  <graphic format="PNG" fileref="figures/Track_elevation_graph.png"/>
+</screenshot>
+</figure>
 </para>
 <para>
 The following colors are used in the elevation-distance graph:
 </para>
 <variablelist>
 <varlistentry>
-<term>'Main' colour - this is dependent on your Desktop theme - often blue by default</term>
+<term><emphasis>Main</emphasis> colour - this is dependent on your Desktop theme - often blue by default</term>
 <listitem><para>elevation data in graph</para></listitem>
 </varlistentry>
 <varlistentry>
@@ -910,16 +990,20 @@ The following colors are used in the elevation-distance graph:
 </listitem>
 </varlistentry>
 </variablelist>
-
+</section>
 </section>
 
 <section><title>Track and Route Operations</title>
 
 <section><title>Finish Track</title>
 <para>
-This is only available when a track is being created by the <xref linkend="track_create"/> tool.
 Selecting this option ends the creation of the individual track.
 </para>
+<note>
+<para>
+This is only available when a track is being created by the <xref linkend="track_create"/> tool.
+</para>
+</note>
 </section>
 
 <section><title>Goto</title>
@@ -952,9 +1036,11 @@ threshold time away. This way, if you somehow end up with lots of small
 segments (say, caused by turning the GPS on and off) you can merge them
 easily into one track.
 </para>
+<note>
 <para>
 This is not available on routes as they have no timestamps.
 </para>
+</note>
 </section>
 
 <section><title>Merge With Other Tracks</title>
@@ -985,9 +1071,11 @@ time interval between successive trackpoints is larger than some
 threshold. This is useful when processing raw NMEA GPS data, especially
 taken over a long time.
 </para>
+<note>
 <para>
 This is not available on routes as they have no timestamps.
 </para>
+</note>
 </section>
 
 <section><title>Split By Number of Points</title>
@@ -1001,19 +1089,60 @@ This can be useful with devices which may have limits on the number of points it
 <para>
 Splits track segments into new tracks.
 </para>
+<note>
 <para>
 This is not available on routes as they do not have route segments.
 </para>
+</note>
 </section>
 
-<section><title>Split at Trackpoint</title>
+<section id='trkpt_split' xreflabel="Split at Trackpoint"><title>Split at Trackpoint</title>
 <para>
-Splits the track at the currently selected trackpoint. This is only enabled when a trackpoint is selected.
+Splits the track at the currently selected trackpoint.
+</para>
+<para>
+The current track will finish at this trackpoint.
+A new track will start from a copy of this trackpoint.
+</para>
+<note>
+<para>
+This is only enabled when a trackpoint is selected.
+</para>
+</note>
+</section>
+</section>
+
+<section><title>Insert Points</title>
+<note>
+<para>
+These options are only enabled when a trackpoint is selected.
+</para>
+</note>
+<section><title>Insert Point Before Selected Point</title>
+<para>
+Inserts a track point halfway between the previous track point and the current track point.
+All track point properties are interpolated between the two points.
+</para>
+</section>
+<section><title>Insert Point After Selected Point</title>
+<para>
+Inserts a track point halfway between the current track point and the next track point.
+All track point properties are interpolated between the two points.
 </para>
 </section>
 </section>
 
 <section><title>Delete Points</title>
+<section><title>Delete Selected Point</title>
+<para>
+Deletes the currently selected track point.
+</para>
+<note>
+<para>
+This is only enabled when a trackpoint is selected.
+</para>
+</note>
+</section>
 <section><title>Delete Points With the Same Position</title>
 <para>
 Deletes subsequent points that have the same position (but have different timestamps).
@@ -1023,17 +1152,70 @@ Deletes subsequent points that have the same position (but have different timest
 <para>
 Deletes subsequent points that have the same time stamp (but may have different positions).
 </para>
+<note>
 <para>
 This is not available on routes as they have no timestamps.
 </para>
+</note>
 </section>
 
 </section>
 
+<section id="transform" xreflabel="Transform"><title>Transform</title>
+<para>
+These options alter the data of trackpoints of a track but not add or remove trackpoints.
+And don't seem to fit any other category :)
+</para>
 <section><title>Apply DEM data</title>
 <para>
 If any DEM data is loaded, this will apply the DEM data to give the track elevation data.
+Two ways of applying DEM data are offered:
+<orderedlist>
+<listitem><para>Keep. Retains the existing elevation data of trackpoints and only those missing an elevation value are set.</para></listitem>
+<listitem><para>Overwrite. Elevation data are set on all trackpoints even if they already elevation values.</para></listitem>
+</orderedlist>
 </para>
+</section>
+<section><title>Smooth Missing Elevation data</title>
+<para>
+In various locations across the world, there are missing DEM values (AKA DEM Holes) from the SRTM data.
+This is particularly noticeable in mountainous areas.
+Two ways of applying elevation data to trackpoints that do not have elevation values are offered:
+<orderedlist>
+<listitem><para>Interpolated. Missing elevation data is interpolated between the previous and next known values.</para></listitem>
+<listitem><para>Flat. Elevation data is filled in from the last previously known value.</para></listitem>
+</orderedlist>
+</para>
+</section>
+<section>
+<title>Convert to Track or Route</title>
+<para>
+If this is a Route then it will convert it to a Track.
+</para>
+<para>
+If this is Track then convert it to a Route.
+</para>
+<note>
+<para>
+Converting from a Track to a Route may involve a loss of information, in particular timestamp values (hence you are required to confirm this operation before it happens).
+</para>
+</note>
+</section>
+<section>
+<title>Anonymize Times</title>
+<para>
+Timestamp information of a track can be shifted to be all offset from 1901-01-01.
+</para>
+<para>
+Thus the timestamps themselves will no longer reveal exactly when a track was taken.
+However the relative difference between the timestamps is kept thus one is still able to calculate some properties such as speeds along the track.
+</para>
+<note>
+<para>
+This is not available for routes, as they have no timestamps.
+</para>
+</note>
+</section>
 </section>
 
 <section><title>Export Track as GPX</title>
@@ -1050,7 +1232,7 @@ Changes the current tool to add trackpoints to the end of the track.
 
 <section><title>Extend Using Route Finder</title>
 <para>
-Enables the Route Finder tool. Thus on a subsequent left click in the viewport, a route is calculated from the end of track to that point using Google's route service and applied to the track.
+Enables the Route Finder tool. Thus on a subsequent left click in the viewport, a route is calculated from the end of track to that point using the default route service and applied to the track.
 </para>
 </section>
 
@@ -1074,9 +1256,35 @@ Same as the layer <link linkend="osm_upload">Upload to OSM</link> command, but o
 <para>
 This selects the track to be used in the <link linkend="filter_with_track">Filter With <emphasis>Trackname</emphasis></link> feature.
 </para>
+<note>
 <para>
 This is not available on routes.
 </para>
+</note>
+</section>
+
+<section><title>Edit Trackpoint</title>
+<para>
+This opens the Trackpoint edit dialog. See <xref linkend="Trackpoint_edit"/>.
+</para>
+<note>
+<para>
+This is only enabled when a trackpoint is selected.
+</para>
+</note>
+</section>
+
+<section><title>Refine Route...</title>
+<para>
+This function allows to request a Routing Engine in order to refine a given route.
+By "refining" we mean computing all real intermediates points between some given major points.
+This could be useful to compute a trip giving only the wished important steps.
+</para>
+<note>
+<para>
+This is only available on routes.
+</para>
+</note>
 </section>
 
 <section><title>View Google Directions</title>
@@ -1103,6 +1311,7 @@ The record of the Google route is stored in the track's comment, so if the comme
 <listitem><para>Goto Waypoint. Same as the layer <link linkend="wp_goto">Goto Waypoint</link></para></listitem>
 <listitem><para>Delete All Waypoints. Same as the layer <link linkend="delete_all_waypoints">Delete All Waypoints</link></para></listitem>
 <listitem><para>Delete Waypoints from Selection. Same as the layer <link linkend="delete_selection_waypoints">Delete Waypoints from Selection</link></para></listitem>
+<listitem><para>List Waypoints. Opens a new dialog with the list. As described in the Aggregrate layer <xref linkend="waypoint_list"/></para></listitem>
 </itemizedlist>
 </section>
 
@@ -1126,9 +1335,23 @@ This centers the viewport on the selected waypoint.
 </para>
 </section>
 
+<section><title>Geotag Images...</title>
+<para>
+This opens the <link linkend="geotagging">Geotag Dialog</link> to allow Geotagging multiple images to the position of this waypoint.
+In this circumstance creation of waypoint options are disabled and only the options related to writing the EXIF information are available.
+</para>
+</section>
+
+<section><title>Transform</title>
+<para>
+Offers a subset of the track <xref linkend="transform"/> utilities.
+Currently only setting the altitude from DEM data methods are available.
+</para>
+</section>
+
 <section><title>Visit Webpage</title>
 <para>
-If the waypoint's comment (or description) starts with 'http:' then this option is available and allows launching a web browser to go to the webpage.
+If the waypoint's comment (or description) starts with <literal>http:</literal> then this option is available and allows launching a web browser to go to the webpage.
 </para>
 </section>
 
@@ -1148,10 +1371,10 @@ Same as the layer <link linkend="new_wp">New Waypoint</link>.
 
 <section id="geotagging" xreflabel="Geotagging"><title>Version1.3+: Geotag Images</title>
 <para>
-This dialog allows geotagging images (normally taken with a digital camera) via interpolation against a specific track or all tracks in the TrackWaypoint layer - depending on how it is invoked.
+This dialog allows geotagging images (normally taken with a digital camera) against a specific waypoint or via interpolation against a specific track or all tracks in the TrackWaypoint layer - depending on how it is invoked.
 </para>
 <para>
-Images need to have an EXIF DATE_TIME_ORIGINAL (nearly always set by a camera). This timestamp is then used to find the location when the image(s) was taken by searching through the track(s) to find the nearest time - interpolating between points if necessary to set the location.
+When geotagging against tracks, images need to have an EXIF DATE_TIME_ORIGINAL (nearly always set by a camera). This timestamp is then used to find the location when the image(s) was taken by searching through the track(s) to find the nearest time - interpolating between points if necessary to set the location.
 </para>
 <note>
 <para>
@@ -1253,7 +1476,7 @@ This layer provides a single map resource, you may have multiple map layers but 
 You will need an open internet connection when you are downloading maps, but once downloaded they are available from the hard disk cache. When map are avaliable from the disk cache it is much faster and can be used offline.
 </para>
 <para>
-Some maps are continually improving over time (e.g. OpenStreetMap) and so in order to not to have to (re)download the data all the time &appname; employs a timeout method - 'Tile Age' to determine whether to access the server. However a forced refresh for the current view can be made via the <guilabel>Reload All Onscreen Maps</guilabel> option.
+Some maps are continually improving over time (e.g. OpenStreetMap) and so in order to not to have to (re)download the data all the time &appname; employs a timeout method - <emphasis>Tile Age</emphasis> to determine whether to access the server. However a forced refresh for the current view can be made via the <guilabel>Reload All Onscreen Maps</guilabel> option.
 </para>
 <para>
 Inbuilt maps include various <ulink url="http://en.wikipedia.org/wiki/TerraServer-USA">Terraserver</ulink> (Primarily USA coverage) and <ulink url="http://openstreetmap.org/">OpenStreetMap (OSM)</ulink> ones and more:
@@ -1293,6 +1516,30 @@ This requests map tiles only if the maps are older than the Tile Age preference.
 Force a refresh of all visible map tiles.
 </para>
 </section>
+
+<section><title>Download Maps in Zoom Levels</title>
+<para>
+This opens a dialog to enable requesting the download of maps for the region in the viewport over a specified number of zoom levels.
+The download method type can be specified to help limit the number of requests.
+</para>
+<warning>
+<para>
+There are some inbuilt limits to prevent downloading large amounts of map tiles.
+</para>
+<para>
+Please respect the usage policy of the tile set provider.
+Such as <ulink url="http://wiki.openstreetmap.org/wiki/Tile_usage_policy"><citetitle>OSM Tile Usage Policy</citetitle></ulink>.
+</para>
+</warning>
+<para>
+<figure>
+<title>Maps Download Dialog: Example</title>
+<screenshot>
+  <graphic format="PNG" fileref="figures/Maps_download_region_dialog.png"/>
+</screenshot>
+</figure>
+</para>
+</section>
 </section>
 
 
@@ -1321,13 +1568,114 @@ Here are some suggestions:
 Thus one can have a list of all your tracks, but groups can be shown or not using the relevant layers visibility checkbox.
 </para>
 
+<section><title>Layer Operations</title>
 <para>
-This layer only has one operation: <guilabel>New Layer</guilabel>
+The following are available on Aggregate Layers:
 </para>
+</section>
 
 <section><title>New Layer</title>
 <para>
 Add a new layer of the selected type.
+</para>
+</section>
+
+<section id="sort_items" xreflabel="Sort"><title>Sort</title>
+<para>
+The list within the treeview can be sorted.
+</para>
+<para>
+Currently alphabetical (A to Z or Z to A) sorts are available, since only the name can be seen in the treeview.
+</para>
+</section>
+
+<section id="track_list" xreflabel="Track List"><title>Track List</title>
+<para>
+Selecting this opens a dialog listing all the tracks in a table along side statistics such as track length and maximum speed.
+Each column header is clickable and will reorder the list according to that particular column.
+</para>
+<para>
+This table may be invoked from a variety of different layer levels and will then list only the relevant tracks (and/or routes).
+<itemizedlist>
+<listitem><para>Aggregate Layer: Lists Tracks and Routes and the TrackWaypoint Layer they are in</para></listitem>
+<listitem><para>TrackWaypoint Layer: Lists Tracks and Routes</para></listitem>
+<listitem><para>TrackWaypoint Track sublayer: Lists Tracks only</para></listitem>
+<listitem><para>TrackWaypoint Route sublayer: Lists Routes only</para></listitem>
+</itemizedlist>
+</para>
+<para>
+<figure>
+<title>Track List Dialog: Example</title>
+<blockquote>
+<para>
+This is showing all tracks and routes (although there are no actual routes here!) in multiple TrackWaypoint layers, that has been sorted by height.
+Note that routes will not have timestamps or speeds, but may have elevations and should have some distance!
+</para>
+</blockquote>
+<screenshot>
+  <graphic format="PNG" fileref="figures/LayersTracksList.png"/>
+</screenshot>
+</figure>
+</para>
+<para>
+Hovering the mouse over an entry will show a tooltip of the comment or description if it is available.
+</para>
+<para>
+Each entry in the track list can be selected and on mouse right click offers these options:
+<itemizedlist>
+<listitem><para>View. Move the viewport to the area of the item and highlight it.</para></listitem>
+<listitem><para>Statistics. Opens the Properties dialog on the <xref linkend="track_statistics"/> tab. Note this will close the track list dialog.</para></listitem>
+</itemizedlist>
+</para>
+</section>
+
+<section id="waypoint_list" xreflabel="Waypoint List"><title>Waypoint List</title>
+<para>
+Selecting this opens a dialog listing all the waypoints to give a overview of the waypoint information.
+Each column header is clickable and will reorder the list according to that particular column.
+</para>
+<para>
+This table may be invoked from a variety of different layer levels and will then list only the relevant waypoints.
+<itemizedlist>
+<listitem><para>Aggregate Layer: Lists Waypoints and the TrackWaypoint Layer they are in</para></listitem>
+<listitem><para>TrackWaypoint Layer: : Lists Waypoints</para></listitem>
+<listitem><para>TrackWaypoint Waypoint sublayer: Lists Waypoints</para></listitem>
+</itemizedlist>
+</para>
+<para>
+<figure>
+<title>Waypoint List Dialog: Example</title>
+<blockquote>
+<para>
+This was invoked on a TrackWaypoint layer and shows all waypoints from that single layer. It has been sorted by the symbols.
+</para>
+</blockquote>
+<screenshot>
+  <graphic format="PNG" fileref="figures/WaypointsList.png"/>
+</screenshot>
+</figure>
+</para>
+<para>
+Hovering the mouse over an entry will show a tooltip of the description if it is available.
+</para>
+<para>
+Each entry in the list can be selected and on mouse right click offers these options:
+<itemizedlist>
+<listitem><para>View. Move the viewport to the area of the item and highlight it.</para></listitem>
+<listitem><para>Properties. This will open the properties dialog. Note this will close the waypoint list dialog.</para></listitem>
+<listitem><para>Show Picture. If enabled, this will open the associated image in an external Image Viewer program.</para></listitem>
+</itemizedlist>
+</para>
+</section>
+
+<section id="vis_options" xreflabel="Visibility Options"><title>Visibility Options</title>
+<para>
+This offers a quick way to set all the visibilities of each item within the containing layer, rather than having to change each one individually.
+<itemizedlist>
+<listitem><para>Show All. Ensures all items are set to be visible.</para></listitem>
+<listitem><para>Hide All. Ensures all items are set to be invisible. This is useful for then turning on single items afterwards so the display is not cluttered.</para></listitem>
+<listitem><para>Toggle. Inverts the visibility status of each item.</para></listitem>
+</itemizedlist>
 </para>
 </section>
 
@@ -1432,7 +1780,7 @@ This mode is entered by clicking on the toolbar icon: <guiicon><inlinegraphic fi
 </para>
 <para>
 The ruler is used to measure the bearing and distance between two points: Click on first point and then move the mouse point around - the values will be continually updated.
-A second click will 'freeze' the ruler at that point.
+A second click will <emphasis>freeze</emphasis> the ruler at that point.
 </para>
 <para>
 This mode can also be entered by the keyboard shortcut <keycap>Ctrl+Shift+U</keycap>
@@ -1520,9 +1868,38 @@ Left click near a trackpoint (in screen pixel terms) to bring up the Track Point
 Whilst the edit dialog is already open, left click again and drag enables moving of the trackpoint.
 If <keycap>Ctrl</keycap> is held at the same time, it will jump the new trackpoint position to a nearby existing trackpoint.
 </para>
+<section id="Trackpoint_edit" xreflabel="Edit Trackpoint Dialog"><title>Edit Trackpoint Dialog</title>
 <para>
-Options in the Track Point Edit dialog include: change position, go to next, go to previous, delete, insert (halfway to next trackpoint) and splitting the track.
+Editing options in the Trackpoint Edit dialog include:
+<itemizedlist>
+<listitem><para>Edit the trackpoint name</para></listitem>
+<listitem><para>Changing raw lat/long position and altitude</para></listitem>
+<listitem><para>Forward (go to the next trackpoint)</para></listitem>
+<listitem><para>Back (go to the previous trackpoint)</para></listitem>
+<listitem><para>Delete</para></listitem>
+<listitem><para>Insert. Inserts a point halfway to next trackpoint</para></listitem>
+<listitem><para>Split. <xref linkend="trkpt_split"/></para></listitem>
+</itemizedlist>
 </para>
+<para>
+Several fields are read only for reference purposes, values are shown if the trackpoint has such information:
+<itemizedlist>
+<listitem><para>Time.</para></listitem>
+<listitem><para>Speed and course.</para></listitem>
+<listitem><para>'Between' values: Speed, Time Difference and Distance Difference. When moving between trackpoints (via the Back and Forward buttons) these values are calculated.</para></listitem>
+<listitem><para>GPS precision factors.</para></listitem>
+</itemizedlist>
+</para>
+<para>
+<figure>
+<title>Trackpoint Edit Dialog: Example</title>
+<screenshot>
+  <graphic format="PNG" fileref="figures/Trackpoint_edit_dialog.png"/>
+</screenshot>
+</figure>
+One must have been going downhill here to get a reasonable speed by bicycle!
+</para>
+</section>
 </section>
 
 <section><title>Show Picture</title>
@@ -1536,11 +1913,11 @@ For Linux you can override this with the setting in the <xref linkend="prefs_ext
 </para>
 </section>
 
-<section><title>Route Finder</title>
+<section id="route_finder" xreflabel="Route Finder"><title>Route Finder</title>
 <para>
 Enable this tool by clicking on the toolbar icon: <guiicon><inlinegraphic fileref="figures/route_finder_18.png"/></guiicon>
 </para>
-<para>Creates a track using Google maps routing between two points.
+<para>Creates a track using default routing engine between two points.
 Requires an internet connection. Click one point, then click another to
 create a track.
 </para>
@@ -1578,7 +1955,7 @@ Drag to move the georeferenced map.
 </section>
 </section>
 
-<section><title>Map Download</title>
+<section id="map_tool_dl" xreflabel="Map Download"><title>Map Download</title>
 <para>
 You must have a <xref linkend="Maps"/> Layer selected to use this.
 </para>
@@ -1601,7 +1978,7 @@ The possible methods to redownload one or more tiles are:
 </para>
 <formalpara><title>Map Tile Information</title>
 <para>
-By right clicking on viewport you can see the tile properties of the that location for the current map layer and current zoom level.
+By right clicking on viewport and selecting <guimenu>Show Tile Information</guimenu> you can see the tile properties of this location for the current map layer and current zoom level.
 This includes the remote source URL for the tile and the cached version on the local filesystem with timestamp details.
 </para>
 </formalpara>
@@ -1625,6 +2002,21 @@ Enable this tool by clicking on the toolbar icon: <guiicon><inlinegraphic filere
 </para>
 <para>
 Click to download and import a DEM file.
+</para>
+<formalpara><title>DEM File Information</title>
+<para>
+By right clicking on viewport and selecting <guimenu>Show DEM File Infomation</guimenu> you can see the file properties of the DEM file for this location.
+This includes the remote source URL for the file and the cached version on the local filesystem with timestamp details.
+</para>
+</formalpara>
+<para>
+<figure>
+<title>DEM File Info Dialog: Example</title>
+<screenshot>
+  <graphic format="PNG" fileref="figures/DEM_file_info_dialog.png"/>
+</screenshot>
+</figure>
+This is for block 51N, 003W - covering Bristol in the UK.
 </para>
 </section>
 
@@ -1680,8 +2072,8 @@ This feature is called <guilabel>Webtools</guilabel>. It is also known as Extern
 <para>An option exists to control the icon (symbol) size used for waypoints
 </para>
 </section>
-<section><title>'Home' Default Location: Latitude and Longitude</title>
-<para>You can set the 'Home' location directly by inputting the latitude and longitude in decimal degrees.
+<section><title><emphasis>Home</emphasis> Default Location: Latitude and Longitude</title>
+<para>You can set the <emphasis>Home</emphasis> location directly by inputting the latitude and longitude in decimal degrees.
 </para>
 </section>
 <section><title>Tile's age</title>
@@ -1732,13 +2124,50 @@ Your OSM password will be stored in plain text.
 </section>
 </section>
 
+<section id="prefs_routing" xreflabel="Routing Preferences"><title>Routing</title>
+<section><title>Routing engine</title>
+<para>You can select the routing engine used by default, ie by features that do not propose a live selection, like <xref linkend="route_finder"/>.</para>
+</section>
+</section>
+
+<section id="prefs_startup" xreflabel="Startup Preferences"><title>Startup</title>
+<para>Naturally since these preferences effect the startup, the values will not be used until &appname; is restarted.</para>
+<section><title>Restore Window Setup</title>
+<para>When this is enabled, the main window size and layout (such as whether the statusbar or layers panel are shown) is restored to the values from last use.</para>
+</section>
+<section><title>Default Map Layer</title>
+<para>When this is enabled, a map layer is automatically added whenever &appname; is opened and a &appname; file is not to be loaded.</para>
+<para>The map layer used is defined by the map layer's default values.</para>
+</section>
+<section><title>Startup Method</title>
+<para>Enables selection of how the startup position should be determined.</para>
+<itemizedlist>
+<listitem><para>Home Location (default) - Position as set by the <guilabel>Set the Default Location</guilabel></para></listitem>
+<listitem><para>Last Location - Uses the last position viewed on the viewport</para></listitem>
+<listitem><para>Specified File - Load the file as specified below</para></listitem>
+<listitem><para>Auto Location - Use the web service <ulink url="http://www.hostip.info">hostip.info</ulink> to attempt to determine your location via IP lookup</para></listitem>
+</itemizedlist>
+</section>
+<section><title>Startup File</title>
+<para>Loads this specified file when the Startup method is set to <guilabel>Specified File</guilabel></para>
+</section>
+<section><title>Check For New Version</title>
+<para>Periodically (no more than once every 14 days), check to see if there is a new version of &appname; available.</para>
+</section>
+</section>
+
 </section>
 
 <!-- HOWTOS-->
 <section><title>Howto's</title>
 <section id="howto_start"><title>Getting Started</title>
 <para>
-To quickly get started using &appname;, follow these instructions.
+&appname; from version 1.5 has several features to ease the start up process.
+On the very first run, you will be asked if you want to enable these features which make use of an Internet connection.
+If you select no or you have upgraded from an earlier version you can choose to enable any of the startup options via the <xref linkend="prefs_startup"/>.
+</para>
+<para>
+Some other general use cases for using &appname;, are as follows:
 </para>
 <section><title>Go to an area of interest</title>
 <para>
@@ -1820,13 +2249,13 @@ The viewport will be automatically moved and resized to view the contents of the
 </step>
 </procedure>
 </section>
-<section><title>Add a map layer</title>
+<section><title>Add a Map Layer</title>
 <para>
-1. Use Layers - New Map Layer, and choose a suitable cache directory
+Use <menuchoice><guimenu>Layers</guimenu><guimenuitem>New Map Layer</guimenuitem></menuchoice>, and choose a suitable cache directory
 where you would like to store your tracks and click <guilabel>OK</guilabel>. Zoom to a
 comfortable level (I suggest 4 mpp) by clicking the left and right
 mouse buttons on the gray area where your tracks are. Now from the menu
-choose Tools - Map Download, Click where you would like to download a
+choose the <xref linkend="map_tool_dl"/> Tool. Click where you would like to download a
 map. Regardless of what tool you are using, the middle mouse button
 always pans. </para>
 <note>
@@ -1835,13 +2264,13 @@ You need an open internet connection when you are downloading maps.
 </para>
 </note>
 <para>
-1. You will notice the maps are being drawn on top of the tracks, which
-is probably not what you want. Look at the Layers Panel to the left.
-Notice how the layer named Map is ABOVE your TrackWaypoint layer that
-your GPS data is in. This means that it will be drawn last, or on top
-of the other layers. Select the Map layer from the list and click the
-down arrow button beneath the list. Your tracks will now be drawn over
-the map. </para>
+If you can no longer see your tracks or waypoints and only the map,
+it is because the layer named <emphasis>Map</emphasis> is <emphasis>ABOVE</emphasis> your TrackWaypoint layer that your GPS data is in.
+This means that it will be drawn last and on top of the other <xref linkend="gc_layers"/>.
+Look at the  <xref linkend="gc_layers_panel"/> to the left which shows this order.
+Select the Map layer from the list and click the down arrow button beneath the list until the Map layer is below the TrackWaypoint layer.
+Your tracks will now be drawn over the map.
+</para>
 </section>
 
 <section><title>Set Your Home Location</title>
@@ -1861,7 +2290,7 @@ the map. </para>
 <section><title>From 1st startup to GPS track (including offline maps)</title>
 <para>
 The first you'll see is an empty map, because &appname; in its default configuration will download maps only on demand.
-Before fetching unneeded data, one can position to a location of interest, e.g. Stuttgart: <menuchoice><guimenu>View</guimenu><guimenuitem>Go to Location</guimenuitem></menuchoice>, enter 'Stuttgart'.
+Before fetching unneeded data, one can position to a location of interest, e.g. Stuttgart: <menuchoice><guimenu>View</guimenu><guimenuitem>Go to Location</guimenuitem></menuchoice>, enter <userinput>Stuttgart</userinput>.
 </para>
 <section><title>Fetching the maps</title>
 <para>
@@ -2053,7 +2482,7 @@ This feature can be really useful for checking existing data before uploading ne
 <guimenuitem>OSM traces...</guimenuitem>
 </menuchoice>.
 Each request can get up to 5,000 points.
-The dialog box allows setting which group of 5,000 points to get. These groups are known as 'Page Numbers' which start at 0.
+The dialog box allows setting which group of 5,000 points to get. These groups are known as <emphasis>Page Numbers</emphasis> which start at 0.
 Increasing the page number parameter allows one to request the subsequent sets of point groups.
 </para>
 </formalpara>
@@ -2082,7 +2511,7 @@ This list can be sorted on each column so that it easier to find an individual t
 	ATM this process only works on an individual image, so it will be tedious for handling lots of images.
 </para>
 <para>
-	First create a <xref linkend="TrackWaypoint"/> layer or use an existing one; and select it in the Layers Panel.
+	First create a <xref linkend="TrackWaypoint"/> layer or use an existing one; and select it in the <xref linkend="gc_layers_panel"/>.
 	NB Make sure this layer is above the map layer in the Layers Panel list.
 	Create a new waypoint (or move an existing one) to exact location desired:
 <itemizedlist>
@@ -2158,175 +2587,6 @@ This list can be sorted on each column so that it easier to find an individual t
 <procedure><step><para>Confirm on the GPS device it has a location.</para></step></procedure>
 <procedure><step><para>Confirm the <emphasis>Realtime Tracking Mode</emphasis> settings.</para></step></procedure>
 </section>
-</section>
-
-<section id="extend_viking" xreflabel="Extending Viking">
-    <title>Extending Viking</title>
-
-      <para>Currently, &app; has some extention points based on configuration files. The file format is heavily inspired by the GtkBuilder file format: you specify the class of the GObject to build and set its properties. Technically, it is a XML file containing a "objects" root element. Inside this element, you set a collection of "object".</para>
-      <para>Here is an example:
-<programlisting><![CDATA[
-<objects>
-  <object class="ClassName">
-    <property name="property_name1">Property value</property>
-    <property name="property_name2">Property value</property>
-  </object>
-  ...
-<objects>
-]]>
-</programlisting>
-</para>
-      <para>You can find more examples in the documentation part of the distribution.</para>
-      <section>
-        <title>Map Source</title>
-        <para>It is possible to add new map's sources. The file is <filename>~/.viking/maps.xml</filename> for <trademark>UNIX</trademark> like systems and <filename>C:\Documents and Settings\<replaceable>username</replaceable>\.viking\maps.xml</filename> on <trademark>Windows XP</trademark>.</para>
-        <para>An example of the file is in the distribution <filename>doc/examples/maps.xml</filename>. Further examples and values are online in the <ulink url="http://sourceforge.net/apps/mediawiki/viking/index.php?title=Maps">Maps Wiki</ulink></para>
-
-        <para>The VikSlippyMapSource allows to declare any map's source working like OpenStreetMap. It supports the following properties:
-          <variablelist>
-            <varlistentry>
-              <term>id</term>
-              <listitem><para>this is an integer and should be unique as it used to identify the map source</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>label</term>
-              <listitem><para>the text displayed in the map's source selection dialog</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>hostname</term>
-              <listitem><para>the server's hostname (eg. "tile.openstreetmap.org")</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>url</term>
-              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 3 "%d" fields for X, Y and Z (zoom level) (eg. "/%d/%d/%d.png")</para></listitem>
-            </varlistentry>
-          </variablelist>
-        </para>
-        <para>The VikTmsMapSource allows to declare any TMS service. It supports the following properties:
-          <variablelist>
-            <varlistentry>
-              <term>id</term>
-              <listitem><para>this is an integer and should be unique as it used to identify the map source</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>label</term>
-              <listitem><para>the text displayed in the map's source selection dialog</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>hostname</term>
-              <listitem><para>the server's hostname (eg. "tile.openstreetmap.org")</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>url</term>
-              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 3 "%d" fields for X, Y and Z (zoom level) (eg. "/%d/%d/%d.png")</para></listitem>
-            </varlistentry>
-          </variablelist>
-        </para>
-        <para>The VikWmscMapSource allows to declare any WMS or WMS-C service. It supports the following properties:
-          <variablelist>
-            <varlistentry>
-              <term>id</term>
-              <listitem><para>this is an integer and should be unique as it used to identify the map source</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>label</term>
-              <listitem><para>the text displayed in the map's source selection dialog</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>hostname</term>
-              <listitem><para>the server's hostname (eg. "tile.openstreetmap.org")</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>url</term>
-              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 4 "%s" fields for bounding box coordinates (eg. "/coord=%s,%s,%s,%s")</para></listitem>
-            </varlistentry>
-          </variablelist>
-        </para>
-      </section>
-
-      <section>
-        <title>Go-to search engines</title>
-        <para>It is possible to add new new search engines for the "Go-To" feature. The file is <filename>~/.viking/goto_tools.xml</filename>.</para>
-        <para>An example of the file in the distribution <filename>doc/examples/goto_tools.xml</filename>.</para>
-        <para>Currently, there is a single object class available: VikGotoXmlTool. Such feature allows to declare any search engine using a XML format as result.</para>
-        <para>The related properties are:
-          <variablelist>
-            <varlistentry>
-              <term>label</term>
-              <listitem><para>the text displayed in the <guilabel>Go-To</guilabel> dialog</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>url-format</term>
-              <listitem><para>the parametrized address of the query, in the spirit of C <function>printf</function> format, with a single "%s" field (replaced by the query string)</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>lat-path</term>
-              <listitem><para>XML path of the latitude (eg. <literal>/root/parent/elem</literal>)</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>lat-attr (optional)</term>
-              <listitem><para>name of the attribute (of previous element) containing the latitude</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>lon-path</term>
-              <listitem><para>XML path of the longitude (eg. <literal>/root/parent/elem</literal>)</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>lon-attr (optional)</term>
-              <listitem><para>name of the attribute (of previous element) containing the longiude</para></listitem>
-            </varlistentry>
-          </variablelist>
-        </para>
-        <para>As a facility (or readability) it is possible to set both path and attribute name in a single property, like an XPath expression. To do so, simply set both info in lat-path (or lon-path) in the following format: <literal>/root/parent/elem@attribute</literal>.</para>
-      </section>
-
-      <section>
-        <title>External tools</title>
-        <para>It is possible to add new external tools. The file is <filename>~/.viking/external_tools.xml</filename>.</para>
-        <para>An example of the file in the distribution <filename>doc/examples/external_tools.xml</filename>.</para>
-        <para>The VikWebtoolCenter allows to declare any Webtool using a logic based on center coordinates and zoom level value.</para>
-        <para>The related properties are:
-          <variablelist>
-            <varlistentry>
-              <term>id</term>
-              <listitem><para>this is an integer and should be unique as it used to identify the tool</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>label</term>
-              <listitem><para>the text displayed in the menu entry</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>url</term>
-              <listitem><para>the parametrized URL to open, in the spirit of C printf format, with 2 "%s" and a "%d" fields for X, Y and Z (zoom level) (eg. "http://hostname/?lat=%s&amp;lon=%s&amp;zoom=%d")</para></listitem>
-            </varlistentry>
-          </variablelist>
-        </para>
-        <para>The VikWebtoolBounds allows to declare any Webtool using a logic based on bounds coordinates.</para>
-        <para>The related properties are:
-          <variablelist>
-            <varlistentry>
-              <term>id</term>
-              <listitem><para>this is an integer and should be unique as it used to identify the tool</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>label</term>
-              <listitem><para>the text displayed in the menu entry</para></listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>url</term>
-              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 4 "%s" fields for left, right, bottom and top (eg. "http://hostname:8111/load_and_zoom?left=%s&amp;right=%s&amp;bottom=%s&amp;top=%s")</para></listitem>
-            </varlistentry>
-          </variablelist>
-        </para>
-      </section>
-      
-      <section>
-        <title>More</title>
-        <para>Note that, on <trademark>UNIX</trademark> like systems, the extension files (<filename>maps.xml</filename>, <filename>goto_tools.xml</filename>, <filename>external_tools.xml</filename>) are also searched in <filename>/etc/viking</filename> and <filename>/usr/share/viking</filename> directories (or related in your system).</para>
-        <para>The <envar>XDG_DATA_DIRS</envar> environment variable can be used to change these directories.</para>
-        <para>The <envar>XDG_DATA_HOME</envar> environment variable s also used (if set) to look for these extension files.</para>
-      </section>
-
 </section>
 
 <section><title>What to Do if &appname; Does Not Seem to Work</title>
@@ -2422,6 +2682,346 @@ Accept: */*
 </section>
 
 </section>
+<!-- End of Howtos -->
+
+<section id="extend_viking" xreflabel="Extending Viking">
+    <title>Extending Viking</title>
+
+      <para>Currently, &app; has some extention points based on configuration files. The file format is heavily inspired by the GtkBuilder file format: you specify the class of the GObject to build and set its properties. Technically, it is a XML file containing a "objects" root element. Inside this element, you set a collection of "object".</para>
+      <para>Here is an example:
+<programlisting><![CDATA[
+<objects>
+  <object class="ClassName">
+    <property name="property_name1">Property value</property>
+    <property name="property_name2">Property value</property>
+  </object>
+  ...
+<objects>
+]]>
+</programlisting>
+</para>
+      <para>You can find more examples in the documentation part of the distribution.</para>
+      <section>
+        <title>Map Source</title>
+        <para>It is possible to add new map's sources. The file is <filename>~/.viking/maps.xml</filename> for <trademark>UNIX</trademark> like systems and <filename>C:\Documents and Settings\<replaceable>username</replaceable>\.viking\maps.xml</filename> on <trademark>Windows XP</trademark>.</para>
+        <para>An example of the file is in the distribution <filename>doc/examples/maps.xml</filename>. Further examples and values are online in the <ulink url="http://sourceforge.net/apps/mediawiki/viking/index.php?title=Maps">Maps Wiki</ulink></para>
+
+        <para>The <classname>VikSlippyMapSource</classname> allows to declare any map's source working like OpenStreetMap. It supports the following properties:
+          <variablelist>
+            <varlistentry>
+              <term>id</term>
+              <listitem><para>this is an integer and should be unique as it used to identify the map source</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>label</term>
+              <listitem><para>the text displayed in the map's source selection dialog</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>hostname</term>
+              <listitem><para>the server's hostname (eg. "tile.openstreetmap.org")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url</term>
+              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 3 "%d" fields for X, Y and Z (zoom level) (eg. "/%d/%d/%d.png")</para></listitem>
+            </varlistentry>
+          </variablelist>
+        </para>
+        <para>The <classname>VikTmsMapSource</classname> allows to declare any TMS service. It supports the following properties:
+          <variablelist>
+            <varlistentry>
+              <term>id</term>
+              <listitem><para>this is an integer and should be unique as it used to identify the map source</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>label</term>
+              <listitem><para>the text displayed in the map's source selection dialog</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>hostname</term>
+              <listitem><para>the server's hostname (eg. "tile.openstreetmap.org")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url</term>
+              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 3 "%d" fields for X, Y and Z (zoom level) (eg. "/%d/%d/%d.png")</para></listitem>
+            </varlistentry>
+          </variablelist>
+        </para>
+        <para>The <classname>VikWmscMapSource</classname> allows to declare any WMS or WMS-C service. It supports the following properties:
+          <variablelist>
+            <varlistentry>
+              <term>id</term>
+              <listitem><para>this is an integer and should be unique as it used to identify the map source</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>label</term>
+              <listitem><para>the text displayed in the map's source selection dialog</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>hostname</term>
+              <listitem><para>the server's hostname (eg. "tile.openstreetmap.org")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url</term>
+              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 4 "%s" fields for bounding box coordinates (eg. "/coord=%s,%s,%s,%s")</para></listitem>
+            </varlistentry>
+          </variablelist>
+        </para>
+      </section>
+
+      <section>
+        <title>Go-to search engines</title>
+        <para>It is possible to add new new search engines for the "Go-To" feature. The file is <filename>~/.viking/goto_tools.xml</filename>.</para>
+        <para>An example of the file in the distribution <filename>doc/examples/goto_tools.xml</filename>.</para>
+        <para>Currently, there is a single object class available: <classname>VikGotoXmlTool</classname>. Such feature allows to declare any search engine using a XML format as result.</para>
+        <para>The related properties are:
+          <variablelist>
+            <varlistentry>
+              <term>label</term>
+              <listitem><para>the text displayed in the <guilabel>Go-To</guilabel> dialog</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url-format</term>
+              <listitem><para>the parametrized address of the query, in the spirit of C <function>printf</function> format, with a single "%s" field (replaced by the query string)</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>lat-path</term>
+              <listitem><para>XML path of the latitude (eg. <literal>/root/parent/elem</literal>)</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>lat-attr (optional)</term>
+              <listitem><para>name of the attribute (of previous element) containing the latitude</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>lon-path</term>
+              <listitem><para>XML path of the longitude (eg. <literal>/root/parent/elem</literal>)</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>lon-attr (optional)</term>
+              <listitem><para>name of the attribute (of previous element) containing the longiude</para></listitem>
+            </varlistentry>
+          </variablelist>
+        </para>
+        <para>As a facility (or readability) it is possible to set both path and attribute name in a single property, like an XPath expression. To do so, simply set both info in lat-path (or lon-path) in the following format: <literal>/root/parent/elem@attribute</literal>.</para>
+      </section>
+
+      <section>
+        <title>External tools</title>
+        <para>It is possible to add new external tools. The file is <filename>~/.viking/external_tools.xml</filename>.</para>
+        <para>An example of the file in the distribution <filename>doc/examples/external_tools.xml</filename>.</para>
+        <para>The <classname>VikWebtoolCenter</classname> allows to declare any Webtool using a logic based on center coordinates and zoom level value.</para>
+        <para>The related properties are:
+          <variablelist>
+            <varlistentry>
+              <term>label</term>
+              <listitem><para>the text displayed in the menu entry</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url</term>
+              <listitem><para>the parametrized URL to open, in the spirit of C printf format, with 2 "%s" and a "%d" fields for X, Y and Z (zoom level) (eg. "http://hostname/?lat=%s&amp;lon=%s&amp;zoom=%d")</para></listitem>
+            </varlistentry>
+          </variablelist>
+        </para>
+        <para>The <classname>VikWebtoolBounds</classname> allows to declare any Webtool using a logic based on bounds coordinates.</para>
+        <para>The related properties are:
+          <variablelist>
+            <varlistentry>
+              <term>label</term>
+              <listitem><para>the text displayed in the menu entry</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url</term>
+              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 4 "%s" fields for left, right, bottom and top (eg. "http://hostname:8111/load_and_zoom?left=%s&amp;right=%s&amp;bottom=%s&amp;top=%s")</para></listitem>
+            </varlistentry>
+          </variablelist>
+        </para>
+      </section>
+      
+      <section>
+        <title>Routing engine</title>
+        <para>It is possible to declare new routing engines. The file is <filename>~/.viking/routing.xml</filename>.</para>
+        <para>An example of the file in the distribution <filename>doc/examples/routing.xml</filename>.</para>
+        <para>The <classname>VikRoutingWebEngine</classname> allows to declare a routing engine available via HTTP.</para>
+        <para>The related properties are:
+          <variablelist>
+            <varlistentry>
+              <term>id</term>
+              <listitem><para>a string, should be unique as it used to identify the routing engine</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>label</term>
+              <listitem><para>the text displayed in the menu entry</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url-base</term>
+              <listitem><para>the base URL of the web service (eg. "http://hostname/service?")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url-start-ll</term>
+              <listitem><para>the part of the URL setting the starting point location, parametrized in the spirit of C printf format, with 2 "%s" for coordinates (eg. "&amp;start=%s,%s")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url-stop-ll</term>
+              <listitem><para>the part of the URL setting the end point location, parametrized in the spirit of C printf format, with 2 "%s" for coordinates (eg. "&amp;stop=%s,%s")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url-via-ll</term>
+              <listitem><para>the part of the URL setting via point location, parametrized in the spirit of C printf format, with 2 "%s" for coordinates (eg. "&amp;via=%s,%s")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url-start-dir</term>
+              <listitem><para>the part of the URL setting the starting point location for direction based routing, parametrized in the spirit of C printf format, with one "%s" for direction (eg. "&amp;start=%s")</para>
+						<para>(Optional)</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url-stop-dir</term>
+              <listitem><para>the part of the URL setting the end point location for direction based routing, parametrized in the spirit of C printf format, with one "%s" for direction (eg. "&amp;start=%s")</para>
+						<para>(Optional)</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>referer</term>
+              <listitem><para>an URL to serve as referer for the HTTP request (eg. "http://hostname/")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>follow-location</term>
+              <listitem><para>the max depth of recursive redirections</para></listitem>
+            </varlistentry>
+          </variablelist>
+        </para>
+      </section>
+      
+      <section>
+        <title>Remote File Datasources</title>
+        <para>It is possible to add web references expected to return a file which can then be opened directly or converted via GPSBabel.</para>
+        <para>The file is <filename>~/.viking/datasources.xml</filename>.</para>
+        <para>An example of the file is in the source distribution <filename>doc/examples/datasources.xml</filename>.</para>
+        <para>The <classname>VikWebtoolDatasource</classname> allows to declare any URL using logic based on coordinates.</para>
+        <para>The related properties are:
+          <variablelist>
+            <varlistentry>
+              <term>label</term>
+              <listitem><para>the text displayed in the menu entry</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url</term>
+              <listitem>
+                <para>the parametrized URL to open in the spirit of C printf format, with up to 7 "%s" values. e.g. <literal>http://hostname/getfile?lat=%s&amp;lon=%s</literal></para>
+                <para>The order and meaning of these parameters is given by the url_format_code below</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>url_format_code</term>
+              <listitem>
+                <para>A string describing the parametrized URL substitution parameters, each character represents how to translate each term.</para>
+                <para>B = Bottom of the current view i.e. minimum latitude</para>
+                <para>L = Left of the current view i.e. minimum longitude</para>
+                <para>T = Top of the current view i.e. maximum latitude</para>
+                <para>R = Right of the current view i.e. maximum longitude</para>
+                <para>A = center lAtitude of the current view</para>
+                <para>O = center lOngitude of the current view</para>
+                <para>Z = OSM Zoom value of the current view. See <ulink url="http://wiki.openstreetmap.org/wiki/Zoom_levels">Zoom Levels</ulink></para>
+                <para>Thus for the url example above then the format code should be <emphasis>AO</emphasis></para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>file_type</term>
+              <listitem>
+                <para>This value is passed on for the -i parameter in interfacing with GPSBabel.</para>
+                <para>If it is not defined then the returned file is interpreted internally as a GPX file.</para>
+                <para>Possible values such as 'kml', 'mapsource' etc.. can be used. See <ulink url="http://www.gpsbabel.org/capabilities.html">GPSBabel File Formats</ulink> for the full list.</para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </para>
+      </section>
+
+      <section>
+        <title>More</title>
+        <para>Note that, on <trademark>UNIX</trademark> like systems, the extension files (<filename>maps.xml</filename>, <filename>goto_tools.xml</filename>, <filename>external_tools.xml</filename>, <filename>datasources.xml</filename>) are also searched in <filename>/etc/viking</filename> and <filename>/usr/share/viking</filename> directories (or related in your system).</para>
+        <para>The <envar>XDG_DATA_DIRS</envar> environment variable can be used to change these directories.</para>
+        <para>The <envar>XDG_DATA_HOME</envar> environment variable is also used (if set) to look for these extension files.</para>
+      </section>
+
+
+      <section>
+        <title>Miscellaneous Settings</title>
+        <para>Various individual values are automatically saved between &app; sessions in the <filename>~/.viking/viking.ini</filename> file.</para>
+        <para>This file is not intended to be manually edited, but since it is a plain text file it can be changed if desired.</para>
+        <para>Some values in this file are <emphasis>read only</emphasis>, in the sense that there is no way to set it other than by manually entering in the keys and values (the key will not exist in the file otherwise). This allows some fine tuning of &app; behaviours, without resorting to recompiling the code. However is it not expected that these values should need to be changed for a normal user, hence no GUI options for these have been provided.</para>
+        <para>Here is the list of the <emphasis>read only</emphasis> keys and their default values.</para>
+	<orderedlist>
+	  <listitem>
+	    <para>maps_max_tiles=1000</para>
+	  </listitem>
+	  <listitem>
+	    <para>maps_min_shrinkfactor=0.0312499</para>
+	  </listitem>
+	  <listitem>
+	    <para>maps_max_shrinkfactor=8.0000001</para>
+	  </listitem>
+	  <listitem>
+	    <para>maps_real_min_shrinkfactor=0.0039062499</para>
+	  </listitem>
+	  <listitem>
+	    <para>background_max_threads=10</para>
+	  </listitem>
+	  <listitem>
+	    <para>window_menubar=true</para>
+	  </listitem>
+	  <listitem>
+	    <para>version_check_period_days=14</para>
+	  </listitem>
+	  <listitem>
+	    <para>trackwaypoint_start_end_distance_diff=100.0</para>
+	  </listitem>
+	  <listitem>
+	    <para>gps_statusbar_format=GSA</para>
+	    <para>This string is in the Message Format Code</para>
+	  </listitem>
+	  <listitem>
+	    <para>trkpt_selected_statusbar_format=KEATDN</para>
+	    <para>This string is in the Message Format Code</para>
+	  </listitem>
+	</orderedlist>
+
+	<section>
+          <title>Message Format Code</title>
+	  <para>Currently for ease of implementation the message format code is a string of characters.</para>
+          <para>Each character represents what should be inserted in relation to a Trackpoint.</para>
+	  <para>One day it might evolve into something more user friendly with a frontend to control it, perhaps allowing arbitary text too. However for now at least some control is offered :)</para>
+	  <para>
+          <variablelist>
+            <varlistentry>
+              <term>Character Code</term>
+              <listitem>
+              <para>G = Some text to display at the start of the message - <emphasis>GPSD</emphasis></para>
+              <para>K = Some text to display at the start of the message - <emphasis>Trkpt</emphasis></para>
+              <para>A = Altitude of a Trackpoint</para>
+              <para>S = Speed of a Trackpoint</para>
+              <para>C = Course of a Trackpoint</para>
+              <para>L = Location of a Trackpoint</para>
+              <para>T = Time of a Trackpoint</para>
+              <para>M = Time diff of a Trackpoint from the previous trackpoint</para>
+              <para>X = Number of satellites used in the trackpoint fix</para>
+              <para>D = Distance of the trackpoint from the start of a track (following along the track)</para>
+              <para>P = Distance difference of the trackpoint from the previous trackpoint</para>
+              <para>N = Name of track to which the trackpoint belongs</para>
+              <para>E = Name of the trackpoint</para>
+	      </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Output Notes</term>
+              <listitem>
+	      <para>If the output has <emphasis>*</emphasis> after it, then the value has been calculated via interpolation (such as speed when the Trackpoint does not contain a speed value).</para>
+	      <para>If the output has <emphasis>**</emphasis> after it, then difficulties were encountered in trying to work the value so probably a default of 0 will be shown.</para>
+	      </listitem>
+            </varlistentry>
+          </variablelist>
+	  </para>
+	</section>
+      </section>
+
+</section>
+<!-- End of Extending Viking -->
 
 <section><title>Dependencies</title>
 <formalpara><title>gpsbabel</title>

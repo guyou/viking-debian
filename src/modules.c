@@ -43,12 +43,27 @@
 #include "dir.h"
 #include "vikmapslayer.h"
 #include "vikexttools.h"
+#include "vikexttool_datasources.h"
 #include "vikgoto.h"
+#include "vikrouting.h"
+
+/* Loadable types */
+#include "vikslippymapsource.h"
+#include "viktmsmapsource.h"
+#include "vikwmscmapsource.h"
+#include "vikwebtoolcenter.h"
+#include "vikwebtoolbounds.h"
+#include "vikgotoxmltool.h"
+#include "vikwebtool_datasource.h"
+#include "vikroutingwebengine.h"
+
 #include "vikgobjectbuilder.h"
 
 #define VIKING_MAPS_FILE "maps.xml"
 #define VIKING_EXTTOOLS_FILE "external_tools.xml"
+#define VIKING_DATASOURCES_FILE "datasources.xml"
 #define VIKING_GOTOTOOLS_FILE "goto_tools.xml"
+#define VIKING_ROUTING_FILE "routing.xml"
 
 static void
 modules_register_map_source(VikGobjectBuilder *self, GObject *object)
@@ -68,11 +83,27 @@ modules_register_exttools(VikGobjectBuilder *self, GObject *object)
 }
 
 static void
+modules_register_datasources(VikGobjectBuilder *self, GObject *object)
+{
+  g_debug (__FUNCTION__);
+  VikExtTool *tool = VIK_EXT_TOOL (object);
+  vik_ext_tool_datasources_register (tool);
+}
+
+static void
 modules_register_gototools(VikGobjectBuilder *self, GObject *object)
 {
   g_debug (__FUNCTION__);
   VikGotoTool *tool = VIK_GOTO_TOOL (object);
   vik_goto_register (tool);
+}
+
+static void
+modules_register_routing_engine(VikGobjectBuilder *self, GObject *object)
+{
+  g_debug (__FUNCTION__);
+  VikRoutingEngine *engine = VIK_ROUTING_ENGINE (object);
+  vik_routing_register (engine);
 }
 
 static void
@@ -89,6 +120,7 @@ modules_load_config_dir(const gchar *dir)
 	vik_gobject_builder_parse (builder, maps);
 	g_object_unref (builder);
   }
+  g_free ( maps );
 
   /* External tools */
   gchar *tools = g_build_filename(dir, VIKING_EXTTOOLS_FILE, NULL);
@@ -99,6 +131,17 @@ modules_load_config_dir(const gchar *dir)
 	vik_gobject_builder_parse (builder, tools);
 	g_object_unref (builder);
   }
+  g_free ( tools );
+
+  gchar *datasources = g_build_filename(dir, VIKING_DATASOURCES_FILE, NULL);
+  if (g_access (datasources, R_OK) == 0)
+  {
+	VikGobjectBuilder *builder = vik_gobject_builder_new ();
+	g_signal_connect (builder, "new-object", G_CALLBACK (modules_register_datasources), NULL);
+	vik_gobject_builder_parse (builder, datasources);
+	g_object_unref (builder);
+  }
+  g_free ( datasources );
 
   /* Go-to search engines */
   gchar *go_to = g_build_filename(dir, VIKING_GOTOTOOLS_FILE, NULL);
@@ -109,6 +152,18 @@ modules_load_config_dir(const gchar *dir)
 	vik_gobject_builder_parse (builder, go_to);
 	g_object_unref (builder);
   }
+  g_free ( go_to );
+
+  /* Routing engines */
+  gchar *routing = g_build_filename(dir, VIKING_ROUTING_FILE, NULL);
+  if (g_access (routing, R_OK) == 0)
+  {
+	VikGobjectBuilder *builder = vik_gobject_builder_new ();
+	g_signal_connect (builder, "new-object", G_CALLBACK (modules_register_routing_engine), NULL);
+	vik_gobject_builder_parse (builder, routing);
+	g_object_unref (builder);
+  }
+  g_free ( routing );
 }
 
 static void
@@ -147,6 +202,34 @@ modules_load_config(void)
   modules_load_config_dir(a_get_viking_dir());
 }
 
+static void
+register_loadable_types(void)
+{
+  /* Force registering of loadable types */
+  volatile GType types[] = {
+    /* Maps */
+    VIK_TYPE_SLIPPY_MAP_SOURCE,
+    VIK_TYPE_TMS_MAP_SOURCE,
+    VIK_TYPE_WMSC_MAP_SOURCE,
+
+    /* Goto */
+    VIK_GOTO_XML_TOOL_TYPE,
+
+    /* Tools */
+    VIK_WEBTOOL_CENTER_TYPE,
+    VIK_WEBTOOL_BOUNDS_TYPE,
+
+    /* Datasource */
+    VIK_WEBTOOL_DATASOURCE_TYPE,
+
+    /* Routing */
+    VIK_ROUTING_WEB_ENGINE_TYPE
+  };
+
+  /* kill 'unused variable' + argument type warnings */
+  g_debug("%d types loaded", (int)sizeof(types)/(int)sizeof(GType));
+}
+
 void modules_init()
 {
 #ifdef VIK_CONFIG_BING
@@ -174,6 +257,8 @@ void modules_init()
 #ifdef VIK_CONFIG_SPOTMAPS
   spotmaps_init();
 #endif
+
+  register_loadable_types ();
 
   /* As modules are loaded, we can load configuration files */
   modules_load_config ();

@@ -10,6 +10,9 @@
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 #define HAVE_BIND_TEXTDOMAIN_CODESET 1
 
+/* Define to 1 if you have the <bzlib.h> header file. */
+#define HAVE_BZLIB_H 1
+
 /* Define to 1 if you have the `dcgettext' function. */
 #define HAVE_DCGETTEXT 1
 
@@ -28,6 +31,9 @@
 /* Define if your <locale.h> file defines LC_MESSAGES. */
 #define HAVE_LC_MESSAGES 1
 
+/* Define to 1 if you have the `bz2' library (-lbz2). */
+#define HAVE_LIBBZ2 1
+
 /* Define to 1 if you have a functional curl library. */
 #define HAVE_LIBCURL 1
 
@@ -40,6 +46,9 @@
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
+/* Define to 1 if you have the `magic' library (-lmagic). */
+#define HAVE_LIBMAGIC 1
+
 /* Define to 1 if you have the `X11' library (-lX11). */
 #define HAVE_LIBX11 1
 
@@ -48,6 +57,9 @@
 
 /* Define to 1 if you have the <locale.h> header file. */
 #define HAVE_LOCALE_H 1
+
+/* Define to 1 if you have the <magic.h> header file. */
+#define HAVE_MAGIC_H 1
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #define HAVE_MALLOC_H 1
@@ -122,11 +134,14 @@
 /* Define to 1 if you have the <utime.h> header file. */
 #define HAVE_UTIME_H 1
 
+/* Enable Viking specifics in otherwise reusable code */
+#define HAVE_VIKING 1
+
 /* Define to 1 if you have the <X11/Xlib.h> header file. */
 #define HAVE_X11_XLIB_H 1
 
 /* Defined if libcurl supports AsynchDNS */
-/* #undef LIBCURL_FEATURE_ASYNCHDNS */
+#define LIBCURL_FEATURE_ASYNCHDNS 1
 
 /* Defined if libcurl supports IDN */
 #define LIBCURL_FEATURE_IDN 1
@@ -193,25 +208,22 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 1.4.2"
+#define PACKAGE_STRING "viking 1.5.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
 
 /* Define to the home page for this package. */
-#define PACKAGE_URL ""
+#define PACKAGE_URL "http://viking.sf.net/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.4.2"
+#define PACKAGE_VERSION "1.5.1"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.4.2"
-
-/* NO ALPHABETIZED TRW */
-#define VIK_CONFIG_ALPHABETIZED_TRW /**/
+#define VERSION "1.5.1"
 
 /* BING STUFF */
 #define VIK_CONFIG_BING /**/

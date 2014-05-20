@@ -46,6 +46,9 @@
 #define VIKING_OSM_TRACES_PARAMS_GROUP_KEY "osm_traces"
 #define VIKING_OSM_TRACES_PARAMS_NAMESPACE "osm_traces."
 
+#define VIK_SETTINGS_OSM_TRACE_VIS "osm_trace_visibility"
+static gint last_active = -1;
+
 /**
  * Login to use for OSM uploading.
  */
@@ -84,14 +87,15 @@ typedef struct _OsmTracesInfo {
   gchar *name;
   gchar *description;
   gchar *tags;
+  gboolean anonymize_times; // ATM only available on a single track.
   const OsmTraceVis_t *vistype;
   VikTrwLayer *vtl;
   VikTrack *trk;
 } OsmTracesInfo;
 
 static VikLayerParam prefs[] = {
-  { VIKING_OSM_TRACES_PARAMS_NAMESPACE "username", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM username:"), VIK_LAYER_WIDGET_ENTRY, NULL, NULL, NULL },
-  { VIKING_OSM_TRACES_PARAMS_NAMESPACE "password", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM password:"), VIK_LAYER_WIDGET_PASSWORD, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_OSM_TRACES_PARAMS_NAMESPACE "username", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM username:"), VIK_LAYER_WIDGET_ENTRY, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_OSM_TRACES_PARAMS_NAMESPACE "password", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM password:"), VIK_LAYER_WIDGET_PASSWORD, NULL, NULL, NULL },
 };
 
 /**
@@ -285,7 +289,15 @@ static void osm_traces_upload_thread ( OsmTracesInfo *oti, gpointer threaddata )
   if (oti->trk != NULL)
   {
     /* Upload only the selected track */
-    a_gpx_write_track_file(oti->trk, file, &options);
+    if ( oti->anonymize_times )
+    {
+      VikTrack *trk = vik_track_copy(oti->trk, TRUE);
+      vik_track_anonymize_times(trk);
+      a_gpx_write_track_file(trk, file, &options);
+      vik_track_free(trk);
+    }
+    else
+      a_gpx_write_track_file(oti->trk, file, &options);
   }
   else
   {
@@ -394,21 +406,22 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
   GtkWidget *name_label, *name_entry;
   GtkWidget *description_label, *description_entry;
   GtkWidget *tags_label, *tags_entry;
-  GtkComboBox *visibility;
+  GtkWidget *visibility;
+  GtkWidget *anonymize_checkbutton = NULL;
   const OsmTraceVis_t *vis_t;
 
   user_label = gtk_label_new(_("Email:"));
   user_entry = gtk_entry_new();
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), user_label, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), user_entry, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), user_label, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), user_entry, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_markup(GTK_WIDGET(user_entry),
                         _("The email used as login\n"
                         "<small>Enter the email you use to login into www.openstreetmap.org.</small>"));
 
   password_label = gtk_label_new(_("Password:"));
   password_entry = gtk_entry_new();
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), password_label, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), password_entry, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), password_label, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), password_entry, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_markup(GTK_WIDGET(password_entry),
                         _("The password used to login\n"
                         "<small>Enter the password you use to login into www.openstreetmap.org.</small>"));
@@ -422,8 +435,8 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
   else
     name = vik_layer_get_name(VIK_LAYER(vtl));
   gtk_entry_set_text(GTK_ENTRY(name_entry), name);
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), name_label, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), name_entry, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), name_label, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), name_entry, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_markup(GTK_WIDGET(name_entry),
                         _("The name of the file on OSM\n"
                         "<small>This is the name of the file created on the server."
@@ -431,24 +444,55 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
 
   description_label = gtk_label_new(_("Description:"));
   description_entry = gtk_entry_new();
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), description_label, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), description_entry, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), description_label, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), description_entry, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text(GTK_WIDGET(description_entry),
                         _("The description of the trace"));
 
+  if (trk != NULL) {
+    GtkWidget *label = gtk_label_new(_("Anonymize Times:"));
+    anonymize_checkbutton = gtk_check_button_new ();
+    gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), label, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), anonymize_checkbutton, FALSE, FALSE, 0);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(anonymize_checkbutton),
+                                _("Anonymize times of the trace.\n"
+                                  "<small>You may choose to make the trace identifiable, yet mask the actual real time values</small>"));
+  }
+
   tags_label = gtk_label_new(_("Tags:"));
   tags_entry = gtk_entry_new();
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), tags_label, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), tags_entry, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), tags_label, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), tags_entry, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text(GTK_WIDGET(tags_entry),
                         _("The tags associated to the trace"));
 
-  visibility = GTK_COMBO_BOX(gtk_combo_box_new_text ());
+  visibility = vik_combo_box_text_new();
   for (vis_t = OsmTraceVis; vis_t->combostr != NULL; vis_t++)
-	gtk_combo_box_append_text(visibility, vis_t->combostr);
-  /* Set identifiable by default */
-  gtk_combo_box_set_active(visibility, 0);
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dia)->vbox), GTK_WIDGET(visibility), FALSE, FALSE, 0);
+    vik_combo_box_text_append (visibility, vis_t->combostr);
+
+  // Set identifiable by default or use the settings for the value
+  if ( last_active < 0 ) {
+    gint find_entry = -1;
+    gint wanted_entry = -1;
+    gchar *vis = NULL;
+    if ( a_settings_get_string ( VIK_SETTINGS_OSM_TRACE_VIS, &vis ) ) {
+      // Use setting
+      if ( vis ) {
+        for (vis_t = OsmTraceVis; vis_t->apistr != NULL; vis_t++) {
+          find_entry++;
+          if (!strcmp(vis, vis_t->apistr)) {
+            wanted_entry = find_entry;
+          }
+        }
+      }
+      // If not found set it to the first entry, otherwise use the entry
+      last_active = ( wanted_entry < 0 ) ? 0 : wanted_entry;
+    }
+    else
+      last_active = 0;
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(visibility), last_active);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), GTK_WIDGET(visibility), FALSE, FALSE, 0);
 
   /* User should think about it first... */
   gtk_dialog_set_default_response ( GTK_DIALOG(dia), GTK_RESPONSE_REJECT );
@@ -470,9 +514,17 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
     info->description = g_strdup(gtk_entry_get_text(GTK_ENTRY(description_entry)));
     /* TODO Normalize tags: they will be used as URL part */
     info->tags        = g_strdup(gtk_entry_get_text(GTK_ENTRY(tags_entry)));
-    info->vistype     = &OsmTraceVis[gtk_combo_box_get_active(visibility)];
+    info->vistype     = &OsmTraceVis[gtk_combo_box_get_active(GTK_COMBO_BOX(visibility))];
     info->vtl         = VIK_TRW_LAYER(g_object_ref(vtl));
     info->trk         = trk;
+    if (trk != NULL && anonymize_checkbutton != NULL )
+      info->anonymize_times = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(anonymize_checkbutton));
+    else
+      info->anonymize_times = FALSE;
+
+    // Save visibility value for default reuse
+    last_active = gtk_combo_box_get_active(GTK_COMBO_BOX(visibility));
+    a_settings_set_string ( VIK_SETTINGS_OSM_TRACE_VIS, OsmTraceVis[last_active].apistr );
 
     title = g_strdup_printf(_("Uploading %s to OSM"), info->name);
 

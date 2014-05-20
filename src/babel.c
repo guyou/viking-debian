@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
  * Copyright (C) 2006, Quy Tonthat <qtonthat@gmail.com>
+ * Copyright (C) 2013, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,11 @@
 
 /* TODO in the future we could have support for other shells (change command strings), or not use a shell at all */
 #define BASH_LOCATION "/bin/bash"
+
+/**
+ * List of supported protocols.
+ */
+const gchar *PROTOS[] = { "http://", "https://", "ftp://", NULL };
 
 /**
  * Path to gpsbabel
@@ -326,7 +332,7 @@ gboolean a_babel_convert_from_shellcommand ( VikTrwLayer *vt, const char *input_
 gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char *input_type, BabelStatusFunc cb, gpointer user_data, DownloadMapOptions *options )
 {
   // If no download options specified, use defaults:
-  DownloadMapOptions myoptions = { FALSE, FALSE, NULL, 2, NULL, NULL };
+  DownloadMapOptions myoptions = { FALSE, FALSE, NULL, 2, NULL, NULL, NULL };
   if ( options )
     myoptions = *options;
   gint fd_src;
@@ -364,6 +370,43 @@ gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char
   }
 
   return ret;
+}
+
+/**
+ * a_babel_convert_from_url_or_shell:
+ * @vt: The #VikTrwLayer where to insert the collected data
+ * @url: the URL to fetch
+ * @cb:	       Optional callback function. Same usage as in a_babel_convert().
+ * @user_data: passed along to cb
+ * @options:   download options. Maybe NULL.
+ *
+ * Download the file pointed by the URL and optionally uses GPSBabel to convert from input_file_type.
+ * If input_file_type is %NULL, doesn't use GPSBabel. Input must be GPX.
+ *
+ * Returns: %TRUE on successful invocation of GPSBabel or read of the GPX
+ *
+ */
+gboolean a_babel_convert_from_url_or_shell ( VikTrwLayer *vt, const char *input, const char *input_type, BabelStatusFunc cb, gpointer user_data, DownloadMapOptions *options )
+{
+  
+  /* Check nature of input */
+  gboolean isUrl = FALSE;
+  int i = 0;
+  for (i = 0 ; PROTOS[i] != NULL ; i++)
+  {
+    const gchar *proto = PROTOS[i];
+    if (strncmp (input, proto, strlen(proto)) == 0)
+    {
+      /* Procotol matches: save result */
+      isUrl = TRUE;
+    }
+  }
+  
+  /* Do the job */
+  if (isUrl)
+    return a_babel_convert_from_url (vt, input, input_type, cb, user_data, options);
+  else
+    return a_babel_convert_from_shellcommand (vt, input, input_type, cb, user_data, options);
 }
 
 static gboolean babel_general_convert_to( VikTrwLayer *vt, VikTrack *trk, BabelStatusFunc cb, gchar **args, const gchar *name_src, gpointer user_data )
@@ -436,14 +479,14 @@ gboolean a_babel_convert_to( VikTrwLayer *vt, VikTrack *track, const char *babel
   return ret;
 }
 
-static void set_mode(BabelMode mode, gchar *smode)
+static void set_mode(BabelMode *mode, gchar *smode)
 {
-  mode.waypointsRead  = smode[0] == 'r';
-  mode.waypointsWrite = smode[1] == 'w';
-  mode.tracksRead     = smode[2] == 'r';
-  mode.tracksWrite    = smode[3] == 'w';
-  mode.routesRead     = smode[4] == 'r';
-  mode.routesWrite    = smode[5] == 'w';
+  mode->waypointsRead  = smode[0] == 'r';
+  mode->waypointsWrite = smode[1] == 'w';
+  mode->tracksRead     = smode[2] == 'r';
+  mode->tracksWrite    = smode[3] == 'w';
+  mode->routesRead     = smode[4] == 'r';
+  mode->routesWrite    = smode[5] == 'w';
 }
 
 /**
@@ -462,11 +505,16 @@ static void load_feature_parse_line (gchar *line)
            && tokens[3] != NULL
            && tokens[4] != NULL ) {
         BabelDevice *device = g_malloc ( sizeof (BabelDevice) );
-        set_mode (device->mode, tokens[1]);
+        set_mode (&(device->mode), tokens[1]);
         device->name = g_strdup (tokens[2]);
         device->label = g_strndup (tokens[4], 50); // Limit really long label text
         a_babel_device_list = g_list_append (a_babel_device_list, device);
-        g_debug ("New gpsbabel device: %s", device->name);
+        g_debug ("New gpsbabel device: %s, %d%d%d%d%d%d(%s)",
+        		device->name,
+        		device->mode.waypointsRead, device->mode.waypointsWrite,
+        		device->mode.tracksRead, device->mode.tracksWrite,
+        		device->mode.routesRead, device->mode.routesWrite,
+        			tokens[1]);
       } else {
         g_warning ( "Unexpected gpsbabel format string: %s", line);
       }
@@ -476,12 +524,17 @@ static void load_feature_parse_line (gchar *line)
            && tokens[3] != NULL
            && tokens[4] != NULL ) {
         BabelFile *file = g_malloc ( sizeof (BabelFile) );
-        set_mode (file->mode, tokens[1]);
+        set_mode (&(file->mode), tokens[1]);
         file->name = g_strdup (tokens[2]);
         file->ext = g_strdup (tokens[3]);
         file->label = g_strdup (tokens[4]);
         a_babel_file_list = g_list_append (a_babel_file_list, file);
-        g_debug ("New gpsbabel file: %s", file->name);
+        g_debug ("New gpsbabel file: %s, %d%d%d%d%d%d(%s)",
+        			file->name,
+        			file->mode.waypointsRead, file->mode.waypointsWrite,
+        			file->mode.tracksRead, file->mode.tracksWrite,
+        			file->mode.routesRead, file->mode.routesWrite,
+        			tokens[1]);
       } else {
         g_warning ( "Unexpected gpsbabel format string: %s", line);
       }

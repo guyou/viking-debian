@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2013, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,9 @@
  */
 
 #include "viking.h"
+#include "viktrwlayer_analysis.h"
+#include "viktrwlayer_tracklist.h"
+#include "viktrwlayer_waypointlist.h"
 #include "icons/icons.h"
 
 #include <string.h>
@@ -31,6 +35,8 @@ static void aggregate_layer_marshall( VikAggregateLayer *val, guint8 **data, gin
 static VikAggregateLayer *aggregate_layer_unmarshall( guint8 *data, gint len, VikViewport *vvp );
 static void aggregate_layer_change_coord_mode ( VikAggregateLayer *val, VikCoordMode mode );
 static void aggregate_layer_drag_drop_request ( VikAggregateLayer *val_src, VikAggregateLayer *val_dest, GtkTreeIter *src_item_iter, GtkTreePath *dest_path );
+
+static void aggregate_layer_add_menu_items ( VikAggregateLayer *val, GtkMenu *menu, gpointer vlp );
 
 VikLayerInterface vik_aggregate_layer_interface = {
   "Aggregate",
@@ -60,7 +66,7 @@ VikLayerInterface vik_aggregate_layer_interface = {
   (VikLayerFuncSetMenuItemsSelection)	NULL,
   (VikLayerFuncGetMenuItemsSelection)	NULL,
 
-  (VikLayerFuncAddMenuItems)            NULL,
+  (VikLayerFuncAddMenuItems)            aggregate_layer_add_menu_items,
   (VikLayerFuncSublayerAddMenuItems)    NULL,
 
   (VikLayerFuncSublayerRenameRequest)   NULL,
@@ -94,6 +100,8 @@ VikLayerInterface vik_aggregate_layer_interface = {
 struct _VikAggregateLayer {
   VikLayer vl;
   GList *children;
+  // One per layer
+  GtkWidget *tracks_analysis_dialog;
 };
 
 GType vik_aggregate_layer_get_type ()
@@ -200,9 +208,16 @@ void vik_aggregate_layer_insert_layer ( VikAggregateLayer *val, VikLayer *l, Gtk
   GtkTreeIter iter;
   VikLayer *vl = VIK_LAYER(val);
 
+  // By default layers are inserted above the selected layer
+  gboolean put_above = TRUE;
+
+  // These types are 'base' types in that you what other information on top
+  if ( l->type == VIK_LAYER_MAPS || l->type == VIK_LAYER_DEM || l->type == VIK_LAYER_GEOREF )
+    put_above = FALSE;
+
   if ( vl->realized )
   {
-    vik_treeview_insert_layer ( vl->vt, &(vl->iter), &iter, l->name, val, l, l->type, l->type, replace_iter );
+    vik_treeview_insert_layer ( vl->vt, &(vl->iter), &iter, l->name, val, put_above, l, l->type, l->type, replace_iter );
     if ( ! l->visible )
       vik_treeview_item_set_visible ( vl->vt, &iter, FALSE );
     vik_layer_realize ( l, vl->vt, &iter );
@@ -213,7 +228,11 @@ void vik_aggregate_layer_insert_layer ( VikAggregateLayer *val, VikLayer *l, Gtk
 
   if (replace_iter) {
     GList *theone = g_list_find ( val->children, vik_treeview_item_get_pointer ( vl->vt, replace_iter ) );
-    val->children = g_list_insert ( val->children, l, g_list_position(val->children,theone)+1 );
+    if ( put_above )
+      val->children = g_list_insert ( val->children, l, g_list_position(val->children,theone)+1 );
+    else
+      // Thus insert 'here' (so don't add 1)
+      val->children = g_list_insert ( val->children, l, g_list_position(val->children,theone) );
   } else {
     // Effectively insert at 'end' of the list to match how displayed in the treeview
     //  - but since it is drawn from 'bottom first' it is actually the first in the child list
@@ -225,14 +244,28 @@ void vik_aggregate_layer_insert_layer ( VikAggregateLayer *val, VikLayer *l, Gtk
   g_signal_connect_swapped ( G_OBJECT(l), "update", G_CALLBACK(vik_layer_emit_update_secondary), val );
 }
 
-void vik_aggregate_layer_add_layer ( VikAggregateLayer *val, VikLayer *l )
+/**
+ * vik_aggregate_layer_add_layer:
+ * @allow_reordering: should be set for GUI interactions,
+ *                    whereas loading from a file needs strict ordering and so should be FALSE
+ */
+void vik_aggregate_layer_add_layer ( VikAggregateLayer *val, VikLayer *l, gboolean allow_reordering )
 {
   GtkTreeIter iter;
   VikLayer *vl = VIK_LAYER(val);
 
+  // By default layers go to the top
+  gboolean put_above = TRUE;
+
+  if ( allow_reordering ) {
+    // These types are 'base' types in that you what other information on top
+    if ( l->type == VIK_LAYER_MAPS || l->type == VIK_LAYER_DEM || l->type == VIK_LAYER_GEOREF )
+      put_above = FALSE;
+  }
+
   if ( vl->realized )
   {
-    vik_treeview_add_layer ( vl->vt, &(vl->iter), &iter, l->name, val, l, l->type, l->type);
+    vik_treeview_add_layer ( vl->vt, &(vl->iter), &iter, l->name, val, put_above, l, l->type, l->type);
     if ( ! l->visible )
       vik_treeview_item_set_visible ( vl->vt, &iter, FALSE );
     vik_layer_realize ( l, vl->vt, &iter );
@@ -241,7 +274,11 @@ void vik_aggregate_layer_add_layer ( VikAggregateLayer *val, VikLayer *l )
       vik_treeview_expand ( vl->vt, &(vl->iter) );
   }
 
-  val->children = g_list_append ( val->children, l );
+  if ( put_above )
+    val->children = g_list_append ( val->children, l );
+  else
+    val->children = g_list_prepend ( val->children, l );
+
   g_signal_connect_swapped ( G_OBJECT(l), "update", G_CALLBACK(vik_layer_emit_update_secondary), val );
 }
 
@@ -294,24 +331,23 @@ void vik_aggregate_layer_move_layer ( VikAggregateLayer *val, GtkTreeIter *child
  * of the pixmap before drawing the trigger layer so we can use it again
  * later.
  */
-void vik_aggregate_layer_draw ( VikAggregateLayer *val, gpointer data )
+void vik_aggregate_layer_draw ( VikAggregateLayer *val, VikViewport *vp )
 {
   GList *iter = val->children;
   VikLayer *vl;
-  VikViewport *viewport = VIK_VIEWPORT(data);
-  VikLayer *trigger = VIK_LAYER(vik_viewport_get_trigger( viewport ));
+  VikLayer *trigger = VIK_LAYER(vik_viewport_get_trigger( vp ));
   while ( iter ) {
     vl = VIK_LAYER(iter->data);
     if ( vl == trigger ) {
-      if ( vik_viewport_get_half_drawn ( viewport ) ) {
-        vik_viewport_set_half_drawn ( viewport, FALSE );
-        vik_viewport_snapshot_load( viewport );
+      if ( vik_viewport_get_half_drawn ( vp ) ) {
+        vik_viewport_set_half_drawn ( vp, FALSE );
+        vik_viewport_snapshot_load( vp );
       } else {
-        vik_viewport_snapshot_save( viewport );
+        vik_viewport_snapshot_save( vp );
       }
     }
-    if ( vl->type == VIK_LAYER_AGGREGATE || vl->type == VIK_LAYER_GPS || ! vik_viewport_get_half_drawn( viewport ) )
-      vik_layer_draw ( vl, data );
+    if ( vl->type == VIK_LAYER_AGGREGATE || vl->type == VIK_LAYER_GPS || ! vik_viewport_get_half_drawn( vp ) )
+      vik_layer_draw ( vl, vp );
     iter = iter->next;
   }
 }
@@ -326,6 +362,270 @@ static void aggregate_layer_change_coord_mode ( VikAggregateLayer *val, VikCoord
   }
 }
 
+static void aggregate_layer_child_visible_toggle ( gpointer data[2] )
+{
+  // Convert data back to correct types
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER ( data[0] );
+  VikLayersPanel *vlp = VIK_LAYERS_PANEL ( data[1] );
+  VikLayer *vl;
+
+  // Loop around all (child) layers applying visibility setting
+  // This does not descend the tree if there are aggregates within aggregrate - just the first level of layers held
+  GList *iter = val->children;
+  while ( iter ) {
+    vl = VIK_LAYER ( iter->data );
+    vl->visible = !vl->visible;
+    // Also set checkbox on/off
+    vik_treeview_item_toggle_visible ( vik_layers_panel_get_treeview ( vlp ), &(vl->iter) );
+    iter = iter->next;
+  }
+  // Redraw as view may have changed
+  vik_layer_emit_update ( VIK_LAYER ( val ) );
+}
+
+static void aggregate_layer_child_visible ( gpointer data[2], gboolean on_off)
+{
+  // Convert data back to correct types
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER ( data[0] );
+  VikLayersPanel *vlp = VIK_LAYERS_PANEL ( data[1] );
+  VikLayer *vl;
+
+  // Loop around all (child) layers applying visibility setting
+  // This does not descend the tree if there are aggregates within aggregrate - just the first level of layers held
+  GList *iter = val->children;
+  while ( iter ) {
+    vl = VIK_LAYER ( iter->data );
+    vl->visible = on_off;
+    // Also set checkbox on_off
+    vik_treeview_item_set_visible ( vik_layers_panel_get_treeview ( vlp ), &(vl->iter), on_off );
+    iter = iter->next;
+  }
+  // Redraw as view may have changed
+  vik_layer_emit_update ( VIK_LAYER ( val ) );
+}
+
+static void aggregate_layer_child_visible_on ( gpointer data[2] )
+{
+  aggregate_layer_child_visible ( data, TRUE );
+}
+
+static void aggregate_layer_child_visible_off ( gpointer data[2] )
+{
+  aggregate_layer_child_visible ( data, FALSE );
+}
+
+/**
+ * If order is true sort ascending, otherwise a descending sort
+ */
+static gint sort_layer_compare ( gconstpointer a, gconstpointer b, gpointer order )
+{
+  VikLayer *sa = (VikLayer *)a;
+  VikLayer *sb = (VikLayer *)b;
+
+  // Default ascending order
+  gint answer = g_strcmp0 ( sa->name, sb->name );
+
+  if ( GPOINTER_TO_INT(order) ) {
+    // Invert sort order for ascending order
+    answer = -answer;
+  }
+
+  return answer;
+}
+
+static void aggregate_layer_sort_a2z ( gpointer lav[2] )
+{
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER(lav[0]);
+  vik_treeview_sort_children ( VIK_LAYER(val)->vt, &(VIK_LAYER(val)->iter), VL_SO_ALPHABETICAL_ASCENDING );
+  val->children = g_list_sort_with_data ( val->children, sort_layer_compare, GINT_TO_POINTER(TRUE) );
+}
+
+static void aggregate_layer_sort_z2a ( gpointer lav[2] )
+{
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER(lav[0]);
+  vik_treeview_sort_children ( VIK_LAYER(val)->vt, &(VIK_LAYER(val)->iter), VL_SO_ALPHABETICAL_DESCENDING );
+  val->children = g_list_sort_with_data ( val->children, sort_layer_compare, GINT_TO_POINTER(FALSE) );
+}
+
+/**
+ * aggregate_layer_waypoint_create_list:
+ * @vl:        The layer that should create the waypoint and layers list
+ * @user_data: Not used in this function
+ *
+ * Returns: A list of #vik_trw_waypoint_list_t
+ */
+static GList* aggregate_layer_waypoint_create_list ( VikLayer *vl, gpointer user_data )
+{
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER(vl);
+
+  // Get all TRW layers
+  GList *layers = NULL;
+  layers = vik_aggregate_layer_get_all_layers_of_type ( val, layers, VIK_LAYER_TRW, TRUE );
+
+  // For each TRW layers keep adding the waypoints to build a list of all of them
+  GList *waypoints_and_layers = NULL;
+  layers = g_list_first ( layers );
+  while ( layers ) {
+    GList *waypoints = NULL;
+    waypoints = g_list_concat ( waypoints, g_hash_table_get_values ( vik_trw_layer_get_waypoints( VIK_TRW_LAYER(layers->data) ) ) );
+
+    waypoints_and_layers = g_list_concat ( waypoints_and_layers, vik_trw_layer_build_waypoint_list_t ( VIK_TRW_LAYER(layers->data), waypoints ) );
+
+    layers = g_list_next ( layers );
+  }
+  g_list_free ( layers );
+
+  return waypoints_and_layers;
+}
+
+static void aggregate_layer_waypoint_list_dialog ( gpointer data[2] )
+{
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER(data[0]);
+  gchar *title = g_strdup_printf ( _("%s: Waypoint List"), VIK_LAYER(val)->name );
+  vik_trw_layer_waypoint_list_show_dialog ( title, VIK_LAYER(val), NULL, aggregate_layer_waypoint_create_list, TRUE );
+  g_free ( title );
+}
+
+/**
+ * aggregate_layer_track_create_list:
+ * @vl:        The layer that should create the track and layers list
+ * @user_data: Not used in this function
+ *
+ * Returns: A list of #vik_trw_track_list_t
+ */
+static GList* aggregate_layer_track_create_list ( VikLayer *vl, gpointer user_data )
+{
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER(vl);
+
+  // Get all TRW layers
+  GList *layers = NULL;
+  layers = vik_aggregate_layer_get_all_layers_of_type ( val, layers, VIK_LAYER_TRW, TRUE );
+
+  // For each TRW layers keep adding the tracks and routes to build a list of all of them
+  GList *tracks_and_layers = NULL;
+  layers = g_list_first ( layers );
+  while ( layers ) {
+    GList *tracks = NULL;
+    tracks = g_list_concat ( tracks, g_hash_table_get_values ( vik_trw_layer_get_tracks( VIK_TRW_LAYER(layers->data) ) ) );
+    tracks = g_list_concat ( tracks, g_hash_table_get_values ( vik_trw_layer_get_routes( VIK_TRW_LAYER(layers->data) ) ) );
+
+    tracks_and_layers = g_list_concat ( tracks_and_layers, vik_trw_layer_build_track_list_t ( VIK_TRW_LAYER(layers->data), tracks ) );
+
+    layers = g_list_next ( layers );
+  }
+  g_list_free ( layers );
+
+  return tracks_and_layers;
+}
+
+static void aggregate_layer_track_list_dialog ( gpointer data[2] )
+{
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER(data[0]);
+  gchar *title = g_strdup_printf ( _("%s: Track and Route List"), VIK_LAYER(val)->name );
+  vik_trw_layer_track_list_show_dialog ( title, VIK_LAYER(val), NULL, aggregate_layer_track_create_list, TRUE );
+  g_free ( title );
+}
+
+/**
+ * aggregate_layer_analyse_close:
+ *
+ * Stuff to do on dialog closure
+ */
+static void aggregate_layer_analyse_close ( GtkWidget *dialog, gint resp, VikLayer* vl )
+{
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER(vl);
+  gtk_widget_destroy ( dialog );
+  val->tracks_analysis_dialog = NULL;
+}
+
+static void aggregate_layer_analyse ( gpointer data[2] )
+{
+  VikAggregateLayer *val = VIK_AGGREGATE_LAYER(data[0]);
+
+  // There can only be one!
+  if ( val->tracks_analysis_dialog )
+    return;
+
+  val->tracks_analysis_dialog = vik_trw_layer_analyse_this ( VIK_GTK_WINDOW_FROM_LAYER(VIK_LAYER(val)),
+                                                             VIK_LAYER(val)->name,
+                                                             VIK_LAYER(val),
+                                                             NULL,
+                                                             aggregate_layer_track_create_list,
+                                                             aggregate_layer_analyse_close );
+}
+
+static void aggregate_layer_add_menu_items ( VikAggregateLayer *val, GtkMenu *menu, gpointer vlp )
+{
+  // Data to pass on in menu functions
+  static gpointer data[2];
+  data[0] = val;
+  data[1] = vlp;
+
+  GtkWidget *item = gtk_menu_item_new();
+  gtk_menu_shell_append ( GTK_MENU_SHELL(menu), item );
+  gtk_widget_show ( item );
+
+  GtkWidget *vis_submenu = gtk_menu_new ();
+  item = gtk_menu_item_new_with_mnemonic ( _("_Visibility") );
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+  gtk_widget_show ( item );
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), vis_submenu );
+
+  item = gtk_image_menu_item_new_with_mnemonic ( _("_Show All") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_APPLY, GTK_ICON_SIZE_MENU) );
+  g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(aggregate_layer_child_visible_on), data );
+  gtk_menu_shell_append (GTK_MENU_SHELL (vis_submenu), item);
+  gtk_widget_show ( item );
+
+  item = gtk_image_menu_item_new_with_mnemonic ( _("_Hide All") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_CLEAR, GTK_ICON_SIZE_MENU) );
+  g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(aggregate_layer_child_visible_off), data );
+  gtk_menu_shell_append (GTK_MENU_SHELL (vis_submenu), item);
+  gtk_widget_show ( item );
+
+  item = gtk_image_menu_item_new_with_mnemonic ( _("_Toggle") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU) );
+  g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(aggregate_layer_child_visible_toggle), data );
+  gtk_menu_shell_append (GTK_MENU_SHELL (vis_submenu), item);
+  gtk_widget_show ( item );
+
+  GtkWidget *submenu_sort = gtk_menu_new ();
+  item = gtk_image_menu_item_new_with_mnemonic ( _("_Sort") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU) );
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+  gtk_widget_show ( item );
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu_sort );
+
+  item = gtk_image_menu_item_new_with_mnemonic ( _("Name _Ascending") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_SORT_ASCENDING, GTK_ICON_SIZE_MENU) );
+  g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(aggregate_layer_sort_a2z), data );
+  gtk_menu_shell_append ( GTK_MENU_SHELL(submenu_sort), item );
+  gtk_widget_show ( item );
+
+  item = gtk_image_menu_item_new_with_mnemonic ( _("Name _Descending") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_SORT_DESCENDING, GTK_ICON_SIZE_MENU) );
+  g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(aggregate_layer_sort_z2a), data );
+  gtk_menu_shell_append ( GTK_MENU_SHELL(submenu_sort), item );
+  gtk_widget_show ( item );
+
+  item = gtk_menu_item_new_with_mnemonic ( _("_Statistics") );
+  g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(aggregate_layer_analyse), data );
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+  gtk_widget_show ( item );
+
+  item = gtk_image_menu_item_new_with_mnemonic ( _("Track _List...") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_INDEX, GTK_ICON_SIZE_MENU) );
+  g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(aggregate_layer_track_list_dialog), data );
+  gtk_menu_shell_append ( GTK_MENU_SHELL(menu), item );
+  gtk_widget_show ( item );
+
+  item = gtk_image_menu_item_new_with_mnemonic ( _("_Waypoint List...") );
+  gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_INDEX, GTK_ICON_SIZE_MENU) );
+  g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(aggregate_layer_waypoint_list_dialog), data );
+  gtk_menu_shell_append ( GTK_MENU_SHELL(menu), item );
+  gtk_widget_show ( item );
+}
+
 static void disconnect_layer_signal ( VikLayer *vl, VikAggregateLayer *val )
 {
   g_assert(DISCONNECT_UPDATE_SIGNAL(vl,val)==1);
@@ -336,6 +636,8 @@ void vik_aggregate_layer_free ( VikAggregateLayer *val )
   g_list_foreach ( val->children, (GFunc)(disconnect_layer_signal), val );
   g_list_foreach ( val->children, (GFunc)(g_object_unref), NULL );
   g_list_free ( val->children );
+  if ( val->tracks_analysis_dialog != NULL )
+    gtk_widget_destroy ( val->tracks_analysis_dialog );
 }
 
 static void delete_layer_iter ( VikLayer *vl )
@@ -368,7 +670,7 @@ gboolean vik_aggregate_layer_delete ( VikAggregateLayer *val, GtkTreeIter *iter 
 
 #if 0
 /* returns 0 == we're good, 1 == didn't find any layers, 2 == got rejected */
-guint vik_aggregate_layer_tool ( VikAggregateLayer *val, guint16 layer_type, VikToolInterfaceFunc tool_func, GdkEventButton *event, VikViewport *vvp )
+guint vik_aggregate_layer_tool ( VikAggregateLayer *val, VikLayerTypeEnum layer_type, VikToolInterfaceFunc tool_func, GdkEventButton *event, VikViewport *vvp )
 {
   GList *iter = val->children;
   gboolean found_rej = FALSE;
@@ -403,7 +705,7 @@ guint vik_aggregate_layer_tool ( VikAggregateLayer *val, guint16 layer_type, Vik
 }
 #endif 
 
-VikLayer *vik_aggregate_layer_get_top_visible_layer_of_type ( VikAggregateLayer *val, gint type )
+VikLayer *vik_aggregate_layer_get_top_visible_layer_of_type ( VikAggregateLayer *val, VikLayerTypeEnum type )
 {
   VikLayer *rv;
   GList *ls = val->children;
@@ -428,7 +730,7 @@ VikLayer *vik_aggregate_layer_get_top_visible_layer_of_type ( VikAggregateLayer 
   return NULL;
 }
 
-GList *vik_aggregate_layer_get_all_layers_of_type(VikAggregateLayer *val, GList *layers, gint type, gboolean include_invisible)
+GList *vik_aggregate_layer_get_all_layers_of_type(VikAggregateLayer *val, GList *layers, VikLayerTypeEnum type, gboolean include_invisible)
 {
   GList *l = layers;
   GList *children = val->children;
@@ -442,11 +744,11 @@ GList *vik_aggregate_layer_get_all_layers_of_type(VikAggregateLayer *val, GList 
     if (vl->type == VIK_LAYER_AGGREGATE ) {
       // Don't even consider invisible aggregrates, unless told to
       if (vl->visible || include_invisible)
-	l = vik_aggregate_layer_get_all_layers_of_type(VIK_AGGREGATE_LAYER(children->data), l, type, include_invisible);
+        l = vik_aggregate_layer_get_all_layers_of_type(VIK_AGGREGATE_LAYER(children->data), l, type, include_invisible);
     }
     else if (vl->type == type) {
       if (vl->visible || include_invisible)
-	l = g_list_prepend(l, children->data); /* now in top down order */
+        l = g_list_prepend(l, children->data); /* now in top down order */
     }
     else if (type == VIK_LAYER_TRW) {
       /* GPS layers contain TRW layers. cf with usage in file.c */
@@ -484,7 +786,7 @@ void vik_aggregate_layer_realize ( VikAggregateLayer *val, VikTreeview *vt, GtkT
   while ( i )
   {
     vli = VIK_LAYER(i->data);
-    vik_treeview_add_layer ( vl->vt, layer_iter, &iter, vli->name, val, 
+    vik_treeview_add_layer ( vl->vt, layer_iter, &iter, vli->name, val, TRUE,
         vli, vli->type, vli->type );
     if ( ! vli->visible )
       vik_treeview_item_set_visible ( vl->vt, &iter, FALSE );

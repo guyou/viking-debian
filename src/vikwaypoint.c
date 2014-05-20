@@ -25,6 +25,8 @@
 #include "vikcoord.h"
 #include "vikwaypoint.h"
 #include "globals.h"
+#include "garminsymbols.h"
+#include "dems.h"
 #include <glib/gi18n.h>
 
 VikWaypoint *vik_waypoint_new()
@@ -87,13 +89,24 @@ void vik_waypoint_set_image(VikWaypoint *wp, const gchar *image)
 
 void vik_waypoint_set_symbol(VikWaypoint *wp, const gchar *symname)
 {
+  const gchar *hashed_symname;
+
   if ( wp->symbol )
     g_free ( wp->symbol );
 
-  if ( symname && symname[0] != '\0' )
-    wp->symbol = g_strdup(symname);
-  else
+  // NB symbol_pixbuf is just a reference, so no need to free it
+
+  if ( symname && symname[0] != '\0' ) {
+    hashed_symname = a_get_hashed_sym ( symname );
+    if ( hashed_symname )
+      symname = hashed_symname;
+    wp->symbol = g_strdup ( symname );
+    wp->symbol_pixbuf = a_get_wp_sym ( wp->symbol );
+  }
+  else {
     wp->symbol = NULL;
+    wp->symbol_pixbuf = NULL;
+  }
 }
 
 void vik_waypoint_free(VikWaypoint *wp)
@@ -115,12 +128,36 @@ VikWaypoint *vik_waypoint_copy(const VikWaypoint *wp)
   new_wp->coord = wp->coord;
   new_wp->visible = wp->visible;
   new_wp->altitude = wp->altitude;
+  new_wp->has_timestamp = wp->has_timestamp;
+  new_wp->timestamp = wp->timestamp;
   vik_waypoint_set_name(new_wp,wp->name);
   vik_waypoint_set_comment(new_wp,wp->comment);
   vik_waypoint_set_description(new_wp,wp->description);
   vik_waypoint_set_image(new_wp,wp->image);
   vik_waypoint_set_symbol(new_wp,wp->symbol);
   return new_wp;
+}
+
+/**
+ * vik_waypoint_apply_dem_data:
+ * @wp:            The Waypoint to operate on
+ * @skip_existing: When TRUE, don't change the elevation if the waypoint already has a value
+ *
+ * Set elevation data for a waypoint using available DEM information
+ *
+ * Returns: TRUE if the waypoint was updated
+ */
+gboolean vik_waypoint_apply_dem_data ( VikWaypoint *wp, gboolean skip_existing )
+{
+  gboolean updated = FALSE;
+  if ( !(skip_existing && wp->altitude != VIK_DEFAULT_ALTITUDE) ) {
+    gint16 elev = a_dems_get_elev_by_coord ( &(wp->coord), VIK_DEM_INTERPOL_BEST );
+    if ( elev != VIK_DEM_INVALID_ELEVATION ) {
+      wp->altitude = (gdouble)elev;
+      updated = TRUE;
+    }
+  }
+  return updated;
 }
 
 /*

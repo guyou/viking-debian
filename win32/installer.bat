@@ -1,16 +1,12 @@
 @echo OFF
+:: License: CC0
 ::
 :: TODO return an error code when not completed as expected
 ::
 echo STARTING INSTALLER PROCESS...
 
-:: For windres + strip
+:: For strip
 set PATH=%PATH%;%SystemDrive%\MinGW\bin
-
-echo Create Icon
-pushd installer\pixmaps
-windres.exe viking_icon.rc -o viking_icon.o
-popd
 
 echo Remove debugging symbols
 pushd ..\src
@@ -62,6 +58,23 @@ if exist "%LIBEXIF%" (
 	%MYCOPY% "%LIBEXIF%" %DESTINATION%
 ) else (
 	echo Required %LIBEXIF% does not exist
+	goto Tidy
+)
+set LIBBZ2=%MINGW_BIN%\libbz2-2.dll
+if exist "%LIBBZ2%" (
+	%MYCOPY% "%LIBBZ2%" %DESTINATION%
+	%MYCOPY% "%MINGW_BIN%\libgcc_s_dw2-1.dll" %DESTINATION%
+) else (
+	echo Required %LIBBZ2% does not exist
+	goto Tidy
+)
+set LIBMAGIC=%MINGW_BIN%\magic1.dll
+if exist "%LIBMAGIC%" (
+	%MYCOPY% "%LIBMAGIC%" %DESTINATION%
+	%MYCOPY% "%MINGW_BIN%\regex2.dll" %DESTINATION%
+	%MYCOPY% "%MINGW%\share\misc\magic.mgc" %DESTINATION%
+) else (
+	echo Required %LIBMAGIC% does not exist
 	goto Tidy
 )
 

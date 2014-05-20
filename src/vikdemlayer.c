@@ -35,28 +35,15 @@
 #include <string.h>
 #endif
 #include <stdlib.h>
+#include <glib/gstdio.h>
 #include <glib/gi18n.h>
 
-#include "config.h"
-#include "globals.h"
-#include "coords.h"
-#include "vikcoord.h"
-#include "download.h"
 #include "background.h"
-#include "vikwaypoint.h"
-#include "viktrack.h"
-#include "vikviewport.h"
-#include "viktreeview.h"
-#include "viklayer.h"
-#include "vikaggregatelayer.h"
-#include "viklayerspanel.h"
+#include "viking.h"
 #include "vikmapslayer.h"
 #include "vikdemlayer.h"
-#include "dialog.h"
-
 #include "dem.h"
 #include "dems.h"
-
 #include "icons/icons.h"
 
 #define MAPS_CACHE_DIR maps_layer_default_dir()
@@ -71,6 +58,10 @@
 
 #define UNUSED_LINE_THICKNESS 3
 
+static VikDEMLayer *dem_layer_new ( VikViewport *vvp );
+static void dem_layer_draw ( VikDEMLayer *vdl, VikViewport *vp );
+static void dem_layer_free ( VikDEMLayer *vdl );
+static VikDEMLayer *dem_layer_create ( VikViewport *vp );
 static const gchar* dem_layer_tooltip( VikDEMLayer *vdl );
 static void dem_layer_marshall( VikDEMLayer *vdl, guint8 **data, gint *len );
 static VikDEMLayer *dem_layer_unmarshall( guint8 *data, gint len, VikViewport *vvp );
@@ -114,13 +105,22 @@ enum { DEM_TYPE_HEIGHT = 0,
        DEM_TYPE_NONE,
 };
 
+static VikLayerParamData color_default ( void ) {
+  VikLayerParamData data; gdk_color_parse ( "blue", &data.c ); return data;
+}
+
+static VikLayerParamData source_default ( void ) { return VIK_LPD_UINT ( DEM_SOURCE_SRTM ); }
+static VikLayerParamData type_default ( void ) { return VIK_LPD_UINT ( DEM_TYPE_HEIGHT ); }
+static VikLayerParamData min_elev_default ( void ) { return VIK_LPD_DOUBLE ( 0.0 ); }
+static VikLayerParamData max_elev_default ( void ) { return VIK_LPD_DOUBLE ( 1000.0 ); }
+
 static VikLayerParam dem_layer_params[] = {
-  { "files", VIK_LAYER_PARAM_STRING_LIST, VIK_LAYER_GROUP_NONE, N_("DEM Files:"), VIK_LAYER_WIDGET_FILELIST, NULL, NULL, NULL },
-  { "source", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Download Source:"), VIK_LAYER_WIDGET_RADIOGROUP_STATIC, params_source, NULL },
-  { "color", VIK_LAYER_PARAM_COLOR, VIK_LAYER_GROUP_NONE, N_("Min Elev Color:"), VIK_LAYER_WIDGET_COLOR, NULL, NULL, NULL  },
-  { "type", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Type:"), VIK_LAYER_WIDGET_RADIOGROUP_STATIC, params_type, NULL, NULL },
-  { "min_elev", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Min Elev:"), VIK_LAYER_WIDGET_SPINBUTTON, &param_scales[0], NULL, NULL },
-  { "max_elev", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Max Elev:"), VIK_LAYER_WIDGET_SPINBUTTON, &param_scales[0], NULL, NULL },
+  { VIK_LAYER_DEM, "files", VIK_LAYER_PARAM_STRING_LIST, VIK_LAYER_GROUP_NONE, N_("DEM Files:"), VIK_LAYER_WIDGET_FILELIST, NULL, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_DEM, "source", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Download Source:"), VIK_LAYER_WIDGET_RADIOGROUP_STATIC, params_source, NULL, NULL, source_default, NULL, NULL },
+  { VIK_LAYER_DEM, "color", VIK_LAYER_PARAM_COLOR, VIK_LAYER_GROUP_NONE, N_("Min Elev Color:"), VIK_LAYER_WIDGET_COLOR, NULL, NULL, NULL, color_default, NULL, NULL },
+  { VIK_LAYER_DEM, "type", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Type:"), VIK_LAYER_WIDGET_RADIOGROUP_STATIC, params_type, NULL, NULL, type_default, NULL, NULL },
+  { VIK_LAYER_DEM, "min_elev", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Min Elev:"), VIK_LAYER_WIDGET_SPINBUTTON, param_scales + 0, NULL, NULL, min_elev_default, NULL, NULL },
+  { VIK_LAYER_DEM, "max_elev", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Max Elev:"), VIK_LAYER_WIDGET_SPINBUTTON, param_scales + 0, NULL, NULL, max_elev_default, NULL, NULL },
 };
 
 
@@ -199,13 +199,13 @@ VikLayerInterface vik_dem_layer_interface = {
 
   VIK_MENU_ITEM_ALL,
 
-  (VikLayerFuncCreate)                  vik_dem_layer_create,
+  (VikLayerFuncCreate)                  dem_layer_create,
   (VikLayerFuncRealize)                 NULL,
   (VikLayerFuncPostRead)                dem_layer_post_read,
-  (VikLayerFuncFree)                    vik_dem_layer_free,
+  (VikLayerFuncFree)                    dem_layer_free,
 
   (VikLayerFuncProperties)              NULL,
-  (VikLayerFuncDraw)                    vik_dem_layer_draw,
+  (VikLayerFuncDraw)                    dem_layer_draw,
   (VikLayerFuncChangeCoordMode)         NULL,
 
   (VikLayerFuncSetMenuItemsSelection)   NULL,
@@ -249,9 +249,12 @@ struct _VikDEMLayer {
   GList *files;
   gdouble min_elev;
   gdouble max_elev;
-  GdkGC *color;
+  GdkColor color;
   guint source;
   guint type;
+
+  // right click menu only stuff - similar to mapslayer
+  GtkMenu *right_click_menu;
 };
 
 GType vik_dem_layer_get_type ()
@@ -292,13 +295,16 @@ static void dem_layer_marshall( VikDEMLayer *vdl, guint8 **data, gint *len )
 
 static VikDEMLayer *dem_layer_unmarshall( guint8 *data, gint len, VikViewport *vvp )
 {
-  VikDEMLayer *rv = vik_dem_layer_new ();
+  VikDEMLayer *rv = dem_layer_new ( vvp );
   gint i;
 
   /* TODO: share GCS between layers */
-  for ( i = 0; i < DEM_N_HEIGHT_COLORS; i++ )
-    rv->gcs[i] = vik_viewport_new_gc ( vvp, dem_height_colors[i], UNUSED_LINE_THICKNESS );
-
+  for ( i = 0; i < DEM_N_HEIGHT_COLORS; i++ ) {
+    if ( i == 0 )
+      rv->gcs[i] = vik_viewport_new_gc_from_color ( vvp, &(rv->color), UNUSED_LINE_THICKNESS );
+    else
+      rv->gcs[i] = vik_viewport_new_gc ( vvp, dem_height_colors[i], UNUSED_LINE_THICKNESS );
+  }
   for ( i = 0; i < DEM_N_GRADIENT_COLORS; i++ )
     rv->gcsgradient[i] = vik_viewport_new_gc ( vvp, dem_gradient_colors[i], UNUSED_LINE_THICKNESS );
 
@@ -347,11 +353,45 @@ static void dem_layer_thread_cancel ( dem_load_thread_data *data )
   // Thus we can see/use what was done
 }
 
+/**
+ * Process the list of DEM files and convert each one to a relative path
+ */
+static GList *dem_layer_convert_to_relative_filenaming ( GList *files )
+{
+  gchar *cwd = g_get_current_dir();
+  if ( !cwd )
+    return files;
+
+  GList *relfiles = NULL;
+
+  while ( files ) {
+    gchar *file = g_strdup ( file_GetRelativeFilename ( cwd, files->data ) );
+    relfiles = g_list_prepend ( relfiles, file );
+    files = files->next;
+  }
+
+  g_free ( cwd );
+
+  if ( relfiles ) {
+    // Replacing current list, so delete old values first.
+    GList *iter = files;
+    while ( iter ) {
+      g_free ( iter->data );
+      iter = iter->next;
+    }
+    g_list_free ( files );
+
+    return relfiles;
+  }
+
+  return files;
+}
+
 gboolean dem_layer_set_param ( VikDEMLayer *vdl, guint16 id, VikLayerParamData data, VikViewport *vp, gboolean is_file_operation )
 {
   switch ( id )
   {
-    case PARAM_COLOR: gdk_gc_set_rgb_fg_color ( vdl->gcs[0], &(data.c) ); break;
+    case PARAM_COLOR: vdl->color = data.c; gdk_gc_set_rgb_fg_color ( vdl->gcs[0], &(vdl->color) ); break;
     case PARAM_SOURCE: vdl->source = data.u; break;
     case PARAM_TYPE: vdl->type = data.u; break;
     case PARAM_MIN_ELEV:
@@ -402,10 +442,16 @@ static VikLayerParamData dem_layer_get_param ( VikDEMLayer *vdl, guint16 id, gbo
   VikLayerParamData rv;
   switch ( id )
   {
-    case PARAM_FILES: rv.sl = vdl->files; break;
+    case PARAM_FILES:
+      rv.sl = vdl->files;
+      if ( is_file_operation )
+        // Save in relative format if necessary
+        if ( a_vik_get_file_ref_format() == VIK_FILE_REF_FORMAT_RELATIVE )
+          rv.sl = dem_layer_convert_to_relative_filenaming ( rv.sl );
+      break;
     case PARAM_SOURCE: rv.u = vdl->source; break;
     case PARAM_TYPE: rv.u = vdl->type; break;
-    case PARAM_COLOR: vik_gc_get_fg_color ( vdl->gcs[0], &(rv.c) ); break;
+    case PARAM_COLOR: rv.c = vdl->color; break;
     case PARAM_MIN_ELEV:
       /* Convert for display in desired units
          NB file operation always in internal units (metres) */
@@ -431,7 +477,7 @@ static void dem_layer_post_read ( VikLayer *vl, VikViewport *vp, gboolean from_f
   /* nothing ATM, but keep in case it's needed the future */
 }
 
-VikDEMLayer *vik_dem_layer_new ( )
+static VikDEMLayer *dem_layer_new ( VikViewport *vvp )
 {
   VikDEMLayer *vdl = VIK_DEM_LAYER ( g_object_new ( VIK_DEM_LAYER_TYPE, NULL ) );
 
@@ -443,10 +489,11 @@ VikDEMLayer *vik_dem_layer_new ( )
   vdl->gcsgradient = g_malloc(sizeof(GdkGC *)*DEM_N_GRADIENT_COLORS);
   /* make new gcs only if we need it (copy layer -> use old) */
 
-  vdl->min_elev = 0.0;
-  vdl->max_elev = 1000.0;
-  vdl->source = DEM_SOURCE_SRTM;
-  vdl->type = DEM_TYPE_HEIGHT;
+  // Ensure the base GC is available so the default colour can be applied
+  if ( vvp ) vdl->gcs[0] = vik_viewport_new_gc ( vvp, "#0000FF", 1 );
+
+  vik_layer_set_defaults ( VIK_LAYER(vdl), vvp );
+
   return vdl;
 }
 
@@ -522,7 +569,7 @@ static void vik_dem_layer_draw_dem ( VikDEMLayer *vdl, VikViewport *vp, VikDEM *
     if ( y2 > vik_viewport_get_height(vp) ) y2=vik_viewport_get_height(vp);
     if ( x2 < 0 ) x2 = 0;
     if ( y1 < 0 ) y1 = 0;
-    vik_viewport_draw_rectangle ( vp, GTK_WIDGET(vp)->style->black_gc, 
+    vik_viewport_draw_rectangle ( vp, gtk_widget_get_style(GTK_WIDGET(vp))->black_gc,
 	FALSE, x2, y1, x1-x2, y2-y1 );
     return;
   }
@@ -804,9 +851,8 @@ static const gchar *srtm_continent_dir ( gint lat, gint lon )
   return(g_hash_table_lookup(srtm_continent, name));
 }
 
-void vik_dem_layer_draw ( VikDEMLayer *vdl, gpointer data )
+static void dem_layer_draw ( VikDEMLayer *vdl, VikViewport *vp )
 {
-  VikViewport *vp = (VikViewport *) data;
   GList *dems_iter = vdl->files;
   VikDEM *dem;
 
@@ -828,12 +874,9 @@ void vik_dem_layer_draw ( VikDEMLayer *vdl, gpointer data )
   }
 }
 
-void vik_dem_layer_free ( VikDEMLayer *vdl )
+static void dem_layer_free ( VikDEMLayer *vdl )
 {
   gint i;
-  if ( vdl->color != NULL )
-    g_object_unref ( vdl->color );
-
   if ( vdl->gcs )
     for ( i = 0; i < DEM_N_HEIGHT_COLORS; i++ )
       g_object_unref ( vdl->gcs[i] );
@@ -847,18 +890,19 @@ void vik_dem_layer_free ( VikDEMLayer *vdl )
   a_dems_list_free ( vdl->files );
 }
 
-VikDEMLayer *vik_dem_layer_create ( VikViewport *vp )
+VikDEMLayer *dem_layer_create ( VikViewport *vp )
 {
-  VikDEMLayer *vdl = vik_dem_layer_new ();
+  VikDEMLayer *vdl = dem_layer_new ( vp );
   gint i;
-
-  /* TODO: share GCS between layers */
-  for ( i = 0; i < DEM_N_HEIGHT_COLORS; i++ )
-    vdl->gcs[i] = vik_viewport_new_gc ( vp, dem_height_colors[i], UNUSED_LINE_THICKNESS );
-
-  for ( i = 0; i < DEM_N_GRADIENT_COLORS; i++ )
-    vdl->gcsgradient[i] = vik_viewport_new_gc ( vp, dem_gradient_colors[i], UNUSED_LINE_THICKNESS );
-
+  if ( vp ) {
+    /* TODO: share GCS between layers */
+    for ( i = 0; i < DEM_N_HEIGHT_COLORS; i++ ) {
+      if ( i > 0 )
+        vdl->gcs[i] = vik_viewport_new_gc ( vp, dem_height_colors[i], UNUSED_LINE_THICKNESS );
+    }
+    for ( i = 0; i < DEM_N_GRADIENT_COLORS; i++ )
+      vdl->gcsgradient[i] = vik_viewport_new_gc ( vp, dem_gradient_colors[i], UNUSED_LINE_THICKNESS );
+  }
   return vdl;
 }
 /**************************************************************
@@ -889,7 +933,11 @@ static void srtm_dem_download_thread ( DEMDownloadParams *p, gpointer threaddata
   continent_dir = srtm_continent_dir(intlat, intlon);
 
   if (!continent_dir) {
-    g_warning(N_("No SRTM data available for %f, %f"), p->lat, p->lon);
+    if ( p->vdl ) {
+      gchar *msg = g_strdup_printf ( _("No SRTM data available for %f, %f"), p->lat, p->lon );
+      vik_window_statusbar_update ( (VikWindow*)VIK_GTK_WINDOW_FROM_LAYER(p->vdl), msg, VIK_STATUSBAR_INFO );
+      g_free ( msg );
+    }
     return;
   }
 
@@ -901,7 +949,7 @@ static void srtm_dem_download_thread ( DEMDownloadParams *p, gpointer threaddata
 		(intlon >= 0) ? 'E' : 'W',
 		ABS(intlon) );
 
-  static DownloadMapOptions options = { FALSE, FALSE, NULL, 0, a_check_map_file };
+  static DownloadMapOptions options = { FALSE, FALSE, NULL, 0, a_check_map_file, NULL };
   a_http_download_get_url ( SRTM_HTTP_SITE, src_fn, p->dest, &options, NULL );
   g_free ( src_fn );
 }
@@ -963,7 +1011,7 @@ static void srtm_draw_existence ( VikViewport *vp )
         vik_viewport_coord_to_screen ( vp, &ne, &x2, &y2 );
         if ( x1 < 0 ) x1 = 0;
         if ( y2 < 0 ) y2 = 0;
-        vik_viewport_draw_rectangle ( vp, GTK_WIDGET(vp)->style->black_gc, 
+        vik_viewport_draw_rectangle ( vp, gtk_widget_get_style(GTK_WIDGET(vp))->black_gc,
 		FALSE, x1, y2, x2-x1, y1-y2 );
       }
     }
@@ -1041,7 +1089,7 @@ static void dem24k_draw_existence ( VikViewport *vp )
         vik_viewport_coord_to_screen ( vp, &ne, &x2, &y2 );
         if ( x1 < 0 ) x1 = 0;
         if ( y2 < 0 ) y2 = 0;
-        vik_viewport_draw_rectangle ( vp, GTK_WIDGET(vp)->style->black_gc, 
+        vik_viewport_draw_rectangle ( vp, gtk_widget_get_style(GTK_WIDGET(vp))->black_gc,
 		FALSE, x1, y2, x2-x1, y1-y2 );
       }
     }
@@ -1063,17 +1111,17 @@ static void weak_ref_cb ( gpointer ptr, GObject * dead_vdl )
 }
 
 /* Try to add file full_path.
- * full_path will be copied.
+ * filename will be copied.
  * returns FALSE if file does not exists, TRUE otherwise.
  */
-static gboolean dem_layer_add_file ( VikDEMLayer *vdl, const gchar *full_path )
+static gboolean dem_layer_add_file ( VikDEMLayer *vdl, const gchar *filename )
 {
-  if ( g_file_test(full_path, G_FILE_TEST_EXISTS ) == TRUE ) {
+  if ( g_file_test(filename, G_FILE_TEST_EXISTS) == TRUE ) {
     /* only load if file size is not 0 (not in progress) */
     struct stat sb;
-    stat (full_path, &sb);
+    stat ( filename, &sb );
     if ( sb.st_size ) {
-      gchar *duped_path = g_strdup(full_path);
+      gchar *duped_path = g_strdup(filename);
       vdl->files = g_list_prepend ( vdl->files, duped_path );
       a_dems_load ( duped_path );
       g_debug("%s: %s", __FUNCTION__, duped_path);
@@ -1119,11 +1167,68 @@ static gpointer dem_layer_download_create ( VikWindow *vw, VikViewport *vvp)
   return vvp;
 }
 
+/**
+ * Display a simple dialog with information about the DEM file at this location
+ */
+static void dem_layer_file_info ( GtkWidget *widget, struct LatLon *ll )
+{
+  gint intlat, intlon;
+  const gchar *continent_dir;
+
+  intlat = (int)floor(ll->lat);
+  intlon = (int)floor(ll->lon);
+  continent_dir = srtm_continent_dir(intlat, intlon);
+
+  gchar *source = NULL;
+  if ( continent_dir )
+    source = g_strdup_printf ( "http://%s%s%s/%c%02d%c%03d.hgt.zip",
+                               SRTM_HTTP_SITE,
+                               SRTM_HTTP_URI,
+                               continent_dir,
+                               (intlat >= 0) ? 'N' : 'S',
+                               ABS(intlat),
+                               (intlon >= 0) ? 'E' : 'W',
+                               ABS(intlon) );
+  else
+    // Probably not over any land...
+    source = g_strdup ( _("No DEM File Available") );
+
+  gchar *filename = NULL;
+  gchar *dem_file = NULL;
+#ifdef VIK_CONFIG_DEM24K
+  dem_file = dem24k_lat_lon_to_dest_fn ( ll->lat, ll->lon );
+#else
+  dem_file = srtm_lat_lon_to_dest_fn ( ll->lat, ll->lon );
+#endif
+  gchar *message = NULL;
+
+  filename = g_strdup_printf ( "%s%s", MAPS_CACHE_DIR, dem_file );
+
+  if ( g_file_test ( filename, G_FILE_TEST_EXISTS ) ) {
+    // Get some timestamp information of the file
+    struct stat stat_buf;
+    if ( g_stat ( filename, &stat_buf ) == 0 ) {
+      gchar time_buf[64];
+      strftime ( time_buf, sizeof(time_buf), "%c", gmtime((const time_t *)&stat_buf.st_mtime) );
+      message = g_strdup_printf ( _("\nSource: %s\n\nDEM File: %s\nDEM File Timestamp: %s"), source, filename, time_buf );
+    }
+  }
+  else
+    message = g_strdup_printf ( _("Source: %s\n\nNo DEM File!"), source );
+
+  // Show the info
+  a_dialog_info_msg ( GTK_WINDOW(gtk_widget_get_toplevel(widget)), message );
+
+  g_free ( message );
+  g_free ( source );
+  g_free ( dem_file );
+  g_free ( filename );
+}
 
 static gboolean dem_layer_download_release ( VikDEMLayer *vdl, GdkEventButton *event, VikViewport *vvp )
 {
   VikCoord coord;
-  struct LatLon ll;
+  static struct LatLon ll;
 
   gchar *full_path;
   gchar *dem_file = NULL;
@@ -1146,27 +1251,42 @@ static gboolean dem_layer_download_release ( VikDEMLayer *vdl, GdkEventButton *e
 
   g_debug("%s: %s", __FUNCTION__, full_path);
 
-  // TODO: check if already in filelist
+  if ( event->button == 1 ) {
+    // TODO: check if already in filelist
+    if ( ! dem_layer_add_file(vdl, full_path) ) {
+      gchar *tmp = g_strdup_printf ( _("Downloading DEM %s"), dem_file );
+      DEMDownloadParams *p = g_malloc(sizeof(DEMDownloadParams));
+      p->dest = g_strdup(full_path);
+      p->lat = ll.lat;
+      p->lon = ll.lon;
+      p->vdl = vdl;
+      p->mutex = g_mutex_new();
+      p->source = vdl->source;
+      g_object_weak_ref(G_OBJECT(p->vdl), weak_ref_cb, p );
 
-  if ( ! dem_layer_add_file(vdl, full_path) ) {
-    gchar *tmp = g_strdup_printf ( _("Downloading DEM %s"), dem_file );
-    DEMDownloadParams *p = g_malloc(sizeof(DEMDownloadParams));
-    p->dest = g_strdup(full_path);
-    p->lat = ll.lat;
-    p->lon = ll.lon;
-    p->vdl = vdl;
-    p->mutex = g_mutex_new();
-    p->source = vdl->source;
-    g_object_weak_ref(G_OBJECT(p->vdl), weak_ref_cb, p );
+      a_background_thread ( VIK_GTK_WINDOW_FROM_LAYER(vdl), tmp,
+                            (vik_thr_func) dem_download_thread, p,
+                            (vik_thr_free_func) free_dem_download_params, NULL, 1 );
 
-    a_background_thread ( VIK_GTK_WINDOW_FROM_LAYER(vdl), tmp,
-		(vik_thr_func) dem_download_thread, p,
-		(vik_thr_free_func) free_dem_download_params, NULL, 1 );
-
-    g_free ( tmp );
+      g_free ( tmp );
+    }
+    else
+      vik_layer_emit_update ( VIK_LAYER(vdl) );
   }
-  else
-    vik_layer_emit_update ( VIK_LAYER(vdl) );
+  else {
+    if ( !vdl->right_click_menu ) {
+      GtkWidget *item;
+      vdl->right_click_menu = GTK_MENU ( gtk_menu_new () );
+
+      item = gtk_image_menu_item_new_with_mnemonic ( _("_Show DEM File Information") );
+      gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_INFO, GTK_ICON_SIZE_MENU) );
+      g_signal_connect ( G_OBJECT(item), "activate", G_CALLBACK(dem_layer_file_info), &ll );
+      gtk_menu_shell_append (GTK_MENU_SHELL(vdl->right_click_menu), item);
+    }
+
+    gtk_menu_popup ( vdl->right_click_menu, NULL, NULL, NULL, NULL, event->button, event->time );
+    gtk_widget_show_all ( GTK_WIDGET(vdl->right_click_menu) );
+  }
 
   g_free ( dem_file );
   g_free ( full_path );

@@ -50,7 +50,7 @@ static BabelFile *last_file_filter = NULL;
 /* The last file format selected */
 static int last_type = 0;
 
-static gpointer datasource_file_init( );
+static gpointer datasource_file_init ( acq_vik_t *avt );
 static void datasource_file_add_setup_widgets ( GtkWidget *dialog, VikViewport *vvp, gpointer user_data );
 static void datasource_file_get_cmd_string ( datasource_file_widgets_t *widgets, gchar **cmd, gchar **input_file_type, gpointer not_used );
 static void datasource_file_cleanup ( gpointer data );
@@ -75,7 +75,7 @@ VikDataSourceInterface vik_datasource_file_interface = {
 };
 
 /* See VikDataSourceInterface */
-static gpointer datasource_file_init ( )
+static gpointer datasource_file_init ( acq_vik_t *avt )
 {
   datasource_file_widgets_t *widgets = g_malloc(sizeof(*widgets));
   return widgets;
@@ -84,13 +84,7 @@ static gpointer datasource_file_init ( )
 static void fill_combo_box (gpointer data, gpointer user_data)
 {
   const gchar *label = ((BabelFile*) data)->label;
-#if GTK_CHECK_VERSION (2,24,0)
-  GtkComboBoxText *combo = GTK_COMBO_BOX_TEXT (user_data);
-  gtk_combo_box_text_append_text (combo, label);
-#else
-  GtkComboBox *combo = GTK_COMBO_BOX (user_data);
-  gtk_combo_box_append_text (combo, label);
-#endif
+  vik_combo_box_text_append (GTK_WIDGET(user_data), label);
 }
 
 static void add_file_filter (gpointer data, gpointer user_data)
@@ -146,19 +140,16 @@ static void datasource_file_add_setup_widgets ( GtkWidget *dialog, VikViewport *
 
   /* The file format selector */
   type_label = gtk_label_new (_("File type:"));
-#if GTK_CHECK_VERSION (2,24,0)
-  widgets->type = gtk_combo_box_text_new ();
-#else
-  widgets->type = gtk_combo_box_new_text ();
-#endif
+  widgets->type = vik_combo_box_text_new ();
   g_list_foreach (a_babel_file_list, fill_combo_box, widgets->type);
   gtk_combo_box_set_active (GTK_COMBO_BOX (widgets->type), last_type);
 
   /* Packing all these widgets */
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), filename_label, FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), widgets->file, FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), type_label, FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), widgets->type, FALSE, FALSE, 5 );
+  GtkBox *box = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
+  gtk_box_pack_start ( box, filename_label, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( box, widgets->file, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( box, type_label, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( box, widgets->type, FALSE, FALSE, 5 );
   gtk_widget_show_all(dialog);
 }
 

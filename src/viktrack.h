@@ -27,6 +27,7 @@
 #include <gtk/gtk.h>
 
 #include "vikcoord.h"
+#include "bbox.h"
 
 G_BEGIN_DECLS
 
@@ -37,6 +38,7 @@ G_BEGIN_DECLS
 
 typedef struct _VikTrackpoint VikTrackpoint;
 struct _VikTrackpoint {
+  gchar* name;
   VikCoord coord;
   gboolean newsegment;
   gboolean has_timestamp;
@@ -55,6 +57,16 @@ struct _VikTrackpoint {
   gdouble pdop;     /* VIK_DEFAULT_DOP if data unavailable */
 };
 
+typedef enum {
+  TRACK_DRAWNAME_NO=0,
+  TRACK_DRAWNAME_CENTRE,
+  TRACK_DRAWNAME_START,
+  TRACK_DRAWNAME_END,
+  TRACK_DRAWNAME_START_END,
+  TRACK_DRAWNAME_START_END_CENTRE,
+  NUM_TRACK_DRAWNAMES
+} VikTrackDrawnameType;
+
 // Instead of having a separate VikRoute type, routes are considered tracks
 //  Thus all track operations must cope with a 'route' version
 //  [track functions handle having no timestamps anyway - so there is no practical difference in most cases]
@@ -66,6 +78,8 @@ struct _VikTrack {
   GList *trackpoints;
   gboolean visible;
   gboolean is_route;
+  VikTrackDrawnameType draw_name_mode;
+  guint8 max_number_dist_labels;
   gchar *comment;
   gchar *description;
   guint8 ref_count;
@@ -73,9 +87,11 @@ struct _VikTrack {
   GtkWidget *property_dialog;
   gboolean has_color;
   GdkColor color;
+  LatLonBBox bbox;
 };
 
 VikTrack *vik_track_new();
+void vik_track_set_defaults(VikTrack *tr);
 void vik_track_set_name(VikTrack *tr, const gchar *name);
 void vik_track_set_comment(VikTrack *tr, const gchar *comment);
 void vik_track_set_description(VikTrack *tr, const gchar *description);
@@ -86,6 +102,10 @@ void vik_track_set_comment_no_copy(VikTrack *tr, gchar *comment);
 VikTrackpoint *vik_trackpoint_new();
 void vik_trackpoint_free(VikTrackpoint *tp);
 VikTrackpoint *vik_trackpoint_copy(VikTrackpoint *tp);
+void vik_trackpoint_set_name(VikTrackpoint *tp, const gchar *name);
+
+void vik_track_add_trackpoint(VikTrack *tr, VikTrackpoint *tp, gboolean recalculate);
+gdouble vik_track_get_length_to_trackpoint (const VikTrack *tr, const VikTrackpoint *tp);
 gdouble vik_track_get_length(const VikTrack *tr);
 gdouble vik_track_get_length_including_gaps(const VikTrack *tr);
 gulong vik_track_get_tp_count(const VikTrack *tr);
@@ -108,6 +128,7 @@ gdouble vik_track_get_average_speed_moving ( const VikTrack *tr, int stop_length
 void vik_track_convert ( VikTrack *tr, VikCoordMode dest_mode );
 gdouble *vik_track_make_elevation_map ( const VikTrack *tr, guint16 num_chunks );
 void vik_track_get_total_elevation_gain(const VikTrack *tr, gdouble *up, gdouble *down);
+VikTrackpoint *vik_track_get_tp_by_dist ( VikTrack *trk, gdouble meters_from_start, gboolean get_next_point, gdouble *tp_metres_from_start );
 VikTrackpoint *vik_track_get_closest_tp_by_percentage_dist ( VikTrack *tr, gdouble reldist, gdouble *meters_from_start );
 VikTrackpoint *vik_track_get_closest_tp_by_percentage_time ( VikTrack *tr, gdouble reldist, time_t *seconds_from_start );
 VikTrackpoint *vik_track_get_tp_by_max_speed ( const VikTrack *tr );
@@ -122,8 +143,12 @@ gboolean vik_track_get_minmax_alt ( const VikTrack *tr, gdouble *min_alt, gdoubl
 void vik_track_marshall ( VikTrack *tr, guint8 **data, guint *len);
 VikTrack *vik_track_unmarshall (guint8 *data, guint datalen);
 
-void vik_track_apply_dem_data ( VikTrack *tr);
+void vik_track_calculate_bounds ( VikTrack *trk );
+
+void vik_track_anonymize_times ( VikTrack *tr );
+gulong vik_track_apply_dem_data ( VikTrack *tr, gboolean skip_existing );
 void vik_track_apply_dem_data_last_trackpoint ( VikTrack *tr );
+gulong vik_track_smooth_missing_elevation_data ( VikTrack *tr, gboolean flat );
 
 void vik_track_steal_and_append_trackpoints ( VikTrack *t1, VikTrack *t2 );
 

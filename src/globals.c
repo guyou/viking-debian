@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
  * Copyright (C) 2008, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
- * Copyright (C) 2010, Rob Norris <rw_norris@hotmail.com>
+ * Copyright (C) 2010-2013, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "globals.h"
 #include "preferences.h"
 #include "math.h"
+#include "dir.h"
 
 gboolean vik_debug = FALSE;
 gboolean vik_verbose = FALSE;
@@ -69,56 +70,90 @@ static gchar * params_units_speed[] = {"km/h", "mph", "m/s", "knots", NULL};
 static gchar * params_units_height[] = {"Metres", "Feet", NULL};
 static VikLayerParamScale params_scales_lat[] = { {-90.0, 90.0, 0.05, 2} };
 static VikLayerParamScale params_scales_long[] = { {-180.0, 180.0, 0.05, 2} };
- 
-static VikLayerParam prefs1[] = {
-  { VIKING_PREFERENCES_NAMESPACE "degree_format", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Degree format:"), VIK_LAYER_WIDGET_COMBOBOX, params_degree_formats, NULL, NULL },
-};
+static gchar * params_vik_fileref[] = {N_("Absolute"), N_("Relative"), NULL};
 
-static VikLayerParam prefs2[] = {
-  { VIKING_PREFERENCES_NAMESPACE "units_distance", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Distance units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_distance, NULL, NULL },
-};
-
-static VikLayerParam prefs3[] = {
-  { VIKING_PREFERENCES_NAMESPACE "units_speed", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Speed units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_speed, NULL, NULL },
-};
-
-static VikLayerParam prefs4[] = {
-  { VIKING_PREFERENCES_NAMESPACE "units_height", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Height units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_height, NULL, NULL },
-};
-
-static VikLayerParam prefs5[] = {
-  { VIKING_PREFERENCES_NAMESPACE "use_large_waypoint_icons", VIK_LAYER_PARAM_BOOLEAN, VIK_LAYER_GROUP_NONE, N_("Use large waypoint icons:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL, NULL },
-};
-
-static VikLayerParam prefs6[] = {
-  { VIKING_PREFERENCES_NAMESPACE "default_latitude", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Default latitude:"),  VIK_LAYER_WIDGET_SPINBUTTON, params_scales_lat, NULL, NULL },
-};
-static VikLayerParam prefs7[] = {
-  { VIKING_PREFERENCES_NAMESPACE "default_longitude", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Default longitude:"),  VIK_LAYER_WIDGET_SPINBUTTON, params_scales_long, NULL, NULL },
+static VikLayerParam general_prefs[] = {
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_NAMESPACE "degree_format", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Degree format:"), VIK_LAYER_WIDGET_COMBOBOX, params_degree_formats, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_NAMESPACE "units_distance", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Distance units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_distance, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_NAMESPACE "units_speed", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Speed units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_speed, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_NAMESPACE "units_height", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Height units:"), VIK_LAYER_WIDGET_COMBOBOX, params_units_height, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_NAMESPACE "use_large_waypoint_icons", VIK_LAYER_PARAM_BOOLEAN, VIK_LAYER_GROUP_NONE, N_("Use large waypoint icons:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_NAMESPACE "default_latitude", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Default latitude:"), VIK_LAYER_WIDGET_SPINBUTTON, params_scales_lat, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_NAMESPACE "default_longitude", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_GROUP_NONE, N_("Default longitude:"), VIK_LAYER_WIDGET_SPINBUTTON, params_scales_long, NULL, NULL, NULL, NULL },
 };
 
 /* External/Export Options */
 
 static gchar * params_kml_export_units[] = {"Metric", "Statute", "Nautical", NULL};
-static gchar * params_gpx_export_trk_sort[] = {N_("Alphabetical"), N_("Time"), NULL};
+static gchar * params_gpx_export_trk_sort[] = {N_("Alphabetical"), N_("Time"), N_("Creation"), NULL };
+static gchar * params_gpx_export_wpt_symbols[] = {N_("Title Case"), N_("Lowercase"), NULL};
 
 static VikLayerParam io_prefs[] = {
-  { VIKING_PREFERENCES_IO_NAMESPACE "kml_export_units", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("KML File Export Units:"), VIK_LAYER_WIDGET_COMBOBOX, params_kml_export_units, NULL, NULL },
-  { VIKING_PREFERENCES_IO_NAMESPACE "gpx_export_track_sort", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("GPX Track Order:"), VIK_LAYER_WIDGET_COMBOBOX, params_gpx_export_trk_sort, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_IO_NAMESPACE "kml_export_units", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("KML File Export Units:"), VIK_LAYER_WIDGET_COMBOBOX, params_kml_export_units, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_IO_NAMESPACE "gpx_export_track_sort", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("GPX Track Order:"), VIK_LAYER_WIDGET_COMBOBOX, params_gpx_export_trk_sort, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_IO_NAMESPACE "gpx_export_wpt_sym_names", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("GPX Waypoint Symbols:"), VIK_LAYER_WIDGET_COMBOBOX, params_gpx_export_wpt_symbols, NULL,
+      N_("Save GPX Waypoint Symbol names in the specified case. May be useful for compatibility with various devices"), NULL, NULL, NULL },
 };
 
 #ifndef WINDOWS
 static VikLayerParam io_prefs_non_windows[] = {
-  { VIKING_PREFERENCES_IO_NAMESPACE "image_viewer", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("Image Viewer:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_IO_NAMESPACE "image_viewer", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("Image Viewer:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL, NULL, NULL, NULL },
 };
 #endif
 
 static VikLayerParam io_prefs_external_gpx[] = {
-  { VIKING_PREFERENCES_IO_NAMESPACE "external_gpx_1", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("External GPX Program 1:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL, NULL },
-  { VIKING_PREFERENCES_IO_NAMESPACE "external_gpx_2", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("External GPX Program 2:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_IO_NAMESPACE "external_gpx_1", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("External GPX Program 1:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_IO_NAMESPACE "external_gpx_2", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("External GPX Program 2:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL, NULL, NULL, NULL },
 };
 
+static VikLayerParam prefs_advanced[] = {
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_ADVANCED_NAMESPACE "save_file_reference_mode", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Save File Reference Mode:"), VIK_LAYER_WIDGET_COMBOBOX, params_vik_fileref, NULL,
+    N_("When saving a Viking .vik file, this determines how the directory paths of filenames are written."), NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_ADVANCED_NAMESPACE "create_track_tooltip", VIK_LAYER_PARAM_BOOLEAN, VIK_LAYER_GROUP_NONE, N_("Show Tooltip during Track Creation:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL, NULL, NULL, NULL },
+};
+
+static gchar * params_startup_methods[] = {N_("Home Location"), N_("Last Location"), N_("Specified File"), N_("Auto Location"), NULL};
+
+static VikLayerParam startup_prefs[] = {
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_STARTUP_NAMESPACE "restore_window_state", VIK_LAYER_PARAM_BOOLEAN, VIK_LAYER_GROUP_NONE, N_("Restore Window Setup:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL,
+    N_("Restore window size and layout"), NULL, NULL, NULL},
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_STARTUP_NAMESPACE "add_default_map_layer", VIK_LAYER_PARAM_BOOLEAN, VIK_LAYER_GROUP_NONE, N_("Add a Default Map Layer:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL,
+    N_("The default map layer added is defined by the Layer Defaults. Use the menu Edit->Layer Defaults->Map... to change the map type and other values."), NULL, NULL, NULL},
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_STARTUP_NAMESPACE "startup_method", VIK_LAYER_PARAM_UINT, VIK_LAYER_GROUP_NONE, N_("Startup Method:"), VIK_LAYER_WIDGET_COMBOBOX, params_startup_methods, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_STARTUP_NAMESPACE "startup_file", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("Startup File:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL,
+    N_("The default file to load on startup. Only applies when the startup method is set to 'Specified File'"), NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_STARTUP_NAMESPACE "check_version", VIK_LAYER_PARAM_BOOLEAN, VIK_LAYER_GROUP_NONE, N_("Check For New Version:"), VIK_LAYER_WIDGET_CHECKBUTTON, NULL, NULL,
+    N_("Periodically check to see if a new version of Viking is available"), NULL, NULL, NULL },
+};
 /* End of Options static stuff */
+
+/**
+ * Detect when Viking is run for the very first time
+ * Call this very early in the startup sequence to ensure subsequent correct results
+ * The return value is cached, since later on the test will no longer be true
+ */
+gboolean a_vik_very_first_run ()
+{
+  static gboolean vik_very_first_run_known = FALSE;
+  static gboolean vik_very_first_run = FALSE;
+
+  // use cached result if available
+  if ( vik_very_first_run_known )
+    return vik_very_first_run;
+
+  gchar *dir = a_get_viking_dir_no_create();
+  // NB: will need extra logic if default dir gets changed e.g. from ~/.viking to ~/.config/viking
+  if ( dir ) {
+    // If directory exists - Viking has been run before
+    vik_very_first_run = ! g_file_test ( dir, G_FILE_TEST_EXISTS );
+    g_free ( dir );
+  }
+  else
+    vik_very_first_run = TRUE;
+  vik_very_first_run_known = TRUE;
+
+  return vik_very_first_run;
+}
 
 void a_vik_preferences_init ()
 {
@@ -129,25 +164,43 @@ void a_vik_preferences_init ()
 
   VikLayerParamData tmp;
   tmp.u = VIK_DEGREE_FORMAT_DMS;
-  a_preferences_register(prefs1, tmp, VIKING_PREFERENCES_GROUP_KEY);
+  a_preferences_register(&general_prefs[0], tmp, VIKING_PREFERENCES_GROUP_KEY);
 
   tmp.u = VIK_UNITS_DISTANCE_KILOMETRES;
-  a_preferences_register(prefs2, tmp, VIKING_PREFERENCES_GROUP_KEY);
+  a_preferences_register(&general_prefs[1], tmp, VIKING_PREFERENCES_GROUP_KEY);
 
   tmp.u = VIK_UNITS_SPEED_KILOMETRES_PER_HOUR;
-  a_preferences_register(prefs3, tmp, VIKING_PREFERENCES_GROUP_KEY);
+  a_preferences_register(&general_prefs[2], tmp, VIKING_PREFERENCES_GROUP_KEY);
 
   tmp.u = VIK_UNITS_HEIGHT_METRES;
-  a_preferences_register(prefs4, tmp, VIKING_PREFERENCES_GROUP_KEY);
+  a_preferences_register(&general_prefs[3], tmp, VIKING_PREFERENCES_GROUP_KEY);
 
   tmp.b = TRUE;
-  a_preferences_register(prefs5, tmp, VIKING_PREFERENCES_GROUP_KEY);
+  a_preferences_register(&general_prefs[4], tmp, VIKING_PREFERENCES_GROUP_KEY);
 
   /* Maintain the default location to New York */
   tmp.d = 40.714490;
-  a_preferences_register(prefs6, tmp, VIKING_PREFERENCES_GROUP_KEY);
+  a_preferences_register(&general_prefs[5], tmp, VIKING_PREFERENCES_GROUP_KEY);
   tmp.d = -74.007130;
-  a_preferences_register(prefs7, tmp, VIKING_PREFERENCES_GROUP_KEY);
+  a_preferences_register(&general_prefs[6], tmp, VIKING_PREFERENCES_GROUP_KEY);
+
+  // New Tab
+  a_preferences_register_group ( VIKING_PREFERENCES_STARTUP_GROUP_KEY, _("Startup") );
+
+  tmp.b = FALSE;
+  a_preferences_register(&startup_prefs[0], tmp, VIKING_PREFERENCES_STARTUP_GROUP_KEY);
+
+  tmp.b = FALSE;
+  a_preferences_register(&startup_prefs[1], tmp, VIKING_PREFERENCES_STARTUP_GROUP_KEY);
+
+  tmp.u = VIK_STARTUP_METHOD_HOME_LOCATION;
+  a_preferences_register(&startup_prefs[2], tmp, VIKING_PREFERENCES_STARTUP_GROUP_KEY);
+
+  tmp.s = "";
+  a_preferences_register(&startup_prefs[3], tmp, VIKING_PREFERENCES_STARTUP_GROUP_KEY);
+
+  tmp.b = FALSE;
+  a_preferences_register(&startup_prefs[4], tmp, VIKING_PREFERENCES_STARTUP_GROUP_KEY);
 
   // New Tab
   a_preferences_register_group ( VIKING_PREFERENCES_IO_GROUP_KEY, _("Export/External") );
@@ -157,6 +210,9 @@ void a_vik_preferences_init ()
 
   tmp.u = VIK_GPX_EXPORT_TRK_SORT_TIME;
   a_preferences_register(&io_prefs[1], tmp, VIKING_PREFERENCES_IO_GROUP_KEY);
+
+  tmp.b = VIK_GPX_EXPORT_WPT_SYM_NAME_TITLECASE;
+  a_preferences_register(&io_prefs[2], tmp, VIKING_PREFERENCES_IO_GROUP_KEY);
 
 #ifndef WINDOWS
   tmp.s = "xdg-open";
@@ -169,6 +225,15 @@ void a_vik_preferences_init ()
   // Add a second external program - another OSM editor by default
   tmp.s = "merkaartor";
   a_preferences_register(&io_prefs_external_gpx[1], tmp, VIKING_PREFERENCES_IO_GROUP_KEY);
+
+  // 'Advanced' Properties
+  a_preferences_register_group ( VIKING_PREFERENCES_ADVANCED_GROUP_KEY, _("Advanced") );
+
+  tmp.u = VIK_FILE_REF_FORMAT_ABSOLUTE;
+  a_preferences_register(&prefs_advanced[0], tmp, VIKING_PREFERENCES_ADVANCED_GROUP_KEY);
+
+  tmp.b = TRUE;
+  a_preferences_register(&prefs_advanced[1], tmp, VIKING_PREFERENCES_ADVANCED_GROUP_KEY);
 }
 
 vik_degree_format_t a_vik_get_degree_format ( )
@@ -236,6 +301,13 @@ vik_gpx_export_trk_sort_t a_vik_get_gpx_export_trk_sort ( )
   return sort;
 }
 
+vik_gpx_export_wpt_sym_name_t a_vik_gpx_export_wpt_sym_name ( )
+{
+  gboolean val;
+  val = a_preferences_get(VIKING_PREFERENCES_IO_NAMESPACE "gpx_export_wpt_sym_names")->b;
+  return val;
+}
+
 #ifndef WINDOWS
 const gchar* a_vik_get_image_viewer ( )
 {
@@ -251,4 +323,48 @@ const gchar* a_vik_get_external_gpx_program_1 ( )
 const gchar* a_vik_get_external_gpx_program_2 ( )
 {
   return a_preferences_get(VIKING_PREFERENCES_IO_NAMESPACE "external_gpx_2")->s;
+}
+
+vik_file_ref_format_t a_vik_get_file_ref_format ( )
+{
+  vik_file_ref_format_t format;
+  format = a_preferences_get(VIKING_PREFERENCES_ADVANCED_NAMESPACE "save_file_reference_mode")->u;
+  return format;
+}
+
+gboolean a_vik_get_create_track_tooltip ( )
+{
+  return a_preferences_get(VIKING_PREFERENCES_ADVANCED_NAMESPACE "create_track_tooltip")->b;
+}
+
+// Startup Options
+gboolean a_vik_get_restore_window_state ( )
+{
+  gboolean data;
+  data = a_preferences_get(VIKING_PREFERENCES_STARTUP_NAMESPACE "restore_window_state")->b;
+  return data;
+}
+
+gboolean a_vik_get_add_default_map_layer ( )
+{
+  gboolean data;
+  data = a_preferences_get(VIKING_PREFERENCES_STARTUP_NAMESPACE "add_default_map_layer")->b;
+  return data;
+}
+
+vik_startup_method_t a_vik_get_startup_method ( )
+{
+  vik_startup_method_t data;
+  data = a_preferences_get(VIKING_PREFERENCES_STARTUP_NAMESPACE "startup_method")->u;
+  return data;
+}
+
+const gchar *a_vik_get_startup_file ( )
+{
+  return a_preferences_get(VIKING_PREFERENCES_STARTUP_NAMESPACE "startup_file")->s;
+}
+
+gboolean a_vik_get_check_version ( )
+{
+  return a_preferences_get(VIKING_PREFERENCES_STARTUP_NAMESPACE "check_version")->b;
 }

@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <time.h>
+#include <math.h>
 
 #include "coords.h"
 #include "vikcoord.h"
@@ -38,7 +39,8 @@
 struct _VikTrwLayerTpwin {
   GtkDialog parent;
   GtkSpinButton *lat, *lon, *alt;
-  GtkLabel *track_name, *ts, *localtime, *diff_dist, *diff_time, *diff_speed, *hdop, *vdop, *pdop, *sat;
+  GtkWidget *trkpt_name;
+  GtkLabel *course, *ts, *localtime, *diff_dist, *diff_time, *diff_speed, *speed, *hdop, *vdop, *pdop, *sat;
   // Previously these buttons were in a glist, however I think the ordering behaviour is implicit
   //  thus control manually to ensure operating on the correct button
   GtkWidget *button_close;
@@ -113,27 +115,35 @@ static void tpwin_sync_alt_to_tp ( VikTrwLayerTpwin *tpwin )
   }
 }
 
+static gboolean tpwin_set_name ( VikTrwLayerTpwin *tpwin )
+{
+  if ( tpwin->cur_tp && (!tpwin->sync_to_tp_block) ) {
+    vik_trackpoint_set_name ( tpwin->cur_tp, gtk_entry_get_text(GTK_ENTRY(tpwin->trkpt_name)) );
+  }
+  return FALSE;
+}
+
 VikTrwLayerTpwin *vik_trw_layer_tpwin_new ( GtkWindow *parent )
 {
-  static gchar *left_label_texts[] = { N_("<b>Part of Track:</b>"),
-	                               N_("<b>Latitude:</b>"),
+  static gchar *left_label_texts[] = { N_("<b>Name:</b>"),
+                                       N_("<b>Latitude:</b>"),
                                        N_("<b>Longitude:</b>"),
-				       N_("<b>Altitude:</b>"),
-				       N_("<b>Timestamp:</b>"),
-				       N_("<b>Time:</b>") };
+                                       N_("<b>Altitude:</b>"),
+                                       N_("<b>Course:</b>"),
+                                       N_("<b>Timestamp:</b>"),
+                                       N_("<b>Time:</b>") };
   static gchar *right_label_texts[] = { N_("<b>Distance Difference:</b>"),
                                         N_("<b>Time Difference:</b>"),
-					N_("<b>\"Speed\" Between:</b>"),
-					N_("<b>VDOP:</b>"),
-					N_("<b>HDOP:</b>"),
-					N_("<b>PDOP:</b>"),
-					N_("<b>SAT/FIX:</b>")
-					};
+                                        N_("<b>\"Speed\" Between:</b>"),
+                                        N_("<b>Speed:</b>"),
+                                        N_("<b>VDOP:</b>"),
+                                        N_("<b>HDOP:</b>"),
+                                        N_("<b>PDOP:</b>"),
+                                        N_("<b>SAT/FIX:</b>") };
 
   VikTrwLayerTpwin *tpwin = VIK_TRW_LAYER_TPWIN ( g_object_new ( VIK_TRW_LAYER_TPWIN_TYPE, NULL ) );
   GtkWidget *main_hbox, *left_vbox, *right_vbox;
   GtkWidget *diff_left_vbox, *diff_right_vbox;
-  
 
   gtk_window_set_transient_for ( GTK_WINDOW(tpwin), parent );
   gtk_window_set_title ( GTK_WINDOW(tpwin), _("Trackpoint") );
@@ -158,9 +168,12 @@ VikTrwLayerTpwin *vik_trw_layer_tpwin_new ( GtkWindow *parent )
   */
 
   /* main track info */
-  left_vbox = a_dialog_create_label_vbox ( left_label_texts, sizeof(left_label_texts) / sizeof(left_label_texts[0]) );
+  left_vbox = a_dialog_create_label_vbox ( left_label_texts, G_N_ELEMENTS(left_label_texts), 1, 3 );
 
-  tpwin->track_name = GTK_LABEL(gtk_label_new(NULL));
+  tpwin->trkpt_name = gtk_entry_new();
+  g_signal_connect_swapped ( G_OBJECT(tpwin->trkpt_name), "focus-out-event", G_CALLBACK(tpwin_set_name), tpwin );
+
+  tpwin->course = GTK_LABEL(gtk_label_new(NULL));
   tpwin->ts = GTK_LABEL(gtk_label_new(NULL));
   tpwin->localtime = GTK_LABEL(gtk_label_new(NULL));
 
@@ -177,35 +190,38 @@ VikTrwLayerTpwin *vik_trw_layer_tpwin_new ( GtkWindow *parent )
 
   g_signal_connect_swapped ( G_OBJECT(tpwin->alt), "value-changed", G_CALLBACK(tpwin_sync_alt_to_tp), tpwin );
 
-  right_vbox = gtk_vbox_new ( FALSE, 3 );
-  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->track_name), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->lat), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->lon), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->alt), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->ts), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->localtime), FALSE, FALSE, 5 );
+  right_vbox = gtk_vbox_new ( TRUE, 1 );
+  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->trkpt_name), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->lat), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->lon), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->alt), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->course), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->ts), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->localtime), FALSE, FALSE, 3 );
 
   /* diff info */
-  diff_left_vbox = a_dialog_create_label_vbox ( right_label_texts, sizeof(right_label_texts) / sizeof(right_label_texts[0]) );
+  diff_left_vbox = a_dialog_create_label_vbox ( right_label_texts, G_N_ELEMENTS(right_label_texts), 1, 3 );
 
   tpwin->diff_dist = GTK_LABEL(gtk_label_new(NULL));
   tpwin->diff_time = GTK_LABEL(gtk_label_new(NULL));
   tpwin->diff_speed = GTK_LABEL(gtk_label_new(NULL));
+  tpwin->speed = GTK_LABEL(gtk_label_new(NULL));
 
   tpwin->vdop = GTK_LABEL(gtk_label_new(NULL));
   tpwin->hdop = GTK_LABEL(gtk_label_new(NULL));
   tpwin->pdop = GTK_LABEL(gtk_label_new(NULL));
   tpwin->sat = GTK_LABEL(gtk_label_new(NULL));
 
-  diff_right_vbox = gtk_vbox_new ( FALSE, 3 );
-  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->diff_dist), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->diff_time), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->diff_speed), FALSE, FALSE, 5 );
+  diff_right_vbox = gtk_vbox_new ( TRUE, 1 );
+  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->diff_dist), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->diff_time), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->diff_speed), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->speed), FALSE, FALSE, 3 );
 
-  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->vdop), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->hdop), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->pdop), FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->sat), FALSE, FALSE, 5 );
+  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->vdop), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->hdop), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->pdop), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->sat), FALSE, FALSE, 3 );
 
   main_hbox = gtk_hbox_new( FALSE, 0 );
   gtk_box_pack_start ( GTK_BOX(main_hbox), left_vbox, TRUE, TRUE, 0 );
@@ -213,18 +229,28 @@ VikTrwLayerTpwin *vik_trw_layer_tpwin_new ( GtkWindow *parent )
   gtk_box_pack_start ( GTK_BOX(main_hbox), diff_left_vbox, TRUE, TRUE, 0 );
   gtk_box_pack_start ( GTK_BOX(main_hbox), diff_right_vbox, TRUE, TRUE, 0 );
 
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(tpwin)->vbox), main_hbox, FALSE, FALSE, 0 );
+  gtk_box_pack_start ( GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(tpwin))), main_hbox, FALSE, FALSE, 0 );
 
   tpwin->cur_tp = NULL;
+
+  GtkWidget *response_w = NULL;
+#if GTK_CHECK_VERSION (2, 20, 0)
+  response_w = gtk_dialog_get_widget_for_response ( GTK_DIALOG(tpwin), VIK_TRW_LAYER_TPWIN_CLOSE );
+#endif
+  if ( response_w )
+    gtk_widget_grab_focus ( response_w );
 
   return tpwin;
 }
 
 void vik_trw_layer_tpwin_set_empty ( VikTrwLayerTpwin *tpwin )
 {
-  gtk_label_set_text ( tpwin->track_name, NULL );
+  gtk_editable_delete_text ( GTK_EDITABLE(tpwin->trkpt_name), 0, -1 );
+  gtk_widget_set_sensitive ( tpwin->trkpt_name, FALSE );
+
   gtk_label_set_text ( tpwin->ts, NULL );
   gtk_label_set_text ( tpwin->localtime, NULL );
+  gtk_label_set_text ( tpwin->course, NULL );
 
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lat), FALSE );
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lon), FALSE );
@@ -240,17 +266,26 @@ void vik_trw_layer_tpwin_set_empty ( VikTrwLayerTpwin *tpwin )
   gtk_label_set_text ( tpwin->diff_dist, NULL );
   gtk_label_set_text ( tpwin->diff_time, NULL );
   gtk_label_set_text ( tpwin->diff_speed, NULL );
+  gtk_label_set_text ( tpwin->speed, NULL );
   gtk_label_set_text ( tpwin->vdop, NULL );
   gtk_label_set_text ( tpwin->hdop, NULL );
   gtk_label_set_text ( tpwin->pdop, NULL );
   gtk_label_set_text ( tpwin->sat, NULL );
+
+  gtk_window_set_title ( GTK_WINDOW(tpwin), _("Trackpoint") );
 }
 
-void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *track_name )
+void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, const gchar *track_name )
 {
-  static char tmp_str[25];
+  static char tmp_str[64];
   static struct LatLon ll;
   VikTrackpoint *tp = VIK_TRACKPOINT(tpl->data);
+
+  if ( tp->name )
+    gtk_entry_set_text ( GTK_ENTRY(tpwin->trkpt_name), tp->name );
+  else
+    gtk_editable_delete_text ( GTK_EDITABLE(tpwin->trkpt_name), 0, -1 );
+  gtk_widget_set_sensitive ( tpwin->trkpt_name, TRUE );
 
   /* Only can insert if not at the end (otherwise use extend track) */
   gtk_widget_set_sensitive ( tpwin->button_insert, (gboolean) GPOINTER_TO_INT (tpl->next) );
@@ -266,7 +301,7 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lon), TRUE );
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->alt), TRUE );
 
-  gtk_label_set_text ( tpwin->track_name, track_name );
+  vik_trw_layer_tpwin_set_track_name ( tpwin, track_name );
 
   tpwin->sync_to_tp_block = TRUE; /* don't update while setting data. */
 
@@ -286,16 +321,13 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
     g_critical("Houston, we've had a problem. height=%d", height_units);
   }
 
-
-  tpwin->sync_to_tp_block = FALSE; /* don't update whlie setting data. */
-
+  tpwin->sync_to_tp_block = FALSE; // don't update while setting data.
 
   if ( tp->has_timestamp )
   {
     g_snprintf ( tmp_str, sizeof(tmp_str), "%ld", tp->timestamp );
     gtk_label_set_text ( tpwin->ts, tmp_str );
-    g_snprintf ( tmp_str, MIN(25,sizeof(tmp_str)), "%s", ctime(&(tp->timestamp)) );
-    /* max. len of 25 will snip off newline, which is good since it messes stuff up */
+    strftime ( tmp_str, sizeof(tmp_str), "%c", localtime(&(tp->timestamp)) );
     gtk_label_set_text ( tpwin->localtime, tmp_str );
   }
   else
@@ -304,6 +336,7 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
     gtk_label_set_text (tpwin->localtime, NULL );
   }
 
+  vik_units_speed_t speed_units = a_vik_get_units_speed ();
   vik_units_distance_t dist_units = a_vik_get_units_distance ();
   if ( tpwin->cur_tp )
   {
@@ -327,7 +360,6 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
         gtk_label_set_text ( tpwin->diff_speed, "--" );
       else
       {
-	vik_units_speed_t speed_units = a_vik_get_units_speed ();
 	switch (speed_units) {
 	case VIK_UNITS_SPEED_KILOMETRES_PER_HOUR:
 	  g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f km/h", VIK_MPS_TO_KPH(vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord)) / (ABS(tp->timestamp - tpwin->cur_tp->timestamp))) );
@@ -354,6 +386,33 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
       gtk_label_set_text ( tpwin->diff_speed, NULL );
     }
   }
+
+  if ( isnan(tp->course) )
+    g_snprintf ( tmp_str, sizeof(tmp_str), "--" );
+  else
+    g_snprintf ( tmp_str, sizeof(tmp_str), "%05.1f\302\260", tp->course );
+  gtk_label_set_text ( tpwin->course, tmp_str );
+
+  if ( isnan(tp->speed) )
+    g_snprintf ( tmp_str, sizeof(tmp_str), "--" );
+  else {
+    switch (speed_units) {
+    case VIK_UNITS_SPEED_MILES_PER_HOUR:
+      g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f mph", VIK_MPS_TO_MPH(tp->speed) );
+      break;
+    case VIK_UNITS_SPEED_METRES_PER_SECOND:
+      g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f m/s", tp->speed );
+      break;
+    case VIK_UNITS_SPEED_KNOTS:
+      g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f knots", VIK_MPS_TO_KNOTS(tp->speed) );
+      break;
+    default:
+      // VIK_UNITS_SPEED_KILOMETRES_PER_HOUR:
+      g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f km/h", VIK_MPS_TO_KPH(tp->speed) );
+      break;
+    }
+  }
+  gtk_label_set_text ( tpwin->speed, tmp_str );
 
   switch (dist_units) {
   case VIK_UNITS_DISTANCE_KILOMETRES:
@@ -393,5 +452,8 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, gchar *tr
 
 void vik_trw_layer_tpwin_set_track_name ( VikTrwLayerTpwin *tpwin, const gchar *track_name )
 {
-  gtk_label_set_text ( tpwin->track_name, track_name );
+  gchar *tmp_name = g_strdup_printf ( "%s: %s", track_name, _("Trackpoint") );
+  gtk_window_set_title ( GTK_WINDOW(tpwin), tmp_name );
+  g_free ( tmp_name );
+  //gtk_label_set_text ( tpwin->track_name, track_name );
 }

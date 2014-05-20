@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2013, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ G_BEGIN_DECLS
 #define PROJECT "Viking"
 #define VIKING_VERSION PACKAGE_VERSION
 #define VIKING_VERSION_NAME "This Name For Rent"
-#define VIKING_URL "http://viking.sf.net/"
+#define VIKING_URL PACKAGE_URL
 
 #define ALTI_TO_MPP 1.4017295
 #define MPP_TO_ALTI 0.7134044
@@ -77,6 +78,9 @@ extern gboolean vik_version;
 
 /* Allow comparing versions */
 gint viking_version_to_number ( gchar *version );
+
+/* Very first run */
+gboolean a_vik_very_first_run ();
 
 /* Global preferences */
 void a_vik_preferences_init ();
@@ -139,9 +143,17 @@ vik_kml_export_units_t a_vik_get_kml_export_units ( );
 typedef enum {
   VIK_GPX_EXPORT_TRK_SORT_ALPHA,
   VIK_GPX_EXPORT_TRK_SORT_TIME,
+  VIK_GPX_EXPORT_TRK_SORT_CREATION,
 } vik_gpx_export_trk_sort_t;
 
 vik_gpx_export_trk_sort_t a_vik_get_gpx_export_trk_sort ( );
+
+typedef enum {
+  VIK_GPX_EXPORT_WPT_SYM_NAME_TITLECASE,
+  VIK_GPX_EXPORT_WPT_SYM_NAME_LOWERCASE,
+} vik_gpx_export_wpt_sym_name_t;
+
+vik_gpx_export_wpt_sym_name_t a_vik_gpx_export_wpt_sym_name ( );
 
 #ifndef WINDOWS
 /* Windows automatically uses the system defined viewer
@@ -153,6 +165,33 @@ const gchar* a_vik_get_external_gpx_program_1 ( );
 
 const gchar* a_vik_get_external_gpx_program_2 ( );
 
+/* File reference preferences - mainly in saving of a viking file */
+typedef enum {
+  VIK_FILE_REF_FORMAT_ABSOLUTE,
+  VIK_FILE_REF_FORMAT_RELATIVE,
+} vik_file_ref_format_t;
+
+vik_file_ref_format_t a_vik_get_file_ref_format ( );
+
+gboolean a_vik_get_create_track_tooltip ( );
+
+gboolean a_vik_get_restore_window_state ( );
+
+gboolean a_vik_get_add_default_map_layer ( );
+
+typedef enum {
+  VIK_STARTUP_METHOD_HOME_LOCATION,
+  VIK_STARTUP_METHOD_LAST_LOCATION,
+  VIK_STARTUP_METHOD_SPECIFIED_FILE,
+  VIK_STARTUP_METHOD_AUTO_LOCATION,
+} vik_startup_method_t;
+
+vik_startup_method_t a_vik_get_startup_method ( );
+
+const gchar *a_vik_get_startup_file ( );
+
+gboolean a_vik_get_check_version ( );
+
 /* Group for global preferences */
 #define VIKING_PREFERENCES_GROUP_KEY "viking.globals"
 #define VIKING_PREFERENCES_NAMESPACE "viking.globals."
@@ -162,6 +201,14 @@ const gchar* a_vik_get_external_gpx_program_2 ( );
 /* AKA Export/External Prefs */
 #define VIKING_PREFERENCES_IO_GROUP_KEY "viking.io"
 #define VIKING_PREFERENCES_IO_NAMESPACE "viking.io."
+
+/* Group for global preferences - but 'advanced'
+   User changeable but only for those that need it */
+#define VIKING_PREFERENCES_ADVANCED_GROUP_KEY "viking.advanced"
+#define VIKING_PREFERENCES_ADVANCED_NAMESPACE "viking.advanced."
+
+#define VIKING_PREFERENCES_STARTUP_GROUP_KEY "viking.startup"
+#define VIKING_PREFERENCES_STARTUP_NAMESPACE "viking.startup."
 
 G_END_DECLS
 

@@ -32,13 +32,21 @@
 #include <stdlib.h>
 
 #include "icons/icons.h"
+/*
+static VikLayerParamData image_default ( void )
+{
+  VikLayerParamData data;
+  data.s = g_strdup ("");
+  return data;
+}
+*/
 
 VikLayerParam georef_layer_params[] = {
-  { "image", VIK_LAYER_PARAM_STRING, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, },
-  { "corner_easting", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, NULL  },
-  { "corner_northing", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, NULL  },
-  { "mpp_easting", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, NULL },
-  { "mpp_northing", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, NULL  },
+  { VIK_LAYER_GEOREF, "image", VIK_LAYER_PARAM_STRING, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_GEOREF, "corner_easting", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_GEOREF, "corner_northing", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_GEOREF, "mpp_easting", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_GEOREF, "mpp_northing", VIK_LAYER_PARAM_DOUBLE, VIK_LAYER_NOT_IN_PROPERTIES, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL },
 };
 
 enum { PARAM_IMAGE = 0, PARAM_CE, PARAM_CN, PARAM_ME, PARAM_MN, NUM_PARAMS };
@@ -48,15 +56,15 @@ static void georef_layer_marshall( VikGeorefLayer *vgl, guint8 **data, gint *len
 static VikGeorefLayer *georef_layer_unmarshall( guint8 *data, gint len, VikViewport *vvp );
 static gboolean georef_layer_set_param ( VikGeorefLayer *vgl, guint16 id, VikLayerParamData data, VikViewport *vp, gboolean is_file_operation );
 static VikLayerParamData georef_layer_get_param ( VikGeorefLayer *vgl, guint16 id, gboolean is_file_operation );
-VikGeorefLayer *georef_layer_new ( );
-VikGeorefLayer *georef_layer_create ( VikViewport *vp );
+static VikGeorefLayer *georef_layer_new ( VikViewport *vvp );
+static VikGeorefLayer *georef_layer_create ( VikViewport *vp );
 static void georef_layer_free ( VikGeorefLayer *vgl );
-gboolean georef_layer_properties ( VikGeorefLayer *vgl, gpointer vp );
-static void georef_layer_draw ( VikGeorefLayer *vgl, gpointer data );
+static gboolean georef_layer_properties ( VikGeorefLayer *vgl, gpointer vp );
+static void georef_layer_draw ( VikGeorefLayer *vgl, VikViewport *vp );
 static void georef_layer_add_menu_items ( VikGeorefLayer *vgl, GtkMenu *menu, gpointer vlp );
 static void georef_layer_set_image ( VikGeorefLayer *vgl, const gchar *image );
 static gboolean georef_layer_dialog ( VikGeorefLayer **vgl, gpointer vp, GtkWindow *w );
-static void georef_layer_load_image ( VikGeorefLayer *vgl );
+static void georef_layer_load_image ( VikGeorefLayer *vgl, VikViewport *vp, gboolean from_file );
 
 /* tools */
 static gpointer georef_layer_move_create ( VikWindow *vw, VikViewport *vvp);
@@ -193,10 +201,10 @@ static void georef_layer_marshall( VikGeorefLayer *vgl, guint8 **data, gint *len
 
 static VikGeorefLayer *georef_layer_unmarshall( guint8 *data, gint len, VikViewport *vvp )
 {
-  VikGeorefLayer *rv = georef_layer_new ();
+  VikGeorefLayer *rv = georef_layer_new ( vvp );
   vik_layer_unmarshall_params ( VIK_LAYER(rv), data, len, vvp );
   if (rv->image) {
-    georef_layer_load_image ( rv );
+    georef_layer_load_image ( rv, vvp, TRUE );
   }
   return rv;
 }
@@ -219,7 +227,22 @@ static VikLayerParamData georef_layer_get_param ( VikGeorefLayer *vgl, guint16 i
   VikLayerParamData rv;
   switch ( id )
   {
-    case PARAM_IMAGE: rv.s = vgl->image ? vgl->image : ""; break;
+    case PARAM_IMAGE: {
+      gboolean set = FALSE;
+      if ( is_file_operation ) {
+        if ( a_vik_get_file_ref_format() == VIK_FILE_REF_FORMAT_RELATIVE ) {
+          gchar *cwd = g_get_current_dir();
+          if ( cwd ) {
+            rv.s = file_GetRelativeFilename ( cwd, vgl->image );
+	    if ( !rv.s ) rv.s = "";
+            set = TRUE;
+	  }
+	}
+      }
+      if ( !set )
+        rv.s = vgl->image ? vgl->image : "";
+      break;
+    }
     case PARAM_CN: rv.d = vgl->corner.northing; break;
     case PARAM_CE: rv.d = vgl->corner.easting; break;
     case PARAM_MN: rv.d = vgl->mpp_northing; break;
@@ -228,10 +251,19 @@ static VikLayerParamData georef_layer_get_param ( VikGeorefLayer *vgl, guint16 i
   return rv;
 }
 
-VikGeorefLayer *georef_layer_new ( )
+static VikGeorefLayer *georef_layer_new ( VikViewport *vvp )
 {
   VikGeorefLayer *vgl = VIK_GEOREF_LAYER ( g_object_new ( VIK_GEOREF_LAYER_TYPE, NULL ) );
   vik_layer_set_type ( VIK_LAYER(vgl), VIK_LAYER_GEOREF );
+
+  // Since GeoRef layer doesn't use uibuilder
+  //  initializing this way won't do anything yet..
+  vik_layer_set_defaults ( VIK_LAYER(vgl), vvp );
+
+  // Make these defaults based on the current view
+  vgl->mpp_northing = vik_viewport_get_ympp ( vvp );
+  vgl->mpp_easting = vik_viewport_get_xmpp ( vvp );
+  vik_coord_to_utm ( vik_viewport_get_center ( vvp ), &(vgl->corner) );
 
   vgl->image = NULL;
   vgl->pixbuf = NULL;
@@ -243,12 +275,13 @@ VikGeorefLayer *georef_layer_new ( )
   return vgl;
 }
 
-static void georef_layer_draw ( VikGeorefLayer *vgl, gpointer data )
+static void georef_layer_draw ( VikGeorefLayer *vgl, VikViewport *vp )
 {
-/* bla, bla */
+  if ( vik_viewport_get_drawmode(vp) != VIK_VIEWPORT_DRAWMODE_UTM )
+    return;
+
   if ( vgl->pixbuf )
   {
-    VikViewport *vp = VIK_VIEWPORT(data);
     struct UTM utm_middle;
     gdouble xmpp = vik_viewport_get_xmpp(vp), ympp = vik_viewport_get_ympp(vp);
     GdkPixbuf *pixbuf = vgl->pixbuf;
@@ -257,33 +290,6 @@ static void georef_layer_draw ( VikGeorefLayer *vgl, gpointer data )
 
     vik_coord_to_utm ( vik_viewport_get_center ( vp ), &utm_middle );
 
-    /* scale the pixbuf if it doesn't match our dimensions */
-    if ( xmpp != vgl->mpp_easting || ympp != vgl->mpp_northing )
-    {
-      layer_width = round(vgl->width * vgl->mpp_easting / xmpp);
-      layer_height = round(vgl->height * vgl->mpp_northing / ympp);
-
-      /* rescale if necessary */
-      if (layer_width == vgl->scaled_width && layer_height == vgl->scaled_height && vgl->scaled != NULL)
-        pixbuf = vgl->scaled;
-      else
-      {
-        pixbuf = gdk_pixbuf_scale_simple(
-          vgl->pixbuf, 
-          layer_width,
-          layer_height,
-          GDK_INTERP_BILINEAR
-        );
-
-        if (vgl->scaled != NULL)
-          g_object_unref(vgl->scaled);
-
-        vgl->scaled = pixbuf;
-        vgl->scaled_width = layer_width;
-        vgl->scaled_height = layer_height;
-      }
-    }
-
     guint width = vik_viewport_get_width(vp), height = vik_viewport_get_height(vp);
     gint32 x, y;
     vgl->corner.zone = utm_middle.zone;
@@ -291,8 +297,43 @@ static void georef_layer_draw ( VikGeorefLayer *vgl, gpointer data )
     VikCoord corner_coord;
     vik_coord_load_from_utm ( &corner_coord, vik_viewport_get_coord_mode(vp), &(vgl->corner) );
     vik_viewport_coord_to_screen ( vp, &corner_coord, &x, &y );
-    if ( (x < 0 || x < width) && (y < 0 || y < height) && x+layer_width > 0 && y+layer_height > 0 )
+
+    /* mark to scale the pixbuf if it doesn't match our dimensions */
+    gboolean scale = FALSE;
+    if ( xmpp != vgl->mpp_easting || ympp != vgl->mpp_northing )
+    {
+      scale = TRUE;
+      layer_width = round(vgl->width * vgl->mpp_easting / xmpp);
+      layer_height = round(vgl->height * vgl->mpp_northing / ympp);
+    }
+
+    // If image not in viewport bounds - no need to draw it (or bother with any scaling)
+    if ( (x < 0 || x < width) && (y < 0 || y < height) && x+layer_width > 0 && y+layer_height > 0 ) {
+
+      if ( scale )
+      {
+        /* rescale if necessary */
+        if (layer_width == vgl->scaled_width && layer_height == vgl->scaled_height && vgl->scaled != NULL)
+          pixbuf = vgl->scaled;
+        else
+        {
+          pixbuf = gdk_pixbuf_scale_simple(
+            vgl->pixbuf,
+            layer_width,
+            layer_height,
+            GDK_INTERP_BILINEAR
+          );
+
+          if (vgl->scaled != NULL)
+            g_object_unref(vgl->scaled);
+
+          vgl->scaled = pixbuf;
+          vgl->scaled_width = layer_width;
+          vgl->scaled_height = layer_height;
+        }
+      }
       vik_viewport_draw_pixbuf ( vp, pixbuf, 0, 0, x, y, layer_width, layer_height ); /* todo: draw only what we need to. */
+    }
   }
 }
 
@@ -304,17 +345,17 @@ static void georef_layer_free ( VikGeorefLayer *vgl )
     g_object_unref ( vgl->scaled );
 }
 
-VikGeorefLayer *georef_layer_create ( VikViewport *vp )
+static VikGeorefLayer *georef_layer_create ( VikViewport *vp )
 {
-  return georef_layer_new ();
+  return georef_layer_new ( vp );
 }
 
-gboolean georef_layer_properties ( VikGeorefLayer *vgl, gpointer vp )
+static gboolean georef_layer_properties ( VikGeorefLayer *vgl, gpointer vp )
 {
   return georef_layer_dialog ( &vgl, vp, VIK_GTK_WINDOW_FROM_WIDGET(vp) );
 }
 
-static void georef_layer_load_image ( VikGeorefLayer *vgl )
+static void georef_layer_load_image ( VikGeorefLayer *vgl, VikViewport *vp, gboolean from_file )
 {
   GError *gx = NULL;
   if ( vgl->image == NULL )
@@ -332,7 +373,8 @@ static void georef_layer_load_image ( VikGeorefLayer *vgl )
 
   if (gx)
   {
-    g_warning ( _("Couldn't open image file: %s"), gx->message );
+    if ( !from_file )
+      a_dialog_error_msg_extra ( VIK_GTK_WINDOW_FROM_WIDGET(vp), _("Couldn't open image file: %s"), gx->message );
     g_error_free ( gx );
   }
   else
@@ -341,6 +383,14 @@ static void georef_layer_load_image ( VikGeorefLayer *vgl )
     vgl->height = gdk_pixbuf_get_height ( vgl->pixbuf );
   }
 
+  if ( !from_file )
+  {
+    if ( vik_viewport_get_drawmode(vp) != VIK_VIEWPORT_DRAWMODE_UTM )
+    {
+      a_dialog_warning_msg ( VIK_GTK_WINDOW_FROM_WIDGET(vp),
+                             _("GeoRef map cannot be displayed in the current drawmode.\nSelect \"UTM Mode\" from View menu to view it.") );
+    }
+  }
   /* should find length and width here too */
 }
 
@@ -472,7 +522,7 @@ static gboolean georef_layer_dialog ( VikGeorefLayer **vgl, gpointer vp, GtkWind
   GtkWidget *pass_along[4];
 
   table = gtk_table_new ( 6, 2, FALSE );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0 );
+  gtk_box_pack_start ( GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), table, TRUE, TRUE, 0 );
 
   wfp_hbox = gtk_hbox_new ( FALSE, 0 );
   wfp_label = gtk_label_new ( _("World File Parameters:") );
@@ -483,11 +533,11 @@ static gboolean georef_layer_dialog ( VikGeorefLayer **vgl, gpointer vp, GtkWind
 
   ce_label = gtk_label_new ( _("Corner pixel easting:") );
   ce_spin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, 0.0, 1500000.0, 1, 5, 0 ), 1, 4 );
-  gtk_widget_set_tooltip_text ( GTK_WIDGET(ce_spin), _("the UTM \"easting\" value of the upper-right corner pixel of the map") );
+  gtk_widget_set_tooltip_text ( GTK_WIDGET(ce_spin), _("the UTM \"easting\" value of the upper-left corner pixel of the map") );
 
   cn_label = gtk_label_new ( _("Corner pixel northing:") );
   cn_spin = gtk_spin_button_new ( (GtkAdjustment *) gtk_adjustment_new ( 4, 0.0, 9000000.0, 1, 5, 0 ), 1, 4 );
-  gtk_widget_set_tooltip_text ( GTK_WIDGET(cn_spin), _("the UTM \"northing\" value of the upper-right corner pixel of the map") );
+  gtk_widget_set_tooltip_text ( GTK_WIDGET(cn_spin), _("the UTM \"northing\" value of the upper-left corner pixel of the map") );
 
   xlabel = gtk_label_new ( _("X (easting) scale (mpp): "));
   ylabel = gtk_label_new ( _("Y (northing) scale (mpp): "));
@@ -548,7 +598,7 @@ static gboolean georef_layer_dialog ( VikGeorefLayer **vgl, gpointer vp, GtkWind
   {
     if (! *vgl)
     {
-      *vgl = georef_layer_new ();
+      *vgl = georef_layer_new ( VIK_VIEWPORT(vp) );
        vik_layer_rename ( VIK_LAYER(*vgl), vik_georef_layer_interface.name );
     }
     (*vgl)->corner.easting = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(ce_spin) );
@@ -558,7 +608,7 @@ static gboolean georef_layer_dialog ( VikGeorefLayer **vgl, gpointer vp, GtkWind
     if ( (!(*vgl)->image) || strcmp( (*vgl)->image, vik_file_entry_get_filename(VIK_FILE_ENTRY(imageentry)) ) != 0 )
     {
       georef_layer_set_image ( *vgl, vik_file_entry_get_filename(VIK_FILE_ENTRY(imageentry)) );
-      georef_layer_load_image ( *vgl );
+      georef_layer_load_image ( *vgl, VIK_VIEWPORT(vp), FALSE );
     }
 
     gtk_widget_destroy ( GTK_WIDGET(dialog) );

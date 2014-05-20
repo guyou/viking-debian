@@ -42,15 +42,6 @@ GType vik_coord_layer_get_type ();
 
 typedef struct _VikCoordLayer VikCoordLayer;
 
-/* TODO 0.0.8: yup, everything goes. */
-
-VikCoordLayer *vik_coord_layer_new ( );
-void vik_coord_layer_draw ( VikCoordLayer *vcl, gpointer data );
-void vik_coord_layer_free ( VikCoordLayer *vcl );
-
-VikCoordLayer *vik_coord_layer_create ( VikViewport *vp );
-gboolean vik_coord_layer_properties ( VikCoordLayer *vcl, gpointer vp );
-
 G_END_DECLS
 
 #endif

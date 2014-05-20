@@ -23,6 +23,7 @@
 #define _VIKING_TREEVIEW_H
 
 #include "config.h"
+#include "uibuilder.h"
 
 #include <glib.h>
 #include <glib-object.h>
@@ -68,10 +69,12 @@ gpointer vik_treeview_item_get_parent ( VikTreeview *vt, GtkTreeIter *iter );
 
 void vik_treeview_select_iter ( VikTreeview *vt, GtkTreeIter *iter, gboolean view_all );
 gboolean vik_treeview_get_selected_iter ( VikTreeview *vt, GtkTreeIter *iter );
+gboolean vik_treeview_get_editing ( VikTreeview *vt );
 
 void vik_treeview_item_set_icon ( VikTreeview *vt, GtkTreeIter *iter, const GdkPixbuf *icon );
 void vik_treeview_item_set_name ( VikTreeview *vt, GtkTreeIter *iter, const gchar *to );
 void vik_treeview_item_set_visible ( VikTreeview *vt, GtkTreeIter *iter, gboolean to );
+void vik_treeview_item_toggle_visible ( VikTreeview *vt, GtkTreeIter *iter );
 void vik_treeview_item_delete ( VikTreeview *vt, GtkTreeIter *iter );
 
 gboolean vik_treeview_get_iter_at_pos ( VikTreeview *vt, GtkTreeIter *iter, gint x, gint y );
@@ -85,21 +88,16 @@ gboolean vik_treeview_item_get_parent_iter ( VikTreeview *vt, GtkTreeIter *iter,
 void vik_treeview_expand_toplevel ( VikTreeview *vt );
 void vik_treeview_expand ( VikTreeview *vt, GtkTreeIter *iter );
 
-void vik_treeview_add_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent,
-                              gpointer item, gint data, gint icon_type ); /* icon type: type of layer or -1 -> no icon */
-void vik_treeview_insert_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent,
-                              gpointer item, gint data, gint icon_type, GtkTreeIter *sibling );
+void vik_treeview_add_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent, gboolean above,
+                              gpointer item, gint data, VikLayerTypeEnum layer_type );
+void vik_treeview_insert_layer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent, gboolean above,
+                              gpointer item, gint data, VikLayerTypeEnum layer_type, GtkTreeIter *sibling );
 void vik_treeview_add_sublayer ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent, gpointer item,
                                  gint data, GdkPixbuf *icon, gboolean has_visible, gboolean editable );
 
 gboolean vik_treeview_get_iter_with_name ( VikTreeview *vt, GtkTreeIter *iter, GtkTreeIter *parent_iter, const gchar *name );
 
-#ifdef VIK_CONFIG_ALPHABETIZED_TRW
-void vik_treeview_add_sublayer_alphabetized ( VikTreeview *vt, GtkTreeIter *parent_iter, GtkTreeIter *iter, const gchar *name, gpointer parent, gpointer item,
-                                 gint data, GdkPixbuf *icon, gboolean has_visible, gboolean editable );
-
-void vik_treeview_sublayer_realphabetize ( VikTreeview *vt, GtkTreeIter *iter, const gchar *newname );
-#endif
+void vik_treeview_sort_children ( VikTreeview *vt, GtkTreeIter *parent, vik_layer_sort_order_t order );
 
 G_END_DECLS
 

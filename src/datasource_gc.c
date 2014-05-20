@@ -54,7 +54,7 @@ typedef struct {
 } datasource_gc_widgets_t;
 
 
-static gpointer datasource_gc_init ( );
+static gpointer datasource_gc_init ( acq_vik_t *avt );
 static void datasource_gc_add_setup_widgets ( GtkWidget *dialog, VikViewport *vvp, gpointer user_data );
 static void datasource_gc_get_cmd_string ( datasource_gc_widgets_t *widgets, gchar **cmd, gchar **input_file_type, gpointer not_used );
 static void datasource_gc_cleanup ( datasource_gc_widgets_t *widgets );
@@ -82,8 +82,8 @@ VikDataSourceInterface vik_datasource_gc_interface = {
 };
 
 static VikLayerParam prefs[] = {
-  { VIKING_GC_PARAMS_NAMESPACE "username", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("geocaching.com username:"), VIK_LAYER_WIDGET_ENTRY, NULL, NULL, NULL },
-  { VIKING_GC_PARAMS_NAMESPACE "password", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("geocaching.com password:"), VIK_LAYER_WIDGET_ENTRY, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_GC_PARAMS_NAMESPACE "username", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("geocaching.com username:"), VIK_LAYER_WIDGET_ENTRY, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_GC_PARAMS_NAMESPACE "password", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("geocaching.com password:"), VIK_LAYER_WIDGET_ENTRY, NULL, NULL, NULL, NULL, NULL },
 };
 
 void a_datasource_gc_init()
@@ -98,7 +98,7 @@ void a_datasource_gc_init()
 }
 
 
-static gpointer datasource_gc_init ( )
+static gpointer datasource_gc_init ( acq_vik_t *avt )
 {
   datasource_gc_widgets_t *widgets = g_malloc(sizeof(*widgets));
   return widgets;
@@ -208,12 +208,14 @@ static void datasource_gc_add_setup_widgets ( GtkWidget *dialog, VikViewport *vv
   g_signal_connect_swapped ( G_OBJECT(widgets->center_entry), "changed", G_CALLBACK(datasource_gc_draw_circle), widgets );
   g_signal_connect_swapped ( G_OBJECT(widgets->miles_radius_spin), "value-changed", G_CALLBACK(datasource_gc_draw_circle), widgets );
 
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), num_label, FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), widgets->num_spin, FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), center_label, FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), widgets->center_entry, FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), miles_radius_label, FALSE, FALSE, 5 );
-  gtk_box_pack_start ( GTK_BOX(GTK_DIALOG(dialog)->vbox), widgets->miles_radius_spin, FALSE, FALSE, 5 );
+  /* Packing all these widgets */
+  GtkBox *box = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
+  gtk_box_pack_start ( box, num_label, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( box, widgets->num_spin, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( box, center_label, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( box, widgets->center_entry, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( box, miles_radius_label, FALSE, FALSE, 5 );
+  gtk_box_pack_start ( box, widgets->miles_radius_spin, FALSE, FALSE, 5 );
   gtk_widget_show_all(dialog);
 }
 
@@ -222,12 +224,16 @@ static void datasource_gc_get_cmd_string ( datasource_gc_widgets_t *widgets, gch
   //gchar *safe_string = g_shell_quote ( gtk_entry_get_text ( GTK_ENTRY(widgets->center_entry) ) );
   gchar *safe_user = g_shell_quote ( a_preferences_get ( VIKING_GC_PARAMS_NAMESPACE "username")->s );
   gchar *safe_pass = g_shell_quote ( a_preferences_get ( VIKING_GC_PARAMS_NAMESPACE "password")->s );
+  gchar *slat, *slon;
   gdouble lat, lon;
   if ( 2 != sscanf ( gtk_entry_get_text ( GTK_ENTRY(widgets->center_entry) ), "%lf,%lf", &lat, &lon ) ) {
     g_warning (_("Broken input - using some defaults"));
     lat = a_vik_get_default_lat();
     lon = a_vik_get_default_long();
   }
+  // Convert double as string in C locale
+  slat = a_coords_dtostr ( lat );
+  slon = a_coords_dtostr ( lon );
 
   // Unix specific shell commands
   // 1. Remove geocache webpages (maybe be from different location)
@@ -235,18 +241,20 @@ static void datasource_gc_get_cmd_string ( datasource_gc_widgets_t *widgets, gch
   // 3. Converts webpages into a single waypoint file, ignoring zero location waypoints '-z'
   //       Probably as they are premium member only geocaches and user is only a basic member
   //  Final output is piped into GPSbabel - hence removal of *html is done at beginning of the command sequence
-  *cmd = g_strdup_printf( "rm -f ~/.geo/caches/*html ; %s -P -n%d -r%.1fM -u %s -p %s %.4f %.4f ; %s -z ~/.geo/caches/*html ",
+  *cmd = g_strdup_printf( "rm -f ~/.geo/caches/*html ; %s -P -n%d -r%.1fM -u %s -p %s %s %s ; %s -z ~/.geo/caches/*html ",
 			  GC_PROGRAM1,
 			  gtk_spin_button_get_value_as_int ( GTK_SPIN_BUTTON(widgets->num_spin) ),
 			  gtk_spin_button_get_value_as_float ( GTK_SPIN_BUTTON(widgets->miles_radius_spin) ),
 			  safe_user,
 			  safe_pass,
-			  lat, lon,
+			  slat, slon,
 			  GC_PROGRAM2 );
   *input_file_type = NULL;
   //g_free ( safe_string );
   g_free ( safe_user );
   g_free ( safe_pass );
+  g_free ( slat );
+  g_free ( slon );
 }
 
 static void datasource_gc_cleanup ( datasource_gc_widgets_t *widgets )

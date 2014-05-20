@@ -30,6 +30,8 @@
 #include "vikwebtoolcenter.h"
 #include "vikgoto.h"
 #include "googlesearch.h"
+#include "vikrouting.h"
+#include "vikroutingwebengine.h"
 
 void google_init () {
   // Webtools
@@ -41,4 +43,26 @@ void google_init () {
   GoogleGotoTool *gototool = google_goto_tool_new (  );
   vik_goto_register ( VIK_GOTO_TOOL ( gototool ) );
   g_object_unref ( gototool );
+
+  // Routing
+  /* Google Directions service as routing engine.
+   * 
+   * Technical details are available here:
+   * https://developers.google.com/maps/documentation/directions/#DirectionsResponses
+   *
+   * gpsbabel supports this format.
+   */
+  VikRoutingEngine *routing = g_object_new ( VIK_ROUTING_WEB_ENGINE_TYPE,
+    "id", "google",
+    "label", "Google",
+    "format", "google",
+    "url-base", "http://maps.google.com/maps?output=js&q=",
+    "url-start-ll", "from:%s,%s",
+    "url-stop-ll", "+to:%s,%s",
+    "url-start-dir", "from:%s",
+    "url-stop-dir", "+to:%s",
+    "referer", "http://maps.google.com/",
+    NULL);
+  vik_routing_register ( VIK_ROUTING_ENGINE ( routing ) );
+  g_object_unref ( routing );
 }

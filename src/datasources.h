@@ -27,9 +27,7 @@ G_BEGIN_DECLS
 
 extern VikDataSourceInterface vik_datasource_gps_interface;
 extern VikDataSourceInterface vik_datasource_file_interface;
-#ifdef VIK_CONFIG_GOOGLE
-extern VikDataSourceInterface vik_datasource_google_interface;
-#endif
+extern VikDataSourceInterface vik_datasource_routing_interface;
 #ifdef VIK_CONFIG_OPENSTREETMAP
 extern VikDataSourceInterface vik_datasource_osm_interface;
 extern VikDataSourceInterface vik_datasource_osm_my_traces_interface;
@@ -43,7 +41,8 @@ extern VikDataSourceInterface vik_datasource_geotag_interface;
 #ifdef VIK_CONFIG_GEONAMES
 extern VikDataSourceInterface vik_datasource_wikipedia_interface;
 #endif
+extern VikDataSourceInterface vik_datasource_url_interface;
 
-G_BEGIN_DECLS
+G_END_DECLS
 
 #endif

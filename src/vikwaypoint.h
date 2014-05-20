@@ -24,6 +24,8 @@
 
 #include "vikcoord.h"
 
+#include <gdk-pixbuf/gdk-pixdata.h>
+
 G_BEGIN_DECLS
 /* todo important: put these in their own header file, maybe.probably also rename */
 
@@ -34,6 +36,8 @@ typedef struct _VikWaypoint VikWaypoint;
 struct _VikWaypoint {
   VikCoord coord;
   gboolean visible;
+  gboolean has_timestamp;
+  time_t timestamp;
   gdouble altitude;
   gchar *name;
   gchar *comment;
@@ -45,6 +49,8 @@ struct _VikWaypoint {
   guint8 image_width;
   guint8 image_height;
   gchar *symbol;
+  // Only for GUI display
+  GdkPixbuf *symbol_pixbuf;
 };
 
 VikWaypoint *vik_waypoint_new();
@@ -56,6 +62,7 @@ void vik_waypoint_set_symbol(VikWaypoint *wp, const gchar *symname);
 void vik_waypoint_free(VikWaypoint * wp);
 VikWaypoint *vik_waypoint_copy(const VikWaypoint *wp);
 void vik_waypoint_set_comment_no_copy(VikWaypoint *wp, gchar *comment);
+gboolean vik_waypoint_apply_dem_data ( VikWaypoint *wp, gboolean skip_existing );
 void vik_waypoint_marshall ( VikWaypoint *wp, guint8 **data, guint *len);
 VikWaypoint *vik_waypoint_unmarshall (guint8 *data, guint datalen);
 

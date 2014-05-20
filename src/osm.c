@@ -2,7 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
- * Copyright (C) 2007, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2007,2013, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
  * Copyright (c) 2012, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,13 @@
 #include "vikwmscmapsource.h"
 #include "vikwebtoolcenter.h"
 #include "vikwebtoolbounds.h"
+#include "vikwebtool_datasource.h"
 #include "vikexttools.h"
+#include "vikexttool_datasources.h"
 #include "vikgotoxmltool.h"
 #include "vikgoto.h"
+#include "vikrouting.h"
+#include "vikroutingwebengine.h"
 
 /* initialisation */
 void osm_init () {
@@ -87,6 +91,18 @@ void osm_init () {
                                 "license", "MapQuest Specific",
                                 "license-url", "http://developer.mapquest.com/web/info/terms-of-use",
                                 NULL));
+  VikMapSource *hot_type =
+    VIK_MAP_SOURCE(g_object_new(VIK_TYPE_SLIPPY_MAP_SOURCE,
+                                "id", 22,
+                                "label", "OpenStreetMap (Humanitarian)",
+                                "hostname", "c.tile.openstreetmap.fr",
+                                "url", "/hot/%d/%d/%d.png",
+                                "check-file-server-time", TRUE,
+                                "use-etag", FALSE,
+                                "copyright", "© OpenStreetMap contributors. Tiles courtesy of Humanitarian OpenStreetMap Team",
+                                "license", "CC-BY-SA",
+                                "license-url", "http://www.openstreetmap.org/copyright",
+                                NULL));
 
   // NB no cache needed for this type!!
   VikMapSource *direct_type =
@@ -102,11 +118,12 @@ void osm_init () {
   maps_layer_register_map_source (mapnik_type);
   maps_layer_register_map_source (cycle_type);
   maps_layer_register_map_source (transport_type);
+  maps_layer_register_map_source (hot_type);
   maps_layer_register_map_source (direct_type);
 
   // Webtools
   VikWebtoolCenter *webtool = NULL;
-  webtool = vik_webtool_center_new_with_members ( _("OSM (view)"), "http://openstreetmap.org/?lat=%s&lon=%s&zoom=%d&layers=B000FTF" );
+  webtool = vik_webtool_center_new_with_members ( _("OSM (view)"), "http://openstreetmap.org/?lat=%s&lon=%s&zoom=%d" );
   vik_ext_tools_register ( VIK_EXT_TOOL ( webtool ) );
   g_object_unref ( webtool );
 
@@ -124,6 +141,12 @@ void osm_init () {
   webtoolbounds = vik_webtool_bounds_new_with_members ( _("Local port 8111 (eg JOSM)"), "http://localhost:8111/load_and_zoom?left=%s&right=%s&bottom=%s&top=%s" );
   vik_ext_tools_register ( VIK_EXT_TOOL ( webtoolbounds ) );
   g_object_unref ( webtoolbounds );
+
+  // Datasource
+  VikWebtoolDatasource *vwtds = NULL;
+  vwtds = vik_webtool_datasource_new_with_members ( _("OpenStreetMap Notes"), "http://api.openstreetmap.org/api/0.6/notes.gpx?bbox=%s,%s,%s,%s&amp;closed=0", "LBRT", NULL );
+  vik_ext_tool_datasources_register ( VIK_EXT_TOOL ( vwtds ) );
+  g_object_unref ( vwtds );
 
   // Goto
   VikGotoXmlTool *nominatim = VIK_GOTO_XML_TOOL ( g_object_new ( VIK_GOTO_XML_TOOL_TYPE, "label", "OSM Nominatim",
@@ -145,5 +168,23 @@ void osm_init () {
     NULL ) );
     vik_goto_register ( VIK_GOTO_TOOL ( namefinder ) );
     g_object_unref ( namefinder );
+
+  // Not really OSM but can't be bothered to create somewhere else to put it...
+  webtool = vik_webtool_center_new_with_members ( _("Wikimedia Toolserver GeoHack"), "http://toolserver.org/~geohack/geohack.php?params=%s;%s" );
+  vik_ext_tools_register ( VIK_EXT_TOOL ( webtool ) );
+  g_object_unref ( webtool );
+  
+  /* See API references: https://github.com/DennisOSRM/Project-OSRM/wiki/Server-api */
+  VikRoutingEngine *osrm = g_object_new ( VIK_ROUTING_WEB_ENGINE_TYPE,
+    "id", "osrm",
+    "label", "OSRM",
+    "format", "gpx",
+    "url-base", "http://router.project-osrm.org/viaroute?output=gpx",
+    "url-start-ll", "&loc=%s,%s",
+    "url-stop-ll", "&loc=%s,%s",
+    "url-via-ll", "&loc=%s,%s",
+    NULL);
+  vik_routing_register ( VIK_ROUTING_ENGINE ( osrm ) );
+  g_object_unref ( osrm );
 }
 
