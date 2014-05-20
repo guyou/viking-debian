@@ -1,3 +1,12 @@
+viking (1.5.1-1) unstable; urgency=medium
+
+  * [53625f28] Fixing watch file to handle .bz2 files.
+  * [c7c0831f] Imported Upstream version 1.5.1 (Closes: #748731)
+  * [c2888d34] refreshing patches.
+  * [28b313f6] Add missig build-dependencies.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 20 May 2014 21:01:25 +0200
+
 viking (1.4.2-2) unstable; urgency=low
 
   [ Hideki Yamane ]
