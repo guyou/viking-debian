@@ -6,11 +6,9 @@ Description: don't specify VIKING_DOC
 Forwarded: no
 Last-Update: 2013-10-23
 
-Index: viking-1.4.2/configure.ac
-===================================================================
---- viking-1.4.2.orig/configure.ac	2013-10-23 21:50:46.822460778 +0900
-+++ viking-1.4.2/configure.ac	2013-10-23 22:03:31.030122042 +0900
-@@ -6,7 +6,6 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -6,7 +6,6 @@ AC_INIT(viking, 1.5.1, , viking, http://
  AM_INIT_AUTOMAKE([dist-bzip2 dist-zip subdir-objects])
  dnl AC_CONFIG_SRCDIR([src/main.c])
  AC_CONFIG_HEADERS([src/config.h])
@@ -18,7 +16,7 @@ Index: viking-1.4.2/configure.ac
  
  # Checks for programs.
  AC_PROG_CC
-@@ -342,8 +341,6 @@
+@@ -377,8 +376,6 @@ dnl correct flags to aclocal.
  ACLOCAL_AMFLAGS="\${ACLOCAL_FLAGS}"
  AC_SUBST(ACLOCAL_AMFLAGS)
  
@@ -27,7 +25,7 @@ Index: viking-1.4.2/configure.ac
  # Configuration
  AC_CONFIG_FILES([
  		Makefile
-@@ -357,11 +354,6 @@
+@@ -392,11 +389,6 @@ AC_CONFIG_FILES([
  		win32/installer/Makefile
  		win32/installer/pixmaps/Makefile
  		win32/installer/translations/Makefile])
@@ -39,10 +37,8 @@ Index: viking-1.4.2/configure.ac
  
  AC_OUTPUT([
  	   viking.spec
-Index: viking-1.4.2/Makefile.am
-===================================================================
---- viking-1.4.2.orig/Makefile.am	2013-06-01 07:01:35.000000000 +0900
-+++ viking-1.4.2/Makefile.am	2013-10-23 21:51:01.934450885 +0900
+--- a/Makefile.am
++++ b/Makefile.am
 @@ -1,8 +1,4 @@
 -# Optionally build documentation bits
 -if VIKING_DOC
