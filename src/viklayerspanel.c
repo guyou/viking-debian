@@ -24,6 +24,7 @@
 #endif
 
 #include "viking.h"
+#include "settings.h"
 
 #include <string.h>
 
@@ -32,6 +33,7 @@
 
 enum {
   VLP_UPDATE_SIGNAL,
+  VLP_DELETE_LAYER_SIGNAL,
   VLP_LAST_SIGNAL
 };
 
@@ -81,6 +83,7 @@ static void vik_layers_panel_class_init ( VikLayersPanelClass *klass )
   parent_class = g_type_class_peek_parent (klass);
 
   layers_panel_signals[VLP_UPDATE_SIGNAL] = g_signal_new ( "update", G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION, G_STRUCT_OFFSET (VikLayersPanelClass, update), NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+  layers_panel_signals[VLP_DELETE_LAYER_SIGNAL] = g_signal_new ( "delete_layer", G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION, G_STRUCT_OFFSET (VikLayersPanelClass, update), NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
 VikLayersPanel *vik_layers_panel_new ()
@@ -178,7 +181,7 @@ static void vik_layers_panel_init ( VikLayersPanel *vlp )
   vik_layer_rename ( VIK_LAYER(vlp->toplayer), _("Top Layer"));
   g_signal_connect_swapped ( G_OBJECT(vlp->toplayer), "update", G_CALLBACK(vik_layers_panel_emit_update), vlp );
 
-  vik_treeview_add_layer ( vlp->vt, NULL, &(vlp->toplayer_iter), VIK_LAYER(vlp->toplayer)->name, NULL, TRUE, vlp->toplayer, VIK_LAYER_AGGREGATE, VIK_LAYER_AGGREGATE );
+  vik_treeview_add_layer ( vlp->vt, NULL, &(vlp->toplayer_iter), VIK_LAYER(vlp->toplayer)->name, NULL, TRUE, vlp->toplayer, VIK_LAYER_AGGREGATE, VIK_LAYER_AGGREGATE, 0 );
   vik_layer_realize ( VIK_LAYER(vlp->toplayer), vlp->vt, &(vlp->toplayer_iter) );
 
   g_signal_connect_swapped ( vlp->vt, "popup_menu", G_CALLBACK(menu_popup_cb), vlp);
@@ -256,8 +259,13 @@ static gboolean idle_draw_panel ( VikLayersPanel *vlp )
 
 void vik_layers_panel_emit_update ( VikLayersPanel *vlp )
 {
+  GThread *thread = vik_window_get_thread (VIK_WINDOW(VIK_GTK_WINDOW_FROM_WIDGET(vlp)));
+  if ( !thread )
+    // Do nothing
+    return;
+
   // Only ever draw when there is time to do so
-  if ( g_thread_self() != vik_window_get_thread (VIK_WINDOW(VIK_GTK_WINDOW_FROM_WIDGET(vlp))) )
+  if ( g_thread_self() != thread )
     // Drawing requested from another (background) thread, so handle via the gdk thread method
     gdk_threads_add_idle ( (GSourceFunc) idle_draw_panel, vlp );
   else
@@ -435,6 +443,7 @@ static void layers_popup_cb ( VikLayersPanel *vlp )
   layers_popup ( vlp, NULL, 0 );
 }
 
+#define VIK_SETTINGS_LAYERS_TRW_CREATE_DEFAULT "layers_create_trw_auto_default"
 /**
  * vik_layers_panel_new_layer:
  * @type: type of the new layer
@@ -445,7 +454,11 @@ gboolean vik_layers_panel_new_layer ( VikLayersPanel *vlp, VikLayerTypeEnum type
 {
   VikLayer *l;
   g_assert ( vlp->vvp );
-  l = vik_layer_create ( type, vlp->vvp, VIK_GTK_WINDOW_FROM_WIDGET(vlp), TRUE );
+  gboolean ask_user = FALSE;
+  if ( type == VIK_LAYER_TRW )
+    a_settings_get_boolean ( VIK_SETTINGS_LAYERS_TRW_CREATE_DEFAULT, &ask_user );
+  ask_user = !ask_user;
+  l = vik_layer_create ( type, vlp->vvp, ask_user );
   if ( l )
   {
     vik_layers_panel_add_layer ( vlp, l );
@@ -580,8 +593,11 @@ void vik_layers_panel_cut_selected ( VikLayersPanel *vlp )
       a_clipboard_copy_selected ( vlp );
 
       if (IS_VIK_AGGREGATE_LAYER(parent)) {
-	if ( vik_aggregate_layer_delete ( parent, &iter ) )
-	  vik_layers_panel_emit_update ( vlp );
+
+        g_signal_emit ( G_OBJECT(vlp), layers_panel_signals[VLP_DELETE_LAYER_SIGNAL], 0 );
+
+        if ( vik_aggregate_layer_delete ( parent, &iter ) )
+          vik_layers_panel_emit_update ( vlp );
       }
     }
     else
@@ -642,6 +658,9 @@ void vik_layers_panel_delete_selected ( VikLayersPanel *vlp )
         vik_viewport_set_trigger ( vlp->vvp, NULL );
 
       if (IS_VIK_AGGREGATE_LAYER(parent)) {
+
+        g_signal_emit ( G_OBJECT(vlp), layers_panel_signals[VLP_DELETE_LAYER_SIGNAL], 0 );
+
         if ( vik_aggregate_layer_delete ( parent, &iter ) )
 	  vik_layers_panel_emit_update ( vlp );
       }
@@ -731,8 +750,10 @@ VikAggregateLayer *vik_layers_panel_get_top_layer ( VikLayersPanel *vlp )
 
 void vik_layers_panel_clear ( VikLayersPanel *vlp )
 {
-  if ( (! vik_aggregate_layer_is_empty(vlp->toplayer)) && a_dialog_yes_or_no ( VIK_GTK_WINDOW_FROM_WIDGET(vlp), _("Are you sure you wish to delete all layers?"), NULL ) )
+  if ( (! vik_aggregate_layer_is_empty(vlp->toplayer)) && a_dialog_yes_or_no ( VIK_GTK_WINDOW_FROM_WIDGET(vlp), _("Are you sure you wish to delete all layers?"), NULL ) ) {
+    g_signal_emit ( G_OBJECT(vlp), layers_panel_signals[VLP_DELETE_LAYER_SIGNAL], 0 );
     vik_aggregate_layer_clear ( vlp->toplayer ); /* simply deletes all layers */
+  }
 }
 
 void vik_layers_panel_change_coord_mode ( VikLayersPanel *vlp, VikCoordMode mode )

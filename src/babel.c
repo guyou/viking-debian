@@ -37,6 +37,7 @@
 #include "viking.h"
 #include "gpx.h"
 #include "babel.h"
+#include "preferences.h"
 #include <stdio.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -44,6 +45,7 @@
 #include <string.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <glib/gi18n.h>
 
 /* TODO in the future we could have support for other shells (change command strings), or not use a shell at all */
 #define BASH_LOCATION "/bin/bash"
@@ -74,6 +76,55 @@ GList *a_babel_file_list;
 GList *a_babel_device_list;
 
 /**
+ * Run a function on all file formats supporting a given mode.
+ */
+void a_babel_foreach_file_with_mode (BabelMode mode, GFunc func, gpointer user_data)
+{
+  GList *current;
+  for ( current = g_list_first (a_babel_file_list) ;
+        current != NULL ;
+        current = g_list_next (current) )
+  {
+    BabelFile *currentFile = current->data;
+    /* Check compatibility of modes */
+    gboolean compat = TRUE;
+    if (mode.waypointsRead  && ! currentFile->mode.waypointsRead)  compat = FALSE;
+    if (mode.waypointsWrite && ! currentFile->mode.waypointsWrite) compat = FALSE;
+    if (mode.tracksRead     && ! currentFile->mode.tracksRead)     compat = FALSE;
+    if (mode.tracksWrite    && ! currentFile->mode.tracksWrite)    compat = FALSE;
+    if (mode.routesRead     && ! currentFile->mode.routesRead)     compat = FALSE;
+    if (mode.routesWrite    && ! currentFile->mode.routesWrite)    compat = FALSE;
+    /* Do call */
+    if (compat)
+      func (currentFile, user_data);
+  }
+}
+
+/**
+ * a_babel_foreach_file_read_any:
+ * @func:      The function to be called on any file format with a read method
+ * @user_data: Data passed into the function
+ *
+ * Run a function on all file formats with any kind of read method
+ *  (which is almost all but not quite - e.g. with GPSBabel v1.4.4 - PalmDoc is write only waypoints)
+ */
+void a_babel_foreach_file_read_any (GFunc func, gpointer user_data)
+{
+  GList *current;
+  for ( current = g_list_first (a_babel_file_list) ;
+        current != NULL ;
+        current = g_list_next (current) )
+  {
+    BabelFile *currentFile = current->data;
+    // Call function when any read mode found
+    if ( currentFile->mode.waypointsRead ||
+         currentFile->mode.tracksRead ||
+         currentFile->mode.routesRead)
+      func (currentFile, user_data);
+  }
+}
+
+/**
  * a_babel_convert:
  * @vt:        The TRW layer to modify. All data will be deleted, and replaced by what gpsbabel outputs.
  * @babelargs: A string containing gpsbabel command line filter options. No file types or names should
@@ -90,18 +141,11 @@ GList *a_babel_device_list;
  */
 gboolean a_babel_convert( VikTrwLayer *vt, const char *babelargs, BabelStatusFunc cb, gpointer user_data, gpointer not_used )
 {
-  int fd_src;
-  FILE *f;
-  gchar *name_src = NULL;
   gboolean ret = FALSE;
   gchar *bargs = g_strconcat(babelargs, " -i gpx", NULL);
+  gchar *name_src = a_gpx_write_tmp_file ( vt, NULL );
 
-  if ((fd_src = g_file_open_tmp("tmp-viking.XXXXXX", &name_src, NULL)) >= 0) {
-    g_debug ("%s: temporary file: %s", __FUNCTION__, name_src);
-    f = fdopen(fd_src, "w");
-    a_gpx_write_file(vt, f, NULL);
-    fclose(f);
-    f = NULL;
+  if ( name_src ) {
     ret = a_babel_convert_from ( vt, bargs, name_src, cb, user_data, not_used );
     g_remove(name_src);
     g_free(name_src);
@@ -208,13 +252,15 @@ static gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb,
 }
 
 /**
- * a_babel_convert_from:
- * @vt:        The TRW layer to place data into. Duplicate items will be overwritten.
- * @babelargs: A string containing gpsbabel command line options. In addition to any filters, this string
- *             must include the input file type (-i) option.
- * @cb:	       Optional callback function. Same usage as in a_babel_convert().
- * @user_data: passed along to cb
- * @not_used:  Must use NULL
+ * a_babel_convert_from_filter:
+ * @vt:           The TRW layer to place data into. Duplicate items will be overwritten.
+ * @babelargs:    A string containing gpsbabel command line options. This string
+ *                must include the input file type (-i) option.
+ * @from          the file name to convert from
+ * @babelfilters: A string containing gpsbabel filter command line options 
+ * @cb:	          Optional callback function. Same usage as in a_babel_convert().
+ * @user_data:    passed along to cb
+ * @not_used:     Must use NULL
  *
  * Loads data into a trw layer from a file, using gpsbabel.  This routine is synchronous;
  * that is, it will block the calling program until the conversion is done. To avoid blocking, call
@@ -222,7 +268,7 @@ static gboolean babel_general_convert_from( VikTrwLayer *vt, BabelStatusFunc cb,
  *
  * Returns: %TRUE on success
  */
-gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, const char *from, BabelStatusFunc cb, gpointer user_data, gpointer not_used )
+gboolean a_babel_convert_from_filter( VikTrwLayer *vt, const char *babelargs, const char *from, const char *babelfilters, BabelStatusFunc cb, gpointer user_data, gpointer not_used )
 {
   int i,j;
   int fd_dst;
@@ -236,6 +282,7 @@ gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, const cha
 
     if (gpsbabel_loc ) {
       gchar **sub_args = g_strsplit(babelargs, " ", 0);
+      gchar **sub_filters = NULL;
 
       i = 0;
       if (unbuffer_loc)
@@ -246,10 +293,18 @@ gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, const cha
         if (sub_args[j][0] != '\0')
           args[i++] = sub_args[j];
       }
-      args[i++] = "-o";
-      args[i++] = "gpx";
       args[i++] = "-f";
       args[i++] = (char *)from;
+      if (babelfilters) {
+        sub_filters = g_strsplit(babelfilters, " ", 0);
+        for (j = 0; sub_filters[j]; j++) {
+          /* some version of gpsbabel can not take extra blank arg */
+          if (sub_filters[j][0] != '\0')
+            args[i++] = sub_filters[j];
+        }
+      }
+      args[i++] = "-o";
+      args[i++] = "gpx";
       args[i++] = "-F";
       args[i++] = name_dst;
       args[i] = NULL;
@@ -257,6 +312,8 @@ gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, const cha
       ret = babel_general_convert_from ( vt, cb, args, name_dst, user_data );
 
       g_strfreev(sub_args);
+      if (sub_filters)
+          g_strfreev(sub_filters);
     } else
       g_critical("gpsbabel not found in PATH");
     g_remove(name_dst);
@@ -266,6 +323,26 @@ gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, const cha
   return ret;
 }
 
+/**
+ * a_babel_convert_from:
+ * @vt:        The TRW layer to place data into. Duplicate items will be overwritten.
+ * @babelargs: A string containing gpsbabel command line options.  This string
+ *             must include the input file type (-i) option.
+ * @from:      The file name to convert from
+ * @cb:	       Optional callback function. Same usage as in a_babel_convert().
+ * @user_data: passed along to cb
+ * @not_used:  Must use NULL
+ *
+ * Loads data into a trw layer from a file, using gpsbabel.  This routine is synchronous;
+ * that is, it will block the calling program until the conversion is done. To avoid blocking, call
+ * this routine from a worker thread.
+ *
+ * Returns: %TRUE on success
+ */
+gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, const char *from, BabelStatusFunc cb, gpointer user_data, gpointer not_used )
+{
+  return a_babel_convert_from_filter ( vt, babelargs, from, NULL, cb, user_data, not_used ); 
+}
 /**
  * a_babel_convert_from_shellcommand:
  * @vt: The #VikTrwLayer where to insert the collected data
@@ -319,17 +396,19 @@ gboolean a_babel_convert_from_shellcommand ( VikTrwLayer *vt, const char *input_
  * a_babel_convert_from_url:
  * @vt: The #VikTrwLayer where to insert the collected data
  * @url: the URL to fetch
+ * @babelfilters: the filter arguments to pass to gpsbabel
  * @cb:	       Optional callback function. Same usage as in a_babel_convert().
  * @user_data: passed along to cb
  * @options:   download options. Maybe NULL.
  *
  * Download the file pointed by the URL and optionally uses GPSBabel to convert from input_file_type.
- * If input_file_type is %NULL, doesn't use GPSBabel. Input must be GPX.
+ * If input_file_type is %NULL, input must be GPX.
+ * If input_file_type and babelfilters are %NULL, gpsbabel is not used.
  *
  * Returns: %TRUE on successful invocation of GPSBabel or read of the GPX
  *
  */
-gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char *input_type, BabelStatusFunc cb, gpointer user_data, DownloadMapOptions *options )
+gboolean a_babel_convert_from_url_filter ( VikTrwLayer *vt, const char *url, const char *input_type, const char *babelfilters, BabelStatusFunc cb, gpointer user_data, DownloadMapOptions *options )
 {
   // If no download options specified, use defaults:
   DownloadMapOptions myoptions = { FALSE, FALSE, NULL, 2, NULL, NULL, NULL };
@@ -349,10 +428,10 @@ gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char
     g_remove(name_src);
 
     fetch_ret = a_http_download_get_url(url, "", name_src, &myoptions, NULL);
-    if (fetch_ret == 0) {
-      if (input_type != NULL) {
-        babelargs = g_strdup_printf(" -i %s", input_type);
-        ret = a_babel_convert_from( vt, babelargs, name_src, NULL, NULL, NULL );
+    if (fetch_ret == DOWNLOAD_SUCCESS) {
+      if (input_type != NULL || babelfilters != NULL) {
+        babelargs = (input_type) ? g_strdup_printf(" -i %s", input_type) : g_strdup("");
+        ret = a_babel_convert_from_filter( vt, babelargs, name_src, babelfilters, NULL, NULL, NULL );
       } else {
         /* Process directly the retrieved file */
         g_debug("%s: directly read GPX file %s", __FUNCTION__, name_src);
@@ -364,12 +443,31 @@ gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char
         }
       }
     }
-    g_remove(name_src);
+    util_remove(name_src);
     g_free(babelargs);
     g_free(name_src);
   }
 
   return ret;
+}
+
+/**
+ * a_babel_convert_from_url:
+ * @vt: The #VikTrwLayer where to insert the collected data
+ * @url: the URL to fetch
+ * @cb:	       Optional callback function. Same usage as in a_babel_convert().
+ * @user_data: passed along to cb
+ * @options:   download options. Maybe NULL.
+ *
+ * Download the file pointed by the URL and optionally uses GPSBabel to convert from input_file_type.
+ * If input_file_type is %NULL, doesn't use GPSBabel. Input must be GPX.
+ *
+ * Returns: %TRUE on successful invocation of GPSBabel or read of the GPX
+ *
+ */
+gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char *input_type, BabelStatusFunc cb, gpointer user_data, DownloadMapOptions *options )
+{
+  return a_babel_convert_from_url_filter ( vt, url, input_type, NULL, cb, user_data, options );
 }
 
 /**
@@ -530,11 +628,11 @@ static void load_feature_parse_line (gchar *line)
         file->label = g_strdup (tokens[4]);
         a_babel_file_list = g_list_append (a_babel_file_list, file);
         g_debug ("New gpsbabel file: %s, %d%d%d%d%d%d(%s)",
-        			file->name,
-        			file->mode.waypointsRead, file->mode.waypointsWrite,
-        			file->mode.tracksRead, file->mode.tracksWrite,
-        			file->mode.routesRead, file->mode.routesWrite,
-        			tokens[1]);
+			file->name,
+			file->mode.waypointsRead, file->mode.waypointsWrite,
+			file->mode.tracksRead, file->mode.tracksWrite,
+			file->mode.routesRead, file->mode.routesWrite,
+			tokens[1]);
       } else {
         g_warning ( "Unexpected gpsbabel format string: %s", line);
       }
@@ -572,19 +670,52 @@ static gboolean load_feature ()
   return ret;
 }
 
+static VikLayerParam prefs[] = {
+  { VIK_LAYER_NUM_TYPES, VIKING_PREFERENCES_IO_NAMESPACE "gpsbabel", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("GPSBabel:"), VIK_LAYER_WIDGET_FILEENTRY, NULL, NULL,
+      N_("Allow setting the specific instance of GPSBabel. You must restart Viking for this value to take effect."), NULL, NULL, NULL },
+};
+
 /**
  * a_babel_init:
  * 
- * Initialises babel module.
- * Mainly check existence of gpsbabel progam
- * and load all features available in ths version.
+ * Just setup preferences first
  */
 void a_babel_init ()
 {
-  /* TODO allow to set gpsbabel path via command line */
-  gpsbabel_loc = g_find_program_in_path( "gpsbabel" );
-  if ( !gpsbabel_loc )
-    g_critical( "gpsbabel not found in PATH" );
+  // Set the defaults
+  VikLayerParamData vlpd;
+#ifdef WINDOWS
+  // Basic guesses - could use %ProgramFiles% but this is simpler:
+  if ( g_file_test ( "C:\\Program Files (x86)\\GPSBabel\\gpsbabel.exe", G_FILE_TEST_EXISTS ) )
+    // 32 bit location on a 64 bit system
+    vlpd.s = "C:\\Program Files (x86)\\GPSBabel\gpsbabel.exe";
+  else
+    vlpd.s = "C:\\Program Files\\GPSBabel\\gpsbabel.exe";
+#else
+  vlpd.s = "gpsbabel";
+#endif
+  a_preferences_register(&prefs[0], vlpd, VIKING_PREFERENCES_IO_GROUP_KEY);
+}
+
+/**
+ * a_babel_post_init:
+ *
+ * Initialises babel module.
+ * Mainly check existence of gpsbabel progam
+ * and load all features available in that version.
+ */
+void a_babel_post_init ()
+{
+  // Read the current preference
+  const gchar *gpsbabel = a_preferences_get(VIKING_PREFERENCES_IO_NAMESPACE "gpsbabel")->s;
+  // If setting is still the UNIX default then lookup in the path - otherwise attempt to use the specified value directly.
+  if ( g_strcmp0 ( gpsbabel, "gpsbabel" ) == 0 ) {
+    gpsbabel_loc = g_find_program_in_path( "gpsbabel" );
+    if ( !gpsbabel_loc )
+      g_critical( "gpsbabel not found in PATH" );
+  }
+  else
+    gpsbabel_loc = (gchar*)gpsbabel;
 
   // Unlikely to package unbuffer on Windows so ATM don't even bother trying
   // Highly unlikely unbuffer is available on a Windows system otherwise
@@ -630,4 +761,16 @@ void a_babel_uninit ()
     g_list_free ( a_babel_device_list );
   }
 
+}
+
+/**
+ * a_babel_available:
+ *
+ * Indicates if babel is available or not.
+ *
+ * Returns: true if babel available
+ */
+gboolean a_babel_available ()
+{
+  return a_babel_device_list != NULL;
 }

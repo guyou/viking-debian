@@ -38,6 +38,7 @@
 
 /*** Input is TRWLayer ***/
 extern VikDataSourceInterface vik_datasource_bfilter_simplify_interface;
+extern VikDataSourceInterface vik_datasource_bfilter_compress_interface;
 extern VikDataSourceInterface vik_datasource_bfilter_dup_interface;
 
 /*** Input is a track and a TRWLayer ***/
@@ -48,6 +49,7 @@ extern VikDataSourceInterface vik_datasource_bfilter_exclude_polygon_interface;
 
 const VikDataSourceInterface *filters[] = {
   &vik_datasource_bfilter_simplify_interface,
+  &vik_datasource_bfilter_compress_interface,
   &vik_datasource_bfilter_dup_interface,
   &vik_datasource_bfilter_polygon_interface,
   &vik_datasource_bfilter_exclude_polygon_interface,
@@ -177,43 +179,18 @@ static void get_from_anything ( w_and_interface_t *wi )
   g_thread_exit ( NULL );
 }
 
-
-static gchar *write_tmp_trwlayer ( VikTrwLayer *vtl )
-{
-  int fd_src;
-  gchar *name_src;
-  FILE *f;
-  g_assert ((fd_src = g_file_open_tmp("tmp-viking.XXXXXX", &name_src, NULL)) >= 0);
-  g_debug ("%s: temporary file: %s", __FUNCTION__, name_src);
-  f = fdopen(fd_src, "w");
-  a_gpx_write_file(vtl, f, NULL);
-  fclose(f);
-  f = NULL;
-  return name_src;
-}
-
-/* TODO: write with name of old track */
-static gchar *write_tmp_track ( VikTrack *track )
-{
-  int fd_src;
-  gchar *name_src;
-  FILE *f;
-  g_assert ((fd_src = g_file_open_tmp("tmp-viking.XXXXXX", &name_src, NULL)) >= 0);
-  g_debug ("%s: temporary file: %s", __FUNCTION__, name_src);
-  f = fdopen(fd_src, "w");
-  a_gpx_write_track_file(track, f, NULL); /* Thank you Guilhem! Just when I needed this function... -- Evan */
-  fclose(f);
-  f = NULL;
-  return name_src;
-}
-
-/* TODO: cleanup, getr rid of redundancy */
-
 /* depending on type of filter, often only vtl or track will be given.
  * the other can be NULL.
  */
-static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikDataSourceInterface *source_interface,
-		      VikTrwLayer *vtl, VikTrack *track, gpointer userdata, VikDataSourceCleanupFunc cleanup_function )
+static void acquire ( VikWindow *vw,
+                      VikLayersPanel *vlp,
+                      VikViewport *vvp,
+                      vik_datasource_mode_t mode,
+                      VikDataSourceInterface *source_interface,
+                      VikTrwLayer *vtl,
+                      VikTrack *track,
+                      gpointer userdata,
+                      VikDataSourceCleanupFunc cleanup_function )
 {
   /* for manual dialogs */
   GtkWidget *dialog = NULL;
@@ -294,24 +271,28 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   /* CREATE INPUT DATA & GET COMMAND STRING */
 
   if ( source_interface->inputtype == VIK_DATASOURCE_INPUTTYPE_TRWLAYER ) {
-    gchar *name_src = write_tmp_trwlayer ( vtl );
+    gchar *name_src = a_gpx_write_tmp_file ( vtl, NULL );
 
     ((VikDataSourceGetCmdStringFuncWithInput) source_interface->get_cmd_string_func)
 	( pass_along_data, &cmd, &extra, name_src );
 
+    util_add_to_deletion_list ( name_src );
+
     g_free ( name_src );
-    /* TODO: delete the tmp file? or delete it only after we're done with it? */
   } else if ( source_interface->inputtype == VIK_DATASOURCE_INPUTTYPE_TRWLAYER_TRACK ) {
-    gchar *name_src = write_tmp_trwlayer ( vtl );
-    gchar *name_src_track = write_tmp_track ( track );
+    gchar *name_src = a_gpx_write_tmp_file ( vtl, NULL );
+    gchar *name_src_track = a_gpx_write_track_tmp_file ( track, NULL );
 
     ((VikDataSourceGetCmdStringFuncWithInputInput) source_interface->get_cmd_string_func)
 	( pass_along_data, &cmd, &extra, name_src, name_src_track );
 
+    util_add_to_deletion_list ( name_src );
+    util_add_to_deletion_list ( name_src_track );
+
     g_free ( name_src );
     g_free ( name_src_track );
   } else if ( source_interface->inputtype == VIK_DATASOURCE_INPUTTYPE_TRACK ) {
-    gchar *name_src_track = write_tmp_track ( track );
+    gchar *name_src_track = a_gpx_write_track_tmp_file ( track, NULL );
 
     ((VikDataSourceGetCmdStringFuncWithInput) source_interface->get_cmd_string_func)
 	( pass_along_data, &cmd, &extra, name_src_track );
@@ -341,7 +322,7 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   wi->extra = extra; /* usually input data type (?) */
   wi->options = options;
   wi->vtl = vtl;
-  wi->creating_new_layer = (!vtl);
+  wi->creating_new_layer = (!vtl); // Default if Auto Layer Management is passed in
 
   dialog = gtk_dialog_new_with_buttons ( "", GTK_WINDOW(vw), 0, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL );
   gtk_dialog_set_response_sensitive ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT, FALSE );
@@ -365,14 +346,17 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
   }
   w->user_data = user_data;
 
-  if (source_interface->mode == VIK_DATASOURCE_ADDTOLAYER) {
+  if ( mode == VIK_DATASOURCE_ADDTOLAYER ) {
     VikLayer *current_selected = vik_layers_panel_get_selected ( w->vlp );
     if ( IS_VIK_TRW_LAYER(current_selected) ) {
       wi->vtl = VIK_TRW_LAYER(current_selected);
       wi->creating_new_layer = FALSE;
     }
   }
-  else if ( source_interface->mode == VIK_DATASOURCE_MANUAL_LAYER_MANAGEMENT ) {
+  else if ( mode == VIK_DATASOURCE_CREATENEWLAYER ) {
+    wi->creating_new_layer = TRUE;
+  }
+  else if ( mode == VIK_DATASOURCE_MANUAL_LAYER_MANAGEMENT ) {
     // Don't create in acquire - as datasource will perform the necessary actions
     wi->creating_new_layer = FALSE;
     VikLayer *current_selected = vik_layers_panel_get_selected ( w->vlp );
@@ -380,7 +364,7 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
       wi->vtl = VIK_TRW_LAYER(current_selected);
   }
   if ( wi->creating_new_layer ) {
-    wi->vtl = VIK_TRW_LAYER ( vik_layer_create ( VIK_LAYER_TRW, w->vvp, NULL, FALSE ) );
+    wi->vtl = VIK_TRW_LAYER ( vik_layer_create ( VIK_LAYER_TRW, w->vvp, FALSE ) );
     vik_layer_rename ( VIK_LAYER ( wi->vtl ), _(source_interface->layer_title) );
   }
 
@@ -447,16 +431,22 @@ static void acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikD
  * @vw: The #VikWindow to work with
  * @vlp: The #VikLayersPanel in which a #VikTrwLayer layer may be created/appended
  * @vvp: The #VikViewport defining the current view
+ * @mode: How layers should be managed
  * @source_interface: The #VikDataSourceInterface determining how and what actions to take
  * @userdata: External data to be passed into the #VikDataSourceInterface
  * @cleanup_function: The function to dispose the #VikDataSourceInterface if necessary
  *
  * Process the given VikDataSourceInterface for sources with no input data.
  */
-void a_acquire ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp, VikDataSourceInterface *source_interface,
-                 gpointer userdata, VikDataSourceCleanupFunc cleanup_function )
+void a_acquire ( VikWindow *vw,
+                 VikLayersPanel *vlp,
+                 VikViewport *vvp,
+                 vik_datasource_mode_t mode,
+                 VikDataSourceInterface *source_interface,
+                 gpointer userdata,
+                 VikDataSourceCleanupFunc cleanup_function )
 {
-  acquire ( vw, vlp, vvp, source_interface, NULL, NULL, userdata, cleanup_function );
+  acquire ( vw, vlp, vvp, mode, source_interface, NULL, NULL, userdata, cleanup_function );
 }
 
 static void acquire_trwlayer_callback ( GObject *menuitem, gpointer *pass_along )
@@ -468,7 +458,7 @@ static void acquire_trwlayer_callback ( GObject *menuitem, gpointer *pass_along 
   VikTrwLayer *vtl =	pass_along[3];
   VikTrack *tr =	pass_along[4];
 
-  acquire ( vw, vlp, vvp, iface, vtl, tr, NULL, NULL );
+  acquire ( vw, vlp, vvp, iface->mode, iface, vtl, tr, NULL, NULL );
 }
 
 static GtkWidget *acquire_build_menu ( VikWindow *vw, VikLayersPanel *vlp, VikViewport *vvp,

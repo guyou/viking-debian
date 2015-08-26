@@ -31,6 +31,7 @@
 #include "viking.h"
 #include "babel.h"
 #include "gpx.h"
+#include "babel_ui.h"
 #include "acquire.h"
 
 typedef struct {
@@ -58,7 +59,7 @@ static void datasource_file_cleanup ( gpointer data );
 VikDataSourceInterface vik_datasource_file_interface = {
   N_("Import file with GPSBabel"),
   N_("Imported file"),
-  VIK_DATASOURCE_ADDTOLAYER,
+  VIK_DATASOURCE_AUTO_LAYER_MANAGEMENT,
   VIK_DATASOURCE_INPUTTYPE_NONE,
   TRUE,
   TRUE,
@@ -72,6 +73,12 @@ VikDataSourceInterface vik_datasource_file_interface = {
   (VikDataSourceAddProgressWidgetsFunc)	NULL,
   (VikDataSourceCleanupFunc)		datasource_file_cleanup,
   (VikDataSourceOffFunc)                NULL,
+
+  NULL,
+  0,
+  NULL,
+  NULL,
+  0
 };
 
 /* See VikDataSourceInterface */
@@ -79,12 +86,6 @@ static gpointer datasource_file_init ( acq_vik_t *avt )
 {
   datasource_file_widgets_t *widgets = g_malloc(sizeof(*widgets));
   return widgets;
-}
-
-static void fill_combo_box (gpointer data, gpointer user_data)
-{
-  const gchar *label = ((BabelFile*) data)->label;
-  vik_combo_box_text_append (GTK_WIDGET(user_data), label);
 }
 
 static void add_file_filter (gpointer data, gpointer user_data)
@@ -140,9 +141,14 @@ static void datasource_file_add_setup_widgets ( GtkWidget *dialog, VikViewport *
 
   /* The file format selector */
   type_label = gtk_label_new (_("File type:"));
-  widgets->type = vik_combo_box_text_new ();
-  g_list_foreach (a_babel_file_list, fill_combo_box, widgets->type);
-  gtk_combo_box_set_active (GTK_COMBO_BOX (widgets->type), last_type);
+  /* Propose any readable file */
+  BabelMode mode = { 1, 0, 1, 0, 1, 0 };
+  widgets->type = a_babel_ui_file_type_selector_new ( mode );
+  g_signal_connect ( G_OBJECT(widgets->type), "changed",
+      G_CALLBACK(a_babel_ui_type_selector_dialog_sensitivity_cb), dialog );
+  gtk_combo_box_set_active ( GTK_COMBO_BOX(widgets->type), last_type );
+  /* Manually call the callback to fix the state */
+  a_babel_ui_type_selector_dialog_sensitivity_cb ( GTK_COMBO_BOX(widgets->type), dialog );
 
   /* Packing all these widgets */
   GtkBox *box = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
@@ -171,8 +177,7 @@ static void datasource_file_get_cmd_string ( datasource_file_widgets_t *widgets,
   /* Retrieve and memorize file format selected */
   gchar *type = NULL;
   last_type = gtk_combo_box_get_active ( GTK_COMBO_BOX (widgets->type) );
-  if ( a_babel_file_list )
-    type = ((BabelFile*)g_list_nth_data (a_babel_file_list, last_type))->name;
+  type = (a_babel_ui_file_type_selector_get ( widgets->type ))->name;
 
   /* Build the string */
   *cmd = g_strdup_printf( "-i %s", type);

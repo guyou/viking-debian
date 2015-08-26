@@ -36,6 +36,7 @@
 #include "vikgeoreflayer_pixmap.h"
 #include "vikgpslayer_pixmap.h"
 #include "viking_pixmap.h"
+#include "vikmapniklayer_pixmap.h"
 #include "vikmapslayer_pixmap.h"
 #include "vik_new_route_18_pixmap.h"
 #include "viktrwlayer_pixmap.h"

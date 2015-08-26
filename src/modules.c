@@ -32,7 +32,6 @@
 #include "modules.h"
 
 #include "bing.h"
-#include "spotmaps.h"
 #include "google.h"
 #include "terraserver.h"
 #include "expedia.h"
@@ -41,6 +40,7 @@
 #include "bluemarble.h"
 #include "geonames.h"
 #include "dir.h"
+#include "datasources.h"
 #include "vikmapslayer.h"
 #include "vikexttools.h"
 #include "vikexttool_datasources.h"
@@ -58,6 +58,10 @@
 #include "vikroutingwebengine.h"
 
 #include "vikgobjectbuilder.h"
+
+#ifdef HAVE_LIBMAPNIK
+#include "vikmapniklayer.h"
+#endif
 
 #define VIKING_MAPS_FILE "maps.xml"
 #define VIKING_EXTTOOLS_FILE "external_tools.xml"
@@ -176,19 +180,13 @@ modules_load_config(void)
      But our logic is to load all existing files and overwrite
      overlapping config with last recent one.
      So, we have to process directories in reverse order. */
-  /* First: find the last element */
-  gchar * * ptr = data_dirs;
-  while (*ptr != NULL) ptr++;
-  /* Second: deduce the number of directories */
-  int nb_data_dirs = 0;
-  nb_data_dirs = ptr - data_dirs;
-  /* Last: parse them in reverse order */
+  int nb_data_dirs = g_strv_length ( data_dirs );
   for (; nb_data_dirs > 0 ; nb_data_dirs--)
   {
     modules_load_config_dir(data_dirs[nb_data_dirs-1]);
   }
   g_strfreev(data_dirs);
-	
+
   /* Check if system config is set */
   modules_load_config_dir(VIKING_SYSCONFDIR);
 
@@ -197,7 +195,7 @@ modules_load_config(void)
   {
     modules_load_config_dir(data_home);
   }
-	
+
   /* Check user's home config */
   modules_load_config_dir(a_get_viking_dir());
 }
@@ -230,6 +228,11 @@ register_loadable_types(void)
   g_debug("%d types loaded", (int)sizeof(types)/(int)sizeof(GType));
 }
 
+/**
+ * First stage initialization
+ * Can not use a_get_preferences() yet...
+ * See comment in main.c
+ */
 void modules_init()
 {
 #ifdef VIK_CONFIG_BING
@@ -254,8 +257,12 @@ void modules_init()
 #ifdef VIK_CONFIG_GEONAMES
   geonames_init();
 #endif
-#ifdef VIK_CONFIG_SPOTMAPS
-  spotmaps_init();
+#ifdef VIK_CONFIG_GEOCACHES
+  a_datasource_gc_init();
+#endif
+
+#ifdef HAVE_LIBMAPNIK
+  vik_mapnik_layer_init();
 #endif
 
   register_loadable_types ();
@@ -264,3 +271,28 @@ void modules_init()
   modules_load_config ();
 }
 
+/**
+ * modules_post_init:
+ *
+ * Secondary stage initialization
+ * Can now use a_get_preferences()
+ */
+void modules_post_init ()
+{
+#ifdef HAVE_LIBMAPNIK
+  vik_mapnik_layer_post_init();
+#endif
+}
+
+/**
+ *
+ */
+void modules_uninit()
+{
+#ifdef VIK_CONFIG_OPENSTREETMAP
+  osm_traces_uninit();
+#endif
+#ifdef HAVE_LIBMAPNIK
+  vik_mapnik_layer_uninit();
+#endif
+}

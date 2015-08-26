@@ -12,7 +12,12 @@ get-icons:
 dist-hook: get-icons doc-dist-hook
 
 DOC_MODULE = viking
-DOC_ENTITIES = legal.xml
+DOC_ENTITIES = legal.xml \
+    attribution.xml \
+    commandline.xml \
+    georef_layer.xml \
+    mapnik_rendering_layer.xml \
+    recommends.xml
 DOC_INCLUDES =
 DOC_FIGURES = \
     figures/addtr_18.png \
@@ -44,7 +49,8 @@ DOC_FIGURES = \
     figures/zoom_18.png \
     figures/zoom_status_popup.png \
     figures/Viking-OSM-CycleMap-ManyTracks.jpg \
-    figures/DEM_file_info_dialog.png
+    figures/DEM_file_info_dialog.png \
+    figures/customize_toolbar_dialog.png
 DOC_LINGUAS =
 
 EXTRA_DIST = viking.xml

@@ -2,6 +2,7 @@
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2015, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +34,18 @@
 #include "viktrack.h"
 #include "viktrwlayer_tpwin.h"
 #include "vikwaypoint.h"
+#include "vikutils.h"
 #include "dialog.h"
 #include "globals.h"
+#include "vikdatetime_edit_dialog.h"
+#include "ui_util.h"
 
 struct _VikTrwLayerTpwin {
   GtkDialog parent;
-  GtkSpinButton *lat, *lon, *alt;
+  GtkSpinButton *lat, *lon, *alt, *ts;
   GtkWidget *trkpt_name;
-  GtkLabel *course, *ts, *localtime, *diff_dist, *diff_time, *diff_speed, *speed, *hdop, *vdop, *pdop, *sat;
+  GtkWidget *time;
+  GtkLabel *course, *diff_dist, *diff_time, *diff_speed, *speed, *hdop, *vdop, *pdop, *sat;
   // Previously these buttons were in a glist, however I think the ordering behaviour is implicit
   //  thus control manually to ensure operating on the correct button
   GtkWidget *button_close;
@@ -75,6 +80,23 @@ GType vik_trw_layer_tpwin_get_type (void)
   }
 
   return tpwin_type;
+}
+
+/**
+ *  Just update the display for the time fields
+ */
+static void tpwin_update_times ( VikTrwLayerTpwin *tpwin, VikTrackpoint *tp )
+{
+  if ( tp->has_timestamp ) {
+    gtk_spin_button_set_value ( tpwin->ts, tp->timestamp );
+    gchar *msg = vu_get_time_string ( &(tp->timestamp), "%c", &(tp->coord), NULL );
+    gtk_button_set_label ( GTK_BUTTON(tpwin->time), msg );
+    g_free ( msg );
+  }
+  else {
+    gtk_spin_button_set_value ( tpwin->ts, 0 );
+    gtk_button_set_label ( GTK_BUTTON(tpwin->time), "" );
+  }
 }
 
 static void tpwin_sync_ll_to_tp ( VikTrwLayerTpwin *tpwin )
@@ -113,6 +135,71 @@ static void tpwin_sync_alt_to_tp ( VikTrwLayerTpwin *tpwin )
       g_critical("Houston, we've had a problem. height=%d", height_units);
     }
   }
+}
+
+/**
+ *
+ */
+static void tpwin_sync_ts_to_tp ( VikTrwLayerTpwin *tpwin )
+{
+  if ( tpwin->cur_tp && (!tpwin->sync_to_tp_block) ) {
+    tpwin->cur_tp->timestamp = gtk_spin_button_get_value_as_int ( tpwin->ts );
+
+    tpwin_update_times ( tpwin, tpwin->cur_tp );
+  }
+}
+
+static time_t last_edit_time = 0;
+
+/**
+ * tpwin_sync_time_to_tp:
+ *
+ */
+static void tpwin_sync_time_to_tp ( GtkWidget* widget, GdkEventButton *event, VikTrwLayerTpwin *tpwin )
+{
+  if ( !tpwin->cur_tp || tpwin->sync_to_tp_block )
+    return;
+
+  if ( event->button == 3 ) {
+    // On right click and when a time is available, allow a method to copy the displayed time as text
+    if ( !gtk_button_get_image ( GTK_BUTTON(widget) ) ) {
+       vu_copy_label_menu ( widget, event->button );
+    }
+    return;
+  }
+  else if ( event->button == 2 ) {
+    return;
+  }
+
+  if ( !tpwin->cur_tp || tpwin->sync_to_tp_block )
+    return;
+
+  if ( tpwin->cur_tp->has_timestamp )
+    last_edit_time = tpwin->cur_tp->timestamp;
+  else if ( last_edit_time == 0 )
+    time ( &last_edit_time );
+
+  GTimeZone *gtz = g_time_zone_new_local ();
+  time_t mytime = vik_datetime_edit_dialog ( GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(&tpwin->parent))),
+                                             _("Date/Time Edit"),
+                                             last_edit_time,
+                                             gtz );
+  g_time_zone_unref ( gtz );
+
+  // Was the dialog cancelled?
+  if ( mytime == 0 )
+    return;
+
+  // Otherwise use the new value
+  tpwin->cur_tp->timestamp = mytime;
+  tpwin->cur_tp->has_timestamp = TRUE;
+  // TODO: consider warning about unsorted times?
+
+  // Clear the previous 'Add' image as now a time is set
+  if ( gtk_button_get_image ( GTK_BUTTON(tpwin->time) ) )
+    gtk_button_set_image ( GTK_BUTTON(tpwin->time), NULL );
+
+  tpwin_update_times ( tpwin, tpwin->cur_tp );
 }
 
 static gboolean tpwin_set_name ( VikTrwLayerTpwin *tpwin )
@@ -173,9 +260,10 @@ VikTrwLayerTpwin *vik_trw_layer_tpwin_new ( GtkWindow *parent )
   tpwin->trkpt_name = gtk_entry_new();
   g_signal_connect_swapped ( G_OBJECT(tpwin->trkpt_name), "focus-out-event", G_CALLBACK(tpwin_set_name), tpwin );
 
-  tpwin->course = GTK_LABEL(gtk_label_new(NULL));
-  tpwin->ts = GTK_LABEL(gtk_label_new(NULL));
-  tpwin->localtime = GTK_LABEL(gtk_label_new(NULL));
+  tpwin->course = GTK_LABEL(ui_label_new_selectable(NULL));
+  tpwin->time = gtk_button_new();
+  gtk_button_set_relief ( GTK_BUTTON(tpwin->time), GTK_RELIEF_NONE );
+  g_signal_connect ( G_OBJECT(tpwin->time), "button-release-event", G_CALLBACK(tpwin_sync_time_to_tp), tpwin );
 
   tpwin->lat = GTK_SPIN_BUTTON(gtk_spin_button_new( GTK_ADJUSTMENT(gtk_adjustment_new (
                                  0, -90, 90, 0.00005, 0.01, 0 )), 0.00005, 6));
@@ -190,6 +278,10 @@ VikTrwLayerTpwin *vik_trw_layer_tpwin_new ( GtkWindow *parent )
 
   g_signal_connect_swapped ( G_OBJECT(tpwin->alt), "value-changed", G_CALLBACK(tpwin_sync_alt_to_tp), tpwin );
 
+  tpwin->ts = GTK_SPIN_BUTTON(gtk_spin_button_new_with_range(0,2147483647,1)); //pow(2,31)-1 limit input to ~2038 for now
+  g_signal_connect_swapped ( G_OBJECT(tpwin->ts), "value-changed", G_CALLBACK(tpwin_sync_ts_to_tp), tpwin );
+  gtk_spin_button_set_digits ( tpwin->ts, 0 );
+
   right_vbox = gtk_vbox_new ( TRUE, 1 );
   gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->trkpt_name), FALSE, FALSE, 3 );
   gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->lat), FALSE, FALSE, 3 );
@@ -197,20 +289,20 @@ VikTrwLayerTpwin *vik_trw_layer_tpwin_new ( GtkWindow *parent )
   gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->alt), FALSE, FALSE, 3 );
   gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->course), FALSE, FALSE, 3 );
   gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->ts), FALSE, FALSE, 3 );
-  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->localtime), FALSE, FALSE, 3 );
+  gtk_box_pack_start ( GTK_BOX(right_vbox), GTK_WIDGET(tpwin->time), FALSE, FALSE, 3 );
 
   /* diff info */
   diff_left_vbox = a_dialog_create_label_vbox ( right_label_texts, G_N_ELEMENTS(right_label_texts), 1, 3 );
 
-  tpwin->diff_dist = GTK_LABEL(gtk_label_new(NULL));
-  tpwin->diff_time = GTK_LABEL(gtk_label_new(NULL));
-  tpwin->diff_speed = GTK_LABEL(gtk_label_new(NULL));
-  tpwin->speed = GTK_LABEL(gtk_label_new(NULL));
+  tpwin->diff_dist = GTK_LABEL(ui_label_new_selectable(NULL));
+  tpwin->diff_time = GTK_LABEL(ui_label_new_selectable(NULL));
+  tpwin->diff_speed = GTK_LABEL(ui_label_new_selectable(NULL));
+  tpwin->speed = GTK_LABEL(ui_label_new_selectable(NULL));
 
-  tpwin->vdop = GTK_LABEL(gtk_label_new(NULL));
-  tpwin->hdop = GTK_LABEL(gtk_label_new(NULL));
-  tpwin->pdop = GTK_LABEL(gtk_label_new(NULL));
-  tpwin->sat = GTK_LABEL(gtk_label_new(NULL));
+  tpwin->vdop = GTK_LABEL(ui_label_new_selectable(NULL));
+  tpwin->hdop = GTK_LABEL(ui_label_new_selectable(NULL));
+  tpwin->pdop = GTK_LABEL(ui_label_new_selectable(NULL));
+  tpwin->sat = GTK_LABEL(ui_label_new_selectable(NULL));
 
   diff_right_vbox = gtk_vbox_new ( TRUE, 1 );
   gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->diff_dist), FALSE, FALSE, 3 );
@@ -224,7 +316,7 @@ VikTrwLayerTpwin *vik_trw_layer_tpwin_new ( GtkWindow *parent )
   gtk_box_pack_start ( GTK_BOX(diff_right_vbox), GTK_WIDGET(tpwin->sat), FALSE, FALSE, 3 );
 
   main_hbox = gtk_hbox_new( FALSE, 0 );
-  gtk_box_pack_start ( GTK_BOX(main_hbox), left_vbox, TRUE, TRUE, 0 );
+  gtk_box_pack_start ( GTK_BOX(main_hbox), left_vbox, TRUE, TRUE, 3 );
   gtk_box_pack_start ( GTK_BOX(main_hbox), right_vbox, TRUE, TRUE, 0 );
   gtk_box_pack_start ( GTK_BOX(main_hbox), diff_left_vbox, TRUE, TRUE, 0 );
   gtk_box_pack_start ( GTK_BOX(main_hbox), diff_right_vbox, TRUE, TRUE, 0 );
@@ -248,13 +340,14 @@ void vik_trw_layer_tpwin_set_empty ( VikTrwLayerTpwin *tpwin )
   gtk_editable_delete_text ( GTK_EDITABLE(tpwin->trkpt_name), 0, -1 );
   gtk_widget_set_sensitive ( tpwin->trkpt_name, FALSE );
 
-  gtk_label_set_text ( tpwin->ts, NULL );
-  gtk_label_set_text ( tpwin->localtime, NULL );
+  gtk_button_set_label ( GTK_BUTTON(tpwin->time), "" );
   gtk_label_set_text ( tpwin->course, NULL );
 
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lat), FALSE );
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lon), FALSE );
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->alt), FALSE );
+  gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->ts), FALSE );
+  gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->time), FALSE );
 
   // Only keep close button enabled
   gtk_widget_set_sensitive ( tpwin->button_insert, FALSE );
@@ -275,7 +368,17 @@ void vik_trw_layer_tpwin_set_empty ( VikTrwLayerTpwin *tpwin )
   gtk_window_set_title ( GTK_WINDOW(tpwin), _("Trackpoint") );
 }
 
-void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, const gchar *track_name )
+/**
+ * vik_trw_layer_tpwin_set_tp:
+ * @tpwin:      The Trackpoint Edit Window
+ * @tpl:        The #Glist of trackpoints pointing at the current trackpoint
+ * @track_name: The name of the track in which the trackpoint belongs
+ * @is_route:   Is the track of the trackpoint actually a route?
+ *
+ * Sets the Trackpoint Edit Window to the values of the current trackpoint given in @tpl.
+ *
+ */
+void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, const gchar *track_name, gboolean is_route )
 {
   static char tmp_str[64];
   static struct LatLon ll;
@@ -300,6 +403,15 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, const gch
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lat), TRUE );
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->lon), TRUE );
   gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->alt), TRUE );
+  gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->ts), tp->has_timestamp );
+  gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->time), tp->has_timestamp );
+  // Enable adding timestamps - but not on routepoints
+  if ( !tp->has_timestamp && !is_route ) {
+    gtk_widget_set_sensitive ( GTK_WIDGET(tpwin->time), TRUE );
+    GtkWidget *img = gtk_image_new_from_stock ( GTK_STOCK_ADD, GTK_ICON_SIZE_MENU );
+    gtk_button_set_image ( GTK_BUTTON(tpwin->time), img );
+  }
+  else
 
   vik_trw_layer_tpwin_set_track_name ( tpwin, track_name );
 
@@ -321,20 +433,9 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, const gch
     g_critical("Houston, we've had a problem. height=%d", height_units);
   }
 
-  tpwin->sync_to_tp_block = FALSE; // don't update while setting data.
+  tpwin_update_times ( tpwin, tp );
 
-  if ( tp->has_timestamp )
-  {
-    g_snprintf ( tmp_str, sizeof(tmp_str), "%ld", tp->timestamp );
-    gtk_label_set_text ( tpwin->ts, tmp_str );
-    strftime ( tmp_str, sizeof(tmp_str), "%c", localtime(&(tp->timestamp)) );
-    gtk_label_set_text ( tpwin->localtime, tmp_str );
-  }
-  else
-  {
-    gtk_label_set_text (tpwin->ts, NULL );
-    gtk_label_set_text (tpwin->localtime, NULL );
-  }
+  tpwin->sync_to_tp_block = FALSE; // don't update while setting data.
 
   vik_units_speed_t speed_units = a_vik_get_units_speed ();
   vik_units_distance_t dist_units = a_vik_get_units_distance ();
@@ -345,6 +446,7 @@ void vik_trw_layer_tpwin_set_tp ( VikTrwLayerTpwin *tpwin, GList *tpl, const gch
       g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f m", vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord)));
       break;
     case VIK_UNITS_DISTANCE_MILES:
+    case VIK_UNITS_DISTANCE_NAUTICAL_MILES:
       g_snprintf ( tmp_str, sizeof(tmp_str), "%.2f yards", vik_coord_diff(&(tp->coord), &(tpwin->cur_tp->coord))*1.0936133);
       break;
     default:

@@ -95,15 +95,23 @@ typedef struct {
 GList *a_babel_file_list;
 GList *a_babel_device_list;
 
+void a_babel_foreach_file_with_mode (BabelMode mode, GFunc func, gpointer user_data);
+void a_babel_foreach_file_read_any (GFunc func, gpointer user_data);
+
 gboolean a_babel_convert( VikTrwLayer *vt, const char *babelargs, BabelStatusFunc cb, gpointer user_data, gpointer options );
+gboolean a_babel_convert_from_filter( VikTrwLayer *vt, const char *babelargs, const char *file, const char *babelfilters, BabelStatusFunc cb, gpointer user_data, gpointer options );
 gboolean a_babel_convert_from( VikTrwLayer *vt, const char *babelargs, const char *file, BabelStatusFunc cb, gpointer user_data, gpointer options );
 gboolean a_babel_convert_from_shellcommand ( VikTrwLayer *vt, const char *input_cmd, const char *input_file_type, BabelStatusFunc cb, gpointer user_data, gpointer options );
+gboolean a_babel_convert_from_url_filter ( VikTrwLayer *vt, const char *url, const char *input_type, const char *filter, BabelStatusFunc cb, gpointer user_data, DownloadMapOptions *options );
 gboolean a_babel_convert_from_url ( VikTrwLayer *vt, const char *url, const char *input_type, BabelStatusFunc cb, gpointer user_data, DownloadMapOptions *options );
 gboolean a_babel_convert_from_url_or_shell ( VikTrwLayer *vt, const char *input, const char *input_type, BabelStatusFunc cb, gpointer user_data, DownloadMapOptions *options );
 gboolean a_babel_convert_to( VikTrwLayer *vt, VikTrack *track, const char *babelargs, const char *file, BabelStatusFunc cb, gpointer user_data );
 
 void a_babel_init ();
+void a_babel_post_init ();
 void a_babel_uninit ();
+
+gboolean a_babel_available ();
 
 G_END_DECLS
 

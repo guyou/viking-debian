@@ -119,17 +119,20 @@ static gboolean preferences_load_from_file()
   return FALSE;
 }
 
-static void preferences_run_setparam ( gpointer notused, guint16 i, VikLayerParamData data, VikLayerParam *params )
+static void preferences_run_setparam ( gpointer notused, guint16 i, VikLayerParamData data, VikLayerParam *vlparams )
 {
-  if ( params[i].type == VIK_LAYER_PARAM_STRING_LIST )
+  // Don't change stored pointer values
+  if ( vlparams[i].type == VIK_LAYER_PARAM_PTR )
+    return;
+  if ( vlparams[i].type == VIK_LAYER_PARAM_STRING_LIST )
     g_critical ( "Param strings not implemented in preferences"); //fake it
-  g_hash_table_insert ( values, (gchar *)(params[i].name), vik_layer_typed_param_data_copy_from_data(params[i].type, data) );
+  g_hash_table_insert ( values, (gchar *)(vlparams[i].name), vik_layer_typed_param_data_copy_from_data(vlparams[i].type, data) );
 }
 
 /* Allow preferences to be manipulated externally */
-void a_preferences_run_setparam ( VikLayerParamData data, VikLayerParam *params )
+void a_preferences_run_setparam ( VikLayerParamData data, VikLayerParam *vlparams )
 {
-  preferences_run_setparam (NULL, 0, data, params);
+  preferences_run_setparam (NULL, 0, data, vlparams);
 }
 
 static VikLayerParamData preferences_run_getparam ( gpointer notused, guint16 i, gboolean notused2 )
@@ -165,8 +168,9 @@ gboolean a_preferences_save_to_file()
     for ( i = 0; i < params->len; i++ ) {
       param = (VikLayerParam *) g_ptr_array_index(params,i);
       val = (VikLayerTypedParamData *) g_hash_table_lookup ( values, param->name );
-      g_assert ( val != NULL );
-      file_write_layer_param ( f, param->name, val->type, val->data );
+      if ( val )
+        if ( val->type != VIK_LAYER_PARAM_PTR )
+          file_write_layer_param ( f, param->name, val->type, val->data );
     }
     fclose(f);
     f = NULL;
@@ -192,7 +196,7 @@ void a_preferences_show_window(GtkWindow *parent) {
 				(gchar **) groups_names->pdata, groups_names->len, // groups, groups_count, // groups? what groups?!
 				(gboolean (*) (gpointer,guint16,VikLayerParamData,gpointer,gboolean)) preferences_run_setparam,
 				NULL /* not used */, contiguous_params,
-                                preferences_run_getparam, NULL /* not used */ ) ) {
+                                preferences_run_getparam, NULL, NULL /* not used */ ) ) {
       a_preferences_save_to_file();
     }
     g_free ( contiguous_params );
@@ -200,6 +204,9 @@ void a_preferences_show_window(GtkWindow *parent) {
 
 void a_preferences_register(VikLayerParam *pref, VikLayerParamData defaultval, const gchar *group_key )
 {
+  // All preferences should be registered before loading
+  if ( loaded )
+    g_critical ( "REGISTERING preference %s after LOADING from " VIKING_PREFS_FILE, pref->name );
   /* copy value */
   VikLayerParam *newpref = g_new(VikLayerParam,1);
   *newpref = *pref;
@@ -238,6 +245,7 @@ void a_preferences_uninit()
 VikLayerParamData *a_preferences_get(const gchar *key)
 {
   if ( ! loaded ) {
+    g_debug ( "%s: First time: %s\n", __FUNCTION__, key );
     /* since we can't load the file in a_preferences_init (no params registered yet),
      * do it once before we get the first key. */
     preferences_load_from_file();

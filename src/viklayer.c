@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2005, Alex Foobarian <foobarian@gmail.com>
  * Copyright (C) 2003-2007, Evan Battaglia <gtoevan@gmx.net>
+ * Copyright (C) 2013, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,9 @@ extern VikLayerInterface vik_coord_layer_interface;
 extern VikLayerInterface vik_georef_layer_interface;
 extern VikLayerInterface vik_gps_layer_interface;
 extern VikLayerInterface vik_dem_layer_interface;
+#ifdef HAVE_LIBMAPNIK
+extern VikLayerInterface vik_mapnik_layer_interface;
+#endif
 
 enum {
   VL_UPDATE_SIGNAL,
@@ -92,10 +96,15 @@ static gboolean idle_draw ( VikLayer *vl )
 void vik_layer_emit_update ( VikLayer *vl )
 {
   if ( vl->visible && vl->realized ) {
+    GThread *thread = vik_window_get_thread ( VIK_WINDOW(VIK_GTK_WINDOW_FROM_LAYER(vl)) );
+    if ( !thread )
+      // Do nothing
+      return;
+
     vik_window_set_redraw_trigger(vl);
 
     // Only ever draw when there is time to do so
-    if ( g_thread_self() != vik_window_get_thread (VIK_WINDOW(VIK_GTK_WINDOW_FROM_LAYER(vl))) )
+    if ( g_thread_self() != thread )
       // Drawing requested from another (background) thread, so handle via the gdk thread method
       gdk_threads_add_idle ( (GSourceFunc) idle_draw, vl );
     else
@@ -130,6 +139,9 @@ static VikLayerInterface *vik_layer_interfaces[VIK_LAYER_NUM_TYPES] = {
   &vik_gps_layer_interface,
   &vik_maps_layer_interface,
   &vik_dem_layer_interface,
+#ifdef HAVE_LIBMAPNIK
+  &vik_mapnik_layer_interface,
+#endif
 };
 
 VikLayerInterface *vik_layer_get_interface ( VikLayerTypeEnum type )
@@ -202,7 +214,14 @@ const gchar *vik_layer_get_name ( VikLayer *l )
   return l->name;
 }
 
-VikLayer *vik_layer_create ( VikLayerTypeEnum type, gpointer vp, GtkWindow *w, gboolean interactive )
+time_t vik_layer_get_timestamp ( VikLayer *vl )
+{
+  if ( vik_layer_interfaces[vl->type]->get_timestamp )
+    return vik_layer_interfaces[vl->type]->get_timestamp ( vl );
+  return 0;
+}
+
+VikLayer *vik_layer_create ( VikLayerTypeEnum type, VikViewport *vp, gboolean interactive )
 {
   VikLayer *new_layer = NULL;
   g_assert ( type < VIK_LAYER_NUM_TYPES );
@@ -227,7 +246,7 @@ VikLayer *vik_layer_create ( VikLayerTypeEnum type, gpointer vp, GtkWindow *w, g
 }
 
 /* returns TRUE if OK was pressed */
-gboolean vik_layer_properties ( VikLayer *layer, gpointer vp )
+gboolean vik_layer_properties ( VikLayer *layer, VikViewport *vp )
 {
   if ( vik_layer_interfaces[layer->type]->properties )
     return vik_layer_interfaces[layer->type]->properties ( layer, vp );
@@ -531,7 +550,8 @@ static gboolean vik_layer_properties_factory ( VikLayer *vl, VikViewport *vp )
 					    vl, 
 					    vp,
 					    (gpointer) vik_layer_interfaces[vl->type]->get_param, 
-					    vl) ) {
+					    vl,
+					    (gpointer) vik_layer_interfaces[vl->type]->change_param ) ) {
     case 0:
     case 3:
       return FALSE;
@@ -630,6 +650,8 @@ VikLayerTypedParamData *vik_layer_data_typed_param_copy_from_string ( VikLayerPa
  */
 void vik_layer_set_defaults ( VikLayer *vl, VikViewport *vvp )
 {
+  // Sneaky initialize of the viewport value here
+  vl->vvp = vvp;
   VikLayerInterface *vli = vik_layer_get_interface ( vl->type );
   const gchar *layer_name = vli->fixed_layer_name;
   VikLayerParamData data;

@@ -258,8 +258,12 @@ static void track_recalculate_bounds_last_tp ( VikTrack *trk )
  */
 void vik_track_add_trackpoint ( VikTrack *tr, VikTrackpoint *tp, gboolean recalculate )
 {
+  // When it's the first trackpoint need to ensure the bounding box is initialized correctly
+  gboolean adding_first_point = tr->trackpoints ? FALSE : TRUE;
   tr->trackpoints = g_list_append ( tr->trackpoints, tp );
-  if ( recalculate )
+  if ( adding_first_point )
+    vik_track_calculate_bounds ( tr );
+  else if ( recalculate )
     track_recalculate_bounds_last_tp ( tr );
 }
 
@@ -553,6 +557,31 @@ void vik_track_reverse ( VikTrack *tr )
     }
     iter = iter->prev;
   }
+}
+
+/**
+ * vik_track_get_duration:
+ * @trk: The track
+ *
+ * Returns: The time in seconds that covers the whole track including gaps
+ *  NB this may be negative particularly if the track has been reversed
+ */
+time_t vik_track_get_duration(const VikTrack *trk)
+{
+  time_t duration = 0;
+  if ( trk->trackpoints ) {
+    // Ensure times are available
+    if ( vik_track_get_tp_first(trk)->has_timestamp ) {
+      // Get trkpt only once - as using vik_track_get_tp_last() iterates whole track each time
+      VikTrackpoint *trkpt_last = vik_track_get_tp_last(trk);
+      if ( trkpt_last->has_timestamp ) {
+        time_t t1 = vik_track_get_tp_first(trk)->timestamp;
+        time_t t2 = trkpt_last->timestamp;
+        duration = t2 - t1;
+      }
+    }
+  }
+  return duration;
 }
 
 gdouble vik_track_get_average_speed(const VikTrack *tr)
@@ -1236,7 +1265,7 @@ VikTrackpoint *vik_track_get_closest_tp_by_percentage_dist ( VikTrack *tr, gdoub
     }
     /* we've gone past the dist already, was prev trackpoint closer? */
     /* should do a vik_coord_average_weighted() thingy. */
-    if ( iter->prev && abs(current_dist-current_inc-dist) < abs(current_dist-dist) ) {
+    if ( iter->prev && fabs(current_dist-current_inc-dist) < fabs(current_dist-dist) ) {
       if (meters_from_start)
         *meters_from_start = last_dist;
       iter = iter->prev;
@@ -1365,6 +1394,43 @@ VikTrackpoint* vik_track_get_tp_by_min_alt ( const VikTrack *tr )
     return NULL;
 
   return min_alt_tp;
+}
+
+VikTrackpoint *vik_track_get_tp_first( const VikTrack *tr )
+{
+  if ( !tr->trackpoints )
+    return NULL;
+
+  return (VikTrackpoint*)g_list_first(tr->trackpoints)->data;
+}
+
+VikTrackpoint *vik_track_get_tp_last ( const VikTrack *tr )
+{
+  if ( !tr->trackpoints )
+    return NULL;
+
+  return (VikTrackpoint*)g_list_last(tr->trackpoints)->data;
+}
+
+VikTrackpoint *vik_track_get_tp_prev ( const VikTrack *tr, VikTrackpoint *tp )
+{
+  if ( !tr->trackpoints )
+    return NULL;
+
+  GList *iter = tr->trackpoints;
+  VikTrackpoint *tp_prev = NULL;
+
+  while (iter) {
+    if (iter->prev) {
+      if ( VIK_TRACKPOINT(iter->data) == tp ) {
+        tp_prev = VIK_TRACKPOINT(iter->prev->data);
+        break;
+      }
+    }
+    iter = iter->next;
+  }
+
+  return tp_prev;
 }
 
 gboolean vik_track_get_minmax_alt ( const VikTrack *tr, gdouble *min_alt, gdouble *max_alt )
@@ -1548,6 +1614,55 @@ void vik_track_anonymize_times ( VikTrack *tr )
   }
 }
 
+/**
+ * vik_track_interpolate_times:
+ *
+ * Interpolate the timestamps between first and last trackpoint,
+ * so that the track is driven at equal speed, regardless of the
+ * distance between individual trackpoints.
+ *
+ * NB This will overwrite any existing trackpoint timestamps
+ */
+void vik_track_interpolate_times ( VikTrack *tr )
+{
+  gdouble tr_dist, cur_dist;
+  time_t tsdiff, tsfirst;
+
+  GList *iter;
+  iter = tr->trackpoints;
+
+  VikTrackpoint *tp = VIK_TRACKPOINT(iter->data);
+  if ( tp->has_timestamp ) {
+    tsfirst = tp->timestamp;
+
+    // Find the end of the track and the last timestamp
+    while ( iter->next ) {
+      iter = iter->next;
+    }
+    tp = VIK_TRACKPOINT(iter->data);
+    if ( tp->has_timestamp ) {
+      tsdiff = tp->timestamp - tsfirst;
+
+      tr_dist = vik_track_get_length_including_gaps ( tr );
+      cur_dist = 0.0;
+
+      if ( tr_dist > 0 ) {
+        iter = tr->trackpoints;
+        // Apply the calculated timestamp to all trackpoints except the first and last ones
+        while ( iter->next && iter->next->next ) {
+          iter = iter->next;
+          tp = VIK_TRACKPOINT(iter->data);
+          cur_dist += vik_coord_diff ( &(tp->coord), &(VIK_TRACKPOINT(iter->prev->data)->coord) );
+
+          tp->timestamp = (cur_dist / tr_dist) * tsdiff + tsfirst;
+          tp->has_timestamp = TRUE;
+        }
+        // Some points may now have the same time so remove them.
+        vik_track_remove_same_time_points ( tr );
+      }
+    }
+  }
+}
 
 /**
  * vik_track_apply_dem_data:
@@ -1726,11 +1841,13 @@ VikCoord *vik_track_cut_back_to_double_point ( VikTrack *tr )
 
 
   while ( iter->prev ) {
-    if ( vik_coord_equals((VikCoord *)iter->data, (VikCoord *)iter->prev->data) ) {
+    VikCoord *cur_coord = &((VikTrackpoint*)iter->data)->coord;
+    VikCoord *prev_coord = &((VikTrackpoint*)iter->prev->data)->coord;
+    if ( vik_coord_equals(cur_coord, prev_coord) ) {
       GList *prev = iter->prev;
 
       rv = g_malloc(sizeof(VikCoord));
-      *rv = *((VikCoord *) iter->data);
+      *rv = *cur_coord;
 
       /* truncate trackpoint list */
       iter->prev = NULL; /* pretend it's the end */
@@ -1746,10 +1863,42 @@ VikCoord *vik_track_cut_back_to_double_point ( VikTrack *tr )
 
   /* no double point found! */
   rv = g_malloc(sizeof(VikCoord));
-  *rv = *((VikCoord *) tr->trackpoints->data);
+  *rv = ((VikTrackpoint*) tr->trackpoints->data)->coord;
   g_list_foreach ( tr->trackpoints, (GFunc) g_free, NULL );
   g_list_free( tr->trackpoints );
   tr->trackpoints = NULL;
   return rv;
 }
 
+/**
+ * Function to compare two tracks by their first timestamp
+ **/
+int vik_track_compare_timestamp (const void *x, const void *y)
+{
+  VikTrack *a = (VikTrack *)x;
+  VikTrack *b = (VikTrack *)y;
+
+  VikTrackpoint *tpa = NULL;
+  VikTrackpoint *tpb = NULL;
+
+  if ( a->trackpoints )
+    tpa = VIK_TRACKPOINT(g_list_first(a->trackpoints)->data);
+
+  if ( b->trackpoints )
+    tpb = VIK_TRACKPOINT(g_list_first(b->trackpoints)->data);
+
+  if ( tpa && tpb ) {
+    if ( tpa->timestamp < tpb->timestamp )
+      return -1;
+    if ( tpa->timestamp > tpb->timestamp )
+      return 1;
+  }
+
+  if ( tpa && !tpb )
+    return 1;
+
+  if ( !tpa && tpb )
+    return -1;
+
+  return 0;
+}

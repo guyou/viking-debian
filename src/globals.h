@@ -43,6 +43,10 @@ G_BEGIN_DECLS
 #define VIK_METERS_TO_MILES(X) ((X)*VIK_MILES_IN_METER)
 #define VIK_MILES_TO_METERS(X) ((X)/VIK_MILES_IN_METER)
 
+#define VIK_NAUTICAL_MILES_IN_METER 0.000539957
+#define VIK_METERS_TO_NAUTICAL_MILES(X) ((X)*VIK_NAUTICAL_MILES_IN_METER)
+#define VIK_NAUTICAL_MILES_TO_METERS(X) ((X)/VIK_NAUTICAL_MILES_IN_METER)
+
 /* MPS - Metres Per Second */
 /* MPH - Metres Per Hour */
 #define VIK_MPH_IN_MPS 2.23693629
@@ -90,6 +94,7 @@ typedef enum {
   VIK_DEGREE_FORMAT_DDD,
   VIK_DEGREE_FORMAT_DMM,
   VIK_DEGREE_FORMAT_DMS,
+  VIK_DEGREE_FORMAT_RAW,
 } vik_degree_format_t;
 
 vik_degree_format_t a_vik_get_degree_format ( );
@@ -98,6 +103,7 @@ vik_degree_format_t a_vik_get_degree_format ( );
 typedef enum {
   VIK_UNITS_DISTANCE_KILOMETRES,
   VIK_UNITS_DISTANCE_MILES,
+  VIK_UNITS_DISTANCE_NAUTICAL_MILES,
 } vik_units_distance_t;
 
 vik_units_distance_t a_vik_get_units_distance ( );
@@ -130,6 +136,15 @@ typedef enum {
 
 gdouble a_vik_get_default_lat ( );
 gdouble a_vik_get_default_long ( );
+
+// Time display format
+typedef enum {
+  VIK_TIME_REF_LOCALE, // User's locale
+  VIK_TIME_REF_WORLD,  // Derive the local timezone at the object's position
+  VIK_TIME_REF_UTC,
+} vik_time_ref_frame_t;
+
+vik_time_ref_frame_t a_vik_get_time_ref_frame ( );
 
 /* KML export preferences */
 typedef enum {
@@ -173,6 +188,8 @@ typedef enum {
 
 vik_file_ref_format_t a_vik_get_file_ref_format ( );
 
+gboolean a_vik_get_ask_for_create_track_name ( );
+
 gboolean a_vik_get_create_track_tooltip ( );
 
 gboolean a_vik_get_restore_window_state ( );
@@ -191,6 +208,8 @@ vik_startup_method_t a_vik_get_startup_method ( );
 const gchar *a_vik_get_startup_file ( );
 
 gboolean a_vik_get_check_version ( );
+
+gint a_vik_get_recent_number_files ( );
 
 /* Group for global preferences */
 #define VIKING_PREFERENCES_GROUP_KEY "viking.globals"

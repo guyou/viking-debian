@@ -51,7 +51,7 @@
 static GList *routing_engine_list = NULL;
 
 static VikLayerParam prefs[] = {
-  { VIK_LAYER_NUM_TYPES, VIKING_ROUTING_PARAMS_NAMESPACE "default", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("Default engine:"), VIK_LAYER_WIDGET_COMBOBOX, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_ROUTING_PARAMS_NAMESPACE "default", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("Default engine:"), VIK_LAYER_WIDGET_COMBOBOX, NULL, NULL, NULL, NULL, NULL, NULL },
 };
 
 gchar **routing_engine_labels = NULL;
@@ -65,7 +65,7 @@ gchar **routing_engine_ids = NULL;
 void
 vik_routing_prefs_init()
 {
-  a_preferences_register_group ( VIKING_ROUTING_PARAMS_GROUP_KEY, "Routing" );
+  a_preferences_register_group ( VIKING_ROUTING_PARAMS_GROUP_KEY, _("Routing") );
 
   VikLayerParamData tmp;
   tmp.s = NULL;
@@ -109,7 +109,7 @@ vik_routing_find_engine ( const gchar *id )
  * 
  * Returns: the default engine
  */
-static VikRoutingEngine *
+VikRoutingEngine *
 vik_routing_default_engine ( void )
 {
   const gchar *id = a_preferences_get ( VIKING_ROUTING_PARAMS_NAMESPACE "default")->s;
@@ -125,14 +125,16 @@ vik_routing_default_engine ( void )
  * vik_routing_default_find:
  * 
  * Route computation with default engine.
+ *
+ * Return indicates success or not
  */
-void
+gboolean
 vik_routing_default_find(VikTrwLayer *vt, struct LatLon start, struct LatLon end)
 {
   /* The engine */
   VikRoutingEngine *engine = vik_routing_default_engine ( );
   /* The route computation */
-  vik_routing_engine_find ( engine, vt, start, end );
+  return vik_routing_engine_find ( engine, vt, start, end );
 }
 
 /**

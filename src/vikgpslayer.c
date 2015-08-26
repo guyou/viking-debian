@@ -46,7 +46,6 @@
 #include "vikutils.h"
 #endif
 
-#define DISCONNECT_UPDATE_SIGNAL(vl, val) g_signal_handlers_disconnect_matched(vl, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, val)
 static VikGpsLayer *vik_gps_layer_create (VikViewport *vp);
 static void vik_gps_layer_realize ( VikGpsLayer *val, VikTreeview *vt, GtkTreeIter *layer_iter );
 static void vik_gps_layer_free ( VikGpsLayer *val );
@@ -62,7 +61,6 @@ static const gchar* gps_layer_tooltip ( VikGpsLayer *vgl );
 
 static void gps_layer_change_coord_mode ( VikGpsLayer *val, VikCoordMode mode );
 static void gps_layer_add_menu_items( VikGpsLayer *vtl, GtkMenu *menu, gpointer vlp );
-static void gps_layer_drag_drop_request ( VikGpsLayer *val_src, VikGpsLayer *val_dest, GtkTreeIter *src_item_iter, GtkTreePath *dest_path );
 
 static void gps_upload_cb( gpointer layer_and_vlp[2] );
 static void gps_download_cb( gpointer layer_and_vlp[2] );
@@ -263,6 +261,8 @@ VikLayerInterface vik_gps_layer_interface = {
   (VikLayerFuncDraw)                    vik_gps_layer_draw,
   (VikLayerFuncChangeCoordMode)         gps_layer_change_coord_mode,
 
+  (VikLayerFuncGetTimestamp)            NULL,
+
   (VikLayerFuncSetMenuItemsSelection)   NULL,
   (VikLayerFuncGetMenuItemsSelection)   NULL,
 
@@ -280,6 +280,7 @@ VikLayerInterface vik_gps_layer_interface = {
 
   (VikLayerFuncSetParam)                gps_layer_set_param,
   (VikLayerFuncGetParam)                gps_layer_get_param,
+  (VikLayerFuncChangeParam)             NULL,
 
   (VikLayerFuncReadFileData)            NULL,
   (VikLayerFuncWriteFileData)           NULL,
@@ -289,7 +290,7 @@ VikLayerInterface vik_gps_layer_interface = {
   (VikLayerFuncCopyItem)                NULL,
   (VikLayerFuncPasteItem)               NULL,
   (VikLayerFuncFreeCopiedItem)          NULL,
-  (VikLayerFuncDragDropRequest)		gps_layer_drag_drop_request,
+  (VikLayerFuncDragDropRequest)         NULL,
 
   (VikLayerFuncSelectClick)             NULL,
   (VikLayerFuncSelectMove)              NULL,
@@ -419,7 +420,7 @@ static VikGpsLayer *vik_gps_layer_create (VikViewport *vp)
   vik_layer_rename ( VIK_LAYER(rv), vik_gps_layer_interface.name );
 
   for (i = 0; i < NUM_TRW; i++) {
-    rv->trw_children[i] = VIK_TRW_LAYER(vik_layer_create ( VIK_LAYER_TRW, vp, NULL, FALSE ));
+    rv->trw_children[i] = VIK_TRW_LAYER(vik_layer_create ( VIK_LAYER_TRW, vp, FALSE ));
     vik_layer_set_menu_items_selection(VIK_LAYER(rv->trw_children[i]), VIK_MENU_ITEM_ALL & ~(VIK_MENU_ITEM_CUT|VIK_MENU_ITEM_DELETE));
   }
   return rv;
@@ -483,7 +484,8 @@ static VikGpsLayer *gps_layer_unmarshall( guint8 *data, gint len, VikViewport *v
     child_layer = vik_layer_unmarshall ( data + sizeof(gint), alm_size, vvp );
     if (child_layer) {
       rv->trw_children[i++] = (VikTrwLayer *)child_layer;
-      g_signal_connect_swapped ( G_OBJECT(child_layer), "update", G_CALLBACK(vik_layer_emit_update_secondary), rv );
+      // NB no need to attach signal update handler here
+      //  as this will always be performed later on in vik_gps_layer_realize()
     }
     alm_next;
   }
@@ -796,14 +798,9 @@ static void gps_layer_add_menu_items( VikGpsLayer *vgl, GtkMenu *menu, gpointer 
 
 static void disconnect_layer_signal ( VikLayer *vl, VikGpsLayer *vgl )
 {
-  guint number_handlers = DISCONNECT_UPDATE_SIGNAL(vl,vgl);
+  guint number_handlers = g_signal_handlers_disconnect_matched(vl, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, vgl);
   if ( number_handlers != 1 ) {
-    /*
-      NB It's not fatal if this gives 2 for example! Hence removal of the g_assert
-      This happens when copied GPS layer is deleted (not sure why the number_handlers would be 2)
-      I don't think there's any side effects and certainly better than the program just aborting
-    */
-    g_warning(_("Unexpected number of disconnected handlers: %d"), number_handlers);
+    g_critical(_("Unexpected number of disconnected handlers: %d"), number_handlers);
   }
 }
 
@@ -828,23 +825,6 @@ static void vik_gps_layer_free ( VikGpsLayer *vgl )
 #endif /* VIK_CONFIG_REALTIME_GPS_TRACKING */
 }
 
-gboolean vik_gps_layer_delete ( VikGpsLayer *vgl, GtkTreeIter *iter )
-{
-  gint i;
-  VikLayer *l = VIK_LAYER( vik_treeview_item_get_pointer ( VIK_LAYER(vgl)->vt, iter ) );
-  gboolean was_visible = l->visible;
-
-  vik_treeview_item_delete ( VIK_LAYER(vgl)->vt, iter );
-  for (i = 0; i < NUM_TRW; i++) {
-    if (VIK_LAYER(vgl->trw_children[i]) == l)
-      vgl->trw_children[i] = NULL;
-  }
-  g_assert(DISCONNECT_UPDATE_SIGNAL(l,vgl)==1);
-  g_object_unref ( l );
-
-  return was_visible;
-}
-
 static void vik_gps_layer_realize ( VikGpsLayer *vgl, VikTreeview *vt, GtkTreeIter *layer_iter )
 {
   GtkTreeIter iter;
@@ -859,7 +839,7 @@ static void vik_gps_layer_realize ( VikGpsLayer *vgl, VikTreeview *vt, GtkTreeIt
     VikLayer * trw = VIK_LAYER(vgl->trw_children[ix]);
     vik_treeview_add_layer ( VIK_LAYER(vgl)->vt, layer_iter, &iter,
         _(trw_names[ix]), vgl, TRUE,
-        trw, trw->type, trw->type );
+        trw, trw->type, trw->type, vik_layer_get_timestamp(trw) );
     if ( ! trw->visible )
       vik_treeview_item_set_visible ( VIK_LAYER(vgl)->vt, &iter, FALSE );
     vik_layer_realize ( trw, VIK_LAYER(vgl)->vt, &iter );
@@ -895,30 +875,11 @@ gboolean vik_gps_layer_is_empty ( VikGpsLayer *vgl )
   return TRUE;
 }
 
-static void gps_layer_drag_drop_request ( VikGpsLayer *val_src, VikGpsLayer *val_dest, GtkTreeIter *src_item_iter, GtkTreePath *dest_path )
-{
-  VikTreeview *vt = VIK_LAYER(val_src)->vt;
-  VikLayer *vl = vik_treeview_item_get_pointer(vt, src_item_iter);
-  gchar *dp;
-
-  dp = gtk_tree_path_to_string(dest_path);
-
-  /* vik_gps_layer_delete unrefs, but we don't want that here.
-   * we're still using the layer. */
-  g_object_ref ( vl );
-  vik_gps_layer_delete(val_src, src_item_iter);
-
-  g_free(dp);
-}
-
 static void gps_session_delete(GpsSession *sess)
 {
-  /* TODO */
-  g_mutex_free(sess->mutex);
+  vik_mutex_free(sess->mutex);
   g_free(sess->cmd_args);
-
   g_free(sess);
-
 }
 
 static void set_total_count(gint cnt, GpsSession *sess)
@@ -1299,7 +1260,7 @@ gint vik_gps_comm ( VikTrwLayer *vtl,
   char *routes = NULL;
   char *waypoints = NULL;
 
-  sess->mutex = g_mutex_new();
+  sess->mutex = vik_mutex_new();
   sess->direction = dir;
   sess->vtl = vtl;
   sess->track = track;
@@ -1628,7 +1589,7 @@ static void update_statusbar ( VikGpsLayer *vgl, VikWindow *vw )
     need2free = TRUE;
   }
 
-  gchar *msg = vu_trackpoint_formatted_message ( statusbar_format_code, vgl->trkpt, vgl->trkpt_prev, vgl->realtime_track );
+  gchar *msg = vu_trackpoint_formatted_message ( statusbar_format_code, vgl->trkpt, vgl->trkpt_prev, vgl->realtime_track, vgl->last_fix.fix.climb );
   vik_statusbar_set_message ( vik_window_get_statusbar (vw), VIK_STATUSBAR_INFO, msg );
   g_free ( msg );
 
@@ -1667,7 +1628,7 @@ static void gpsd_raw_hook(VglGpsd *vgpsd, gchar *data)
 
     if ((vgl->vehicle_position == VEHICLE_POSITION_CENTERED) ||
         (vgl->realtime_jump_to_start && vgl->first_realtime_trackpoint)) {
-      vik_viewport_set_center_coord(vvp, &vehicle_coord);
+      vik_viewport_set_center_coord(vvp, &vehicle_coord, FALSE);
       update_all = TRUE;
     }
     else if (vgl->vehicle_position == VEHICLE_POSITION_ON_SCREEN) {
@@ -1712,7 +1673,7 @@ static gboolean gpsd_data_available(GIOChannel *source, GIOCondition condition, 
   if (condition == G_IO_IN) {
 #if GPSD_API_MAJOR_VERSION == 3 || GPSD_API_MAJOR_VERSION == 4
     if (!gps_poll(&vgl->vgpsd->gpsd)) {
-#elif GPSD_API_MAJOR_VERSION == 5
+#elif GPSD_API_MAJOR_VERSION == 5 || GPSD_API_MAJOR_VERSION == 6
     if (gps_read(&vgl->vgpsd->gpsd) > -1) {
       // Reuse old function to perform operations on the new GPS data
       gpsd_raw_hook(vgl->vgpsd, NULL);
@@ -1757,7 +1718,7 @@ static gboolean rt_gpsd_try_connect(gpointer *data)
   vgl->vgpsd = g_malloc(sizeof(VglGpsd));
 
   if (gps_open_r(vgl->gpsd_host, vgl->gpsd_port, /*(struct gps_data_t *)*/vgl->vgpsd) != 0) {
-#elif GPSD_API_MAJOR_VERSION == 5
+#elif GPSD_API_MAJOR_VERSION == 5 || GPSD_API_MAJOR_VERSION == 6
   vgl->vgpsd = g_malloc(sizeof(VglGpsd));
   if (gps_open(vgl->gpsd_host, vgl->gpsd_port, &vgl->vgpsd->gpsd) != 0) {
 #else
@@ -1796,7 +1757,7 @@ static gboolean rt_gpsd_try_connect(gpointer *data)
 #if GPSD_API_MAJOR_VERSION == 3
   gps_query(&vgl->vgpsd->gpsd, "w+x");
 #endif
-#if GPSD_API_MAJOR_VERSION == 4 || GPSD_API_MAJOR_VERSION == 5
+#if GPSD_API_MAJOR_VERSION == 4 || GPSD_API_MAJOR_VERSION == 5 || GPSD_API_MAJOR_VERSION == 6
   gps_stream(&vgl->vgpsd->gpsd, WATCH_ENABLE, NULL);
 #endif
 
@@ -1852,13 +1813,13 @@ static void rt_gpsd_disconnect(VikGpsLayer *vgl)
     vgl->realtime_io_channel = NULL;
   }
   if (vgl->vgpsd) {
-#if GPSD_API_MAJOR_VERSION == 4 || GPSD_API_MAJOR_VERSION == 5
+#if GPSD_API_MAJOR_VERSION == 4 || GPSD_API_MAJOR_VERSION == 5 || GPSD_API_MAJOR_VERSION == 6
     gps_stream(&vgl->vgpsd->gpsd, WATCH_DISABLE, NULL);
 #endif
     gps_close(&vgl->vgpsd->gpsd);
 #if GPSD_API_MAJOR_VERSION == 3
     free(vgl->vgpsd);
-#elif GPSD_API_MAJOR_VERSION == 4 || GPSD_API_MAJOR_VERSION == 5
+#elif GPSD_API_MAJOR_VERSION == 4 || GPSD_API_MAJOR_VERSION == 5 || GPSD_API_MAJOR_VERSION == 6
     g_free(vgl->vgpsd);
 #endif
     vgl->vgpsd = NULL;

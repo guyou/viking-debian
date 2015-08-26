@@ -46,7 +46,7 @@ static void datasource_url_cleanup ( gpointer data );
 VikDataSourceInterface vik_datasource_url_interface = {
 	N_("Acquire from URL"),
 	N_("URL"),
-	VIK_DATASOURCE_CREATENEWLAYER,
+	VIK_DATASOURCE_AUTO_LAYER_MANAGEMENT,
 	VIK_DATASOURCE_INPUTTYPE_NONE,
 	TRUE,
 	TRUE,
@@ -119,7 +119,7 @@ static void datasource_url_add_setup_widgets ( GtkWidget *dialog, VikViewport *v
 		last_type = ( wanted_entry < 0 ) ? 0 : wanted_entry;
 	}
 
-	if ( a_babel_file_list ) {
+	if ( a_babel_available() ) {
 		widgets->type = vik_combo_box_text_new ();
 		g_list_foreach (a_babel_file_list, fill_combo_box, widgets->type);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widgets->type), last_type);

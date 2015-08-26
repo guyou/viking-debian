@@ -56,6 +56,7 @@ struct _VikLayer {
   gboolean visible;
 
   gboolean realized;
+  VikViewport *vvp;/* simply a reference */
   VikTreeview *vt; /* simply a reference */
   GtkTreeIter iter;
 
@@ -156,7 +157,9 @@ typedef gboolean      (*VikLayerFuncSetParam)              (VikLayer *, guint16,
 typedef VikLayerParamData
                       (*VikLayerFuncGetParam)              (VikLayer *, guint16, gboolean);
 
-typedef gboolean      (*VikLayerFuncReadFileData)          (VikLayer *, FILE *); // Should report success or failure
+typedef void          (*VikLayerFuncChangeParam)           (GtkWidget *, ui_change_values );
+
+typedef gboolean      (*VikLayerFuncReadFileData)          (VikLayer *, FILE *, const gchar *); // gchar* is the directory path. Function should report success or failure
 typedef void          (*VikLayerFuncWriteFileData)         (VikLayer *, FILE *);
 
 /* item manipulation */
@@ -174,9 +177,11 @@ typedef void          (*VikLayerFuncFreeCopiedItem)        (gint, gpointer);
 typedef void 	      (*VikLayerFuncDragDropRequest)       (VikLayer *, VikLayer *, GtkTreeIter *, GtkTreePath *);
 
 typedef gboolean      (*VikLayerFuncSelectClick)           (VikLayer *, GdkEventButton *, VikViewport *, tool_ed_t*);
-typedef gboolean      (*VikLayerFuncSelectMove)            (VikLayer *, GdkEventButton *, VikViewport *, tool_ed_t*);
+typedef gboolean      (*VikLayerFuncSelectMove)            (VikLayer *, GdkEventMotion *, VikViewport *, tool_ed_t*);
 typedef gboolean      (*VikLayerFuncSelectRelease)         (VikLayer *, GdkEventButton *, VikViewport *, tool_ed_t*);
 typedef gboolean      (*VikLayerFuncSelectedViewportMenu)  (VikLayer *, GdkEventButton *, VikViewport *);
+
+typedef time_t        (*VikLayerFuncGetTimestamp)          (VikLayer *);
 
 typedef enum {
   VIK_MENU_ITEM_PROPERTY=1,
@@ -217,6 +222,8 @@ struct _VikLayerInterface {
   VikLayerFuncDraw                  draw;
   VikLayerFuncChangeCoordMode       change_coord_mode;
 
+  VikLayerFuncGetTimestamp          get_timestamp;
+
   VikLayerFuncSetMenuItemsSelection set_menu_selection;
   VikLayerFuncGetMenuItemsSelection get_menu_selection;
 
@@ -234,6 +241,7 @@ struct _VikLayerInterface {
   /* for I/O */
   VikLayerFuncSetParam              set_param;
   VikLayerFuncGetParam              get_param;
+  VikLayerFuncChangeParam           change_param;
 
   /* for I/O -- extra non-param data like TrwLayer data */
   VikLayerFuncReadFileData          read_file_data;
@@ -263,6 +271,8 @@ void vik_layer_rename ( VikLayer *l, const gchar *new_name );
 void vik_layer_rename_no_copy ( VikLayer *l, gchar *new_name );
 const gchar *vik_layer_get_name ( VikLayer *l );
 
+time_t vik_layer_get_timestamp ( VikLayer *vl );
+
 gboolean vik_layer_set_param (VikLayer *layer, guint16 id, VikLayerParamData data, gpointer vp, gboolean is_file_operation);
 
 void vik_layer_set_defaults ( VikLayer *vl, VikViewport *vvp );
@@ -273,8 +283,8 @@ void vik_layer_emit_update ( VikLayer *vl );
 void vik_layer_set_menu_items_selection(VikLayer *l, guint16 selection);
 guint16 vik_layer_get_menu_items_selection(VikLayer *l);
 void vik_layer_add_menu_items ( VikLayer *l, GtkMenu *menu, gpointer vlp );
-VikLayer *vik_layer_create ( VikLayerTypeEnum type, gpointer vp, GtkWindow *w, gboolean interactive );
-gboolean vik_layer_properties ( VikLayer *layer, gpointer vp );
+VikLayer *vik_layer_create ( VikLayerTypeEnum type, VikViewport *vp, gboolean interactive );
+gboolean vik_layer_properties ( VikLayer *layer, VikViewport *vp );
 
 void vik_layer_realize ( VikLayer *l, VikTreeview *vt, GtkTreeIter * layer_iter );
 void vik_layer_post_read ( VikLayer *layer, VikViewport *vp, gboolean from_file );

@@ -33,6 +33,7 @@ extern VikDataSourceInterface vik_datasource_osm_interface;
 extern VikDataSourceInterface vik_datasource_osm_my_traces_interface;
 #endif
 #ifdef VIK_CONFIG_GEOCACHES
+void a_datasource_gc_init();
 extern VikDataSourceInterface vik_datasource_gc_interface;
 #endif
 #ifdef VIK_CONFIG_GEOTAG
@@ -42,6 +43,7 @@ extern VikDataSourceInterface vik_datasource_geotag_interface;
 extern VikDataSourceInterface vik_datasource_wikipedia_interface;
 #endif
 extern VikDataSourceInterface vik_datasource_url_interface;
+extern VikDataSourceInterface vik_datasource_geojson_interface;
 
 G_END_DECLS
 

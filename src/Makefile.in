@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# This is the Makefile for the viking gps viewer program.
+# This is the Makefile for the Viking GPS viewer program.
 # This file is licensed through the GPL version 2 or newer.
 
 
@@ -81,13 +81,15 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = @build@
+host_triplet = @host@
 bin_PROGRAMS = viking$(EXEEXT)
 @BING_TRUE@am__append_1 = \
 @BING_TRUE@	bingmapsource.c bingmapsource.h \
 @BING_TRUE@	bing.c bing.h
 
 @GOOGLE_TRUE@am__append_2 = \
-@GOOGLE_TRUE@       google.c google.h
+@GOOGLE_TRUE@	google.c google.h
 
 @TERRASERVER_TRUE@am__append_3 = \
 @TERRASERVER_TRUE@	terraservermapsource.c terraservermapsource.h \
@@ -109,15 +111,22 @@ bin_PROGRAMS = viking$(EXEEXT)
 @GEONAMES_TRUE@	geonames.c geonames.h \
 @GEONAMES_TRUE@	geonamessearch.c geonamessearch.h
 
-#endif
 @GEOTAG_TRUE@am__append_8 = \
 @GEOTAG_TRUE@	datasource_geotag.c \
 @GEOTAG_TRUE@	geotag_exif.c geotag_exif.h \
-@GEOTAG_TRUE@	viktrwlayer_geotag.c viktrwlayer_geotag.h \
-@GEOTAG_TRUE@	libjpeg/jpeg-data.c libjpeg/jpeg-data.h \
-@GEOTAG_TRUE@	libjpeg/jpeg-marker.c libjpeg/jpeg-marker.h
+@GEOTAG_TRUE@	viktrwlayer_geotag.c viktrwlayer_geotag.h
 
-@WINDOWS_TRUE@am__append_9 = \
+
+# libexif doesn't have write support of EXIF info - so reused this code from command line exif tool
+@LIBEXIF_TRUE@am__append_9 = \
+@LIBEXIF_TRUE@	libjpeg/jpeg-data.c libjpeg/jpeg-data.h \
+@LIBEXIF_TRUE@	libjpeg/jpeg-marker.c libjpeg/jpeg-marker.h
+
+@MAPNIK_TRUE@am__append_10 = \
+@MAPNIK_TRUE@	vikmapniklayer.c vikmapniklayer.h \
+@MAPNIK_TRUE@	mapnik_interface.cpp mapnik_interface.h
+
+@WINDOWS_TRUE@am__append_11 = \
 @WINDOWS_TRUE@	../win32/installer/pixmaps/viking_icon.o
 
 subdir = src
@@ -126,7 +135,11 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/expat.m4 \
+	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/libcurl.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -143,62 +156,72 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libviking_a_AR = $(AR) $(ARFLAGS)
 libviking_a_LIBADD =
-am__libviking_a_SOURCES_DIST = bbox.h modules.h modules.c \
+am__libviking_a_SOURCES_DIST = bbox.h map_ids.h modules.h modules.c \
 	curl_download.c curl_download.h compression.c compression.h \
 	menu.xml.h degrees_converters.c degrees_converters.h globals.c \
-	globals.h viking.h mapcoord.h config.h viktrack.c viktrack.h \
-	vikwaypoint.c vikwaypoint.h clipboard.c clipboard.h coords.c \
-	coords.h gpsmapper.c gpsmapper.h gpspoint.c gpspoint.h dir.c \
+	globals.h viking.h mapcoord.h config.h vik_compat.c \
+	vik_compat.h viktrack.c viktrack.h vikwaypoint.c vikwaypoint.h \
+	clipboard.c clipboard.h coords.c coords.h gpsmapper.c \
+	gpsmapper.h gpspoint.c gpspoint.h geojson.c geojson.h dir.c \
 	dir.h file.c file.h fileutils.c fileutils.h authors.h \
-	documenters.h dialog.c dialog.h util.c util.h download.c \
-	download.h vikenumtypes.c vikenumtypes.h viktreeview.c \
-	viktreeview.h viktrwlayer.c viktrwlayer.h viklayer.c \
-	viklayer.h viklayerspanel.c viklayerspanel.h vikcoordlayer.c \
-	vikcoordlayer.h vikstatus.c vikstatus.h vikwindow.c \
-	vikwindow.h vikviewport.c vikviewport.h vikaggregatelayer.c \
-	vikaggregatelayer.h vikgobjectbuilder.c vikgobjectbuilder.h \
-	vikgpslayer.c vikgpslayer.h vikgeoreflayer.c vikgeoreflayer.h \
-	vikfileentry.c vikfileentry.h vikgototool.c vikgototool.h \
-	vikgotoxmltool.c vikgotoxmltool.h vikgoto.c vikgoto.h \
-	viktrwlayer_tpwin.c viktrwlayer_tpwin.h viktrwlayer_propwin.c \
+	documenters.h dialog.c dialog.h util.c util.h ui_util.c \
+	ui_util.h download.c download.h jpg.c jpg.h vikenumtypes.c \
+	vikenumtypes.h viktreeview.c viktreeview.h viktrwlayer.c \
+	viktrwlayer.h viklayer.c viklayer.h viklayerspanel.c \
+	viklayerspanel.h vikcoordlayer.c vikcoordlayer.h vikstatus.c \
+	vikstatus.h vikwindow.c vikwindow.h vikviewport.c \
+	vikviewport.h vikaggregatelayer.c vikaggregatelayer.h \
+	vikgobjectbuilder.c vikgobjectbuilder.h vikgpslayer.c \
+	vikgpslayer.h vikgeoreflayer.c vikgeoreflayer.h vikfileentry.c \
+	vikfileentry.h vikgototool.c vikgototool.h vikgotoxmltool.c \
+	vikgotoxmltool.h vikgoto.c vikgoto.h viktrwlayer_export.c \
+	viktrwlayer_export.h viktrwlayer_tpwin.c viktrwlayer_tpwin.h \
+	viktrwlayer_wpwin.c viktrwlayer_wpwin.h viktrwlayer_propwin.c \
 	viktrwlayer_propwin.h viktrwlayer_analysis.c \
 	viktrwlayer_analysis.h viktrwlayer_tracklist.c \
 	viktrwlayer_tracklist.h viktrwlayer_waypointlist.c \
 	viktrwlayer_waypointlist.h vikrouting.c vikrouting.h \
 	vikroutingengine.c vikroutingengine.h vikroutingwebengine.c \
-	vikroutingwebengine.h vikutils.c vikutils.h thumbnails.c \
-	thumbnails.h background.c background.h vikradiogroup.c \
-	vikradiogroup.h vikcoord.c vikcoord.h mapcache.c mapcache.h \
-	maputils.c maputils.h vikmapsource.c vikmapsource.h \
-	vikmapsourcedefault.c vikmapsourcedefault.h vikmapslayer.c \
-	vikmapslayer.h vikmapslayer_compat.c vikmapslayer_compat.h \
-	vikmaptype.c vikmaptype.h vikslippymapsource.c \
-	vikslippymapsource.h vikwmscmapsource.c vikwmscmapsource.h \
-	viktmsmapsource.c viktmsmapsource.h gpx.c gpx.h \
+	vikroutingwebengine.h vikutils.c vikutils.h toolbar.c \
+	toolbar.h toolbar.xml.h thumbnails.c thumbnails.h background.c \
+	background.h vikradiogroup.c vikradiogroup.h vikcoord.c \
+	vikcoord.h mapcache.c mapcache.h maputils.c maputils.h \
+	vikmapsource.c vikmapsource.h vikmapsourcedefault.c \
+	vikmapsourcedefault.h vikmapslayer.c vikmapslayer.h \
+	vikmapslayer_compat.c vikmapslayer_compat.h vikmaptype.c \
+	vikmaptype.h vikslippymapsource.c vikslippymapsource.h \
+	vikwmscmapsource.c vikwmscmapsource.h viktmsmapsource.c \
+	viktmsmapsource.h metatile.c metatile.h gpx.c gpx.h \
 	garminsymbols.c garminsymbols.h acquire.c acquire.h babel.c \
-	babel.h datasource_file.c datasource_gps.c datasource_gps.h \
+	babel.h babel_ui.c babel_ui.h datasource_file.c \
+	datasource_geojson.c datasource_gps.c datasource_gps.h \
 	datasource_routing.c datasource_gc.c datasource_bfilter.c \
 	datasource_wikipedia.c datasource_url.c datasources.h \
 	googlesearch.c googlesearch.h dem.c dem.h vikdemlayer.h \
-	vikdemlayer.c vikfilelist.c vikfilelist.h vikexttool.c \
-	vikexttool.h vikexttools.c vikexttools.h vikwebtool.c \
-	vikwebtool.h vikwebtoolcenter.c vikwebtoolcenter.h \
-	vikwebtoolbounds.c vikwebtoolbounds.h vikexttool_datasources.c \
+	vikdemlayer.c vikdatetime_edit_dialog.c \
+	vikdatetime_edit_dialog.h vikfilelist.c vikfilelist.h \
+	vikexttool.c vikexttool.h vikexttools.c vikexttools.h \
+	vikwebtool.c vikwebtool.h vikwebtoolcenter.c \
+	vikwebtoolcenter.h vikwebtoolbounds.c vikwebtoolbounds.h \
+	vikwebtoolformat.c vikwebtoolformat.h vikexttool_datasources.c \
 	vikexttool_datasources.h vikwebtool_datasource.c \
 	vikwebtool_datasource.h dems.c dems.h srtm_continent.c \
 	uibuilder.c uibuilder.h print-preview.c print-preview.h \
 	print.c print.h viklayer_defaults.c viklayer_defaults.h \
 	settings.c settings.h preferences.c preferences.h \
+	misc/strtod.c misc/strtod.h misc/kdtree.c misc/kdtree.h \
 	bingmapsource.c bingmapsource.h bing.c bing.h google.c \
 	google.h terraservermapsource.c terraservermapsource.h \
 	terraserver.c terraserver.h expedia.c expedia.h osm.c osm.h \
 	osm-traces.c osm-traces.h datasource_osm_my_traces.c \
 	datasource_osm.c bluemarble.c bluemarble.h geonames.c \
-	geonames.h geonamessearch.c geonamessearch.h spotmaps.c \
-	spotmaps.h datasource_geotag.c geotag_exif.c geotag_exif.h \
+	geonames.h geonamessearch.c geonamessearch.h \
+	datasource_geotag.c geotag_exif.c geotag_exif.h \
 	viktrwlayer_geotag.c viktrwlayer_geotag.h libjpeg/jpeg-data.c \
 	libjpeg/jpeg-data.h libjpeg/jpeg-marker.c \
-	libjpeg/jpeg-marker.h
+	libjpeg/jpeg-marker.h vikmapniklayer.c vikmapniklayer.h \
+	mapnik_interface.cpp mapnik_interface.h
+am__dirstamp = $(am__leading_dot)dirstamp
 @BING_TRUE@am__objects_1 = bingmapsource.$(OBJEXT) bing.$(OBJEXT)
 @GOOGLE_TRUE@am__objects_2 = google.$(OBJEXT)
 @TERRASERVER_TRUE@am__objects_3 = terraservermapsource.$(OBJEXT) \
@@ -212,15 +235,19 @@ am__libviking_a_SOURCES_DIST = bbox.h modules.h modules.c \
 @GEONAMES_TRUE@	geonamessearch.$(OBJEXT)
 @GEOTAG_TRUE@am__objects_8 = datasource_geotag.$(OBJEXT) \
 @GEOTAG_TRUE@	geotag_exif.$(OBJEXT) \
-@GEOTAG_TRUE@	viktrwlayer_geotag.$(OBJEXT) jpeg-data.$(OBJEXT) \
-@GEOTAG_TRUE@	jpeg-marker.$(OBJEXT)
+@GEOTAG_TRUE@	viktrwlayer_geotag.$(OBJEXT)
+@LIBEXIF_TRUE@am__objects_9 = libjpeg/jpeg-data.$(OBJEXT) \
+@LIBEXIF_TRUE@	libjpeg/jpeg-marker.$(OBJEXT)
+@MAPNIK_TRUE@am__objects_10 = vikmapniklayer.$(OBJEXT) \
+@MAPNIK_TRUE@	mapnik_interface.$(OBJEXT)
 am_libviking_a_OBJECTS = modules.$(OBJEXT) curl_download.$(OBJEXT) \
 	compression.$(OBJEXT) degrees_converters.$(OBJEXT) \
-	globals.$(OBJEXT) viktrack.$(OBJEXT) vikwaypoint.$(OBJEXT) \
-	clipboard.$(OBJEXT) coords.$(OBJEXT) gpsmapper.$(OBJEXT) \
-	gpspoint.$(OBJEXT) dir.$(OBJEXT) file.$(OBJEXT) \
-	fileutils.$(OBJEXT) dialog.$(OBJEXT) util.$(OBJEXT) \
-	download.$(OBJEXT) vikenumtypes.$(OBJEXT) \
+	globals.$(OBJEXT) vik_compat.$(OBJEXT) viktrack.$(OBJEXT) \
+	vikwaypoint.$(OBJEXT) clipboard.$(OBJEXT) coords.$(OBJEXT) \
+	gpsmapper.$(OBJEXT) gpspoint.$(OBJEXT) geojson.$(OBJEXT) \
+	dir.$(OBJEXT) file.$(OBJEXT) fileutils.$(OBJEXT) \
+	dialog.$(OBJEXT) util.$(OBJEXT) ui_util.$(OBJEXT) \
+	download.$(OBJEXT) jpg.$(OBJEXT) vikenumtypes.$(OBJEXT) \
 	viktreeview.$(OBJEXT) viktrwlayer.$(OBJEXT) viklayer.$(OBJEXT) \
 	viklayerspanel.$(OBJEXT) vikcoordlayer.$(OBJEXT) \
 	vikstatus.$(OBJEXT) vikwindow.$(OBJEXT) vikviewport.$(OBJEXT) \
@@ -228,34 +255,39 @@ am_libviking_a_OBJECTS = modules.$(OBJEXT) curl_download.$(OBJEXT) \
 	vikgpslayer.$(OBJEXT) vikgeoreflayer.$(OBJEXT) \
 	vikfileentry.$(OBJEXT) vikgototool.$(OBJEXT) \
 	vikgotoxmltool.$(OBJEXT) vikgoto.$(OBJEXT) \
-	viktrwlayer_tpwin.$(OBJEXT) viktrwlayer_propwin.$(OBJEXT) \
+	viktrwlayer_export.$(OBJEXT) viktrwlayer_tpwin.$(OBJEXT) \
+	viktrwlayer_wpwin.$(OBJEXT) viktrwlayer_propwin.$(OBJEXT) \
 	viktrwlayer_analysis.$(OBJEXT) viktrwlayer_tracklist.$(OBJEXT) \
 	viktrwlayer_waypointlist.$(OBJEXT) vikrouting.$(OBJEXT) \
 	vikroutingengine.$(OBJEXT) vikroutingwebengine.$(OBJEXT) \
-	vikutils.$(OBJEXT) thumbnails.$(OBJEXT) background.$(OBJEXT) \
-	vikradiogroup.$(OBJEXT) vikcoord.$(OBJEXT) mapcache.$(OBJEXT) \
-	maputils.$(OBJEXT) vikmapsource.$(OBJEXT) \
-	vikmapsourcedefault.$(OBJEXT) vikmapslayer.$(OBJEXT) \
-	vikmapslayer_compat.$(OBJEXT) vikmaptype.$(OBJEXT) \
-	vikslippymapsource.$(OBJEXT) vikwmscmapsource.$(OBJEXT) \
-	viktmsmapsource.$(OBJEXT) gpx.$(OBJEXT) \
-	garminsymbols.$(OBJEXT) acquire.$(OBJEXT) babel.$(OBJEXT) \
-	datasource_file.$(OBJEXT) datasource_gps.$(OBJEXT) \
-	datasource_routing.$(OBJEXT) datasource_gc.$(OBJEXT) \
-	datasource_bfilter.$(OBJEXT) datasource_wikipedia.$(OBJEXT) \
-	datasource_url.$(OBJEXT) googlesearch.$(OBJEXT) dem.$(OBJEXT) \
-	vikdemlayer.$(OBJEXT) vikfilelist.$(OBJEXT) \
+	vikutils.$(OBJEXT) toolbar.$(OBJEXT) thumbnails.$(OBJEXT) \
+	background.$(OBJEXT) vikradiogroup.$(OBJEXT) \
+	vikcoord.$(OBJEXT) mapcache.$(OBJEXT) maputils.$(OBJEXT) \
+	vikmapsource.$(OBJEXT) vikmapsourcedefault.$(OBJEXT) \
+	vikmapslayer.$(OBJEXT) vikmapslayer_compat.$(OBJEXT) \
+	vikmaptype.$(OBJEXT) vikslippymapsource.$(OBJEXT) \
+	vikwmscmapsource.$(OBJEXT) viktmsmapsource.$(OBJEXT) \
+	metatile.$(OBJEXT) gpx.$(OBJEXT) garminsymbols.$(OBJEXT) \
+	acquire.$(OBJEXT) babel.$(OBJEXT) babel_ui.$(OBJEXT) \
+	datasource_file.$(OBJEXT) datasource_geojson.$(OBJEXT) \
+	datasource_gps.$(OBJEXT) datasource_routing.$(OBJEXT) \
+	datasource_gc.$(OBJEXT) datasource_bfilter.$(OBJEXT) \
+	datasource_wikipedia.$(OBJEXT) datasource_url.$(OBJEXT) \
+	googlesearch.$(OBJEXT) dem.$(OBJEXT) vikdemlayer.$(OBJEXT) \
+	vikdatetime_edit_dialog.$(OBJEXT) vikfilelist.$(OBJEXT) \
 	vikexttool.$(OBJEXT) vikexttools.$(OBJEXT) \
 	vikwebtool.$(OBJEXT) vikwebtoolcenter.$(OBJEXT) \
-	vikwebtoolbounds.$(OBJEXT) vikexttool_datasources.$(OBJEXT) \
+	vikwebtoolbounds.$(OBJEXT) vikwebtoolformat.$(OBJEXT) \
+	vikexttool_datasources.$(OBJEXT) \
 	vikwebtool_datasource.$(OBJEXT) dems.$(OBJEXT) \
 	srtm_continent.$(OBJEXT) uibuilder.$(OBJEXT) \
 	print-preview.$(OBJEXT) print.$(OBJEXT) \
 	viklayer_defaults.$(OBJEXT) settings.$(OBJEXT) \
-	preferences.$(OBJEXT) $(am__objects_1) $(am__objects_2) \
+	preferences.$(OBJEXT) misc/strtod.$(OBJEXT) \
+	misc/kdtree.$(OBJEXT) $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
-	$(am__objects_6) $(am__objects_7) spotmaps.$(OBJEXT) \
-	$(am__objects_8)
+	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
+	$(am__objects_9) $(am__objects_10)
 libviking_a_OBJECTS = $(am_libviking_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(desktopdir)"
 PROGRAMS = $(bin_PROGRAMS)
@@ -264,7 +296,7 @@ viking_OBJECTS = $(am_viking_OBJECTS)
 viking_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 viking_DEPENDENCIES = libviking.a $(am__DEPENDENCIES_1) \
-	icons/libicons.a $(am__append_9)
+	icons/libicons.a $(am__append_11)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -281,10 +313,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
@@ -297,6 +325,19 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_@AM_V@)
+am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
+CXXLD = $(CXX)
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
+am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
 SOURCES = $(libviking_a_SOURCES) $(viking_SOURCES)
 DIST_SOURCES = $(am__libviking_a_SOURCES_DIST) $(viking_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
@@ -412,6 +453,10 @@ CFLAGS = @CFLAGS@
 CONFIG_STATUS_DEPENDENCIES = @CONFIG_STATUS_DEPENDENCIES@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
+CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DB2MAN_XSL = @DB2MAN_XSL@
@@ -427,10 +472,12 @@ EXEEXT = @EXEEXT@
 EXPAT_CFLAGS = @EXPAT_CFLAGS@
 EXPAT_LIBS = @EXPAT_LIBS@
 GDK_PIXBUF_CSOURCE = @GDK_PIXBUF_CSOURCE@
+GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GLIB_MKENUMS = @GLIB_MKENUMS@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
+GMSGFMT_015 = @GMSGFMT_015@
 GREP = @GREP@
 GTKDOC_CHECK = @GTKDOC_CHECK@
 GTKDOC_CHECK_PATH = @GTKDOC_CHECK_PATH@
@@ -455,17 +502,23 @@ INTLTOOL_V_MERGE = @INTLTOOL_V_MERGE@
 INTLTOOL_V_MERGE_OPTIONS = @INTLTOOL_V_MERGE_OPTIONS@
 INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
+INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 LDFLAGS = @LDFLAGS@
 LIBCURL = @LIBCURL@
 LIBCURL_CPPFLAGS = @LIBCURL_CPPFLAGS@
+LIBICONV = @LIBICONV@
+LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LN_S = @LN_S@
+LTLIBICONV = @LTLIBICONV@
+LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
+MSGFMT_015 = @MSGFMT_015@
 MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 OBJEXT = @OBJEXT@
@@ -495,6 +548,8 @@ STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 XGETTEXT = @XGETTEXT@
+XGETTEXT_015 = @XGETTEXT_015@
+XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
 XP = @XP@
 _libcurl_config = @_libcurl_config@
 abs_builddir = @abs_builddir@
@@ -502,20 +557,29 @@ abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -549,65 +613,73 @@ EXTRA_DIST = docbook2documenters.xsl vikenumtypes.h.template \
 ENUM_H_FILES = \
 	vikviewport.h
 
-
-#if SPOTMAPS
-libviking_a_SOURCES = bbox.h modules.h modules.c curl_download.c \
-	curl_download.h compression.c compression.h menu.xml.h \
-	degrees_converters.c degrees_converters.h globals.c globals.h \
-	viking.h mapcoord.h config.h viktrack.c viktrack.h \
-	vikwaypoint.c vikwaypoint.h clipboard.c clipboard.h coords.c \
-	coords.h gpsmapper.c gpsmapper.h gpspoint.c gpspoint.h dir.c \
+libviking_a_SOURCES = bbox.h map_ids.h modules.h modules.c \
+	curl_download.c curl_download.h compression.c compression.h \
+	menu.xml.h degrees_converters.c degrees_converters.h globals.c \
+	globals.h viking.h mapcoord.h config.h vik_compat.c \
+	vik_compat.h viktrack.c viktrack.h vikwaypoint.c vikwaypoint.h \
+	clipboard.c clipboard.h coords.c coords.h gpsmapper.c \
+	gpsmapper.h gpspoint.c gpspoint.h geojson.c geojson.h dir.c \
 	dir.h file.c file.h fileutils.c fileutils.h authors.h \
-	documenters.h dialog.c dialog.h util.c util.h download.c \
-	download.h vikenumtypes.c vikenumtypes.h viktreeview.c \
-	viktreeview.h viktrwlayer.c viktrwlayer.h viklayer.c \
-	viklayer.h viklayerspanel.c viklayerspanel.h vikcoordlayer.c \
-	vikcoordlayer.h vikstatus.c vikstatus.h vikwindow.c \
-	vikwindow.h vikviewport.c vikviewport.h vikaggregatelayer.c \
-	vikaggregatelayer.h vikgobjectbuilder.c vikgobjectbuilder.h \
-	vikgpslayer.c vikgpslayer.h vikgeoreflayer.c vikgeoreflayer.h \
-	vikfileentry.c vikfileentry.h vikgototool.c vikgototool.h \
-	vikgotoxmltool.c vikgotoxmltool.h vikgoto.c vikgoto.h \
-	viktrwlayer_tpwin.c viktrwlayer_tpwin.h viktrwlayer_propwin.c \
+	documenters.h dialog.c dialog.h util.c util.h ui_util.c \
+	ui_util.h download.c download.h jpg.c jpg.h vikenumtypes.c \
+	vikenumtypes.h viktreeview.c viktreeview.h viktrwlayer.c \
+	viktrwlayer.h viklayer.c viklayer.h viklayerspanel.c \
+	viklayerspanel.h vikcoordlayer.c vikcoordlayer.h vikstatus.c \
+	vikstatus.h vikwindow.c vikwindow.h vikviewport.c \
+	vikviewport.h vikaggregatelayer.c vikaggregatelayer.h \
+	vikgobjectbuilder.c vikgobjectbuilder.h vikgpslayer.c \
+	vikgpslayer.h vikgeoreflayer.c vikgeoreflayer.h vikfileentry.c \
+	vikfileentry.h vikgototool.c vikgototool.h vikgotoxmltool.c \
+	vikgotoxmltool.h vikgoto.c vikgoto.h viktrwlayer_export.c \
+	viktrwlayer_export.h viktrwlayer_tpwin.c viktrwlayer_tpwin.h \
+	viktrwlayer_wpwin.c viktrwlayer_wpwin.h viktrwlayer_propwin.c \
 	viktrwlayer_propwin.h viktrwlayer_analysis.c \
 	viktrwlayer_analysis.h viktrwlayer_tracklist.c \
 	viktrwlayer_tracklist.h viktrwlayer_waypointlist.c \
 	viktrwlayer_waypointlist.h vikrouting.c vikrouting.h \
 	vikroutingengine.c vikroutingengine.h vikroutingwebengine.c \
-	vikroutingwebengine.h vikutils.c vikutils.h thumbnails.c \
-	thumbnails.h background.c background.h vikradiogroup.c \
-	vikradiogroup.h vikcoord.c vikcoord.h mapcache.c mapcache.h \
-	maputils.c maputils.h vikmapsource.c vikmapsource.h \
-	vikmapsourcedefault.c vikmapsourcedefault.h vikmapslayer.c \
-	vikmapslayer.h vikmapslayer_compat.c vikmapslayer_compat.h \
-	vikmaptype.c vikmaptype.h vikslippymapsource.c \
-	vikslippymapsource.h vikwmscmapsource.c vikwmscmapsource.h \
-	viktmsmapsource.c viktmsmapsource.h gpx.c gpx.h \
+	vikroutingwebengine.h vikutils.c vikutils.h toolbar.c \
+	toolbar.h toolbar.xml.h thumbnails.c thumbnails.h background.c \
+	background.h vikradiogroup.c vikradiogroup.h vikcoord.c \
+	vikcoord.h mapcache.c mapcache.h maputils.c maputils.h \
+	vikmapsource.c vikmapsource.h vikmapsourcedefault.c \
+	vikmapsourcedefault.h vikmapslayer.c vikmapslayer.h \
+	vikmapslayer_compat.c vikmapslayer_compat.h vikmaptype.c \
+	vikmaptype.h vikslippymapsource.c vikslippymapsource.h \
+	vikwmscmapsource.c vikwmscmapsource.h viktmsmapsource.c \
+	viktmsmapsource.h metatile.c metatile.h gpx.c gpx.h \
 	garminsymbols.c garminsymbols.h acquire.c acquire.h babel.c \
-	babel.h datasource_file.c datasource_gps.c datasource_gps.h \
+	babel.h babel_ui.c babel_ui.h datasource_file.c \
+	datasource_geojson.c datasource_gps.c datasource_gps.h \
 	datasource_routing.c datasource_gc.c datasource_bfilter.c \
 	datasource_wikipedia.c datasource_url.c datasources.h \
 	googlesearch.c googlesearch.h dem.c dem.h vikdemlayer.h \
-	vikdemlayer.c vikfilelist.c vikfilelist.h vikexttool.c \
-	vikexttool.h vikexttools.c vikexttools.h vikwebtool.c \
-	vikwebtool.h vikwebtoolcenter.c vikwebtoolcenter.h \
-	vikwebtoolbounds.c vikwebtoolbounds.h vikexttool_datasources.c \
+	vikdemlayer.c vikdatetime_edit_dialog.c \
+	vikdatetime_edit_dialog.h vikfilelist.c vikfilelist.h \
+	vikexttool.c vikexttool.h vikexttools.c vikexttools.h \
+	vikwebtool.c vikwebtool.h vikwebtoolcenter.c \
+	vikwebtoolcenter.h vikwebtoolbounds.c vikwebtoolbounds.h \
+	vikwebtoolformat.c vikwebtoolformat.h vikexttool_datasources.c \
 	vikexttool_datasources.h vikwebtool_datasource.c \
 	vikwebtool_datasource.h dems.c dems.h srtm_continent.c \
 	uibuilder.c uibuilder.h print-preview.c print-preview.h \
 	print.c print.h viklayer_defaults.c viklayer_defaults.h \
 	settings.c settings.h preferences.c preferences.h \
+	misc/strtod.c misc/strtod.h misc/kdtree.c misc/kdtree.h \
 	$(am__append_1) $(am__append_2) $(am__append_3) \
 	$(am__append_4) $(am__append_5) $(am__append_6) \
-	$(am__append_7) spotmaps.c spotmaps.h $(am__append_8)
+	$(am__append_7) $(am__append_8) $(am__append_9) \
+	$(am__append_10)
 viking_SOURCES = main.c
 LDADD = libviking.a $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ \
-	icons/libicons.a $(am__append_9)
+	icons/libicons.a $(am__append_11)
 AM_CFLAGS = -Wall -g -D_GNU_SOURCE \
 	$(PACKAGE_CFLAGS) \
 	@EXPAT_CFLAGS@ @LIBCURL_CPPFLAGS@
 
 AM_CPPFLAGS = \
+	$(PACKAGE_CFLAGS) \
 	-DVIKING_DATADIR=\""$(pkgdatadir)"\" \
 	-DVIKING_SYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"
 
@@ -619,7 +691,7 @@ all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
+.SUFFIXES: .c .cpp .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -668,6 +740,26 @@ distclean-hdr:
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+misc/$(am__dirstamp):
+	@$(MKDIR_P) misc
+	@: > misc/$(am__dirstamp)
+misc/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) misc/$(DEPDIR)
+	@: > misc/$(DEPDIR)/$(am__dirstamp)
+misc/strtod.$(OBJEXT): misc/$(am__dirstamp) \
+	misc/$(DEPDIR)/$(am__dirstamp)
+misc/kdtree.$(OBJEXT): misc/$(am__dirstamp) \
+	misc/$(DEPDIR)/$(am__dirstamp)
+libjpeg/$(am__dirstamp):
+	@$(MKDIR_P) libjpeg
+	@: > libjpeg/$(am__dirstamp)
+libjpeg/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) libjpeg/$(DEPDIR)
+	@: > libjpeg/$(DEPDIR)/$(am__dirstamp)
+libjpeg/jpeg-data.$(OBJEXT): libjpeg/$(am__dirstamp) \
+	libjpeg/$(DEPDIR)/$(am__dirstamp)
+libjpeg/jpeg-marker.$(OBJEXT): libjpeg/$(am__dirstamp) \
+	libjpeg/$(DEPDIR)/$(am__dirstamp)
 
 libviking.a: $(libviking_a_OBJECTS) $(libviking_a_DEPENDENCIES) $(EXTRA_libviking_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libviking.a
@@ -722,12 +814,15 @@ viking$(EXEEXT): $(viking_OBJECTS) $(viking_DEPENDENCIES) $(EXTRA_viking_DEPENDE
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f libjpeg/*.$(OBJEXT)
+	-rm -f misc/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/acquire.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/babel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/babel_ui.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/background.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bing.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bingmapsource.Po@am__quote@
@@ -739,6 +834,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/datasource_bfilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/datasource_file.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/datasource_gc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/datasource_geojson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/datasource_geotag.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/datasource_gps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/datasource_osm.Po@am__quote@
@@ -756,6 +852,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fileutils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/garminsymbols.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geojson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geonames.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geonamessearch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geotag_exif.Po@am__quote@
@@ -765,11 +862,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpsmapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpspoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpx.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpeg-data.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpeg-marker.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapcache.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapnik_interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/maputils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/metatile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/modules.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/osm-traces.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/osm.Po@am__quote@
@@ -777,16 +875,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print-preview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/settings.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spotmaps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/srtm_continent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/terraserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/terraservermapsource.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thumbnails.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/toolbar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ui_util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uibuilder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vik_compat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikaggregatelayer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikcoord.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikcoordlayer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikdatetime_edit_dialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikdemlayer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikenumtypes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikexttool.Po@am__quote@
@@ -803,6 +904,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viklayer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viklayer_defaults.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viklayerspanel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikmapniklayer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikmapslayer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikmapslayer_compat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikmapsource.Po@am__quote@
@@ -819,11 +921,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktreeview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer_analysis.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer_export.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer_geotag.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer_propwin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer_tpwin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer_tracklist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer_waypointlist.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viktrwlayer_wpwin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikutils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikviewport.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwaypoint.Po@am__quote@
@@ -831,50 +935,45 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwebtool_datasource.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwebtoolbounds.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwebtoolcenter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwebtoolformat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vikwmscmapsource.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@libjpeg/$(DEPDIR)/jpeg-data.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@libjpeg/$(DEPDIR)/jpeg-marker.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/kdtree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/strtod.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-jpeg-data.o: libjpeg/jpeg-data.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jpeg-data.o -MD -MP -MF $(DEPDIR)/jpeg-data.Tpo -c -o jpeg-data.o `test -f 'libjpeg/jpeg-data.c' || echo '$(srcdir)/'`libjpeg/jpeg-data.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/jpeg-data.Tpo $(DEPDIR)/jpeg-data.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libjpeg/jpeg-data.c' object='jpeg-data.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jpeg-data.o `test -f 'libjpeg/jpeg-data.c' || echo '$(srcdir)/'`libjpeg/jpeg-data.c
+.cpp.o:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
-jpeg-data.obj: libjpeg/jpeg-data.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jpeg-data.obj -MD -MP -MF $(DEPDIR)/jpeg-data.Tpo -c -o jpeg-data.obj `if test -f 'libjpeg/jpeg-data.c'; then $(CYGPATH_W) 'libjpeg/jpeg-data.c'; else $(CYGPATH_W) '$(srcdir)/libjpeg/jpeg-data.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/jpeg-data.Tpo $(DEPDIR)/jpeg-data.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libjpeg/jpeg-data.c' object='jpeg-data.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jpeg-data.obj `if test -f 'libjpeg/jpeg-data.c'; then $(CYGPATH_W) 'libjpeg/jpeg-data.c'; else $(CYGPATH_W) '$(srcdir)/libjpeg/jpeg-data.c'; fi`
-
-jpeg-marker.o: libjpeg/jpeg-marker.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jpeg-marker.o -MD -MP -MF $(DEPDIR)/jpeg-marker.Tpo -c -o jpeg-marker.o `test -f 'libjpeg/jpeg-marker.c' || echo '$(srcdir)/'`libjpeg/jpeg-marker.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/jpeg-marker.Tpo $(DEPDIR)/jpeg-marker.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libjpeg/jpeg-marker.c' object='jpeg-marker.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jpeg-marker.o `test -f 'libjpeg/jpeg-marker.c' || echo '$(srcdir)/'`libjpeg/jpeg-marker.c
-
-jpeg-marker.obj: libjpeg/jpeg-marker.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jpeg-marker.obj -MD -MP -MF $(DEPDIR)/jpeg-marker.Tpo -c -o jpeg-marker.obj `if test -f 'libjpeg/jpeg-marker.c'; then $(CYGPATH_W) 'libjpeg/jpeg-marker.c'; else $(CYGPATH_W) '$(srcdir)/libjpeg/jpeg-marker.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/jpeg-marker.Tpo $(DEPDIR)/jpeg-marker.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libjpeg/jpeg-marker.c' object='jpeg-marker.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jpeg-marker.obj `if test -f 'libjpeg/jpeg-marker.c'; then $(CYGPATH_W) 'libjpeg/jpeg-marker.c'; else $(CYGPATH_W) '$(srcdir)/libjpeg/jpeg-marker.c'; fi`
+.cpp.obj:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 install-desktopDATA: $(desktop_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(desktop_DATA)'; test -n "$(desktopdir)" || list=; \
@@ -1088,6 +1187,10 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f libjpeg/$(DEPDIR)/$(am__dirstamp)
+	-rm -f libjpeg/$(am__dirstamp)
+	-rm -f misc/$(DEPDIR)/$(am__dirstamp)
+	-rm -f misc/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1099,7 +1202,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-recursive
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) libjpeg/$(DEPDIR) misc/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -1145,7 +1248,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-recursive
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) libjpeg/$(DEPDIR) misc/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

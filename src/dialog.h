@@ -26,9 +26,6 @@
 #include <gtk/gtk.h>
 
 #include "coords.h"
-#include "vikwaypoint.h"
-#include "vikcoord.h"
-#include "viktrwlayer.h"
 
 G_BEGIN_DECLS
 
@@ -47,21 +44,17 @@ void a_dialog_msg ( GtkWindow *parent, gint type, const gchar *info, const gchar
 
 void a_dialog_response_accept ( GtkDialog *dialog );
 
+void a_dialog_list ( GtkWindow *parent, const gchar *title, GArray *array, gint padding );
+
 void a_dialog_about ( GtkWindow *parent );
 
 /* okay, everthing below here is an architechtural flaw. */
 gboolean a_dialog_goto_latlon ( GtkWindow *parent, struct LatLon *ll, const struct LatLon *old );
 gboolean a_dialog_goto_utm ( GtkWindow *parent, struct UTM *utm, const struct UTM *old );
 
-/* Specify if a new waypoint or not */
-/* If a new waypoint then it uses the default_name for the suggested name allowing the user to change it.
-    The name to use is returned
-   When an existing waypoint the name is shown but is not allowed to be changed and NULL is returned
- */
-gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikTrwLayer *vtl, VikWaypoint *wp, VikCoordMode coord_mode, gboolean is_new, gboolean *updated );
-
 gchar *a_dialog_new_track ( GtkWindow *parent, gchar *default_name, gboolean is_route );
 
+gchar *a_dialog_get_date ( GtkWindow *parent, const gchar *title );
 gboolean a_dialog_yes_or_no ( GtkWindow *parent, const gchar *message, const gchar *extra );
 gboolean a_dialog_custom_zoom ( GtkWindow *parent, gdouble *xmpp, gdouble *ympp );
 gboolean a_dialog_time_threshold ( GtkWindow *parent, gchar *title_text, gchar *label_text, guint *thr );

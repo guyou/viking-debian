@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
  * Copyright (C) 2012, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2012-2013, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,9 @@
 #endif
 #include "viking.h"
 
+#include "jpg.h"
 #include "gpx.h"
+#include "geojson.h"
 #include "babel.h"
 
 #include <string.h>
@@ -42,6 +45,7 @@
 #include <glib/gi18n.h>
 
 #include "file.h"
+#include "misc/strtod.h"
 
 #define TEST_BOOLEAN(str) (! ((str)[0] == '\0' || (str)[0] == '0' || (str)[0] == 'n' || (str)[0] == 'N' || (str)[0] == 'f' || (str)[0] == 'F') )
 #define VIK_MAGIC "#VIK"
@@ -264,7 +268,7 @@ static void string_list_set_param (gint i, GList *list, gpointer *layer_and_vp)
  * TODO flow up line number(s) / error messages of problems encountered...
  *
  */
-static gboolean file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
+static gboolean file_read ( VikAggregateLayer *top, FILE *f, const gchar *dirpath, VikViewport *vp )
 {
   Stack *stack;
   struct LatLon ll = { 0.0, 0.0 };
@@ -340,7 +344,7 @@ static gboolean file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
           }
           else
           {
-            stack->data = (gpointer) vik_layer_create ( type, vp, NULL, FALSE );
+            stack->data = (gpointer) vik_layer_create ( type, vp, FALSE );
             params = vik_layer_get_interface(type)->params;
             params_count = vik_layer_get_interface(type)->params_count;
           }
@@ -383,7 +387,7 @@ static gboolean file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
         if ( stack->data && vik_layer_get_interface(VIK_LAYER(stack->data)->type)->read_file_data )
         {
           /* must read until hits ~EndLayerData */
-          if ( ! vik_layer_get_interface(VIK_LAYER(stack->data)->type)->read_file_data ( VIK_LAYER(stack->data), f ) )
+          if ( ! vik_layer_get_interface(VIK_LAYER(stack->data)->type)->read_file_data ( VIK_LAYER(stack->data), f, dirpath ) )
             successful_read = FALSE;
         }
         else
@@ -430,13 +434,13 @@ static gboolean file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
         // However we'll still carry and attempt to read whatever we can
       }
       else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "xmpp", eq_pos ) == 0) /* "hard coded" params: global & for all layer-types */
-        vik_viewport_set_xmpp ( VIK_VIEWPORT(vp), strtod ( line+5, NULL ) );
+        vik_viewport_set_xmpp ( VIK_VIEWPORT(vp), strtod_i8n ( line+5, NULL ) );
       else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "ympp", eq_pos ) == 0)
-        vik_viewport_set_ympp ( VIK_VIEWPORT(vp), strtod ( line+5, NULL ) );
+        vik_viewport_set_ympp ( VIK_VIEWPORT(vp), strtod_i8n ( line+5, NULL ) );
       else if ( stack->under == NULL && eq_pos == 3 && strncasecmp ( line, "lat", eq_pos ) == 0 )
-        ll.lat = strtod ( line+4, NULL );
+        ll.lat = strtod_i8n ( line+4, NULL );
       else if ( stack->under == NULL && eq_pos == 3 && strncasecmp ( line, "lon", eq_pos ) == 0 )
-        ll.lon = strtod ( line+4, NULL );
+        ll.lon = strtod_i8n ( line+4, NULL );
       else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "mode", eq_pos ) == 0 && strcasecmp ( line+5, "utm" ) == 0)
         vik_viewport_set_drawmode ( VIK_VIEWPORT(vp), VIK_VIEWPORT_DRAWMODE_UTM);
       else if ( stack->under == NULL && eq_pos == 4 && strncasecmp ( line, "mode", eq_pos ) == 0 && strcasecmp ( line+5, "expedia" ) == 0)
@@ -497,7 +501,7 @@ static gboolean file_read ( VikAggregateLayer *top, FILE *f, VikViewport *vp )
             } else {
               switch ( params[i].type )
               {
-                case VIK_LAYER_PARAM_DOUBLE: x.d = strtod(line, NULL); break;
+                case VIK_LAYER_PARAM_DOUBLE: x.d = strtod_i8n(line, NULL); break;
                 case VIK_LAYER_PARAM_UINT: x.u = strtoul(line, NULL, 10); break;
                 case VIK_LAYER_PARAM_INT: x.i = strtol(line, NULL, 10); break;
 	        case VIK_LAYER_PARAM_BOOLEAN: x.b = TEST_BOOLEAN(line); break;
@@ -545,7 +549,7 @@ name=this
   }
 
   if ( ll.lat != 0.0 || ll.lon != 0.0 )
-    vik_viewport_set_center_latlon ( VIK_VIEWPORT(vp), &ll );
+    vik_viewport_set_center_latlon ( VIK_VIEWPORT(vp), &ll, TRUE );
 
   if ( ( ! VIK_LAYER(top)->visible ) && VIK_LAYER(top)->realized )
     vik_treeview_item_set_visible ( VIK_LAYER(top)->vt, &(VIK_LAYER(top)->iter), FALSE ); 
@@ -573,7 +577,7 @@ if "[LayerData]"
 
 /* ---------------------------------------------------- */
 
-static FILE *xfopen ( const char *fn, const char *mode )
+static FILE *xfopen ( const char *fn )
 {
   if ( strcmp(fn,"-") == 0 )
     return stdin;
@@ -595,12 +599,53 @@ static void xfclose ( FILE *f )
 gboolean check_file_magic_vik ( const gchar *filename )
 {
   gboolean result = FALSE;
-  FILE *ff = xfopen ( filename, "r" );
+  FILE *ff = xfopen ( filename );
   if ( ff ) {
     result = check_magic ( ff, VIK_MAGIC );
     xfclose ( ff );
   }
   return result;
+}
+
+/**
+ * append_file_ext:
+ *
+ * Append a file extension, if not already present.
+ *
+ * Returns: a newly allocated string
+ */
+gchar *append_file_ext ( const gchar *filename, VikFileType_t type )
+{
+  gchar *new_name = NULL;
+  const gchar *ext = NULL;
+
+  /* Select an extension */
+  switch (type)
+  {
+  case FILE_TYPE_GPX:
+    ext = ".gpx";
+    break;
+  case FILE_TYPE_KML:
+    ext = ".kml";
+    break;
+  case FILE_TYPE_GEOJSON:
+    ext = ".geojson";
+    break;
+  case FILE_TYPE_GPSMAPPER:
+  case FILE_TYPE_GPSPOINT:
+  default:
+    /* Do nothing, ext already set to NULL */
+    break;
+  }
+
+  /* Do */
+  if ( ext != NULL && ! a_file_check_ext ( filename, ext ) )
+    new_name = g_strconcat ( filename, ext, NULL );
+  else
+    /* Simply duplicate */
+    new_name = g_strdup ( filename );
+
+  return new_name;
 }
 
 VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filename_or_uri )
@@ -615,38 +660,25 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
     filename = filename + 7;
     g_debug ( "Loading file %s from URI %s", filename, filename_or_uri );
   }
-  FILE *f = xfopen ( filename, "r" );
+  FILE *f = xfopen ( filename );
 
   if ( ! f )
     return LOAD_TYPE_READ_FAILURE;
 
   VikLoadType_t load_answer = LOAD_TYPE_OTHER_SUCCESS;
 
+  gchar *dirpath = g_path_get_dirname ( filename );
   // Attempt loading the primary file type first - our internal .vik file:
   if ( check_magic ( f, VIK_MAGIC ) )
   {
-    // Enables relative paths in a .vik file to work
-    gchar *cwd = g_get_current_dir();
-    gchar *dir = g_path_get_dirname ( filename );
-    if ( dir ) {
-      if ( g_chdir ( dir ) ) {
-        g_warning ( "Could not change directory to %s", dir );
-      }
-      g_free (dir);
-    }
-
-    if ( file_read ( top, f, vp ) )
+    if ( file_read ( top, f, dirpath, vp ) )
       load_answer = LOAD_TYPE_VIK_SUCCESS;
     else
       load_answer = LOAD_TYPE_VIK_FAILURE_NON_FATAL;
-
-    // Restore previous working directory
-    if ( cwd ) {
-      if ( g_chdir ( cwd ) ) {
-        g_warning ( "Could not return to directory %s", cwd );
-      }
-      g_free (cwd);
-    }
+  }
+  else if ( a_jpg_magic_check ( filename ) ) {
+    if ( ! a_jpg_load_file ( top, filename, vp ) )
+      load_answer = LOAD_TYPE_UNSUPPORTED_FAILURE;
   }
   else
   {
@@ -654,10 +686,11 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
 	//  must be loaded into a new TrackWaypoint layer (hence it be created)
     gboolean success = TRUE; // Detect load failures - mainly to remove the layer created as it's not required
 
-    VikLayer *vtl = vik_layer_create ( VIK_LAYER_TRW, vp, NULL, FALSE );
+    VikLayer *vtl = vik_layer_create ( VIK_LAYER_TRW, vp, FALSE );
+    vik_layer_rename ( vtl, a_file_basename ( filename ) );
 
     // In fact both kml & gpx files start the same as they are in xml
-    if ( check_file_ext ( filename, ".kml" ) && check_magic ( f, GPX_MAGIC ) ) {
+    if ( a_file_check_ext ( filename, ".kml" ) && check_magic ( f, GPX_MAGIC ) ) {
       // Implicit Conversion
       if ( ! ( success = a_babel_convert_from ( VIK_TRW_LAYER(vtl), "-i kml", filename, NULL, NULL, NULL ) ) ) {
         load_answer = LOAD_TYPE_GPSBABEL_FAILURE;
@@ -665,18 +698,19 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
     }
     // NB use a extension check first, as a GPX file header may have a Byte Order Mark (BOM) in it
     //    - which currently confuses our check_magic function
-    else if ( check_file_ext ( filename, ".gpx" ) || check_magic ( f, GPX_MAGIC ) ) {
+    else if ( a_file_check_ext ( filename, ".gpx" ) || check_magic ( f, GPX_MAGIC ) ) {
       if ( ! ( success = a_gpx_read_file ( VIK_TRW_LAYER(vtl), f ) ) ) {
         load_answer = LOAD_TYPE_GPX_FAILURE;
       }
     }
     else {
       // Try final supported file type
-      if ( ! ( success = a_gpspoint_read_file ( VIK_TRW_LAYER(vtl), f ) ) ) {
-		// Failure here means we don't know how to handle the file
+      if ( ! ( success = a_gpspoint_read_file ( VIK_TRW_LAYER(vtl), f, dirpath ) ) ) {
+        // Failure here means we don't know how to handle the file
         load_answer = LOAD_TYPE_UNSUPPORTED_FAILURE;
-	  }
+      }
     }
+    g_free ( dirpath );
 
     // Clean up when we can't handle the file
     if ( ! success ) {
@@ -685,7 +719,6 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
     }
     else {
       // Complete the setup from the successful load
-      vik_layer_rename ( vtl, a_file_basename ( filename ) );
       vik_layer_post_read ( vtl, vp, TRUE );
       vik_aggregate_layer_add_layer ( top, vtl, FALSE );
       vik_trw_layer_auto_set_view ( VIK_TRW_LAYER(vtl), vp );
@@ -735,9 +768,9 @@ gboolean a_file_save ( VikAggregateLayer *top, gpointer vp, const gchar *filenam
 
 
 /* example: 
-     gboolean is_gpx = check_file_ext ( "a/b/c.gpx", ".gpx" );
+     gboolean is_gpx = a_file_check_ext ( "a/b/c.gpx", ".gpx" );
 */
-gboolean check_file_ext ( const gchar *filename, const gchar *fileext )
+gboolean a_file_check_ext ( const gchar *filename, const gchar *fileext )
 {
   g_return_val_if_fail ( filename != NULL, FALSE );
   g_return_val_if_fail ( fileext && fileext[0]=='.', FALSE );
@@ -769,6 +802,8 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
   FILE *f = g_fopen ( filename, "w" );
   if ( f )
   {
+    gboolean result = TRUE;
+
     if ( trk ) {
       switch ( file_type ) {
         case FILE_TYPE_GPX:
@@ -789,6 +824,9 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
           break;
         case FILE_TYPE_GPSPOINT:
           a_gpspoint_write_file ( vtl, f );
+          break;
+        case FILE_TYPE_GEOJSON:
+          result = a_geojson_write_file ( vtl, f );
           break;
         case FILE_TYPE_KML:
 	  fclose ( f );
@@ -812,9 +850,25 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
     }
     fclose ( f );
     f = NULL;
-    return TRUE;
+    return result;
   }
   return FALSE;
+}
+
+/**
+ * a_file_export_babel:
+ */
+gboolean a_file_export_babel ( VikTrwLayer *vtl, const gchar *filename, const gchar *format,
+                               gboolean tracks, gboolean routes, gboolean waypoints )
+{
+  gchar *args = g_strdup_printf("%s %s %s -o %s",
+                                tracks ? "-t" : "",
+                                routes ? "-r" : "",
+                                waypoints ? "-w" : "",
+                                format);
+  gboolean result = a_babel_convert_to ( vtl, NULL, args, filename, NULL, NULL );
+  g_free(args);
+  return result;
 }
 
 /**
@@ -823,6 +877,24 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
 char *file_realpath ( const char *path, char *real )
 {
   return realpath ( path, real );
+}
+
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 1024
+#endif
+/**
+ * Always return the canonical filename in a newly allocated string
+ */
+char *file_realpath_dup ( const char *path )
+{
+	char real[MAXPATHLEN];
+
+	g_return_val_if_fail(path != NULL, NULL);
+
+	if (file_realpath(path, real))
+		return g_strdup(real);
+
+	return g_strdup(path);
 }
 
 /**
@@ -836,10 +908,6 @@ char *file_realpath ( const char *path, char *real )
 // rfisher@iee.org
 // http://come.to/robfisher
 
-// defines
-#ifndef MAXPATHLEN
-#define MAXPATHLEN 1024
-#endif
 // The number of characters at the start of an absolute filename.  e.g. in DOS,
 // absolute filenames start with "X:\" so this value should be 3, in UNIX they start
 // with "\" so this value should be 1.

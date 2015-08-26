@@ -136,7 +136,7 @@ static VikToolInterface dem_tools[] = {
     (VikToolMouseFunc) dem_layer_download_click, NULL,  (VikToolMouseFunc) dem_layer_download_release,
     (VikToolKeyFunc) NULL,
     FALSE,
-    GDK_CURSOR_IS_PIXMAP, &cursor_demdl_pixbuf },
+    GDK_CURSOR_IS_PIXMAP, &cursor_demdl_pixbuf, NULL },
 };
 
 
@@ -208,6 +208,8 @@ VikLayerInterface vik_dem_layer_interface = {
   (VikLayerFuncDraw)                    dem_layer_draw,
   (VikLayerFuncChangeCoordMode)         NULL,
 
+  (VikLayerFuncGetTimestamp)            NULL,
+
   (VikLayerFuncSetMenuItemsSelection)   NULL,
   (VikLayerFuncGetMenuItemsSelection)   NULL,
 
@@ -225,6 +227,7 @@ VikLayerInterface vik_dem_layer_interface = {
 
   (VikLayerFuncSetParam)                dem_layer_set_param,
   (VikLayerFuncGetParam)                dem_layer_get_param,
+  (VikLayerFuncChangeParam)             NULL,
 
   (VikLayerFuncReadFileData)            NULL,
   (VikLayerFuncWriteFileData)           NULL,
@@ -423,7 +426,8 @@ gboolean dem_layer_set_param ( VikDEMLayer *vdl, guint16 id, VikLayerParamData d
         dltd->vdl = vdl;
         dltd->vdl->files = data.sl;
 
-        a_background_thread ( VIK_GTK_WINDOW_FROM_WIDGET(vp),
+        a_background_thread ( BACKGROUND_POOL_LOCAL,
+                              VIK_GTK_WINDOW_FROM_WIDGET(vp),
                               _("DEM Loading"),
                               (vik_thr_func) dem_layer_load_list_thread,
                               dltd,
@@ -433,6 +437,7 @@ gboolean dem_layer_set_param ( VikDEMLayer *vdl, guint16 id, VikLayerParamData d
       }
       break;
     }
+    default: break;
   }
   return TRUE;
 }
@@ -468,6 +473,7 @@ static VikLayerParamData dem_layer_get_param ( VikDEMLayer *vdl, guint16 id, gbo
       else
         rv.d = vdl->max_elev;
       break;
+    default: break;
   }
   return rv;
 }
@@ -949,8 +955,27 @@ static void srtm_dem_download_thread ( DEMDownloadParams *p, gpointer threaddata
 		(intlon >= 0) ? 'E' : 'W',
 		ABS(intlon) );
 
-  static DownloadMapOptions options = { FALSE, FALSE, NULL, 0, a_check_map_file, NULL };
-  a_http_download_get_url ( SRTM_HTTP_SITE, src_fn, p->dest, &options, NULL );
+  static DownloadMapOptions options = { FALSE, FALSE, NULL, 0, a_check_map_file, NULL, NULL };
+  DownloadResult_t result = a_http_download_get_url ( SRTM_HTTP_SITE, src_fn, p->dest, &options, NULL );
+  switch ( result ) {
+    case DOWNLOAD_CONTENT_ERROR:
+    case DOWNLOAD_HTTP_ERROR: {
+      gchar *msg = g_strdup_printf ( _("DEM download failure for %f, %f"), p->lat, p->lon );
+      vik_window_statusbar_update ( (VikWindow*)VIK_GTK_WINDOW_FROM_LAYER(p->vdl), msg, VIK_STATUSBAR_INFO );
+      g_free ( msg );
+      break;
+    }
+    case DOWNLOAD_FILE_WRITE_ERROR: {
+      gchar *msg = g_strdup_printf ( _("DEM write failure for %s"), p->dest );
+      vik_window_statusbar_update ( (VikWindow*)VIK_GTK_WINDOW_FROM_LAYER(p->vdl), msg, VIK_STATUSBAR_INFO );
+      g_free ( msg );
+      break;
+    }
+    case DOWNLOAD_SUCCESS:
+    case DOWNLOAD_NOT_REQUIRED:
+    default:
+      break;
+  }
   g_free ( src_fn );
 }
 
@@ -1157,7 +1182,7 @@ static void dem_download_thread ( DEMDownloadParams *p, gpointer threaddata )
 
 static void free_dem_download_params ( DEMDownloadParams *p )
 {
-  g_mutex_free ( p->mutex );
+  vik_mutex_free ( p->mutex );
   g_free ( p->dest );
   g_free ( p );
 }
@@ -1260,11 +1285,12 @@ static gboolean dem_layer_download_release ( VikDEMLayer *vdl, GdkEventButton *e
       p->lat = ll.lat;
       p->lon = ll.lon;
       p->vdl = vdl;
-      p->mutex = g_mutex_new();
+      p->mutex = vik_mutex_new();
       p->source = vdl->source;
       g_object_weak_ref(G_OBJECT(p->vdl), weak_ref_cb, p );
 
-      a_background_thread ( VIK_GTK_WINDOW_FROM_LAYER(vdl), tmp,
+      a_background_thread ( BACKGROUND_POOL_REMOTE,
+                            VIK_GTK_WINDOW_FROM_LAYER(vdl), tmp,
                             (vik_thr_func) dem_download_thread, p,
                             (vik_thr_free_func) free_dem_download_params, NULL, 1 );
 

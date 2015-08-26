@@ -584,7 +584,7 @@ static gboolean datasource_osm_my_traces_process ( VikTrwLayer *vtl, const gchar
 	//result = read_gpx_files_metadata_xml ( "/tmp/viking-download.GI47PW", xd );
 
 	if ( tmpname ) {
-		g_remove ( tmpname );
+		util_remove ( tmpname );
 		g_free ( tmpname );
 	}
 
@@ -627,7 +627,7 @@ static gboolean datasource_osm_my_traces_process ( VikTrwLayer *vtl, const gchar
 
 		if ( create_new_layer ) {
 			// Have data but no layer - so create one
-			vtlX = VIK_TRW_LAYER ( vik_layer_create ( VIK_LAYER_TRW, vik_window_viewport(adw->vw), NULL, FALSE ) );
+			vtlX = VIK_TRW_LAYER ( vik_layer_create ( VIK_LAYER_TRW, adw->vvp, FALSE ) );
 			if ( ((gpx_meta_data_t*)selected_iterator->data)->name )
 				vik_layer_rename ( VIK_LAYER ( vtlX ), ((gpx_meta_data_t*)selected_iterator->data)->name );
 			else
@@ -644,9 +644,12 @@ static gboolean datasource_osm_my_traces_process ( VikTrwLayer *vtl, const gchar
 			// http://developer.gnome.org/gtk/2.24/GtkProgressBar.html
 
 			got_something = got_something || result;
-			// TODO feedback to UI to inform which traces failed
-			if ( !result )
-				g_warning ( _("Unable to get trace: %s"), url );
+			if ( !result ) {
+				// Report errors to the status bar
+				gchar* msg = g_strdup_printf ( _("Unable to get trace: %s"), url );
+				vik_window_statusbar_update ( adw->vw, msg, VIK_STATUSBAR_INFO );
+				g_free (msg);
+			}
 			g_free ( url );
 		}
 

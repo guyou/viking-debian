@@ -57,6 +57,21 @@ GType vik_trw_layer_get_type ();
 
 typedef struct _VikTrwLayer VikTrwLayer;
 
+typedef struct {
+  gchar *description;
+  gchar *author;
+  //gboolean has_time;
+  gchar *timestamp; // TODO: Consider storing as proper time_t.
+  gchar *keywords; // TODO: handling/storing a GList of individual tags?
+} VikTRWMetadata;
+
+VikTRWMetadata *vik_trw_metadata_new();
+void vik_trw_metadata_free ( VikTRWMetadata *metadata);
+VikTRWMetadata *vik_trw_layer_get_metadata ( VikTrwLayer *vtl );
+void vik_trw_layer_set_metadata ( VikTrwLayer *vtl, VikTRWMetadata *metadata);
+
+gboolean vik_trw_layer_find_date ( VikTrwLayer *vtl, const gchar *date_str, VikCoord *position, VikViewport *vvp, gboolean do_tracks, gboolean select );
+
 /* These are meant for use in file loaders (gpspoint.c, gpx.c, etc).
  * These copy the name, so you should free it if necessary. */
 void vik_trw_layer_filein_add_waypoint ( VikTrwLayer *vtl, gchar *name, VikWaypoint *wp );
@@ -95,6 +110,10 @@ void vik_trw_layer_delete_all_routes ( VikTrwLayer *vtl );
 void trw_layer_cancel_tps_of_track ( VikTrwLayer *vtl, VikTrack *trk );
 
 void vik_trw_layer_reset_waypoints ( VikTrwLayer *vtl );
+
+void vik_trw_layer_draw_highlight ( VikTrwLayer *vtl, VikViewport *vvp );
+void vik_trw_layer_draw_highlight_item ( VikTrwLayer *vtl, VikTrack *trk, VikWaypoint *wpt, VikViewport *vvp );
+void vik_trw_layer_draw_highlight_items ( VikTrwLayer *vtl, GHashTable *trks, GHashTable *wpts, VikViewport *vvp );
 
 // For creating a list of tracks with the corresponding layer it is in
 //  (thus a selection of tracks may be from differing layers)

@@ -72,12 +72,7 @@
 
 #define PIXMAP_THUMB_SIZE  128
 
-#ifndef MAXPATHLEN
-#define MAXPATHLEN 1024
-#endif
-
 static char *md5_hash(const char *message);
-static char *pathdup(const char *path);
 static GdkPixbuf *save_thumbnail(const char *pathname, GdkPixbuf *full);
 static GdkPixbuf *child_create_thumbnail(const gchar *path);
 
@@ -105,7 +100,7 @@ void a_thumbnails_create(const gchar *filename)
 
   if ( ! pixbuf )
     pixbuf = child_create_thumbnail(filename);
-  
+
   if ( pixbuf )
     g_object_unref (  G_OBJECT ( pixbuf ) );
 }
@@ -143,14 +138,14 @@ static GdkPixbuf *child_create_thumbnail(const gchar *path)
 
 	image = gdk_pixbuf_new_from_file(path, NULL);
 	if (!image)
-	  return NULL;
+		return NULL;
 
 	tmpbuf = gdk_pixbuf_apply_embedded_orientation(image);
 	g_object_unref(G_OBJECT(image));
 	image = tmpbuf;
 
 	if (image)
-        {
+	{
 		GdkPixbuf *thumb = save_thumbnail(path, image);
 		g_object_unref ( G_OBJECT ( image ) );
 		return thumb;
@@ -187,11 +182,11 @@ static GdkPixbuf *save_thumbnail(const char *pathname, GdkPixbuf *full)
 	ssize = g_strdup_printf(ST_SIZE_FMT, info.st_size);
 	smtime = g_strdup_printf("%ld", (long) info.st_mtime);
 
-	path = pathdup(pathname);
+	path = file_realpath_dup(pathname);
 	uri = g_strconcat("file://", path, NULL);
 	md5 = md5_hash(uri);
 	g_free(path);
-		
+
 	to = g_string_new(HOME_DIR);
 	g_string_append(to, THUMB_DIR);
 	g_string_append(to, THUMB_SUB_DIR);
@@ -206,19 +201,38 @@ static GdkPixbuf *save_thumbnail(const char *pathname, GdkPixbuf *full)
 
 	g_free(md5);
 
+	// Thumb::URI must be in ISO-8859-1 encoding otherwise gdk_pixbuf_save() will fail
+	// - e.g. if characters such as 'ě' are encountered
+	// Also see http://en.wikipedia.org/wiki/ISO/IEC_8859-1
+	// ATM GLIB Manual doesn't specify in which version this function became available
+	//  find out that it's fairly recent so may break builds without this test
+#if GLIB_CHECK_VERSION(2,40,0)
+	char *thumb_uri = g_str_to_ascii ( uri, NULL );
+#else
+	char *thumb_uri = g_strdup ( uri );
+#endif
 	old_mask = umask(0077);
-	gdk_pixbuf_save(thumb, to->str, "png", NULL,
-			"tEXt::Thumb::Image::Width", swidth,
-			"tEXt::Thumb::Image::Height", sheight,
-			"tEXt::Thumb::Size", ssize,
-			"tEXt::Thumb::MTime", smtime,
-			"tEXt::Thumb::URI", uri,
-			"tEXt::Software", PROJECT,
-			"tEXt::Software::Orientation", orientation ? orientation : "0",
-			NULL);
+	GError *error = NULL;
+	gdk_pixbuf_save(thumb, to->str, "png", &error,
+	                "tEXt::Thumb::Image::Width", swidth,
+	                "tEXt::Thumb::Image::Height", sheight,
+	                "tEXt::Thumb::Size", ssize,
+	                "tEXt::Thumb::MTime", smtime,
+	                "tEXt::Thumb::URI", thumb_uri,
+	                "tEXt::Software", PROJECT,
+	                "tEXt::Software::Orientation", orientation ? orientation : "0",
+	                NULL);
 	umask(old_mask);
+	g_free(thumb_uri);
 
-	/* We create the file ###.png.ROX-Filer-PID and rename it to avoid
+	if (error) {
+		g_warning ( "%s::%s", __FUNCTION__, error->message );
+		g_error_free ( error );
+		g_object_unref ( G_OBJECT(thumb) );
+		thumb = NULL; /* return NULL */
+	}
+	else
+	/* We create the file ###.png.Viking-PID and rename it to avoid
 	 * a race condition if two programs create the same thumb at
 	 * once.
 	 */
@@ -255,11 +269,11 @@ GdkPixbuf *a_thumbnails_get(const gchar *pathname)
 	const char *ssize, *smtime;
 	struct stat info;
 
-	path = pathdup(pathname);
+	path = file_realpath_dup(pathname);
 	uri = g_strconcat("file://", path, NULL);
 	md5 = md5_hash(uri);
 	g_free(uri);
-	
+
 	thumb_path = g_strdup_printf("%s%s%s%s.png", HOME_DIR, THUMB_DIR, THUMB_SUB_DIR, md5);
 
 	g_free(md5);
@@ -292,20 +306,6 @@ out:
 	g_free(path);
 	g_free(thumb_path);
 	return thumb;
-}
-
-/* pathdup() stuff */
-
-static char *pathdup(const char *path)
-{
-	char real[MAXPATHLEN];
-
-	g_return_val_if_fail(path != NULL, NULL);
-
-	if (file_realpath(path, real))
-		return g_strdup(real);
-
-	return g_strdup(path);
 }
 
 /*

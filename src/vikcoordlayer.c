@@ -86,6 +86,8 @@ VikLayerInterface vik_coord_layer_interface = {
   (VikLayerFuncDraw)                    coord_layer_draw,
   (VikLayerFuncChangeCoordMode)         NULL,
 
+  (VikLayerFuncGetTimestamp)            NULL,
+
   (VikLayerFuncSetMenuItemsSelection)   NULL,
   (VikLayerFuncGetMenuItemsSelection)   NULL,
 
@@ -103,6 +105,7 @@ VikLayerInterface vik_coord_layer_interface = {
 
   (VikLayerFuncSetParam)                coord_layer_set_param,
   (VikLayerFuncGetParam)                coord_layer_get_param,
+  (VikLayerFuncChangeParam)             NULL,
 
   (VikLayerFuncReadFileData)            NULL,
   (VikLayerFuncWriteFileData)           NULL,
@@ -173,6 +176,7 @@ gboolean coord_layer_set_param ( VikCoordLayer *vcl, guint16 id, VikLayerParamDa
     case PARAM_COLOR: vcl->color = data.c; break;
     case PARAM_MIN_INC: vcl->deg_inc = data.d / 60.0; break;
     case PARAM_LINE_THICKNESS: if ( data.u >= 1 && data.u <= 15 ) vcl->line_thickness = data.u; break;
+    default: break;
   }
   return TRUE;
 }
@@ -185,6 +189,7 @@ static VikLayerParamData coord_layer_get_param ( VikCoordLayer *vcl, guint16 id,
     case PARAM_COLOR: rv.c = vcl->color; break;
     case PARAM_MIN_INC: rv.d = vcl->deg_inc * 60.0; break;
     case PARAM_LINE_THICKNESS: rv.i = vcl->line_thickness; break;
+    default: break;
   }
   return rv;
 }

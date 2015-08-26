@@ -75,16 +75,26 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = @build@
+host_triplet = @host@
 @REALTIME_GPS_TRACKING_TRUE@am__append_1 = -lgps
+@GEOTAG_TRUE@am__append_2 = check_geotag.sh
 check_PROGRAMS = degrees_converter$(EXEEXT) gpx2gpx$(EXEEXT) \
-	test_vikgotoxmltool$(EXEEXT) test_coord_conversion$(EXEEXT)
+	test_vikgotoxmltool$(EXEEXT) test_coord_conversion$(EXEEXT) \
+	test_babel$(EXEEXT) test_metatile$(EXEEXT) $(am__EXEEXT_1)
+@GEOTAG_TRUE@am__append_3 = geotag_read geotag_write
+@GEOTAG_TRUE@am__append_4 = check_geotag.sh
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp \
 	$(top_srcdir)/test-driver README
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/expat.m4 \
+	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/libcurl.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -92,6 +102,7 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/src/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+@GEOTAG_TRUE@am__EXEEXT_1 = geotag_read$(EXEEXT) geotag_write$(EXEEXT)
 am_degrees_converter_OBJECTS = degrees_converter.$(OBJEXT)
 degrees_converter_OBJECTS = $(am_degrees_converter_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -99,13 +110,33 @@ am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) \
 	$(top_builddir)/src/icons/libicons.a $(am__DEPENDENCIES_1)
 degrees_converter_DEPENDENCIES =  \
 	$(top_builddir)/src/degrees_converters.o $(am__DEPENDENCIES_2)
+am__geotag_read_SOURCES_DIST = geotag_read.c
+@GEOTAG_TRUE@am_geotag_read_OBJECTS = geotag_read.$(OBJEXT)
+geotag_read_OBJECTS = $(am_geotag_read_OBJECTS)
+@GEOTAG_TRUE@geotag_read_DEPENDENCIES =  \
+@GEOTAG_TRUE@	$(top_builddir)/src/libviking.a \
+@GEOTAG_TRUE@	$(am__DEPENDENCIES_2)
+am__geotag_write_SOURCES_DIST = geotag_write.c
+@GEOTAG_TRUE@am_geotag_write_OBJECTS = geotag_write.$(OBJEXT)
+geotag_write_OBJECTS = $(am_geotag_write_OBJECTS)
+@GEOTAG_TRUE@geotag_write_DEPENDENCIES =  \
+@GEOTAG_TRUE@	$(top_builddir)/src/libviking.a \
+@GEOTAG_TRUE@	$(am__DEPENDENCIES_2)
 am_gpx2gpx_OBJECTS = gpx2gpx.$(OBJEXT)
 gpx2gpx_OBJECTS = $(am_gpx2gpx_OBJECTS)
 gpx2gpx_DEPENDENCIES = $(top_builddir)/src/libviking.a \
 	$(am__DEPENDENCIES_2)
+am_test_babel_OBJECTS = test_babel.$(OBJEXT)
+test_babel_OBJECTS = $(am_test_babel_OBJECTS)
+test_babel_DEPENDENCIES = $(top_builddir)/src/libviking.a \
+	$(am__DEPENDENCIES_2)
 am_test_coord_conversion_OBJECTS = test_coord_conversion.$(OBJEXT)
 test_coord_conversion_OBJECTS = $(am_test_coord_conversion_OBJECTS)
 test_coord_conversion_DEPENDENCIES = $(top_builddir)/src/libviking.a \
+	$(am__DEPENDENCIES_2)
+am_test_metatile_OBJECTS = test_metatile.$(OBJEXT)
+test_metatile_OBJECTS = $(am_test_metatile_OBJECTS)
+test_metatile_DEPENDENCIES = $(top_builddir)/src/libviking.a \
 	$(am__DEPENDENCIES_2)
 am_test_vikgotoxmltool_OBJECTS = test_vikgotoxmltool.$(OBJEXT)
 test_vikgotoxmltool_OBJECTS = $(am_test_vikgotoxmltool_OBJECTS)
@@ -139,12 +170,15 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(degrees_converter_SOURCES) $(gpx2gpx_SOURCES) \
-	$(test_coord_conversion_SOURCES) \
-	$(test_vikgotoxmltool_SOURCES)
-DIST_SOURCES = $(degrees_converter_SOURCES) $(gpx2gpx_SOURCES) \
-	$(test_coord_conversion_SOURCES) \
-	$(test_vikgotoxmltool_SOURCES)
+SOURCES = $(degrees_converter_SOURCES) $(geotag_read_SOURCES) \
+	$(geotag_write_SOURCES) $(gpx2gpx_SOURCES) \
+	$(test_babel_SOURCES) $(test_coord_conversion_SOURCES) \
+	$(test_metatile_SOURCES) $(test_vikgotoxmltool_SOURCES)
+DIST_SOURCES = $(degrees_converter_SOURCES) \
+	$(am__geotag_read_SOURCES_DIST) \
+	$(am__geotag_write_SOURCES_DIST) $(gpx2gpx_SOURCES) \
+	$(test_babel_SOURCES) $(test_coord_conversion_SOURCES) \
+	$(test_metatile_SOURCES) $(test_vikgotoxmltool_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -391,6 +425,10 @@ CFLAGS = @CFLAGS@
 CONFIG_STATUS_DEPENDENCIES = @CONFIG_STATUS_DEPENDENCIES@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
+CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DB2MAN_XSL = @DB2MAN_XSL@
@@ -406,10 +444,12 @@ EXEEXT = @EXEEXT@
 EXPAT_CFLAGS = @EXPAT_CFLAGS@
 EXPAT_LIBS = @EXPAT_LIBS@
 GDK_PIXBUF_CSOURCE = @GDK_PIXBUF_CSOURCE@
+GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GLIB_MKENUMS = @GLIB_MKENUMS@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
+GMSGFMT_015 = @GMSGFMT_015@
 GREP = @GREP@
 GTKDOC_CHECK = @GTKDOC_CHECK@
 GTKDOC_CHECK_PATH = @GTKDOC_CHECK_PATH@
@@ -434,17 +474,23 @@ INTLTOOL_V_MERGE = @INTLTOOL_V_MERGE@
 INTLTOOL_V_MERGE_OPTIONS = @INTLTOOL_V_MERGE_OPTIONS@
 INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
+INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 LDFLAGS = @LDFLAGS@
 LIBCURL = @LIBCURL@
 LIBCURL_CPPFLAGS = @LIBCURL_CPPFLAGS@
+LIBICONV = @LIBICONV@
+LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LN_S = @LN_S@
+LTLIBICONV = @LTLIBICONV@
+LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
+MSGFMT_015 = @MSGFMT_015@
 MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 OBJEXT = @OBJEXT@
@@ -474,6 +520,8 @@ STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 XGETTEXT = @XGETTEXT@
+XGETTEXT_015 = @XGETTEXT_015@
+XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
 XP = @XP@
 _libcurl_config = @_libcurl_config@
 abs_builddir = @abs_builddir@
@@ -481,20 +529,29 @@ abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -525,13 +582,32 @@ AM_CFLAGS = -I$(top_srcdir)/src \
 
 LDADD = $(PACKAGE_LIBS) @EXPAT_LIBS@ @LIBCURL@ \
 	$(top_builddir)/src/icons/libicons.a $(am__append_1)
-TESTS = check_degrees_conversions.sh
-check_SCRIPTS = check_degrees_conversions.sh
-EXTRA_DIST = check_degrees_conversions.sh
+TESTS = check_degrees_conversions.sh check_metatile.sh $(am__append_2)
+check_SCRIPTS = check_degrees_conversions.sh check_metatile.sh \
+	$(am__append_4)
+
+# Scripts and the test data that they use
+EXTRA_DIST = check_degrees_conversions.sh \
+	check_metatile.sh \
+	metatile_example/13/0/0/250/220/0.meta \
+	check_geotag.sh \
+	Stonehenge.jpg \
+	ViewFromCribyn-Wales-GPS.jpg
+
 degrees_converter_SOURCES = degrees_converter.c
 degrees_converter_LDADD = \
   $(top_builddir)/src/degrees_converters.o \
   $(LDADD)
+
+@GEOTAG_TRUE@geotag_read_SOURCES = geotag_read.c
+@GEOTAG_TRUE@geotag_read_LDADD = \
+@GEOTAG_TRUE@  $(top_builddir)/src/libviking.a \
+@GEOTAG_TRUE@  $(LDADD)
+
+@GEOTAG_TRUE@geotag_write_SOURCES = geotag_write.c
+@GEOTAG_TRUE@geotag_write_LDADD = \
+@GEOTAG_TRUE@  $(top_builddir)/src/libviking.a \
+@GEOTAG_TRUE@  $(LDADD)
 
 gpx2gpx_SOURCES = gpx2gpx.c
 gpx2gpx_LDADD = \
@@ -545,6 +621,16 @@ test_vikgotoxmltool_LDADD = \
 
 test_coord_conversion_SOURCES = test_coord_conversion.c
 test_coord_conversion_LDADD = \
+  $(top_builddir)/src/libviking.a \
+  $(LDADD)
+
+test_babel_SOURCES = test_babel.c
+test_babel_LDADD = \
+  $(top_builddir)/src/libviking.a \
+  $(LDADD)
+
+test_metatile_SOURCES = test_metatile.c
+test_metatile_LDADD = \
   $(top_builddir)/src/libviking.a \
   $(LDADD)
 
@@ -590,13 +676,29 @@ degrees_converter$(EXEEXT): $(degrees_converter_OBJECTS) $(degrees_converter_DEP
 	@rm -f degrees_converter$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(degrees_converter_OBJECTS) $(degrees_converter_LDADD) $(LIBS)
 
+geotag_read$(EXEEXT): $(geotag_read_OBJECTS) $(geotag_read_DEPENDENCIES) $(EXTRA_geotag_read_DEPENDENCIES) 
+	@rm -f geotag_read$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(geotag_read_OBJECTS) $(geotag_read_LDADD) $(LIBS)
+
+geotag_write$(EXEEXT): $(geotag_write_OBJECTS) $(geotag_write_DEPENDENCIES) $(EXTRA_geotag_write_DEPENDENCIES) 
+	@rm -f geotag_write$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(geotag_write_OBJECTS) $(geotag_write_LDADD) $(LIBS)
+
 gpx2gpx$(EXEEXT): $(gpx2gpx_OBJECTS) $(gpx2gpx_DEPENDENCIES) $(EXTRA_gpx2gpx_DEPENDENCIES) 
 	@rm -f gpx2gpx$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gpx2gpx_OBJECTS) $(gpx2gpx_LDADD) $(LIBS)
 
+test_babel$(EXEEXT): $(test_babel_OBJECTS) $(test_babel_DEPENDENCIES) $(EXTRA_test_babel_DEPENDENCIES) 
+	@rm -f test_babel$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(test_babel_OBJECTS) $(test_babel_LDADD) $(LIBS)
+
 test_coord_conversion$(EXEEXT): $(test_coord_conversion_OBJECTS) $(test_coord_conversion_DEPENDENCIES) $(EXTRA_test_coord_conversion_DEPENDENCIES) 
 	@rm -f test_coord_conversion$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(test_coord_conversion_OBJECTS) $(test_coord_conversion_LDADD) $(LIBS)
+
+test_metatile$(EXEEXT): $(test_metatile_OBJECTS) $(test_metatile_DEPENDENCIES) $(EXTRA_test_metatile_DEPENDENCIES) 
+	@rm -f test_metatile$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(test_metatile_OBJECTS) $(test_metatile_LDADD) $(LIBS)
 
 test_vikgotoxmltool$(EXEEXT): $(test_vikgotoxmltool_OBJECTS) $(test_vikgotoxmltool_DEPENDENCIES) $(EXTRA_test_vikgotoxmltool_DEPENDENCIES) 
 	@rm -f test_vikgotoxmltool$(EXEEXT)
@@ -609,20 +711,26 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/degrees_converter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geotag_read.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geotag_write.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpx2gpx.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_babel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_coord_conversion.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_metatile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_vikgotoxmltool.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
@@ -823,6 +931,20 @@ recheck: all $(check_PROGRAMS) $(check_SCRIPTS)
 check_degrees_conversions.sh.log: check_degrees_conversions.sh
 	@p='check_degrees_conversions.sh'; \
 	b='check_degrees_conversions.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_metatile.sh.log: check_metatile.sh
+	@p='check_metatile.sh'; \
+	b='check_metatile.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_geotag.sh.log: check_geotag.sh
+	@p='check_geotag.sh'; \
+	b='check_geotag.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

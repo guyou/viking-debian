@@ -22,6 +22,8 @@
 #define _VIKING_UIBUILDER_H
 
 #include <gtk/gtk.h>
+#include "vik_compat.h"
+#include "config.h"
 
 G_BEGIN_DECLS
 
@@ -35,6 +37,7 @@ typedef union {
   const gchar *s;
   GdkColor c;
   GList *sl;
+  gpointer ptr; // For internal usage - don't save this value in a file!
 } VikLayerParamData;
 
 typedef enum {
@@ -50,6 +53,7 @@ typedef enum {
   VIK_LAYER_WIDGET_COLOR,
   VIK_LAYER_WIDGET_COMBOBOX,
   VIK_LAYER_WIDGET_FILELIST,
+  VIK_LAYER_WIDGET_BUTTON,
 } VikLayerWidgetType;
 
 /* id is index */
@@ -71,6 +75,7 @@ VIK_LAYER_PARAM_COLOR,
  */
 
 VIK_LAYER_PARAM_STRING_LIST,
+VIK_LAYER_PARAM_PTR, // Not really a 'parameter' but useful to route to extended configuration (e.g. toolbar order)
 } VikLayerParamType;
 
 typedef enum {
@@ -81,6 +86,9 @@ typedef enum {
   VIK_LAYER_GPS,
   VIK_LAYER_MAPS,
   VIK_LAYER_DEM,
+#ifdef HAVE_LIBMAPNIK
+  VIK_LAYER_MAPNIK,
+#endif
   VIK_LAYER_NUM_TYPES // Also use this value to indicate no layer association
 } VikLayerTypeEnum;
 
@@ -141,6 +149,17 @@ typedef struct {
 VikLayerParamData vik_lpd_true_default ( void );
 VikLayerParamData vik_lpd_false_default ( void );
 
+typedef enum {
+  UI_CHG_LAYER = 0,
+  UI_CHG_PARAM,
+  UI_CHG_PARAM_ID,
+  UI_CHG_WIDGETS,
+  UI_CHG_LABELS,
+  UI_CHG_LAST
+} ui_change_index;
+
+typedef gpointer ui_change_values[UI_CHG_LAST];
+
 GtkWidget *a_uibuilder_new_widget ( VikLayerParam *param, VikLayerParamData data );
 VikLayerParamData a_uibuilder_widget_get_value ( GtkWidget *widget, VikLayerParam *param );
 gint a_uibuilder_properties_factory ( const gchar *dialog_name,
@@ -149,11 +168,12 @@ gint a_uibuilder_properties_factory ( const gchar *dialog_name,
                                       guint16 params_count,
                                       gchar **groups,
                                       guint8 groups_count,
-                                      gboolean (*setparam) (gpointer,guint16,VikLayerParamData,gpointer,gboolean),
+                                      gboolean (*setparam) (gpointer,guint16,VikLayerParamData,gpointer,gboolean), // AKA VikLayerFuncSetParam in viklayer.h
                                       gpointer pass_along1,
                                       gpointer pass_along2,
-                                      VikLayerParamData (*getparam) (gpointer,guint16,gboolean),
-                                      gpointer pass_along_getparam );
+                                      VikLayerParamData (*getparam) (gpointer,guint16,gboolean),  // AKA VikLayerFuncGetParam in viklayer.h
+                                      gpointer pass_along_getparam,
+                                      void (*changeparam) (GtkWidget*, ui_change_values) ); // AKA VikLayerFuncChangeParam in viklayer.h
                                       /* pass_along1 and pass_along2 are for set_param first and last params */
 
 VikLayerParamData *a_uibuilder_run_dialog ( const gchar *dialog_name, GtkWindow *parent, VikLayerParam *params,
@@ -163,24 +183,12 @@ VikLayerParamData *a_uibuilder_run_dialog ( const gchar *dialog_name, GtkWindow 
 /* frees data from last (if ness) */
 void a_uibuilder_free_paramdatas ( VikLayerParamData *paramdatas, VikLayerParam *params, guint16 params_count );
 
-/*
- * Since combo boxes are used in various places
- * keep the code reasonably tidy and only have one ifdef to cater for the naming variances
- */
-#if GTK_CHECK_VERSION (2, 24, 0)
-#define vik_combo_box_text_new gtk_combo_box_text_new
-#define vik_combo_box_text_append(X,Y) gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(X),Y)
-#else
-#define vik_combo_box_text_new gtk_combo_box_new_text
-#define vik_combo_box_text_append(X,Y) gtk_combo_box_append_text(GTK_COMBO_BOX(X),Y)
-#endif
-
-// Consider adding sort options such as by time
-//  However use within the treeview then is more complicated as one would need to store that data in the treeview...
 typedef enum {
   VL_SO_NONE = 0,
   VL_SO_ALPHABETICAL_ASCENDING,
   VL_SO_ALPHABETICAL_DESCENDING,
+  VL_SO_DATE_ASCENDING,
+  VL_SO_DATE_DESCENDING,
   VL_SO_LAST
 } vik_layer_sort_order_t;
 

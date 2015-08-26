@@ -36,6 +36,7 @@
 #include "globals.h"
 #include "coords.h"
 #include "vikcoord.h"
+#include "vik_compat.h"
 #include "download.h"
 #include "vikwaypoint.h"
 #include "viktrack.h"
@@ -51,6 +52,9 @@
 #include "vikfileentry.h"
 #include "viktrwlayer.h"
 #include "vikgpslayer.h"
+#ifdef HAVE_LIBMAPNIK
+#include "vikmapniklayer.h"
+#endif
 #include "clipboard.h"
 #include "dialog.h"
 #include "file.h"
@@ -59,5 +63,6 @@
 #include "gpspoint.h"
 #include "gpsmapper.h"
 #include "settings.h"
+#include "util.h"
 
 #endif
