@@ -25,13 +25,15 @@
 !insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_DESKTOP_SHORTCUT_SECTION_TITLE	"Desktop"
 !insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_STARTMENU_SHORTCUT_SECTION_TITLE	"Start Menu"
 !insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_FILE_ASSOCIATION_SECTION_TITLE	"File association"
+!insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_GPSBABEL_SECTION_TITLE	"GPSBabel 1.5.2"
 !insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_SECTION_DESCRIPTION		"Core Viking files and dlls"
 !insertmacro VIKING_MACRO_DEFAULT_STRING GTK_SECTION_DESCRIPTION		"A multi-platform GUI toolkit, used by Viking"
 
 !insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_SHORTCUTS_SECTION_DESCRIPTION	"Shortcuts for starting Viking"
 !insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_DESKTOP_SHORTCUT_DESC		"Create a shortcut to Viking on the Desktop"
 !insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_STARTMENU_SHORTCUT_DESC		"Create a Start Menu entry for Viking"
-!insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_FILE_ASSOCIATION_DESC	  "Associate .vik files with Viking"
+!insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_FILE_ASSOCIATION_DESC	  "Associate .gpx files with Viking"
+!insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_INSTALL_GPSBABEL_DESC	  "Install GPSBabel Program"
 
 ; Installer Finish Page
 !insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_FINISH_VISIT_WEB_SITE		"Visit the Viking Web Page"
@@ -42,3 +44,5 @@
 ; Uninstall Section Prompts
 !insertmacro VIKING_MACRO_DEFAULT_STRING un.VIKING_UNINSTALL_ERROR_1		"The uninstaller could not find registry entries for Viking.$\rIt is likely that another user installed this application."
 !insertmacro VIKING_MACRO_DEFAULT_STRING un.VIKING_UNINSTALL_ERROR_2		"You do not have permission to uninstall this application."
+
+!insertmacro VIKING_MACRO_DEFAULT_STRING VIKING_UNINSTALL_COMMENTS			"GPS data editor and analyser"

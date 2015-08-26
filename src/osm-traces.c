@@ -52,12 +52,12 @@ static gint last_active = -1;
 /**
  * Login to use for OSM uploading.
  */
-static gchar *user = NULL;
+static gchar *osm_user = NULL;
 
 /**
  * Password to use for OSM uploading.
  */
-static gchar *password = NULL;
+static gchar *osm_password = NULL;
 
 /**
  * Mutex to protect auth. token
@@ -94,8 +94,8 @@ typedef struct _OsmTracesInfo {
 } OsmTracesInfo;
 
 static VikLayerParam prefs[] = {
-  { VIK_LAYER_NUM_TYPES, VIKING_OSM_TRACES_PARAMS_NAMESPACE "username", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM username:"), VIK_LAYER_WIDGET_ENTRY, NULL, NULL, NULL },
-  { VIK_LAYER_NUM_TYPES, VIKING_OSM_TRACES_PARAMS_NAMESPACE "password", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM password:"), VIK_LAYER_WIDGET_PASSWORD, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_OSM_TRACES_PARAMS_NAMESPACE "username", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM username:"), VIK_LAYER_WIDGET_ENTRY, NULL, NULL, NULL, NULL, NULL, NULL },
+  { VIK_LAYER_NUM_TYPES, VIKING_OSM_TRACES_PARAMS_NAMESPACE "password", VIK_LAYER_PARAM_STRING, VIK_LAYER_GROUP_NONE, N_("OSM password:"), VIK_LAYER_WIDGET_PASSWORD, NULL, NULL, NULL, NULL, NULL, NULL },
 };
 
 /**
@@ -125,18 +125,13 @@ static const gchar *get_default_user()
   return default_user;
 }
 
-void osm_set_login(const gchar *user_, const gchar *password_)
+void osm_set_login(const gchar *user, const gchar *password)
 {
-  /* Allocate mutex */
-  if (login_mutex == NULL)
-  {
-    login_mutex = g_mutex_new();
-  }
   g_mutex_lock(login_mutex);
-  g_free(user); user = NULL;
-  g_free(password); password = NULL;
-  user        = g_strdup(user_);
-  password    = g_strdup(password_);
+  g_free(osm_user); osm_user = NULL;
+  g_free(osm_password); osm_password = NULL;
+  osm_user        = g_strdup(user);
+  osm_password    = g_strdup(password);
   g_mutex_unlock(login_mutex);
 }
 
@@ -144,7 +139,7 @@ gchar *osm_get_login()
 {
   gchar *user_pass = NULL;
   g_mutex_lock(login_mutex);
-  user_pass = g_strdup_printf("%s:%s", user, password);
+  user_pass = g_strdup_printf("%s:%s", osm_user, osm_password);
   g_mutex_unlock(login_mutex);
   return user_pass;
 }
@@ -160,6 +155,12 @@ void osm_traces_init () {
   tmp.s = "";
   a_preferences_register(prefs+1, tmp, VIKING_OSM_TRACES_PARAMS_GROUP_KEY);
 
+  login_mutex = vik_mutex_new();
+}
+
+void osm_traces_uninit()
+{
+  vik_mutex_free(login_mutex);
 }
 
 /*
@@ -265,25 +266,11 @@ static void osm_traces_upload_thread ( OsmTracesInfo *oti, gpointer threaddata )
   /* Due to OSM limits, we have to enforce ele and time fields
    also don't upload invisible tracks */
   static GpxWritingOptions options = { TRUE, TRUE, FALSE, FALSE };
-  FILE *file = NULL;
-  gchar *filename = NULL;
-  int fd;
-  GError *error = NULL;
-  int ret;
 
-  g_assert(oti != NULL);
-
-  /* Opening temporary file */
-  fd = g_file_open_tmp("viking_osm_upload_XXXXXX.gpx", &filename, &error);
-  if (fd < 0) {
-    g_error(_("failed to open temporary file: %s"), strerror(errno));
+  if (!oti)
     return;
-  }
-  g_clear_error(&error);
-  g_debug("%s: temporary file = %s", __FUNCTION__, filename);
 
-  /* Creating FILE* */
-  file = fdopen(fd, "w");
+  gchar *filename = NULL;
 
   /* writing gpx file */
   if (oti->trk != NULL)
@@ -293,25 +280,23 @@ static void osm_traces_upload_thread ( OsmTracesInfo *oti, gpointer threaddata )
     {
       VikTrack *trk = vik_track_copy(oti->trk, TRUE);
       vik_track_anonymize_times(trk);
-      a_gpx_write_track_file(trk, file, &options);
+      filename = a_gpx_write_track_tmp_file(trk, &options);
       vik_track_free(trk);
     }
     else
-      a_gpx_write_track_file(oti->trk, file, &options);
+      filename = a_gpx_write_track_tmp_file (oti->trk, &options);
   }
   else
   {
     /* Upload the whole VikTrwLayer */
-    a_gpx_write_file(oti->vtl, file, &options);
+    filename = a_gpx_write_tmp_file (oti->vtl, &options);
   }
   
-  /* We can close the file */
-  /* This also close the associated fd */
-  fclose(file);
-  file = NULL;
+  if ( !filename )
+    return;
 
   /* finally, upload it */
-  gint ans = osm_traces_upload_file(user, password, filename,
+  gint ans = osm_traces_upload_file(osm_user, osm_password, filename,
                    oti->name, oti->description, oti->tags, oti->vistype);
 
   //
@@ -350,7 +335,7 @@ static void osm_traces_upload_thread ( OsmTracesInfo *oti, gpointer threaddata )
     g_free (msg);
   }
   /* Removing temporary file */
-  ret = g_unlink(filename);
+  int ret = g_unlink(filename);
   if (ret != 0) {
     g_critical(_("failed to unlink temporary file: %s"), strerror(errno));
   }
@@ -368,15 +353,15 @@ void osm_login_widgets (GtkWidget *user_entry, GtkWidget *password_entry)
   const gchar *pref_user = a_preferences_get(VIKING_OSM_TRACES_PARAMS_NAMESPACE "username")->s;
   const gchar *pref_password = a_preferences_get(VIKING_OSM_TRACES_PARAMS_NAMESPACE "password")->s;
 
-  if (user != NULL && user[0] != '\0')
-    gtk_entry_set_text(GTK_ENTRY(user_entry), user);
+  if (osm_user != NULL && osm_user[0] != '\0')
+    gtk_entry_set_text(GTK_ENTRY(user_entry), osm_user);
   else if (pref_user != NULL && pref_user[0] != '\0')
     gtk_entry_set_text(GTK_ENTRY(user_entry), pref_user);
   else if (default_user != NULL)
     gtk_entry_set_text(GTK_ENTRY(user_entry), default_user);
 
-  if (password != NULL && password[0] != '\0')
-    gtk_entry_set_text(GTK_ENTRY(password_entry), password);
+  if (osm_password != NULL && osm_password[0] != '\0')
+    gtk_entry_set_text(GTK_ENTRY(password_entry), osm_password);
   else if (pref_password != NULL)
     gtk_entry_set_text(GTK_ENTRY(password_entry), pref_password);
   /* This is a password -> invisible */
@@ -389,7 +374,7 @@ void osm_login_widgets (GtkWidget *user_entry, GtkWidget *password_entry)
  * @param vtl VikTrwLayer
  * @param trk if not null, the track to upload
  */
-static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
+void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
 {
   GtkWidget *dia = gtk_dialog_new_with_buttons (_("OSM upload"),
                                                  VIK_GTK_WINDOW_FROM_LAYER(vtl),
@@ -444,6 +429,15 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
 
   description_label = gtk_label_new(_("Description:"));
   description_entry = gtk_entry_new();
+  const gchar *description = NULL;
+  if (trk != NULL)
+    description = trk->description;
+  else {
+    VikTRWMetadata *md = vik_trw_layer_get_metadata (vtl);
+    description = md ? md->description : NULL;
+  }
+  if (description)
+    gtk_entry_set_text(GTK_ENTRY(description_entry), description);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), description_label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), description_entry, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text(GTK_WIDGET(description_entry),
@@ -461,6 +455,9 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
 
   tags_label = gtk_label_new(_("Tags:"));
   tags_entry = gtk_entry_new();
+  VikTRWMetadata *md = vik_trw_layer_get_metadata (vtl);
+  if (md->keywords)
+    gtk_entry_set_text(GTK_ENTRY(tags_entry), md->keywords);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), tags_label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dia))), tags_entry, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text(GTK_WIDGET(tags_entry),
@@ -528,36 +525,16 @@ static void osm_traces_upload_viktrwlayer ( VikTrwLayer *vtl, VikTrack *trk )
 
     title = g_strdup_printf(_("Uploading %s to OSM"), info->name);
 
-    /* launch the thread */
-    a_background_thread(VIK_GTK_WINDOW_FROM_LAYER(vtl),          /* parent window */
-			title,                                   /* description string */
-			(vik_thr_func) osm_traces_upload_thread, /* function to call within thread */
-			info,                                    /* pass along data */
-			(vik_thr_free_func) oti_free,            /* function to free pass along data */
-			(vik_thr_free_func) NULL,
-			1 );
+    // launch the thread
+    a_background_thread( BACKGROUND_POOL_REMOTE,
+                         VIK_GTK_WINDOW_FROM_LAYER(vtl),          /* parent window */
+                         title,                                   /* description string */
+                         (vik_thr_func) osm_traces_upload_thread, /* function to call within thread */
+                         info,                                    /* pass along data */
+                         (vik_thr_free_func) oti_free,            /* function to free pass along data */
+                         (vik_thr_free_func) NULL,
+                         1 );
     g_free ( title ); title = NULL;
   }
   gtk_widget_destroy ( dia );
-}
-
-/**
- * Function called by the entry menu of a TrwLayer
- */
-void osm_traces_upload_cb ( gpointer layer_and_vlp[2], guint file_type )
-{
-  osm_traces_upload_viktrwlayer(VIK_TRW_LAYER(layer_and_vlp[0]), NULL);
-}
-
-/**
- * Function called by the entry menu of a single track
- */
-// TODO: Fix this dodgy usage of magic 8 ball array sized numbering
-//       At least have some common definition somewhere...
-void osm_traces_upload_track_cb ( gpointer pass_along[8] )
-{
-  if ( pass_along[7] ) {
-    VikTrack *trk = VIK_TRACK(pass_along[7]);
-    osm_traces_upload_viktrwlayer(VIK_TRW_LAYER(pass_along[0]), trk);
-  }
 }

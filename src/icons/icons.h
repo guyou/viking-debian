@@ -23,6 +23,7 @@ extern const GdkPixdata vikdemlayer_pixbuf;
 extern const GdkPixdata vikgeoreflayer_pixbuf;
 extern const GdkPixdata vikgpslayer_pixbuf;
 extern const GdkPixdata vikmapslayer_pixbuf;
+extern const GdkPixdata vikmapniklayer_pixbuf;
 extern const GdkPixdata viktrwlayer_pixbuf;
 extern const GdkPixdata wp_camp_pixbuf;
 extern const GdkPixdata wp_car_pixbuf;

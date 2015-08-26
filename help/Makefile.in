@@ -99,13 +99,19 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = @build@
+host_triplet = @host@
 DIST_COMMON = $(top_srcdir)/gnome-doc-utils.make $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/mkinstalldirs
 @GEN_MANPAGES_TRUE@am__append_1 = $(MANPAGES)
 subdir = help
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/expat.m4 \
+	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/libcurl.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -182,6 +188,10 @@ CFLAGS = @CFLAGS@
 CONFIG_STATUS_DEPENDENCIES = @CONFIG_STATUS_DEPENDENCIES@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
+CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DB2MAN_XSL = @DB2MAN_XSL@
@@ -197,10 +207,12 @@ EXEEXT = @EXEEXT@
 EXPAT_CFLAGS = @EXPAT_CFLAGS@
 EXPAT_LIBS = @EXPAT_LIBS@
 GDK_PIXBUF_CSOURCE = @GDK_PIXBUF_CSOURCE@
+GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GLIB_MKENUMS = @GLIB_MKENUMS@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
+GMSGFMT_015 = @GMSGFMT_015@
 GREP = @GREP@
 GTKDOC_CHECK = @GTKDOC_CHECK@
 GTKDOC_CHECK_PATH = @GTKDOC_CHECK_PATH@
@@ -225,17 +237,23 @@ INTLTOOL_V_MERGE = @INTLTOOL_V_MERGE@
 INTLTOOL_V_MERGE_OPTIONS = @INTLTOOL_V_MERGE_OPTIONS@
 INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
+INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 LDFLAGS = @LDFLAGS@
 LIBCURL = @LIBCURL@
 LIBCURL_CPPFLAGS = @LIBCURL_CPPFLAGS@
+LIBICONV = @LIBICONV@
+LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LN_S = @LN_S@
+LTLIBICONV = @LTLIBICONV@
+LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
+MSGFMT_015 = @MSGFMT_015@
 MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 OBJEXT = @OBJEXT@
@@ -265,6 +283,8 @@ STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 XGETTEXT = @XGETTEXT@
+XGETTEXT_015 = @XGETTEXT_015@
+XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
 XP = @XP@ -''-nonet
 _libcurl_config = @_libcurl_config@
 abs_builddir = @abs_builddir@
@@ -272,20 +292,29 @@ abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -436,7 +465,13 @@ _clean_lc = $(if $(_DOC_REAL_LINGUAS),clean-doc-lc)
 _clean_dir = $(if $(DOC_MODULE)$(DOC_ID),clean-doc-dir)
 _doc_install_dir = $(if $(DOC_ID),$(DOC_ID),$(DOC_MODULE))
 DOC_MODULE = viking
-DOC_ENTITIES = legal.xml
+DOC_ENTITIES = legal.xml \
+    attribution.xml \
+    commandline.xml \
+    georef_layer.xml \
+    mapnik_rendering_layer.xml \
+    recommends.xml
+
 DOC_INCLUDES = 
 DOC_FIGURES = \
     figures/addtr_18.png \
@@ -468,7 +503,8 @@ DOC_FIGURES = \
     figures/zoom_18.png \
     figures/zoom_status_popup.png \
     figures/Viking-OSM-CycleMap-ManyTracks.jpg \
-    figures/DEM_file_info_dialog.png
+    figures/DEM_file_info_dialog.png \
+    figures/customize_toolbar_dialog.png
 
 DOC_LINGUAS = 
 EXTRA_DIST = viking.xml

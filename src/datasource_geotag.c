@@ -50,7 +50,7 @@ static void datasource_geotag_cleanup ( gpointer user_data );
 VikDataSourceInterface vik_datasource_geotag_interface = {
   N_("Create Waypoints from Geotagged Images"),
   N_("Geotagged Images"),
-  VIK_DATASOURCE_ADDTOLAYER,
+  VIK_DATASOURCE_AUTO_LAYER_MANAGEMENT,
   VIK_DATASOURCE_INPUTTYPE_NONE,
   TRUE,
   FALSE, // We should be able to see the data on the screen so no point in keeping the dialog open
@@ -165,7 +165,9 @@ static gboolean datasource_geotag_process ( VikTrwLayer *vtl, const gchar *cmd, 
 			g_free ( name );
 		}
 		else {
-			g_warning ( _("Unable to create waypoint from %s"), filename );
+			gchar* msg = g_strdup_printf ( _("Unable to create waypoint from %s"), filename );
+			vik_window_statusbar_update ( adw->vw, msg, VIK_STATUSBAR_INFO );
+			g_free (msg);
 		}
 		g_free ( filename );
 		cur_file = g_slist_next ( cur_file );

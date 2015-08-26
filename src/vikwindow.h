@@ -63,6 +63,7 @@ void vik_window_selected_layer(VikWindow *vw, struct _VikLayer *vl);
 struct _VikViewport * vik_window_viewport(VikWindow *vw);
 struct _VikLayersPanel * vik_window_layers_panel(VikWindow *vw);
 struct _VikStatusbar * vik_window_get_statusbar(VikWindow *vw);
+const gchar *vik_window_get_filename(VikWindow *vw);
 
 void vik_window_statusbar_update (VikWindow *vw, const gchar* message, vik_statusbar_type_t vs_type);
 
@@ -95,6 +96,7 @@ typedef struct {
   VikViewport *vvp;
   gpointer *vtl; // VikTrwlayer
   gboolean holding;
+  gboolean moving;
   gboolean is_waypoint; // otherwise a track
   GdkGC *gc;
   int oldx, oldy;

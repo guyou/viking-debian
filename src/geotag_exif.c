@@ -2,7 +2,7 @@
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
- * Copyright (C) 2011, Rob Norris <rw_norris@hotmail.com>
+ * Copyright (C) 2011-2014, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,14 @@
 /*
  * This uses EXIF information from images to create waypoints at those positions
  *
- * For the implementation I have chosen to use libexif, which keeps Viking a pure C program
- * For an alternative implementation (a la gpscorrelate), one could use libeviv2 but it appears to be C++ only.
+ * The intial implementation uses libexif, which keeps Viking a pure C program.
+ * Now libgexiv2 is available (in C as a wrapper around the more powerful libexiv2 [C++]) so this is the preferred build.
+ *  The attentative reader will notice the use of gexiv2 is a lot simpler as well.
+ * For the time being the libexif code + build is still made available.
  */
 #include <string.h>
 #include "geotag_exif.h"
+#include "config.h"
 #include "globals.h"
 #include "file.h"
 
@@ -38,9 +41,41 @@
 #include <math.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
+#ifdef HAVE_LIBGEXIV2
+#include <gexiv2/gexiv2.h>
+#endif
+#ifdef HAVE_LIBEXIF
 #include <libexif/exif-data.h>
 #include "libjpeg/jpeg-data.h"
+#endif
 
+#ifdef HAVE_LIBGEXIV2
+/**
+ * Attempt to get a single comment from the various exif fields
+ */
+static gchar* geotag_get_exif_comment ( GExiv2Metadata *gemd )
+{
+	//
+	// Try various options to create a comment
+	//
+	if ( gexiv2_metadata_has_tag ( gemd, "Exif.Image.ImageDescription" ) )
+		return g_strdup ( gexiv2_metadata_get_tag_interpreted_string ( gemd, "Exif.Image.ImageDescription" ) );
+
+	if ( gexiv2_metadata_has_tag ( gemd, "Exif.Image.XPComment" ) )
+		return g_strdup ( gexiv2_metadata_get_tag_interpreted_string ( gemd, "Exif.Image.XPComment" ) );
+
+	if ( gexiv2_metadata_has_tag ( gemd, "Exif.Image.XPSubject" ) )
+		return g_strdup ( gexiv2_metadata_get_tag_interpreted_string ( gemd, "Exif.Image.XPSubject" ) );
+
+	if ( gexiv2_metadata_has_tag ( gemd, "Exif.Image.DateTimeOriginal" ) )
+		return g_strdup ( gexiv2_metadata_get_tag_interpreted_string ( gemd, "Exif.Image.DateTimeOriginal" ) );
+
+	// Otherwise nothing found
+	return NULL;
+}
+#endif
+
+#ifdef HAVE_LIBEXIF
 /**
  * Attempt to get a single comment from the various exif fields
  */
@@ -77,7 +112,7 @@ static gchar* geotag_get_exif_comment ( ExifData *ed )
 		exif_entry_get_value ( ee, str, 128 );
 		return g_strdup ( str );
 	}
-	
+
 	// Otherwise nothing found
 	return NULL;
 }
@@ -118,6 +153,99 @@ static gdouble Rational2Double ( unsigned char *data, int offset, ExifByteOrder 
 	return ans;
 }
 
+static struct LatLon get_latlon ( ExifData *ed )
+{
+	struct LatLon ll = { 0.0, 0.0 };
+	const struct LatLon ll0 = { 0.0, 0.0 };
+
+	gchar str[128];
+	ExifEntry *ee;
+	//
+	// Lat & Long is necessary to form a waypoint.
+	//
+	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LATITUDE);
+	if ( ! ( ee && ee->components == 3 && ee->format == EXIF_FORMAT_RATIONAL ) )
+		return ll0;
+
+	ll.lat = Rational2Double ( ee->data,
+							   exif_format_get_size(ee->format),
+							   exif_data_get_byte_order(ed) );
+
+	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LATITUDE_REF);
+	if ( ee ) {
+		exif_entry_get_value ( ee, str, 128 );
+		if ( str[0] == 'S' )
+			ll.lat = -ll.lat;
+	}
+
+	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LONGITUDE);
+	if ( ! ( ee && ee->components == 3 && ee->format == EXIF_FORMAT_RATIONAL ) )
+		return ll0;
+
+	ll.lon = Rational2Double ( ee->data,
+							   exif_format_get_size(ee->format),
+							   exif_data_get_byte_order(ed) );
+
+	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LONGITUDE_REF);
+	if ( ee ) {
+		exif_entry_get_value ( ee, str, 128 );
+		if ( str[0] == 'W' )
+			ll.lon = -ll.lon;
+	}
+
+	return ll;
+}
+#endif
+
+/**
+ * a_geotag_get_position:
+ *
+ * @filename: The (JPG) file with EXIF information in it
+ *
+ * Returns: The position in LatLon format.
+ *  It will be 0,0 if some kind of failure occurs.
+ */
+struct LatLon a_geotag_get_position ( const gchar *filename )
+{
+	struct LatLon ll = { 0.0, 0.0 };
+
+#ifdef HAVE_LIBGEXIV2
+	GExiv2Metadata *gemd = gexiv2_metadata_new ();
+	if ( gexiv2_metadata_open_path ( gemd, filename, NULL ) ) {
+		gdouble lat;
+		gdouble lon;
+		gdouble alt;
+		if ( gexiv2_metadata_get_gps_info ( gemd, &lon, &lat, &alt ) ) {
+			ll.lat = lat;
+			ll.lon = lon;
+		}
+	}
+	gexiv2_metadata_free  ( gemd );
+#else
+#ifdef HAVE_LIBEXIF
+	// open image with libexif
+	ExifData *ed = exif_data_new_from_file ( filename );
+
+	// Detect EXIF load failure
+	if ( !ed )
+		return ll;
+
+	ExifEntry *ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_VERSION_ID);
+	// Confirm this has a GPS Id - normally "2.0.0.0" or "2.2.0.0"
+	if ( ! ( ee && ee->components == 4 ) )
+		goto MyReturn0;
+
+	ll = get_latlon ( ed );
+
+MyReturn0:
+	// Finished with EXIF
+	exif_data_free ( ed );
+#endif
+#endif
+
+	return ll;
+}
+
 /**
  * a_geotag_create_waypoint_from_file:
  * @filename: The image file to process
@@ -133,6 +261,38 @@ VikWaypoint* a_geotag_create_waypoint_from_file ( const gchar *filename, VikCoor
 	*name = NULL;
 	VikWaypoint *wp = NULL;
 
+#ifdef HAVE_LIBGEXIV2
+	GExiv2Metadata *gemd = gexiv2_metadata_new ();
+	if ( gexiv2_metadata_open_path ( gemd, filename, NULL ) ) {
+		gdouble lat;
+		gdouble lon;
+		gdouble alt;
+		if ( gexiv2_metadata_get_gps_info ( gemd, &lon, &lat, &alt ) ) {
+			struct LatLon ll;
+			ll.lat = lat;
+			ll.lon = lon;
+
+			//
+			// Now create Waypoint with acquired information
+			//
+			wp = vik_waypoint_new();
+			wp->visible = TRUE;
+			// Set info from exif values
+			// Location
+			vik_coord_load_from_latlon ( &(wp->coord), vcmode, &ll );
+			// Altitude
+			wp->altitude = alt;
+
+			if ( gexiv2_metadata_has_tag ( gemd, "Exif.Image.XPTitle" ) )
+				*name = g_strdup ( gexiv2_metadata_get_tag_interpreted_string ( gemd, "Exif.Image.XPTitle" ) );
+			wp->comment = geotag_get_exif_comment ( gemd );
+
+			vik_waypoint_set_image ( wp, filename );
+		}
+	}
+	gexiv2_metadata_free ( gemd );
+#else
+#ifdef HAVE_LIBEXIF
 	// TODO use log?
 	//ExifLog *log = NULL;
 
@@ -157,38 +317,11 @@ VikWaypoint* a_geotag_create_waypoint_from_file ( const gchar *filename, VikCoor
 	//if ( ! ( ee->data[0] == 2 && ee->data[2] == 0 && ee->data[3] == 0 ) )
 	//	goto MyReturn;
 
-	//
-	// Lat & Long is necessary to form a waypoint.
-	//
-	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LATITUDE);
-	if ( ! ( ee && ee->components == 3 && ee->format == EXIF_FORMAT_RATIONAL ) )
+	ll = get_latlon ( ed );
+
+	// Hopefully won't have valid images at 0,0!
+	if ( ll.lat == 0.0 && ll.lon == 0.0 )
 		goto MyReturn;
-  
-	ll.lat = Rational2Double ( ee->data,
-							   exif_format_get_size(ee->format),
-							   exif_data_get_byte_order(ed) );
-
-	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LATITUDE_REF);
-	if ( ee ) {
-		exif_entry_get_value ( ee, str, 128 );
-		if ( str[0] == 'S' )
-			ll.lat = -ll.lat;
-	}
-
-	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LONGITUDE);
-	if ( ! ( ee && ee->components == 3 && ee->format == EXIF_FORMAT_RATIONAL ) )
-		goto MyReturn;
-
-	ll.lon = Rational2Double ( ee->data,
-							   exif_format_get_size(ee->format),
-							   exif_data_get_byte_order(ed) );
-
-	ee = exif_content_get_entry (ed->ifd[EXIF_IFD_GPS], EXIF_TAG_GPS_LONGITUDE_REF);
-	if ( ee ) {
-		exif_entry_get_value ( ee, str, 128 );
-		if ( str[0] == 'W' )
-			ll.lon = -ll.lon;
-	}
 
 	//
 	// Not worried if none of the other fields exist, as can default the values to something
@@ -231,6 +364,8 @@ VikWaypoint* a_geotag_create_waypoint_from_file ( const gchar *filename, VikCoor
 MyReturn:
 	// Finished with EXIF
 	exif_data_free ( ed );
+#endif
+#endif
 
 	return wp;
 }
@@ -259,6 +394,16 @@ VikWaypoint* a_geotag_waypoint_positioned ( const gchar *filename, VikCoord coor
 	wp->coord = coord;
 	wp->altitude = alt;
 
+#ifdef HAVE_LIBGEXIV2
+	GExiv2Metadata *gemd = gexiv2_metadata_new ();
+	if ( gexiv2_metadata_open_path ( gemd, filename, NULL ) ) {
+			wp->comment = geotag_get_exif_comment ( gemd );
+			if ( gexiv2_metadata_has_tag ( gemd, "Exif.Image.XPTitle" ) )
+				*name = g_strdup ( gexiv2_metadata_get_tag_interpreted_string ( gemd, "Exif.Image.XPTitle" ) );
+	}
+	gexiv2_metadata_free ( gemd );
+#else
+#ifdef HAVE_LIBEXIF
 	ExifData *ed = exif_data_new_from_file ( filename );
 
 	// Set info from exif values
@@ -277,6 +422,8 @@ VikWaypoint* a_geotag_waypoint_positioned ( const gchar *filename, VikCoord coor
 		// Finished with EXIF
 		exif_data_free ( ed );
 	}
+#endif
+#endif
 
 	vik_waypoint_set_image ( wp, filename );
 
@@ -298,6 +445,21 @@ gchar* a_geotag_get_exif_date_from_file ( const gchar *filename, gboolean *has_G
 	gchar* datetime = NULL;
 	*has_GPS_info = FALSE;
 
+#ifdef HAVE_LIBGEXIV2
+	GExiv2Metadata *gemd = gexiv2_metadata_new ();
+	if ( gexiv2_metadata_open_path ( gemd, filename, NULL ) ) {
+		gdouble lat, lon;
+		*has_GPS_info = ( gexiv2_metadata_get_gps_longitude(gemd,&lon) && gexiv2_metadata_get_gps_latitude(gemd,&lat) );
+
+		// Prefer 'Photo' version over 'Image'
+		if ( gexiv2_metadata_has_tag ( gemd, "Exif.Photo.DateTimeOriginal" ) )
+			datetime = g_strdup ( gexiv2_metadata_get_tag_interpreted_string ( gemd, "Exif.Photo.DateTimeOriginal" ) );
+		else
+			datetime = g_strdup ( gexiv2_metadata_get_tag_interpreted_string ( gemd, "Exif.Image.DateTimeOriginal" ) );
+	}
+	gexiv2_metadata_free ( gemd );
+#else
+#ifdef HAVE_LIBEXIF
 	ExifData *ed = exif_data_new_from_file ( filename );
 
 	// Detect EXIF load failure
@@ -331,11 +493,13 @@ gchar* a_geotag_get_exif_date_from_file ( const gchar *filename, gboolean *has_G
 		*has_GPS_info = FALSE;
 
 	exif_data_free ( ed );
-
+#endif
+#endif
 	return datetime;
 }
 
 
+#ifdef HAVE_LIBEXIF
 /**! If the entry doesn't exist, create it.
  * Based on exif command line action_create_value function in exif 0.6.20
  */
@@ -553,6 +717,7 @@ static void convert_to_entry (const char *set_value, gdouble gdvalue, ExifEntry 
 		if ( value_p )
 			g_warning (_("Warning; Too many components specified!"));
 }
+#endif
 
 /**
  * a_geotag_write_exif_gps:
@@ -572,6 +737,26 @@ gint a_geotag_write_exif_gps ( const gchar *filename, VikCoord coord, gdouble al
 	if ( no_change_mtime )
 		stat ( filename, &stat_save );
 
+#ifdef HAVE_LIBGEXIV2
+	GExiv2Metadata *gemd = gexiv2_metadata_new ();
+	if ( gexiv2_metadata_open_path ( gemd, filename, NULL ) ) {
+		struct LatLon ll;
+		vik_coord_to_latlon ( &coord, &ll );
+		if ( ! gexiv2_metadata_set_gps_info ( gemd, ll.lon, ll.lat, alt ) ) {
+			result = 1; // Failed
+		}
+		else {
+			GError *error = NULL;
+			if ( ! gexiv2_metadata_save_file ( gemd, filename, &error ) ) {
+				result = 2;
+				g_warning ( "Write EXIF failure:%s" , error->message );
+				g_error_free ( error );
+			}
+		}
+	}
+	gexiv2_metadata_free ( gemd );
+#else
+#ifdef HAVE_LIBEXIF
 	/*
 	  Appears libexif doesn't actually support writing EXIF data directly to files
 	  Thus embed command line exif writing method within Viking
@@ -649,6 +834,10 @@ gint a_geotag_write_exif_gps ( const gchar *filename, VikCoord coord, gdouble al
 		// Epic fail - file probably not a JPEG
 		result = 2;
 	}
+
+	exif_data_free ( ed );
+#endif
+#endif
 
 	if ( no_change_mtime ) {
 		// Restore mtime, using the saved value

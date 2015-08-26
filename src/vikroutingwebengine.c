@@ -42,10 +42,10 @@
 
 static void vik_routing_web_engine_finalize ( GObject *gob );
 
-static int vik_routing_web_engine_find ( VikRoutingEngine *self, VikTrwLayer *vtl, struct LatLon start, struct LatLon end );
+static gboolean vik_routing_web_engine_find ( VikRoutingEngine *self, VikTrwLayer *vtl, struct LatLon start, struct LatLon end );
 static gchar *vik_routing_web_engine_get_cmd_from_directions(VikRoutingEngine *self, const gchar *start, const gchar *end);
 static gboolean vik_routing_web_engine_supports_direction(VikRoutingEngine *self);
-static int vik_routing_web_engine_refine ( VikRoutingEngine *self, VikTrwLayer *vtl, VikTrack *vt );
+static gboolean vik_routing_web_engine_refine ( VikRoutingEngine *self, VikTrwLayer *vtl, VikTrack *vt );
 static gboolean vik_routing_web_engine_supports_refine ( VikRoutingEngine *self );
 
 typedef struct _VikRoutingWebEnginePrivate VikRoutingWebEnginePrivate;
@@ -417,18 +417,15 @@ vik_routing_web_engine_get_url_for_coords ( VikRoutingEngine *self, struct LatLo
 	return url;
 }
 
-static int
+static gboolean
 vik_routing_web_engine_find ( VikRoutingEngine *self, VikTrwLayer *vtl, struct LatLon start, struct LatLon end )
 {
-  gchar *uri;
-  int ret = 0;  /* OK */
-
-  uri = vik_routing_web_engine_get_url_for_coords(self, start, end);
+  gchar *uri = vik_routing_web_engine_get_url_for_coords(self, start, end);
 
   DownloadMapOptions *options = vik_routing_web_engine_get_download_options(self);
   
   gchar *format = vik_routing_engine_get_format ( self );
-  a_babel_convert_from_url ( vtl, uri, format, NULL, NULL, options );
+  gboolean ret = a_babel_convert_from_url ( vtl, uri, format, NULL, NULL, options );
 
   g_free(uri);
 
@@ -551,21 +548,18 @@ vik_routing_web_engine_get_url_for_track ( VikRoutingEngine *self, VikTrack *vt 
   return url;
 }
 
-static int
+static gboolean
 vik_routing_web_engine_refine ( VikRoutingEngine *self, VikTrwLayer *vtl, VikTrack *vt )
 {
-  gchar *uri;
-  int ret = 0;  /* OK */
-
   /* Compute URL */
-  uri = vik_routing_web_engine_get_url_for_track ( self, vt );
+  gchar *uri = vik_routing_web_engine_get_url_for_track ( self, vt );
 
   /* Download data */
   DownloadMapOptions *options = vik_routing_web_engine_get_download_options ( self );
 
   /* Convert and insert data in model */
   gchar *format = vik_routing_engine_get_format ( self );
-  a_babel_convert_from_url ( vtl, uri, format, NULL, NULL, options );
+  gboolean ret = a_babel_convert_from_url ( vtl, uri, format, NULL, NULL, options );
 
   g_free(uri);
 

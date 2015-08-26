@@ -1,7 +1,8 @@
+/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * viking -- GPS Data and Topo Analyzer, Explorer, and Manager
  *
- * Copyright (C) 2010, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
+ * Copyright (C) 2014, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +20,9 @@
  *
  */
 
-#ifndef __VIKING_SPOTMAPS_H
-#define __VIKING_SPOTMAPS_H
+// MAX_SIZE is the biggest file which we will return to the user
+#define METATILE_MAX_SIZE (1 * 1024 * 1024)
 
-void spotmaps_init();
+int xyz_to_meta(char *path, size_t len, const char *dir, int x, int y, int z);
 
-#endif
-
+int metatile_read(const char *dir, int x, int y, int z, char *buf, size_t sz, int * compressed, char * log_msg);

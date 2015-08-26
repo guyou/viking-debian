@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2003-2005, Evan Battaglia <gtoevan@gmx.net>
  * Copyright (C) 2008, Hein Ragas <viking@ragas.nl>
- * Copyright (C) 2010-2013, Rob Norris <rw_norris@hotmail.com>
+ * Copyright (C) 2010-2014, Rob Norris <rw_norris@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,20 +26,16 @@
 #endif
 
 #include "viking.h"
-#include "thumbnails.h"
-#include "garminsymbols.h"
 #include "degrees_converters.h"
 #include "authors.h"
 #include "documenters.h"
-#include "vikgoto.h"
-#include "util.h"
+#include "ui_util.h"
 
 #include <glib/gi18n.h>
 
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <time.h>
 
 void a_dialog_msg ( GtkWindow *parent, gint type, const gchar *info, const gchar *extra )
 {
@@ -179,249 +175,6 @@ void a_dialog_response_accept ( GtkDialog *dialog )
   gtk_dialog_response ( dialog, GTK_RESPONSE_ACCEPT );
 }
 
-static void symbol_entry_changed_cb(GtkWidget *combo, GtkListStore *store)
-{
-  GtkTreeIter iter;
-  gchar *sym;
-
-  if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(combo), &iter))
-    return;
-
-  gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, (void *)&sym, -1 );
-  /* Note: symm is NULL when "(none)" is select (first cell is empty) */
-  gtk_widget_set_tooltip_text(combo, sym);
-  g_free(sym);
-}
-
-/* Specify if a new waypoint or not */
-/* If a new waypoint then it uses the default_name for the suggested name allowing the user to change it.
-    The name to use is returned
- */
-/* todo: less on this side, like add track */
-gchar *a_dialog_waypoint ( GtkWindow *parent, gchar *default_name, VikTrwLayer *vtl, VikWaypoint *wp, VikCoordMode coord_mode, gboolean is_new, gboolean *updated )
-{
-  GtkWidget *dialog = gtk_dialog_new_with_buttons (_("Waypoint Properties"),
-                                                   parent,
-                                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                   GTK_STOCK_CANCEL,
-                                                   GTK_RESPONSE_REJECT,
-                                                   GTK_STOCK_OK,
-                                                   GTK_RESPONSE_ACCEPT,
-                                                   NULL);
-  struct LatLon ll;
-  GtkWidget *latlabel, *lonlabel, *namelabel, *latentry, *lonentry, *altentry, *altlabel, *nameentry=NULL;
-  GtkWidget *commentlabel, *commententry, *descriptionlabel, *descriptionentry, *imagelabel, *imageentry, *symbollabel, *symbolentry;
-  GtkWidget *timelabel = NULL;
-  GtkWidget *timevaluelabel = NULL; // No editing of time allowed ATM
-  GtkListStore *store;
-
-  gchar *lat, *lon, *alt;
-
-  vik_coord_to_latlon ( &(wp->coord), &ll );
-
-  lat = g_strdup_printf ( "%f", ll.lat );
-  lon = g_strdup_printf ( "%f", ll.lon );
-  vik_units_height_t height_units = a_vik_get_units_height ();
-  switch (height_units) {
-  case VIK_UNITS_HEIGHT_METRES:
-    alt = g_strdup_printf ( "%f", wp->altitude );
-    break;
-  case VIK_UNITS_HEIGHT_FEET:
-    alt = g_strdup_printf ( "%f", VIK_METERS_TO_FEET(wp->altitude) );
-    break;
-  default:
-    alt = g_strdup_printf ( "%f", wp->altitude );
-    g_critical("Houston, we've had a problem. height=%d", height_units);
-  }
-
-  *updated = FALSE;
-
-  namelabel = gtk_label_new (_("Name:"));
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), namelabel, FALSE, FALSE, 0);
-  // Name is now always changeable
-  nameentry = gtk_entry_new ();
-  if ( default_name )
-    gtk_entry_set_text( GTK_ENTRY(nameentry), default_name );
-  g_signal_connect_swapped ( nameentry, "activate", G_CALLBACK(a_dialog_response_accept), GTK_DIALOG(dialog) );
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), nameentry, FALSE, FALSE, 0);
-
-  latlabel = gtk_label_new (_("Latitude:"));
-  latentry = gtk_entry_new ();
-  gtk_entry_set_text ( GTK_ENTRY(latentry), lat );
-  g_free ( lat );
-
-  lonlabel = gtk_label_new (_("Longitude:"));
-  lonentry = gtk_entry_new ();
-  gtk_entry_set_text ( GTK_ENTRY(lonentry), lon );
-  g_free ( lon );
-
-  altlabel = gtk_label_new (_("Altitude:"));
-  altentry = gtk_entry_new ();
-  gtk_entry_set_text ( GTK_ENTRY(altentry), alt );
-  g_free ( alt );
-
-  commentlabel = gtk_label_new (_("Comment:"));
-  commententry = gtk_entry_new ();
-  gchar *cmt =  NULL;
-  // Auto put in some kind of 'name' as a comment if one previously 'goto'ed this exact location
-  cmt = a_vik_goto_get_search_string_for_this_place(VIK_WINDOW(parent));
-  if (cmt)
-    gtk_entry_set_text(GTK_ENTRY(commententry), cmt);
-
-  descriptionlabel = gtk_label_new (_("Description:"));
-  descriptionentry = gtk_entry_new ();
-
-  imagelabel = gtk_label_new (_("Image:"));
-  imageentry = vik_file_entry_new (GTK_FILE_CHOOSER_ACTION_OPEN);
-
-  {
-    GtkCellRenderer *r;
-    symbollabel = gtk_label_new (_("Symbol:"));
-    GtkTreeIter iter;
-
-    store = gtk_list_store_new(3, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_STRING);
-    symbolentry = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
-    gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(symbolentry), 6);
-
-    g_signal_connect(symbolentry, "changed", G_CALLBACK(symbol_entry_changed_cb), store);
-    gtk_list_store_append (store, &iter);
-    gtk_list_store_set (store, &iter, 0, NULL, 1, NULL, 2, _("(none)"), -1);
-    a_populate_sym_list(store);
-
-    r = gtk_cell_renderer_pixbuf_new ();
-    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (symbolentry), r, FALSE);
-    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (symbolentry), r, "pixbuf", 1, NULL);
-
-    r = gtk_cell_renderer_text_new ();
-    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (symbolentry), r, FALSE);
-    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (symbolentry), r, "text", 2, NULL);
-
-    if ( !is_new && wp->symbol ) {
-      gboolean ok;
-      gchar *sym;
-      for (ok = gtk_tree_model_get_iter_first ( GTK_TREE_MODEL(store), &iter ); ok; ok = gtk_tree_model_iter_next ( GTK_TREE_MODEL(store), &iter)) {
-	gtk_tree_model_get ( GTK_TREE_MODEL(store), &iter, 0, (void *)&sym, -1 );
-	if (sym && !strcmp(sym, wp->symbol)) {
-	  g_free(sym);
-	  break;
-	} else {
-	  g_free(sym);
-	}
-      }
-      // Ensure is it a valid symbol in the given symbol set (large vs small)
-      // Not all symbols are available in both
-      // The check prevents a Gtk Critical message
-      if ( iter.stamp )
-	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(symbolentry), &iter);
-    }
-  }
-
-  if ( !is_new && wp->comment )
-    gtk_entry_set_text ( GTK_ENTRY(commententry), wp->comment );
-
-  if ( !is_new && wp->description )
-    gtk_entry_set_text ( GTK_ENTRY(descriptionentry), wp->description );
-
-  if ( !is_new && wp->image )
-    vik_file_entry_set_filename ( VIK_FILE_ENTRY(imageentry), wp->image );
-
-  if ( !is_new && wp->has_timestamp ) {
-    gchar tmp_str[64];
-    timelabel = gtk_label_new ( _("Time:") );
-    timevaluelabel = gtk_label_new ( NULL );
-    strftime ( tmp_str, sizeof(tmp_str), "%c", localtime(&(wp->timestamp)) );
-    gtk_label_set_text ( GTK_LABEL(timevaluelabel), tmp_str );
-  }
-
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), latlabel, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), latentry, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), lonlabel, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), lonentry, FALSE, FALSE, 0);
-  if ( timelabel ) {
-    gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), timelabel, FALSE, FALSE, 0);
-    gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), timevaluelabel, FALSE, FALSE, 0);
-  }
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), altlabel, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), altentry, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), commentlabel, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), commententry, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), descriptionlabel, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), descriptionentry, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), imagelabel, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), imageentry, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), symbollabel, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), GTK_WIDGET(symbolentry), FALSE, FALSE, 0);
-
-  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
-
-  gtk_widget_show_all ( gtk_dialog_get_content_area(GTK_DIALOG(dialog)) );
-
-  if ( !is_new ) {
-    // Shift left<->right to try not to obscure the waypoint.
-    trw_layer_dialog_shift ( vtl, GTK_WINDOW(dialog), &(wp->coord), FALSE );
-  }
-
-  while ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT )
-  {
-    if ( strlen((gchar*)gtk_entry_get_text ( GTK_ENTRY(nameentry) )) == 0 ) /* TODO: other checks (isalpha or whatever ) */
-      a_dialog_info_msg ( parent, _("Please enter a name for the waypoint.") );
-    else {
-      // NB: No check for unique names - this allows generation of same named entries.
-      gchar *entered_name = g_strdup ( (gchar*)gtk_entry_get_text ( GTK_ENTRY(nameentry) ) );
-
-      /* Do It */
-      ll.lat = convert_dms_to_dec ( gtk_entry_get_text ( GTK_ENTRY(latentry) ) );
-      ll.lon = convert_dms_to_dec ( gtk_entry_get_text ( GTK_ENTRY(lonentry) ) );
-      vik_coord_load_from_latlon ( &(wp->coord), coord_mode, &ll );
-      // Always store in metres
-      switch (height_units) {
-      case VIK_UNITS_HEIGHT_METRES:
-        wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
-        break;
-      case VIK_UNITS_HEIGHT_FEET:
-        wp->altitude = VIK_FEET_TO_METERS(atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) ));
-        break;
-      default:
-        wp->altitude = atof ( gtk_entry_get_text ( GTK_ENTRY(altentry) ) );
-        g_critical("Houston, we've had a problem. height=%d", height_units);
-      }
-      if ( g_strcmp0 ( wp->comment, gtk_entry_get_text ( GTK_ENTRY(commententry) ) ) )
-        vik_waypoint_set_comment ( wp, gtk_entry_get_text ( GTK_ENTRY(commententry) ) );
-      if ( g_strcmp0 ( wp->description, gtk_entry_get_text ( GTK_ENTRY(descriptionentry) ) ) )
-        vik_waypoint_set_description ( wp, gtk_entry_get_text ( GTK_ENTRY(descriptionentry) ) );
-      if ( g_strcmp0 ( wp->image, vik_file_entry_get_filename ( VIK_FILE_ENTRY(imageentry) ) ) )
-        vik_waypoint_set_image ( wp, vik_file_entry_get_filename ( VIK_FILE_ENTRY(imageentry) ) );
-      if ( wp->image && *(wp->image) && (!a_thumbnails_exists(wp->image)) )
-        a_thumbnails_create ( wp->image );
-
-      GtkTreeIter iter, first;
-      gtk_tree_model_get_iter_first ( GTK_TREE_MODEL(store), &first );
-      if ( !gtk_combo_box_get_active_iter ( GTK_COMBO_BOX(symbolentry), &iter ) || !memcmp(&iter, &first, sizeof(GtkTreeIter)) ) {
-        vik_waypoint_set_symbol ( wp, NULL );
-      } else {
-        gchar *sym;
-        gtk_tree_model_get ( GTK_TREE_MODEL(store), &iter, 0, (void *)&sym, -1 );
-        vik_waypoint_set_symbol ( wp, sym );
-        g_free(sym);
-      }
-
-      gtk_widget_destroy ( dialog );
-      if ( is_new )
-        return entered_name;
-      else {
-        *updated = TRUE;
-        // See if name has been changed
-        if ( g_strcmp0 (default_name, entered_name ) )
-          return entered_name;
-        else
-          return NULL;
-      }
-    }
-  }
-  gtk_widget_destroy ( dialog );
-  return NULL;
-}
-
 static void get_selected_foreach_func(GtkTreeModel *model,
                                       GtkTreePath *path,
                                       GtkTreeIter *iter,
@@ -495,13 +248,13 @@ GList *a_dialog_select_from_list ( GtkWindow *parent, GList *names, gboolean mul
 
   while ( gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT )
   {
-    GList *names = NULL;
+    GList *names_selected = NULL;
     GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-    gtk_tree_selection_selected_foreach(selection, get_selected_foreach_func, &names);
-    if (names)
+    gtk_tree_selection_selected_foreach(selection, get_selected_foreach_func, &names_selected);
+    if (names_selected)
     {
       gtk_widget_destroy ( dialog );
-      return (names);
+      return names_selected;
     }
     a_dialog_error_msg(parent, _("Nothing was selected"));
   }
@@ -550,6 +303,63 @@ gchar *a_dialog_new_track ( GtkWindow *parent, gchar *default_name, gboolean is_
   return NULL;
 }
 
+static void today_clicked (GtkWidget *cal)
+{
+  GDateTime *now = g_date_time_new_now_local ();
+  gtk_calendar_select_month ( GTK_CALENDAR(cal), g_date_time_get_month(now)-1, g_date_time_get_year(now) );
+  gtk_calendar_select_day ( GTK_CALENDAR(cal), g_date_time_get_day_of_month(now) );
+  g_date_time_unref ( now );
+}
+
+/**
+ * a_dialog_get_date:
+ *
+ * Returns: a date as a string - always in ISO8601 format (YYYY-MM-DD)
+ *  This string can be NULL (especially when the dialog is cancelled)
+ *  Free the string after use
+ */
+gchar *a_dialog_get_date ( GtkWindow *parent, const gchar *title )
+{
+  GtkWidget *dialog = gtk_dialog_new_with_buttons ( title,
+                                                    parent,
+                                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_STOCK_CANCEL,
+                                                    GTK_RESPONSE_REJECT,
+                                                    GTK_STOCK_OK,
+                                                    GTK_RESPONSE_ACCEPT,
+                                                    NULL);
+  GtkWidget *cal = gtk_calendar_new ();
+  GtkWidget *today = gtk_button_new_with_label ( _("Today") );
+
+  static guint year = 0;
+  static guint month = 0;
+  static guint day = 0;
+
+  if ( year != 0 ) {
+    // restore the last selected date
+    gtk_calendar_select_month ( GTK_CALENDAR(cal), month, year );
+    gtk_calendar_select_day ( GTK_CALENDAR(cal), day );
+  }
+
+  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), today, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), cal, FALSE, FALSE, 0);
+
+  g_signal_connect_swapped ( G_OBJECT(today), "clicked", G_CALLBACK(today_clicked), cal );
+
+  gtk_widget_show_all ( dialog );
+
+  gtk_dialog_set_default_response ( GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT );
+
+  gchar *date_str = NULL;
+  if ( gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT )
+  {
+    gtk_calendar_get_date ( GTK_CALENDAR(cal), &year, &month, &day );
+    date_str = g_strdup_printf ( "%d-%02d-%02d", year, month+1, day );
+  }
+  gtk_widget_destroy ( dialog );
+  return date_str;
+}
+
 /* creates a vbox full of labels */
 GtkWidget *a_dialog_create_label_vbox ( gchar **texts, int label_count, gint spacing, gint padding )
 {
@@ -561,6 +371,10 @@ GtkWidget *a_dialog_create_label_vbox ( gchar **texts, int label_count, gint spa
   {
     label = gtk_label_new(NULL);
     gtk_label_set_markup ( GTK_LABEL(label), _(texts[i]) );
+    if ( strchr(texts[i], ':') ) {
+      // Align label to the right
+      gtk_misc_set_alignment ( GTK_MISC(label), 1.0, 0.5 );
+    }
     gtk_box_pack_start ( GTK_BOX(vbox), label, FALSE, TRUE, padding );
   }
   return vbox;
@@ -781,6 +595,33 @@ static void about_email_hook (GtkAboutDialog *about,
 }
 #endif
 
+/**
+ *  Creates a dialog with list of text
+ *  Mostly useful for longer messages that have several lines of information.
+ */
+void a_dialog_list ( GtkWindow *parent, const gchar *title, GArray *array, gint padding )
+{
+  GtkWidget *dialog = gtk_dialog_new_with_buttons ( title,
+                                                    parent,
+                                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_STOCK_CLOSE,
+                                                    GTK_RESPONSE_CLOSE,
+                                                    NULL);
+
+  GtkBox *vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
+  GtkWidget *label;
+
+  for ( int i = 0; i < array->len; i++ ) {
+    label = ui_label_new_selectable (NULL);
+    gtk_label_set_markup ( GTK_LABEL(label), g_array_index(array,gchar*,i) );
+    gtk_box_pack_start ( GTK_BOX(vbox), label, FALSE, TRUE, padding );
+  }
+
+  gtk_widget_show_all ( dialog );
+  gtk_dialog_run ( GTK_DIALOG(dialog) );
+  gtk_widget_destroy ( dialog );
+}
+
 void a_dialog_about ( GtkWindow *parent )
 {
   const gchar *program_name = PACKAGE_NAME;
@@ -826,6 +667,9 @@ void a_dialog_about ( GtkWindow *parent )
 #ifdef HAVE_LIBGPS
     "libgps",
 #endif
+#ifdef HAVE_LIBGEXIV2
+    "libgexiv2",
+#endif
 #ifdef HAVE_LIBEXIF
     "libexif",
 #endif
@@ -837,6 +681,12 @@ void a_dialog_about ( GtkWindow *parent )
 #endif
 #ifdef HAVE_LIBBZ2
     "libbz2",
+#endif
+#ifdef HAVE_LIBSQLITE3
+    "libsqlite3",
+#endif
+#ifdef HAVE_LIBMAPNIK
+    "libmapnik",
 #endif
     NULL
   };

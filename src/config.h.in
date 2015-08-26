@@ -1,6 +1,7 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* always defined to indicate that i18n is enabled */
+/* Define to 1 if translation of program messages to the user's native
+   language is requested. */
 #undef ENABLE_NLS
 
 /* Gettext package name */
@@ -12,7 +13,16 @@
 /* Define to 1 if you have the <bzlib.h> header file. */
 #undef HAVE_BZLIB_H
 
-/* Define to 1 if you have the `dcgettext' function. */
+/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
+   CoreFoundation framework. */
+#undef HAVE_CFLOCALECOPYCURRENT
+
+/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+   the CoreFoundation framework. */
+#undef HAVE_CFPREFERENCESCOPYAPPVALUE
+
+/* Define if the GNU dcgettext() function is already present or preinstalled.
+   */
 #undef HAVE_DCGETTEXT
 
 /* Define to 1 if you have the <expat.h> header file. */
@@ -23,6 +33,9 @@
 
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #undef HAVE_GETTEXT
+
+/* Define if you have the iconv() function and it works. */
+#undef HAVE_ICONV
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -39,6 +52,9 @@
 /* Define to 1 if you have the `exif' library (-lexif). */
 #undef HAVE_LIBEXIF
 
+/* Define to 1 if you have the `gexiv2' library (-lgexiv2). */
+#undef HAVE_LIBGEXIV2
+
 /* Define to 1 if you have the `gps' library (-lgps). */
 #undef HAVE_LIBGPS
 
@@ -47,6 +63,15 @@
 
 /* Define to 1 if you have the `magic' library (-lmagic). */
 #undef HAVE_LIBMAGIC
+
+/* Define to 1 if you have the `mapnik' library (-lmapnik). */
+#undef HAVE_LIBMAPNIK
+
+/* Define to 1 if you have the `sqlite3' library (-lsqlite3). */
+#undef HAVE_LIBSQLITE3
+
+/* Define to 1 if you have the `stdc++' library (-lstdc++). */
+#undef HAVE_LIBSTDC__
 
 /* Define to 1 if you have the `X11' library (-lX11). */
 #undef HAVE_LIBX11
@@ -81,6 +106,9 @@
 /* Define to 1 if you have the `realpath' function. */
 #undef HAVE_REALPATH
 
+/* Define to 1 if you have the <sqlite3.h> header file. */
+#undef HAVE_SQLITE3_H
+
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT
 
@@ -99,9 +127,6 @@
 
 /* Define to 1 if you have the `strchr' function. */
 #undef HAVE_STRCHR
-
-/* Define to 1 if you have the `strdup' function. */
-#undef HAVE_STRDUP
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -268,9 +293,6 @@
 
 /* Id. for searching via GOOGLE */
 #undef VIK_CONFIG_SEARCH_GOOGLE
-
-/* SPOTMAPS STUFF */
-#undef VIK_CONFIG_SPOTMAPS
 
 /* TERRASERVER STUFF */
 #undef VIK_CONFIG_TERRASERVER

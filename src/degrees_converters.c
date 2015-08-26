@@ -134,7 +134,7 @@ static gchar *convert_dec_to_dms(gdouble dec, gchar pos_c, gchar neg_c)
   tmp = (tmp - val_d) * 60;
   val_m = (gint)tmp;
 
-  /* Minutes */
+  /* Seconds */
   val_s = (tmp - val_m) * 60;
 
   /* Format */
@@ -178,8 +178,13 @@ gdouble convert_dms_to_dec(const gchar *dms)
 			gdouble value;
 			ptr = strpbrk (endptr, "0123456789,.");
 			if (ptr != NULL) {
-			  value = g_strtod((const gchar *)ptr, (gchar **)&endptr);
-      			nbFloat++;
+				const gchar *tmpptr = endptr;
+				value = g_strtod((const gchar *)ptr, (gchar **)&endptr);
+				// Detect when endptr hasn't changed (which may occur if no conversion took place)
+				//  particularly if the last character is a ',' or there are multiple '.'s like '5.5.'
+				if ( endptr == tmpptr )
+					break;
+				nbFloat++;
       		switch(nbFloat) {
       			case 1:
       				d = value;
@@ -190,6 +195,7 @@ gdouble convert_dms_to_dec(const gchar *dms)
       			case 3:
       				s = value;
       				break;
+      			default: break;
       		}
 			}
 		} while (ptr != NULL && endptr != NULL);

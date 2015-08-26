@@ -495,13 +495,14 @@ _load_attributions_thread ( BingMapSource *self, gpointer threaddata )
 static void
 _async_load_attributions ( BingMapSource *self )
 {
-	a_background_thread ( /*VIK_GTK_WINDOW_FROM_WIDGET(vp)*/NULL,
-			    _("Bing attribution Loading"),
-			    (vik_thr_func) _load_attributions_thread,
-			    self,
-			    NULL,
-			    NULL,
-			    1 );
+	a_background_thread ( BACKGROUND_POOL_REMOTE,
+	                      /*VIK_GTK_WINDOW_FROM_WIDGET(vp)*/NULL,
+	                      _("Bing attribution Loading"),
+	                      (vik_thr_func) _load_attributions_thread,
+	                      self,
+	                      NULL,
+	                      NULL,
+	                      1 );
      
 }
 
@@ -522,10 +523,13 @@ bing_map_source_new_with_id (guint16 id, const gchar *label, const gchar *key)
 	return g_object_new(BING_TYPE_MAP_SOURCE,
 	                    "id", id,
 						"label", label,
+						"name", "Bing-Aerial",
 						"hostname", "ecn.t2.tiles.virtualearth.net",
 						"url", "/tiles/a%s.jpeg?g=587",
 						"api-key", key,
 						"check-file-server-time", TRUE,
+						"zoom-min", 0,
+						"zoom-max", 19, // NB: Might be regionally different rather than the same across the world
 						"copyright", "© 2011 Microsoft Corporation and/or its suppliers",
 						"license", "Microsoft Bing Maps Specific",
 						"license-url", "http://www.microsoft.com/maps/assets/docs/terms.aspx",

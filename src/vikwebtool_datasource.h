@@ -54,7 +54,9 @@ VikWebtoolDatasource *vik_webtool_datasource_new ( );
 VikWebtoolDatasource *vik_webtool_datasource_new_with_members ( const gchar *label,
                                                                 const gchar *url,
                                                                 const gchar *url_format_code,
-                                                                const gchar *file_type );
+                                                                const gchar *file_type,
+                                                                const gchar *babel_filter_args,
+                                                                const gchar *input_label);
 
 G_END_DECLS
 

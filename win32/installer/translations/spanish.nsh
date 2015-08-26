@@ -25,13 +25,15 @@
 !define VIKING_SHORTCUTS_SECTION_TITLE		"Accesos directos"
 !define VIKING_DESKTOP_SHORTCUT_SECTION_TITLE	"Escritorio"
 !define VIKING_STARTMENU_SHORTCUT_SECTION_TITLE	"Menú Inicio"
-!define VIKING_FILE_ASSOCIATION_SECTION_TITLE	"Extensión.vik"
+!define VIKING_FILE_ASSOCIATION_SECTION_TITLE	"Extensión.gpx"
 !define VIKING_SECTION_DESCRIPTION		"Ficheros y DLLs de base de Viking"
+!define VIKING_GPSBABEL_SECTION_TITLE	"GPSBabel 1.5.2"
 
 !define VIKING_SHORTCUTS_SECTION_DESCRIPTION	"Accesos directos para lanzar Viking"
 !define VIKING_DESKTOP_SHORTCUT_DESC		"Crear un acceso directo a Viking en el escritorio"
 !define VIKING_STARTMENU_SHORTCUT_DESC		"Crear un acceso directo a Viking en el menú de inicio"
-!define VIKING_FILE_ASSOCIATION_DESC    "Asociar Viking con la extensión .vik"
+!define VIKING_FILE_ASSOCIATION_DESC    "Asociar Viking con la extensión .gpx"
+!define VIKING_INSTALL_GPSBABEL_DESC	"Instalar GPSBabel Programa"
 
 ; Installer Finish Page
 !define VIKING_FINISH_VISIT_WEB_SITE		"Visite la página web de Viking" 
@@ -42,3 +44,5 @@
 ; Uninstall Section Prompts
 !define un.VIKING_UNINSTALL_ERROR_1		"El programa de desinstalación no ha encontrado las entradas de Viking en la base de registros.$\rLa aplicación quizá haya sido instalada por un usuario distinto."
 !define un.VIKING_UNINSTALL_ERROR_2		"Usted no tiene los permisos necesarios para suprimir esta aplicación."
+
+!define VIKING_UNINSTALL_COMMENTS		"Edición y de análisis de datos GPS"

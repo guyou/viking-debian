@@ -1,7 +1,8 @@
 /* src/config.h.  Generated from config.h.in by configure.  */
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* always defined to indicate that i18n is enabled */
+/* Define to 1 if translation of program messages to the user's native
+   language is requested. */
 #define ENABLE_NLS 1
 
 /* Gettext package name */
@@ -13,7 +14,16 @@
 /* Define to 1 if you have the <bzlib.h> header file. */
 #define HAVE_BZLIB_H 1
 
-/* Define to 1 if you have the `dcgettext' function. */
+/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
+   CoreFoundation framework. */
+/* #undef HAVE_CFLOCALECOPYCURRENT */
+
+/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+   the CoreFoundation framework. */
+/* #undef HAVE_CFPREFERENCESCOPYAPPVALUE */
+
+/* Define if the GNU dcgettext() function is already present or preinstalled.
+   */
 #define HAVE_DCGETTEXT 1
 
 /* Define to 1 if you have the <expat.h> header file. */
@@ -24,6 +34,9 @@
 
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #define HAVE_GETTEXT 1
+
+/* Define if you have the iconv() function and it works. */
+/* #undef HAVE_ICONV */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -38,7 +51,10 @@
 #define HAVE_LIBCURL 1
 
 /* Define to 1 if you have the `exif' library (-lexif). */
-#define HAVE_LIBEXIF 1
+/* #undef HAVE_LIBEXIF */
+
+/* Define to 1 if you have the `gexiv2' library (-lgexiv2). */
+#define HAVE_LIBGEXIV2 1
 
 /* Define to 1 if you have the `gps' library (-lgps). */
 #define HAVE_LIBGPS 1
@@ -48,6 +64,15 @@
 
 /* Define to 1 if you have the `magic' library (-lmagic). */
 #define HAVE_LIBMAGIC 1
+
+/* Define to 1 if you have the `mapnik' library (-lmapnik). */
+#define HAVE_LIBMAPNIK 1
+
+/* Define to 1 if you have the `sqlite3' library (-lsqlite3). */
+#define HAVE_LIBSQLITE3 1
+
+/* Define to 1 if you have the `stdc++' library (-lstdc++). */
+#define HAVE_LIBSTDC__ 1
 
 /* Define to 1 if you have the `X11' library (-lX11). */
 #define HAVE_LIBX11 1
@@ -82,6 +107,9 @@
 /* Define to 1 if you have the `realpath' function. */
 #define HAVE_REALPATH 1
 
+/* Define to 1 if you have the <sqlite3.h> header file. */
+#define HAVE_SQLITE3_H 1
+
 /* Define to 1 if you have the `sqrt' function. */
 /* #undef HAVE_SQRT */
 
@@ -100,9 +128,6 @@
 
 /* Define to 1 if you have the `strchr' function. */
 #define HAVE_STRCHR 1
-
-/* Define to 1 if you have the `strdup' function. */
-#define HAVE_STRDUP 1
 
 /* Define to 1 if you have the <strings.h> header file. */
 #define HAVE_STRINGS_H 1
@@ -208,7 +233,7 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 1.5.1"
+#define PACKAGE_STRING "viking 1.6"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
@@ -217,13 +242,13 @@
 #define PACKAGE_URL "http://viking.sf.net/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.5.1"
+#define PACKAGE_VERSION "1.6"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.5.1"
+#define VERSION "1.6"
 
 /* BING STUFF */
 #define VIK_CONFIG_BING /**/
@@ -270,11 +295,8 @@
 /* Id. for searching via GOOGLE */
 #define VIK_CONFIG_SEARCH_GOOGLE 1
 
-/* SPOTMAPS STUFF */
-#define VIK_CONFIG_SPOTMAPS /**/
-
 /* TERRASERVER STUFF */
-#define VIK_CONFIG_TERRASERVER /**/
+/* #undef VIK_CONFIG_TERRASERVER */
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */

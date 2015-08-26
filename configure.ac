@@ -1,15 +1,16 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
-AC_INIT(viking, 1.5.1, , viking, http://viking.sf.net/)
-AM_INIT_AUTOMAKE([dist-bzip2 dist-zip])
+AC_PREREQ(2.64)
+AC_INIT(viking, 1.6, , viking, http://viking.sf.net/)
+AM_INIT_AUTOMAKE([dist-bzip2 dist-zip subdir-objects])
 dnl AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
 GTK_DOC_CHECK(1.0)
 
-# Checks for programs.
 AC_PROG_CC
+AC_PROG_CC_STDC
+# Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PATH_PROG(GLIB_MKENUMS, glib-mkenums)
@@ -21,7 +22,9 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package name])
 
 AM_GLIB_DEFINE_LOCALEDIR(LOCALEDIR)
 
-AM_GLIB_GNU_GETTEXT
+AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT([external])
+
 IT_PROG_INTLTOOL([0.35.0])
 
 AC_SUBST([CONFIG_STATUS_DEPENDENCIES],['$(top_srcdir)/po/LINGUAS'])
@@ -42,7 +45,7 @@ AC_TYPE_MODE_T
 # Checks for library functions or symbols
 AC_FUNC_STAT
 AC_FUNC_STRTOD
-AC_CHECK_FUNCS([floor memset mkdtemp pow realpath sqrt strcasecmp strchr strdup strncasecmp strtol strtoul])
+AC_CHECK_FUNCS([floor memset mkdtemp pow realpath sqrt strcasecmp strchr strncasecmp strtol strtoul])
 AC_CHECK_LIB(m, tan)
 AC_CHECK_LIB(z, inflate)
 AC_CHECK_LIB(X11, XSetErrorHandler)
@@ -79,9 +82,9 @@ dnl | Pkgconfig checks |---------------------------------------
 dnl  ------------------
 
 PKG_CHECK_MODULES(PACKAGE, [
-        glib-2.0          >= 2.16
+        glib-2.0          >= 2.26
         gthread-2.0       >= 2.2
-        gtk+-2.0          >= 2.14
+        gtk+-2.0          >= 2.16
         gio-2.0           >= 2.12
 ])
 
@@ -145,9 +148,9 @@ esac
 AM_CONDITIONAL([GOOGLE], [test x$ac_cv_enable_google = xyes])
 
 AC_ARG_ENABLE(terraserver, AC_HELP_STRING([--enable-terraserver],
-              [enable Terraserver stuff (default is enable)]),
+              [enable Terraserver stuff (default is disabled as the tileserver is no longer available)]),
               [ac_cv_enable_terraserver=$enableval],
-              [ac_cv_enable_terraserver=yes])
+              [ac_cv_enable_terraserver=no])
 AC_CACHE_CHECK([whether to enable Terraserver stuff],
                [ac_cv_enable_terraserver], [ac_cv_enable_terraserver=yes])
 case $ac_cv_enable_terraserver in
@@ -225,6 +228,8 @@ case $ac_cv_enable_geocaches in
 esac
 AM_CONDITIONAL([GEOCACHES], [test x$ac_cv_enable_geocaches = xyes])
 
+# Geotagging
+AC_ARG_WITH(libexif, AC_HELP_STRING([--with-libexif], [Force usage of libexif instead of libgexiv2]))
 AC_ARG_ENABLE(geotag, AC_HELP_STRING([--enable-geotag],
 	      [enable Geotag Support (default is enable).]),
               [ac_cv_enable_geotag=$enableval],
@@ -233,25 +238,21 @@ AC_CACHE_CHECK([whether to enable Geotag Support],
                [ac_cv_enable_geotag], [ac_cv_enable_geotag=yes])
 case $ac_cv_enable_geotag in
   yes)
-    AC_CHECK_LIB(exif,exif_loader_new,,AC_MSG_ERROR([libexif is needed for Geotag features[,] but is not found. The feature can be disabled with --disable-geotag]))
+    AS_IF([test x$with_libexif = xyes],
+      AC_CHECK_HEADER([libexif/exif-data.h],[],AC_MSG_ERROR([exif-data.h is needed but not found - you will need to install package 'libexif-dev' or similar]))
+      AC_CHECK_LIB(exif,exif_loader_new,, AC_MSG_ERROR([libexif is not found but it has been forcibly required])),
+      # gexiv2.h relies on glib so a simple compile check fails.
+      #AC_CHECK_HEADER([gexiv2/gexiv2.h],,AC_MSG_ERROR([Error msg...]))
+      AC_CHECK_LIB(gexiv2,gexiv2_metadata_new,, AC_MSG_ERROR([libgexiv2 is needed but not found - you will need to install package 'libgexiv2-dev' or similar. The feature can be disabled with --disable-geotag]))
+      )
     AC_DEFINE(VIK_CONFIG_GEOTAG, [], [GEOTAG STUFF])
     ;;
 esac
 AM_CONDITIONAL([GEOTAG], [test x$ac_cv_enable_geotag = xyes])
-
-AC_ARG_ENABLE(spotmaps, AC_HELP_STRING([--enable-spotmaps],
-	      [enable SPOTMaps map (default is enable).]),
-              [ac_cv_enable_spotmaps=$enableval],
-              [ac_cv_enable_spotmaps=yes])
-AC_CACHE_CHECK([whether to enable SPOTMaps map],
-               [ac_cv_enable_spotmaps], [ac_cv_enable_spotmaps=yes])
-case $ac_cv_enable_spotmaps in
-  yes)
-    AC_DEFINE(VIK_CONFIG_SPOTMAPS, [], [SPOTMAPS STUFF])
-    ;;
-esac
-AM_CONDITIONAL([SPOTMAPS], [test x$ac_cv_enable_spotmaps = xyes])
-
+AM_CONDITIONAL([GEXIV2], [test x$ac_cv_lib_gexiv2_gexiv2_metadata_new = xyes] )
+# Tested with gexiv2 0.10.2, but probably would work with older versions; may be all of them...
+#AM_COND_IF([GEXIV2], [PKG_CHECK_MODULES([GEXIV2], [gexiv2 >= 0.6.1])])
+AM_CONDITIONAL([LIBEXIF], [test x$ac_cv_lib_exif_exif_loader_new = xyes] )
 
 AC_ARG_ENABLE(dem24k, AC_HELP_STRING([--enable-dem24k],
 	      [enable USGS 24k DEM (default is disable) download source. Requires dem24k.pl script in path.]),
@@ -311,7 +312,51 @@ case $ac_cv_enable_magic in
 esac
 AM_CONDITIONAL([MAGIC], [test x$ac_cv_enable_magic = xyes])
 
+# SQL for MBTiles
+AC_ARG_ENABLE(mbtiles, AC_HELP_STRING([--enable-mbtiles],
+              [enable MBTiles support via libsqlite3 (default is enable).]),
+              [ac_cv_enable_mbtiles=$enableval],
+              [ac_cv_enable_mbtiles=yes])
+AC_CACHE_CHECK([whether to enable MBTiles Support],
+               [ac_cv_enable_mbtiles], [ac_cv_enable_mbtiles=yes])
+case $ac_cv_enable_mbtiles in
+  yes)
+    AC_CHECK_HEADERS([sqlite3.h],[],[AC_MSG_ERROR([sqlite3.h is needed but not found - you will need to install package 'libsqlite3-dev' or similar. The feature can be disabled with --disable-mbtiles])])
+    AC_CHECK_LIB(sqlite3, sqlite3_open, [], [AC_MSG_ERROR([libsqlite3 is needed but not found.])])
+    ;;
+esac
+AM_CONDITIONAL([SQLITE], [test x$ac_cv_enable_mbtiles = xyes])
+
+# Mapnik rendering layer
+AC_ARG_ENABLE(mapnik, AC_HELP_STRING([--enable-mapnik],
+              [enable Mapnik (default is enable)]),
+              [ac_cv_enable_mapnik=$enableval],
+              [ac_cv_enable_mapnik=yes])
+AC_CACHE_CHECK([whether to enable Mapnik],
+               [ac_cv_enable_mapnik], [ac_cv_enable_mapnik=yes])
+case $ac_cv_enable_mapnik in
+  yes)
+    # C++
+    AC_LANG_CPLUSPLUS
+    AC_LANG_SAVE
+    AC_PROG_CXX
+    # Too difficult to get check working under Windows (extra dependencies needed probably Boost)- so just skip it
+    if test "x$ac_cv_enable_windows" = "xno"; then
+      AC_CHECK_HEADER([mapnik/map.hpp],[],[AC_MSG_ERROR([mapnik/map.hpp is needed but not found - you will need to install package 'libmapnik-dev' or similar. The feature can be disabled with --disable-mapnik])])
+    fi
+    AC_CHECK_LIB([mapnik], [main], [], [AC_MSG_ERROR([libmapnik is needed but not found.])])
+    AC_CHECK_LIB([stdc++], [main], [], [AC_MSG_ERROR([libstdc++ is needed but not found.])])
+    AC_LANG_RESTORE
+    ;;
+esac
+AM_CONDITIONAL([MAPNIK], [test x$ac_cv_enable_mapnik = xyes])
 ###
+
+## WORK AROUND BROKEN autoconf - see http://lists.gnu.org/archive/html/bug-automake/2002-11/msg00020.html
+m4_pushdef([AC_MSG_ERROR])
+AC_PROG_CXX
+m4_popdef([AC_MSG_ERROR])
+##
 
 AC_ARG_WITH(search,
             [AC_HELP_STRING([--with-search],
@@ -386,6 +431,7 @@ AC_CONFIG_FILES([
 		src/icons/Makefile
 		po/Makefile.in
 		data/Makefile
+		tools/Makefile
 		test/Makefile
 		help/Makefile
 		win32/Makefile
@@ -405,7 +451,7 @@ AC_OUTPUT([
 dnl Output the configuration summary
 echo ""
 echo "==========================================="
-echo "$PACKAGE $VERSION"
+echo "$PACKAGE $PACKAGE_URL $VERSION"
 echo "-------------------------------------------"
 echo "Bing Maps                        : $ac_cv_enable_bing"
 echo "Google                           : $ac_cv_enable_google"
@@ -413,18 +459,18 @@ echo "Terraserver Maps                 : $ac_cv_enable_terraserver"
 echo "Expedia Maps                     : $ac_cv_enable_expedia"
 echo "Open Street Map                  : $ac_cv_enable_openstreetmap"
 echo "BlueMarble                       : $ac_cv_enable_bluemarble"
-echo "SPOTMaps                         : $ac_cv_enable_spotmaps"
 echo "Geonames                         : $ac_cv_enable_geonames"
 echo "Geocaches Acquire                : $ac_cv_enable_geocaches"
-echo "Geotag Support                   : $ac_cv_enable_geotag"
+echo "Geotag Support                   : $ac_cv_enable_geotag (libgexiv2=$ac_cv_lib_gexiv2_gexiv2_metadata_new libexif=$ac_cv_lib_exif_exif_loader_new)"
 echo "USGS 24k DEM                     : $ac_cv_enable_dem24k"
 echo "Realtime GPS Tracking            : $ac_cv_enable_realtimegpstracking"
 echo "bzip2 Support                    : $ac_cv_enable_bzip2"
 echo "File Magic Support               : $ac_cv_enable_magic"
+echo "MBTiles Support (SQLite3)        : $ac_cv_enable_mbtiles"
+echo "Mapnik Rendering Support (C++)   : $ac_cv_enable_mapnik"
 echo "Size of map cache (in memory)    : ${VIK_CONFIG_MAPCACHE_SIZE}"
 echo "Age of tiles (in seconds)        : ${VIK_CONFIG_DEFAULT_TILE_AGE}"
 echo "Documentation (+HTML)            : ${enable_gtk_doc} (HTML: ${enable_gtk_doc_html})"
 echo "-------------------------------------------"
 echo ""
 echo "Configure finished, type 'make' to build."
-

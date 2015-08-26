@@ -1,43 +1,707 @@
 
+2015-03-29
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix potential broken builds.
+	* Releasing Viking 1.6
+	* Fix new test programs to work under 'make distcheck'
+	* Fix renamed file
+	* [DOC] Improve formal docbook compliance.
+	* Add more files that have i18n.
+	* Debian #746815: Fix loading image thumbnails when some Unicode chars in the pathname
+	* [QA] White space fixes
+	* Detect gdk_pixbuf_save failures in thumbnail generation
+	* Debian #761966: Remove an incorrect accelerator in the German translation.
+	* Document previous translation updates
+	* Import Launchpad translation updates
+
+2015-03-28
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Interpolate Times
+	* Prevent potential infinite speeds in interpolating time function.
+
+2015-03-28
+Christian Müller <cmue81@gmx.de>:
+	* Interpolate timestamps of a track between first and last trackpoint
+
+2015-03-28
+Rob Norris <rw_norris@hotmail.com>:
+	* Extend TrackWaypoint layer tooltip to include the total length of routes.
+	* Fix mislabelled distance markers when using Nautical Miles.
+	* [QA] Fix (an unused) function parameter type.
+	* Enable a method to copy the time in the Trackpoint and Waypoint Edit dialogs.
+	* Enable invoking Web Tools via right click menus on selected layers or points.
+	* [QA] Prevent a Gtk-Critical warning.
+
+2015-03-27
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Update comment regarding GPSBabel version for Overpass API query result handling.
+
+2015-03-19
+Christian Müller <cmue81@gmx.de>:
+	* Improve layout of the Edit Trackpoint dialog.
+
+2015-03-18
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix initialization so that preferences aren't accessed too early.
+	* Fix toolbar preference types
+
+2015-03-17
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix changed Wikimedia Toolserver GeoHack URL
+	* Add built in support for OSM Query requests.
+	* [QA] Normalize OSM URL.
+	* [QA] Improve tool_edit_trackpoint_click() comments
+	* Add advanced setting to create TrackWaypoint layers without asking for details.
+
+2015-03-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix enable selecting trackpoints/routepoints via Edit Trackpoint tool when the other kind is invisible.
+	* SF Bugs#118: Fix route point selection via the Edit Trackpoint tool.
+	* Allow re-sizing the width of the layers panel to smaller than the initial value.
+
+2015-03-09
+Rob Norris <rw_norris@hotmail.com>:
+	* SF Bugs#117: Confirm capability with GPSD_API_MAJOR_VERSION=6 (gpsd 3.12 / libgps.so.22)
+
+2015-03-08
+Rob Norris <rw_norris@hotmail.com>:
+	* [WINDOWS] Update to GPSBabel 1.5.2
+	* [WINDOWS] Enable faster building by using all available CPUs.
+	* Use the correct variable name!
+
+2015-03-06
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Force integer type in calls to abs() as x,y in GdkEventButton are doubles.
+	* [QA] Use labs() instead of abs() in comparison of timestamps to avoid truncation issues
+	* [QA] Fix clang warning: format string is not a string literal
+	* Fix building when geotagging is disabled.
+
+2015-02-24
+Rob Norris <rw_norris@hotmail.com>:
+	* SF Features#122: Export Track, Route and Waypoint Lists as text.
+	* White space fixes.
+	* [QA] List display of maximum track height could be a negative value.
+	* Merge branch 'TimeSort'
+
+2015-02-22
+Rob Norris <rw_norris@hotmail.com>:
+	* Improve date treeview storage consistency by updating TRW layer when sublayers are deleted.
+	* Add ability to sort Aggregate layers and sublayers of Tracks and Waypoints by date.
+	* Refactor getting first timestamp for VikTrwlayers (and sublayers) into reuse-able functions.
+	* Refactor sublayer sort to use a common function.
+	* Fix uniquify tracks to use the appropriate sort order.
+	* Remove 'has_visibile_column' from treeview as it's always true.
+	* Merge branch 'MapnikRenderingLayer'
+
+2015-02-12
+Rob Norris <rw_norris@hotmail.com>:
+	* Test file zoom out so it's more obvious the location.
+
+2015-02-10
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Add some words about Advanced Prefrences.
+	* Display attribution on Mapnik Renderings.
+	* Enable displaying of Mapnik configuration extra parameters.
+	* Separate thread pool for Mapnik rendering defaulting to just 1 task.
+	* World Countries test data and configuration for Mapnik Rendering.
+	* Mapnik library needs full filename for the configuration file.
+
+2015-01-31
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Document the Mapnik Rendering Layer capability.
+	* [QA] Minor document correction.
+	* Fix displaying refreshed map tiles.
+	* Add mapnik rendering tile info.
+	* Allow the Mapnik rendering buffer size to be altered via the config file.
+	* Extend map cache data to hold extra data associated with the pixbuf.
+
+2015-01-27
+Rob Norris <rw_norris@hotmail.com>:
+	* Add method to force re-running carto for a Mapnik Rendering Layer.
+	* Mapnik Layer tool.
+	* [QA] Prevent some Gtk-CRITICAL messages about values out of range.
+	* [WINDOWS] Explore compiling against mapnik with g++ - but ultimately disable it.
+	* Enable using an optional file cache for Mapnik Renderings.
+	* Add Refresh to consider reloading a Mapnik Rendering configuration.
+	* Use threading with Mapnik Renderings layer.
+	* Pass Mapnik loading errors around and display in the GUI.
+	* Add GUI About Mapnik information.
+	* Carto CSS support to generate Mapnik XML.
+	* Create a mapnik interface object so each Mapnik Layer will render using a separate mapnik::map
+	* A Mapnik Rendering layer
+	* Split background threads into two pools.
+	* Simple function to add a file into the GTK+ Recent list.
+	* Add Inverse TMS to Spherical Mercator VikCoord conversion (top left corner)
+	* Shift Inverse TMS MapCoord <=> Spherical Mercator VikCoord functions for global access.
+	* Add ability to remove the map cache for a single map type.
+	* Add function to get number of processors.
+	* Add XML as file entry filter option.
+	* [DOC] Add command line synopsis from the man page into the help.
+	* Allow starting Viking with command line parameters to set position, zoom and map type.
+	* Add functions to allow getting the default and setting the map layer type.
+	* [QA] Fix vik_maps_layer_get_map_type() and improve return type.
+	* [QA] Use map ids.
+	* Rework Map Tile information output to use new multi line dialog.
+	* Add a dialog to display several separate lines of text.
+	* Fix drawing of copied MBTiles map layers.
+	* [QA] Write boolean check in a more standard manner.
+	* [QA] Fix spelling mistakes and note that the INSTALL file is for Unix like systems.
+	* Allow various variable text output to be selectable so the user can copy the information.
+	* Add a function to enable creating a selectable label.
+	* [QA] Fix incorrect comment.
+	* Enable opening an external Astronomy program at the specific date & time of a trackpoint or waypoint.
+	* Slightly more configurable support for RedNotebook.
+	* Add 'Education' back into the Desktop Specification.
+
+2014-12-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Release some resources on program exit.
+	* Correct Bing Aerial map name and allow for i18n.
+	* Shift Map Ids into a central location for ease of knowing what is in use.
+
+2014-12-14
+Rob Norris <rw_norris@hotmail.com>:
+	* Show maps layer tile grid lines in extreme debug mode
+	* Shift GTK+ compatibility definitions into vik_compat.h
+	* Extend zoom menus to cater for the highest zoom levels.
+	* Prevent compiler warnings with GLIB version 2.32 or later.
+	* SF Features#129: Advanced Maps Layer drawing configuration.
+	* Fix potential crashes from long running threads in a removed window.
+	* Remove configure check for strdup() as it is not used.
+	* SF Bugs#116: Fix erroneous usage of abs(). Use fabs() instead.
+	* Fix stdout/stderr variable usage.
+	* Improve potential statusbar message of a selected trackpoint.
+	* Fix display of calculated speed for the statusbar message.
+	* Remove not very helpful debug message since it can generate large volumes of messages.
+	* Support showing a climb (vertical speed) value in the statusbar.
+	* [QA] Minor function rename for consistency
+	* Shift build configurable bits into modules.c
+	* [WINDOWS] Tidy up Windows build
+	* SF Bugs#112: Enable using libgexiv2 for writing geotag image data to void XMP data loss.
+
+2014-11-16
+Rob Norris <rw_norris@hotmail.com>:
+	* SF Features#124: Enable modifier key to enable panning in select tool mode.
+	* Merge branch 'GeoRefImprove'
+	* [DOC] Update GeoRef Layer documentation for the latest capabilities.
+	* [DOC] Shift GeoRef layer help into a separate file.
+	* Add alpha capability to GeoRef images.
+	* Move function to apply an alpha value to be reuse-able.
+	* GeoRef Layer improvement to offer entering coordinates in Lat/Lon.
+
+2014-11-05
+Rob Norris <rw_norris@hotmail.com>:
+	* By default automatically attempt to read the associated world file of a new georef image.
+	* Refactor world file reading to be more reuseable and improved comments.
+	* Extend file entry to enable running a callback on entry accepted.
+
+2014-11-04
+Rob Norris <rw_norris@hotmail.com>:
+	* GeoRefLayer is always created before the properties dialog is called.
+	* Remove unnecessary restriction on GeoRef layer needing to be in UTM Mode.
+	* SF Bugs#113: Fix waypoints can be accidentally moved on (re)selection by the select tool
+
+2014-11-02
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Fix compiler warning from previous commit
+	* SF Bugs#115: Fix application hanging on degrees input ending in a comma.
+
+2014-10-29
+Rob Norris <rw_norris@hotmail.com>:
+	* Some geotagging tests.
+	* SF Features#125: Don't export unchecked items when exporting GPX files.
+	* SF Bugs#114: Fix Shortcut keys get reset next start
+	* Use test_metatile as a test program.
+	* [QA] Prevent depreciated warnings from test programs.
+	* Fix memory leak in saving Geotag EXIF information.
+	* Fix memory leak in display of the preferences window.
+	* Fix crashing on invoking the Customize Toolbar from the preferences dialog.
+	* [DOC] Toolbar customization.
+
+2014-10-17
+Rob Norris <rw_norris@hotmail.com>:
+	* Bump requirements to match the code.
+	* Fix for non portable GNU only strcasestr() function.
+
+2014-10-16
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Wiki Help URL change.
+	* [DOC] Fix some strict docbook validation issues.
+	* [DOC] Recommended programs
+
+2014-10-15
+Rob Norris <rw_norris@hotmail.com>:
+	* [WINDOWS] Various install improvements.
+	* [WINDOWS] Must accept GPL2 license before installing.
+	* [WINDOWS] .vik file registration is automatic, .gpx is optional
+	* [WINDOWS] Enable optional install of GPSBabel 1.5.1
+	* [WINDOWS] Toolbar default to be similar to previous non optional setting.
+	* [WINDOWS] Update to use libcurl 7.34.0
+	* [WINDOWS] Update to compile with GCC4.8.1
+	* [WINDOWS] Fix path in installer generation
+	* [WINDOWS] For some reason the compiler under Windows doesn't like variables such as 'stdout' or 'stderr'
+	* [DOC] Some words about GPX export options.
+	* [WINDOWS] Default locations for GPSBabel
+	* Only enable Google routing when GPSBabel is available.
+	* Allow specifying the location for GPSBabel via a preference.
+	* Update README to reflect current capabilities and fix changed Git URL.
+	* Ensure waypoint bounds are recalculated when a waypoint is deleted.
+	* Add TIFF as an image file type that gets listed in the applied filter.
+	* [DOC] Add manual section about the command line options.
+
+2014-10-14
+Rob Norris <rw_norris@hotmail.com>:
+	* 'extreme' debug mode (i.e. -Vd) to not remove downloaded temporary files.
+	* Make "utils.h" commonly available in "viking.h"
+	* Add simple amenity POI datasource for immediate use and an extended example.
+	* [DOC] Help for the extended datasource.
+	* Add i18n and activate on return key in the entry in web datasource.
+
+2014-10-13
+Matthew Hague <matthewhague@zoho.com>:
+	* added help for the extended datasource stuff
+	* removed a grab_focus that wasn't working
+	* fixed a memory leak in babel.c
+	* added map to datasources so that last string is remembered by datasource not one for all
+	* added save previous user input string and input label options to datasource search with user string
+
+2014-09-30
+Matthew Hague <matthewhague@zoho.com>:
+	* added search capability to datasources.xml, undocumented so far
+	* added capability of adding babel filter args to external datasources
+
+2014-09-28
+Matthew Hague <matthewhague@zoho.com>:
+	* gps babel filters must be applied between the input and output options (separate from other options that must be passed first), implemented version of a_babel_convert_from and a_babel_convert_from_url to handle this properly
+
+2014-09-24
+Rob Norris <rw_norris@hotmail.com>:
+	* Merge branch 'MapsExtendedConfiguration'
+
+2014-09-15
+Rob Norris <rw_norris@hotmail.com>:
+	* Extend TMS and WMSC maps to handle Zoom and Area extents.
+	* Add and use capability of defined area by min/max lat/lons for map types.
+
+2014-09-13
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Improve Map Layer documentation including properties of the map layer.
+	* [DOC] Remove references to defunct Terraserver maps.
+	* Add OSM Metatiles as a Map Type so one can read metatiles directly from disk.
+	* Read OSM Metatile capability and basic test with single example metatile.
+	* [QA] Explain some more map configuration options.
+	* SF Features#121: Support reading alternative forms of tile image names.
+	* Improve tile info dialog message to print out the filename even when cache file is not on disk.
+	* [WINDOWS] Add cache tool script into Windows distribution build.
+	* Add and use capability of defined individual map types zoom minimum and maximum levels.
+	* Enable Cache conversion in the Python tool viking-cache.py
+	* Change tool to require specifying the mode of operation.
+	* More reliable file processing in creating an mbtiles file.
+	* Python 3 compatibility.
+	* Rename viking cache tool in preparation for more than just mbtiles usage.
+	* Enable importing from an mbtiles file to Viking cache via the python tool.
+	* [QA] Rename mode to id.
+	* Add map name property which is used in the directory path of the cache storage.
+	* Default map caches for new users to use the OSM layout scheme.
+	* Enable Map Cache layout control per map.
+	* Add capability to save layer defaults from outside the layer defaults code.
+	* Fix up toolbar/menu toggle button alignment when loading from Viking files.
+	* Fix broken generated toolbar UI file definition.
+
+2014-09-12
+Rob Norris <rw_norris@hotmail.com>:
+	* Merge commit 'ToolbarConfig'
+
+2014-09-06
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Prevent warning from test_coord_conversion.c and ignore test outputs
+	* [QA] Ignore test_babel build output
+	* [QA] Tidy test_babel.c to compile without warnings and a hint on usage.
+	* More accurate description for the .spec file.
+	* [QA] Fix spelling mistake.
+	* Fix incorrect map id variable saved for remembering licenses shown.
+	* [QA] Add warning if file rename fails.
+
+2014-08-21
+Rob Norris <rw_norris@hotmail.com>:
+	* Add debug output view of the Back/Forward positions.
+
+2014-08-04
+Rob Norris <rw_norris@hotmail.com>:
+	* Integrate toolbar code to be used with Viking windows.
+	* Extend toolbar code for usage with Viking.
+	* [QA] Use VIK_VIEWPORT_DRAWMODE values in GtkRadioActionEntry mode_entries[]
+	* Give all action entries with an icon a tooltip.
+	* Add capability to use a button callback within UI builder.
+	* Add Gtk+ utility functions from Geany 1.24.1
+	* Add glib utility functions from Geany 1.24.1
+	* Add toolbar code from Geany 1.24.1
+	* [QA] Shift Gtk dependent utility functions into separate file.
+
+2014-08-03
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix commit SHA:e8518759e6c64fac28783cf190b82705dc4bbb87
+	* [QA] Remove very old unused code from vikmapslayer.c
+
+2014-08-01
+Rob Norris <rw_norris@hotmail.com>:
+	* Save and use the position of the horizontal pane when restoring the window layout.
+	* [QA] Better to claim key board event handled for F5 & Ctrl+F5 usage.
+	* SF Bugs#109: Ctrl+Keypad+/- to Zoom In/Out respectively.
+	* [QA] Use glib functions for the format in reporting the size of a file and the map cache.
+
+2014-07-20
+Rob Norris <rw_norris@hotmail.com>:
+	* Prevention of crashing in mapcache when tmp variable is NULL.
+	* [QA] Fix up overzealous variable renaming.
+
+2014-07-13
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Window's build - better use of environment variable.
+	* Enable i18n on 'Routing' preferences tab name.
+	* Add capability to define the URL format for web links.
+	* Add link to HERE Maps.
+	* Add map cache information to be accessible from the GUI only in debug mode.
+	* [QA] Rename and correct some map cache variables usage for better understanding.
+	* Prevent crashing when queue_tail is NULL.
+	* Fix zoom type definition in map cache.
+
+2014-06-14
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Expand keys used for panning the map.
+	* Add trackpoint message output option value of the distance to the end of the track.
+
+2014-06-09
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Distance units not used here.
+	* SF Features#120: Add Nautical Miles preference for distance units.
+
+2014-06-07
+Rob Norris <rw_norris@hotmail.com>:
+	* Add methods to open Waypoint URLs in comments & descriptions from the Properties dialog.
+
+2014-06-05
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Move Waypoint dialog code into its own file.
+	* [QA] Use a library function to get the number of items in a string array.
+	* Merge branch 'TimeDisplay'
+	* [DOC] Time Display option.
+	* SF Features#95 - Part 2: TimeZone lookup based on an object's position.
+	* Create timezone lookup file derived from geonames.org
+	* Add kdtree C code version 0.5.6 from https://code.google.com/p/kdtree/
+	* SF Features#95 - Part 1: Allow and use configuration of an alternative time display.
+	* [DOC] Include source link for strtod.c
+	* Fix test file: OSMarender Map is long defunct. Use Maqquest.
+	* If a route or track creation is cancelled with the Escape key with just the initial point,  assume it's not really wanted and delete it.
+	* Add and use preference in whether a name is requested when creating a new track or route.
+
+2014-06-01
+Rob Norris <rw_norris@hotmail.com>:
+	* Allow import of file format with *any* readable components as supported by GPSBabel.
+	* Fix jump to today's date in search if Viking has been running over a day.
+
+2014-05-27
+Rob Norris <rw_norris@hotmail.com>:
+	* SF Bugs#106: Fix incorrect location on opening .vik file saved in different locale.
+	* [DOC] Attribution of Sanos strtod.c
+	* strtod.c from Sanos Operating System Kernel 1.3.4 (http://www.jbox.dk/sanos)
+	* Fix pasting of text in DMS format to resolve to the correct location.
+	* [DOC] Add attributions to meet binary distribution requirements.
+	* [DOC] Bump Docbook Version to 4.5 in the Help.
+
+2014-05-15
+Rob Norris <rw_norris@hotmail.com>:
+	* Enable copying the centre location of the viewport via Ctrl+h
+	* Add alternative bearing readout as raw lat/lon double values.
+	* Fix waypoints may not be drawn when created by paste of a text location.
+
+2014-05-10
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] GPSBabel Filter: Compress Tracks
+	* Allow compressing tracks using the GPSBabel simplify crosstrack feature.
+
+2014-05-08
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix zoom level tile reporting for an MBTiles map.
+	* Save track property show DEM & speed settings between dialog invocations.
+	* Optionally show DEM values on Elevation/Speed graph.
+
+2014-05-03
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Use cross platform directory separator
+
+2014-05-02
+Rob Norris <rw_norris@hotmail.com>:
+	* Update external_tools configurations.
+	* Enable Windows installation to search for and use deployed extension configuration files.
+
+2014-04-25
+Rob Norris <rw_norris@hotmail.com>:
+	* Allow setting timestamps on trackpoints and waypoints that previously had none.
+	* SF Features#100: Allow 'easy' changing of the time of trackpoints & waypoints.
+	* SF Features#100: Allow changing of the time of trackpoints.
+	* Ensure track bounds are initialized correctly during track creation.
+	* Improve ordering of date/time output on time graphs.
+
+2014-04-11
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Remove unused parameter
+
+2014-04-10
+Rob Norris <rw_norris@hotmail.com>:
+	* Remove temporary files used asynchronously on program exit.
+	* Enable importing from GeoJSON files via the usage of the program 'togpx'.
+	* Enable exporting to GeoJSON file via the program togeojson.
+
+2014-04-08
+Rob Norris <rw_norris@hotmail.com>:
+	* Use a common way to create temporary GPX files.
+	* [QA] Limit scope of includes of vikutils header.
+	* Geoname services now require an username account to access free services.
+	* [DOC] Update Help for current built in Maps list.
+	* Rationalise acquire mode to have more obvious behaviour.
+	* Convert some console warnings to get reported to the GUI in the statusbar.
+	* [QA] Correct and improve enumeration usage for export file types.
+	* Ensure tools directory is really included in the build output.
+
+2014-04-04
+Rob Norris <rw_norris@hotmail.com>:
+	* Add the miscellaneous 'tools' scripts into the build output.
+
+2014-04-03
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix googledirections script.
+	* Fix slightly incorrect DEM point drawing on the track property display after recent code changes.
+
+2014-03-27
+Rob Norris <rw_norris@hotmail.com>:
+	* Show distance axis grids on distance graphs.
+	* SF Features#91: Part 2. Show time axis grids on time graphs.
+
+2014-03-26
+Rob Norris <rw_norris@hotmail.com>:
+	* Create and use a function to return the duration of a track.
+	* [QA] Refactoring track properties window.
+	* SF Features#91: Part 1. Display Clock Date/Time of the blob on the time graphs.
+	* Remove unnecessary subdomain in some OSM tileserver hostnames.
+	* Refix Merging tracks by time.
+
+2014-03-22
+Rob Norris <rw_norris@hotmail.com>:
+	* Remove no longer available map services.
+	* Remove default usage of Terraserver maps as they are no longer available.
+	* Completely remove SPOTMaps as this service is no longer available.
+	* Optimize tooltip message generation, remove unnecessary track iterations.
+	* Allow clearing and copying of the information message in the statusbar.
+	* Report download failures in the statusbar.
+	* Fix crashing on double clicks - properly initialize variable.
+
+2014-03-20
+Rob Norris <rw_norris@hotmail.com>:
+	* Refactor time from start track property label update
+
+2014-03-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Flow up error states from routing so the GUI can display the failing result.
+	* Notes on how to use git2changelog.sh
+
 2014-03-15
 Rob Norris <rw_norris@hotmail.com>:
 	* [WINDOWS] Ensure an icon is embedded in the executable.
+	* Yet more files to ignore from output of the build process.
+	* [WINDOWS] More reliable rebuilds.
 	* [WINDOWS] Fix opening URLs in Windows build only.
-	* Shift code around to reduce dependencies required for DEM access.
+
+2014-02-23
+Rob Norris <rw_norris@hotmail.com>:
 	* SF Bugs#105: Fix Display of Lines (Clipping) at High Zoom Levels.
+	* Fix building on Windows as Viking only supports GLIB 2.24 ATM.
+
+2014-02-10
+Rob Norris <rw_norris@hotmail.com>:
+	* Add a tooltip for Aggregate Layers to say how many layers they contain.
 	* Remove built in OpenStreetBugs datasource as this service is being phased out.
+
+2014-02-08
+Rob Norris <rw_norris@hotmail.com>:
+	* Add support for reading waypoint specific URL fields in GPX1.0 files.
 	* Isolate Viking specific code in otherwise reusable code.
+	* Shift code around to reduce dependencies required for DEM access.
+	* Don't store regenerated INSTALL file in git.
 	* Fix DEM layer URL reference output.
 	* Remove mistaken need to change directory.
+
+2014-02-05
+Rob Norris <rw_norris@hotmail.com>:
+	* Merge branch 'ImprovedRouteFinder'
+	* Improve routing function return types to simple TRUE / FALSE for success or failure indication.
+
+2014-02-05
+Matthew Hague <matthewhague@zoho.com>:
+	* Updated documentation for the improved route finding tool
+	* Improve the Route Finder Tool
+	* Extend Routing functions for UI reuse.
+	* Fix vik_track_cut_back_to_double_point().
+
+2014-01-02
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Remove unused parameter.
+	* [QA] Rename variables to avoid shadowing global variables.
+	* [QA] Add default cases for all switch statements.
+	* [QA] Add explicit missing field initializers.
+	* Extend Waypoint properties with some EXIF Geotag (read only) information.
+	* Add a function to return the position from a file with EXIF GPS information.
+	* Use the last selected date when initializing the date search.
+
+2014-01-01
+Rob Norris <rw_norris@hotmail.com>:
+	* Add a preference to control the number of recent files made available.
+	* Enable JPG files as a primary supported type.
+	* [QA] Rename function
+	* Fix autodownload tiles when scrolling. Was broken by a recent commit.
+
+2013-12-09
+Rob Norris <rw_norris@hotmail.com>:
+	* Enable zooming in/out in jumps of 3 levels by pressing shift key at the same time with the zoom tool.
+	* Enable double clicking as an optional way to control zooming in pan mode.
+
+2013-12-07
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix right click on a selected waypoint image starts to move it.
+	* [DOC] Mention the new maps switch-xy property.
+	* Add an example of using ArcGIS Server with use of the "switch-xy" property
+	* Enable boolean map configuration 'switch-xy' property to swap X,Y parts of the URL.
 	* Remove repeating of built in types in data files.
 	* External tools don't use ids
+	* Shift Search by Date into a sub menu.
+	* Explicitly use subdir-objects in automake init to prevent large warning with automake-1.14
 	* Skip etag files in mbtile converter tool
-	* Fix crashing when copying layers with null strings as parameters.
+	* Tidy up Makefile.am spacings
 
-2014-03-15
+2013-12-05
 Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
-	* Fix translatable string with variable argument
-	* Fix 'export_to_common' dialog
+	* Fix autogen.sh in order to install needed files
+
+2013-11-25
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Remove unused parameter
+	* [QA] Tools are enabled per active layer
+	* Fix excluding own self track when creating lists of other tracks.
+
+2013-11-20
+Rob Norris <rw_norris@hotmail.com>:
+	* RedNotebook 1.7.3+ integration to open the diary program on a specific date.
 
 2013-11-18
 Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Remove redundant GTK checks for > 2.10, since we need 2.16.
 	* Fix needing to calculate bounds of *both* tracks when a track is split via the marker.
+	* Fix another compiler warning from the Export via GPSBabel work
 
-2013-11-17
+2013-11-16
 Rob Norris <rw_norris@hotmail.com>:
+	* Enable a history of requested positions.
+	* Really enable C99 mode.
 	* Fix vik_track_get_length_to_trackpoint() so with the first track point it returns zero, not the entire track length!
+	* Fix highlight draw to cope with cut layers.
+	* Fix another compiler warning from the Export via GPSBabel work
+	* Ensure highlight for a single track or waypoint is always shown on top.
+	* Add function to work out the visibility of an item considering all the items ancestor's visibilities.
+
+2013-11-15
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix compiler warnings from Export via GPSBabel work
+
+2013-11-14
+Rob Norris <rw_norris@hotmail.com>:
+	* Support using multiple Viking files with relative paths.
+	* [QA] Use actual type rather than a gpointer
+
+2013-11-05
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix previous fix
+	* Fix error handling at autogen.sh
+
+2013-11-04
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* SF Feature#49: Export via GPSBabel
+	* Extract a UI module for babel
+	* Extract trw export module
+	* Refactoring: introduce a function for better encapsulation
+
+2013-11-01
+Rob Norris <rw_norris@hotmail.com>:
+	* More files to ignore from output of the build process.
+
+2013-11-01
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Sometimes gnome-autogen.sh does not support the most recent automake versions.
+
+2013-10-31
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix crashing when copying layers with null strings as parameters.
 
 2013-10-30
 Rob Norris <rw_norris@hotmail.com>:
 	* Fix opening files on command line in different directories.
+	* Use TRW Metadata in generating default values for some OSM Trace upload fields.
+	* Basic support of some GPX Metadata values common to GPX1.0 and GPX1.1
+
+2013-10-27
+Rob Norris <rw_norris@hotmail.com>:
+	* Make comparing timestamps of tracks more available.
+
+2013-10-26
+Rob Norris <rw_norris@hotmail.com>:
+	* Enable a search item by date feature from an Aggregate Layer level.
+	* Open picture associated with a waypoint on double click by the select tool.
+	* Update to allow C99 mode
+	* Update to at least Gtk2.16.
+	* Refactor: update OSM track upload
+
+2013-10-25
+Rob Norris <rw_norris@hotmail.com>:
+	* Merge branch 'Refactor'
 
 2013-10-24
 Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Remove unnecessary g_critical()
+	* [QA] Remove compiler warning when building for Windows
+	* Refactor: Create and use functions to access track start or end trackpoints.
+	* Refactor: TrackWaypoint sublayer menu callback functions.
+	* Refactor: TrackWaypoint layer menu callback functions.
+	* Tidy update signal handler in VikAggregate Layer.
+	* Improve update signal handler usage in GPS Layer.
+	* Remove never used GPS layer drag drop request function.
+	* Only the TrackWaypoint layer should handle it's internal callback type.
+	* Refactor: passed around map layer menu values
+	* Refactor: passed around aggregate menu values
 	* Move man files from doc to help directory so they will be included in the output from make distcheck.
 	* Update spec file
 	* [QA] Remove build references to things that don't exist anymore.
 	* SF Bugs #104: Fix GStatBuf not available on Glib < 2.26
 	* Fix the display of speed in statusbar output.
+
+2013-10-22
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* QA: factorize trw_layer_acquire* functions
+
+2013-10-19
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fix translatable string with variable argument
+	* Fix 'export_to_common' dialog
+	* Fix configure error message
+
+2013-10-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Merge branch 'MBTilesRead'
+	* [WINDOWS] More reliable rebuilds.
+	* [WINDOWS] Build with SQLite DLL 3.8.0.2
+	* [QA] Fix typo + grammar in a comment
+	* Allow creating a File Chooser dialog with optional file filters.
+	* Expand mapcache hash to include a hash of the map filename (if there is one).
+	* Directly support reading from MBTile files using libsqlite3.
+	* Enable widget sensitivity in the layer properties to be controlled.
 
 2013-10-13
 Rob Norris <rw_norris@hotmail.com>:

@@ -113,6 +113,7 @@ guint vik_track_get_segment_count(const VikTrack *tr);
 VikTrack **vik_track_split_into_segments(VikTrack *tr, guint *ret_len);
 guint vik_track_merge_segments(VikTrack *tr);
 void vik_track_reverse(VikTrack *tr);
+time_t vik_track_get_duration(const VikTrack *trk);
 
 gulong vik_track_get_dup_point_count ( const VikTrack *vt );
 gulong vik_track_remove_dup_points ( VikTrack *vt );
@@ -134,6 +135,9 @@ VikTrackpoint *vik_track_get_closest_tp_by_percentage_time ( VikTrack *tr, gdoub
 VikTrackpoint *vik_track_get_tp_by_max_speed ( const VikTrack *tr );
 VikTrackpoint *vik_track_get_tp_by_max_alt ( const VikTrack *tr );
 VikTrackpoint *vik_track_get_tp_by_min_alt ( const VikTrack *tr );
+VikTrackpoint *vik_track_get_tp_first ( const VikTrack *tr );
+VikTrackpoint *vik_track_get_tp_last ( const VikTrack *tr );
+VikTrackpoint *vik_track_get_tp_prev ( const VikTrack *tr, VikTrackpoint *tp );
 gdouble *vik_track_make_gradient_map ( const VikTrack *tr, guint16 num_chunks );
 gdouble *vik_track_make_speed_map ( const VikTrack *tr, guint16 num_chunks );
 gdouble *vik_track_make_distance_map ( const VikTrack *tr, guint16 num_chunks );
@@ -146,6 +150,7 @@ VikTrack *vik_track_unmarshall (guint8 *data, guint datalen);
 void vik_track_calculate_bounds ( VikTrack *trk );
 
 void vik_track_anonymize_times ( VikTrack *tr );
+void vik_track_interpolate_times ( VikTrack *tr );
 gulong vik_track_apply_dem_data ( VikTrack *tr, gboolean skip_existing );
 void vik_track_apply_dem_data_last_trackpoint ( VikTrack *tr );
 gulong vik_track_smooth_missing_elevation_data ( VikTrack *tr, gboolean flat );
@@ -153,6 +158,8 @@ gulong vik_track_smooth_missing_elevation_data ( VikTrack *tr, gboolean flat );
 void vik_track_steal_and_append_trackpoints ( VikTrack *t1, VikTrack *t2 );
 
 VikCoord *vik_track_cut_back_to_double_point ( VikTrack *tr );
+
+int vik_track_compare_timestamp (const void *x, const void *y);
 
 void vik_track_set_property_dialog(VikTrack *tr, GtkWidget *dialog);
 void vik_track_clear_property_dialog(VikTrack *tr);

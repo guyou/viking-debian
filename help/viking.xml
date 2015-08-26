@@ -30,10 +30,10 @@ and docbook-xsl in your Build-Depends control field.
   <!ENTITY dhfirstname "<firstname>Ralf</firstname>">
   <!ENTITY dhsurname   "<surname>Meyer</surname>">
   <!-- Please adjust the date whenever revising the manpage. -->
-  <!ENTITY dhdate      "<date>2014-03-16</date>">
+  <!ENTITY dhdate      "<date>2015-03-29</date>">
   <!-- Would be nice if the version could auto-update. -->
   <!ENTITY dhsource      "Viking">
-  <!ENTITY dhversion     "1.5.1">
+  <!ENTITY dhversion     "1.6.0">
   <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
        allowed: see man(7), man(1). -->
   <!ENTITY dhsection   "<manvolnum>1</manvolnum>">
@@ -91,6 +91,23 @@ and docbook-xsl in your Build-Depends control field.
         <arg choice="plain"><option>-V</option></arg>
         <arg choice="plain"><option>--verbose</option></arg>
       </group>
+      <sbr/>
+      <group choice="opt">
+        <arg choice="plain"><option>--latitude</option> <replaceable>degrees</replaceable></arg>
+      </group>
+      <group choice="opt">
+        <arg choice="plain"><option>--longitude</option> <replaceable>degrees</replaceable></arg>
+      </group>
+      <sbr/>
+      <group choice="opt">
+        <arg choice="plain"><option>-z</option></arg>
+        <arg choice="plain"><option>--zoom</option> <replaceable>ZoomLevelOSM</replaceable></arg>
+      </group>
+      <group choice="opt">
+        <arg choice="plain"><option>-m</option></arg>
+        <arg choice="plain"><option>--map</option> <replaceable>MapId</replaceable></arg>
+      </group>
+      <sbr/>
       <arg rep="repeat"><replaceable>file</replaceable></arg>
     </cmdsynopsis>
     <cmdsynopsis>
@@ -115,9 +132,9 @@ and docbook-xsl in your Build-Depends control field.
       Viking is a program to manage GPS data.
     </para>
     <para>  
-      You can import and plot tracks, routes and waypoints, show OpenStreetMap (OSM) maps and/or
-      Terraserver maps under it, add coordinate lines, make new tracks, routes and waypoints, hide different things, etc.
-      It is written in C with the GTK+ 2 toolkit, available for Linux, other POSIX operating systems and Windows.
+      You can import and plot tracks, routes and waypoints, show OpenStreetMap (OSM) and/or other maps, generate maps (using Mapnik),
+       geotag images, add coordinate lines, make new tracks, routes and waypoints, hide different things, etc.
+      It is written mainly in C with some C++ and uses the GTK+ 2 toolkit. It is available for Linux, other POSIX operating systems and Windows.
     </para>
     <para>  
       Homepage: <ulink type="http" url="http://viking.sf.net">http://viking.sf.net</ulink>
@@ -165,13 +182,46 @@ and docbook-xsl in your Build-Depends control field.
           <para>Show version.</para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--latitude</option></term>
+        <listitem>
+          <para>Set the initial position to the specified latitude in decimal degrees.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--longitude</option></term>
+        <listitem>
+          <para>Set the initial position to the specified longitude in decimal degrees.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-z</option></term>
+        <term><option>--zoom</option></term>
+        <listitem>
+          <para>Set the initial zoom level. The value is the OSM zoom level (0 - 22).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-m</option></term>
+        <term><option>--map</option></term>
+        <listitem>
+          <para>Add a map layer by specifying the map id. The value needs to match one of the internal ids or an id from the maps configuration extension (see below).
+          Specifying a value of 0 will use the configured map layer default.</para>
+<variablelist>
+  <varlistentry><term></term><listitem><para>Internal Map Ids:</para></listitem></varlistentry>
+  <varlistentry><term></term><listitem><para>OSM Mapnik = 13</para></listitem></varlistentry>
+  <varlistentry><term></term><listitem><para>OSM Cycle = 17</para></listitem></varlistentry>
+  <varlistentry><term></term><listitem><para>Mapquest OSM = 19</para></listitem></varlistentry>
+</variablelist>
+        </listitem>
+      </varlistentry>
     </variablelist>
 
   </refsect1>
   <refsect1>
     <title>Extending Viking</title>
 
-      <para>Currently, &dhpackage; has some extention points based on configuration files. The file format is heavily inspired by the GtkBuilder file format: you specify the class of the GObject to build and set its properties. Technically, it is a XML file containing a "objects" root element. Inside this element, you set a collection of "object".</para>
+      <para>Currently, &dhpackage; has some extension points based on configuration files. The file format is heavily inspired by the GtkBuilder file format: you specify the class of the GObject to build and set its properties. Technically, it is a XML file containing a "objects" root element. Inside this element, you set a collection of "object".</para>
       <para>Here is an example:
 <literallayout><![CDATA[
 <objects>
@@ -196,6 +246,10 @@ and docbook-xsl in your Build-Depends control field.
               <listitem><para>this is an integer and should be unique as it used to identify the map source</para></listitem>
             </varlistentry>
             <varlistentry>
+              <term>name</term>
+              <listitem><para>a string (should be unique) that is used for the OSM style cache directory name when the Map Cache directory is the default (<filename>~/.viking-maps</filename>)</para></listitem>
+            </varlistentry>
+            <varlistentry>
               <term>label</term>
               <listitem><para>the text displayed in the map's source selection dialog</para></listitem>
             </varlistentry>
@@ -205,47 +259,140 @@ and docbook-xsl in your Build-Depends control field.
             </varlistentry>
             <varlistentry>
               <term>url</term>
-              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 3 "%d" fields for X, Y and Z (zoom level) (eg. "/%d/%d/%d.png")</para></listitem>
+              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 3 "%d" fields for Z, X and Y (in that order) (eg. "/%d/%d/%d.png")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>zoom-min (optional)</term>
+              <listitem><para>The minimum zoom value supported by the tile server. The Default is 0 if not specified.</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>zoom-max (optional)</term>
+              <listitem>
+                 <para>The maximum zoom value supported by the tile server. The Default is 18 if not specified.</para>
+                 <para>See <ulink url="http://wiki.openstreetmap.org/wiki/Zoom_levels">Zoom Levels</ulink></para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>lat-min (optional)</term>
+              <listitem><para>The minimum latitude value in degrees supported by the tile server. The Default is -90 degrees if not specified.</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>lat-max (optional)</term>
+              <listitem><para>The maximum latitude value in degrees supported by the tile server. The Default is 90 degrees if not specified.</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>lon-min (optional)</term>
+              <listitem><para>The minimum longitude value in degrees supported by the tile server. The Default is -180 degrees if not specified.</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>lon-max (optional)</term>
+              <listitem><para>The maximum longitude value in degrees supported by the tile server. The Default is 180 degrees if not specified.</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>file-extension (optional)</term>
+              <listitem>
+                <para>The file extension of the files on disk. The default is <emphasis>.png</emphasis></para>
+                <para>If the tile source URL ends in something other than .png, then this parameter will need to match it.</para>
+                <para>This can also be useful in reading a tileset from other software which may name tiles in an alternative form,
+                      e.g. for Mobile Atlas creator it names them <emphasis>.png.tile</emphasis></para>
+                <note><para>The file types actually usable are those supported by GDK Pixbuf Library, which includes at least PNG and JPEG.</para></note>
+                <note><para>Remember to include the beginning <emphasis>'.'</emphasis> when specifying this parameter.</para></note>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>switch-xy (optional)</term>
+              <listitem>
+                <para>Swap the X,Y values around in the URL parametrized ordering.</para>
+                <para>The default is false.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>check-file-server-time (optional)</term>
+              <listitem>
+                <para>Sends the timestamp of the tile to the server, so the server can decide whether it should send a new tile or not.</para>
+                <para>The default is false.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>use-etag (optional)</term>
+              <listitem>
+                <para>Use and compare the <ulink url="http://en.wikipedia.org/wiki/HTTP_ETag">ETag</ulink> value in determining whether to download a newer tile. The default is false.</para>
+                <para>The ETag value is stored in a separate file in the same directory as the tile to enable checking the value across multiple runs of the program.</para>
+              </listitem>
             </varlistentry>
           </variablelist>
         </para>
-        <para>The VikTmsMapSource allows to declare any TMS service. It supports the following properties:
+        <para>The VikTmsMapSource allows to declare any TMS service. It supports the following properties (as per VikSlippyMapSource above):
           <variablelist>
             <varlistentry>
               <term>id</term>
-              <listitem><para>this is an integer and should be unique as it used to identify the map source</para></listitem>
             </varlistentry>
             <varlistentry>
               <term>label</term>
-              <listitem><para>the text displayed in the map's source selection dialog</para></listitem>
             </varlistentry>
             <varlistentry>
               <term>hostname</term>
-              <listitem><para>the server's hostname (eg. "tile.openstreetmap.org")</para></listitem>
             </varlistentry>
             <varlistentry>
               <term>url</term>
-              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 3 "%d" fields for X, Y and Z (zoom level) (eg. "/%d/%d/%d.png")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>check-file-server-time (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>zoom-min (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>zoom-max (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>lat-min (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>lat-max (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>lon-min (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>lon-max (optional)</term>
             </varlistentry>
           </variablelist>
         </para>
-        <para>The VikWmscMapSource allows to declare any WMS or WMS-C service. It supports the following properties:
+        <para>The VikWmscMapSource allows to declare any WMS or WMS-C service. It supports the following properties  (as per VikSlippyMapSource above):
           <variablelist>
             <varlistentry>
               <term>id</term>
-              <listitem><para>this is an integer and should be unique as it used to identify the map source</para></listitem>
             </varlistentry>
             <varlistentry>
               <term>label</term>
-              <listitem><para>the text displayed in the map's source selection dialog</para></listitem>
             </varlistentry>
             <varlistentry>
               <term>hostname</term>
-              <listitem><para>the server's hostname (eg. "tile.openstreetmap.org")</para></listitem>
             </varlistentry>
             <varlistentry>
               <term>url</term>
-              <listitem><para>the parametrized address of the tile, in the spirit of C printf format, with 4 "%s" fields for bounding box coordinates (eg. "/coord=%s,%s,%s,%s")</para></listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>check-file-server-time (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>zoom-min (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>zoom-max (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>lat-min (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>lat-max (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>lon-min (optional)</term>
+            </varlistentry>
+            <varlistentry>
+              <term>lon-max (optional)</term>
             </varlistentry>
           </variablelist>
         </para>
@@ -349,6 +496,7 @@ and docbook-xsl in your Build-Depends control field.
                 <para>A = center lAtitude of the current view</para>
                 <para>O = center lOngitude of the current view</para>
                 <para>Z = OSM Zoom value of the current view. See <ulink url="http://wiki.openstreetmap.org/wiki/Zoom_levels">Zoom Levels</ulink></para>
+                <para>S = A user specified input string requested from the user via a dialog box</para>
                 <para>Thus for the url example above then the format code should be <emphasis>AO</emphasis></para>
               </listitem>
             </varlistentry>
@@ -358,6 +506,20 @@ and docbook-xsl in your Build-Depends control field.
                 <para>This value is passed on for the -i parameter in interfacing with GPSBabel.</para>
                 <para>If it is not defined then the returned file is interpreted internally as a GPX file.</para>
                 <para>Possible values such as 'kml', 'mapsource' etc.. can be used. See <ulink url="http://www.gpsbabel.org/capabilities.html">GPSBabel File Formats</ulink> for the full list.</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>babel_filter_args</term>
+              <listitem>
+                <para>This value is passed on for the filter arguments interfacing with GPSBabel.</para>
+                <para>E.g. "-x nuketypes,routes" can be used to filter all routes from the results.</para>
+              </listitem>
+            </varlistentry>
+             <varlistentry>
+              <term>input_label</term>
+              <listitem>
+                <para>This value is used when requesting input from the user.</para>
+                <para>It is the label of the text input box.</para>
               </listitem>
             </varlistentry>
           </variablelist>
@@ -418,6 +580,13 @@ and docbook-xsl in your Build-Depends control field.
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><filename>~/.viking/keys.rc</filename></term>
+        <listitem>
+          <para>File containing short cut key accelerators.</para>
+          <para>This is in the standard GTK Accelerator map format.</para>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><filename>~/.viking/cookies.txt</filename></term>
         <listitem>
           <para>File hosting cookies used by &dhpackage;.</para>
@@ -426,7 +595,7 @@ and docbook-xsl in your Build-Depends control field.
       <varlistentry>
         <term><filename>~/.viking-maps/</filename></term>
         <listitem>
-          <para>Map cache of tiles downloaded by &dhpackage;.</para>
+          <para>Default location of the map cache of tiles downloaded or created by &dhpackage;.</para>
         </listitem>
       </varlistentry>
     </variablelist>

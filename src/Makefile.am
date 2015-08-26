@@ -1,4 +1,4 @@
-# This is the Makefile for the viking gps viewer program.
+# This is the Makefile for the Viking GPS viewer program.
 # This file is licensed through the GPL version 2 or newer.
 
 SUBDIRS = icons
@@ -33,10 +33,10 @@ vikenumtypes.h: vikenumtypes.h.template $(ENUM_H_FILES) $(GLIB_MKENUMS)
 vikenumtypes.c: vikenumtypes.c.template $(ENUM_H_FILES) $(GLIB_MKENUMS)
 	(cd $(srcdir) && $(GLIB_MKENUMS) --template vikenumtypes.c.template $(ENUM_H_FILES)) > $@
 
-EXTRA_DIST =                         \
-        docbook2documenters.xsl      \
-        vikenumtypes.h.template      \
-        vikenumtypes.c.template
+EXTRA_DIST = \
+	docbook2documenters.xsl \
+	vikenumtypes.h.template \
+	vikenumtypes.c.template
 
 BUILT_SOURCES += vikenumtypes.h vikenumtypes.c
 
@@ -47,19 +47,22 @@ ENUM_H_FILES = \
 
 libviking_a_SOURCES = \
 	bbox.h \
+	map_ids.h \
 	modules.h modules.c \
 	curl_download.c curl_download.h \
 	compression.c compression.h \
 	menu.xml.h \
-    degrees_converters.c degrees_converters.h \
+	degrees_converters.c degrees_converters.h \
 	globals.c globals.h \
 	viking.h mapcoord.h config.h \
+	vik_compat.c vik_compat.h \
 	viktrack.c viktrack.h \
 	vikwaypoint.c vikwaypoint.h \
 	clipboard.c clipboard.h \
 	coords.c coords.h \
 	gpsmapper.c gpsmapper.h \
 	gpspoint.c gpspoint.h \
+	geojson.c geojson.h \
 	dir.c dir.h \
 	file.c file.h \
 	fileutils.c fileutils.h \
@@ -67,7 +70,9 @@ libviking_a_SOURCES = \
 	documenters.h \
 	dialog.c dialog.h \
 	util.c util.h \
+	ui_util.c ui_util.h \
 	download.c download.h \
+	jpg.c jpg.h \
 	vikenumtypes.c vikenumtypes.h \
 	viktreeview.c viktreeview.h \
 	viktrwlayer.c viktrwlayer.h \
@@ -85,7 +90,9 @@ libviking_a_SOURCES = \
 	vikgototool.c vikgototool.h \
 	vikgotoxmltool.c vikgotoxmltool.h \
 	vikgoto.c vikgoto.h \
+	viktrwlayer_export.c viktrwlayer_export.h \
 	viktrwlayer_tpwin.c viktrwlayer_tpwin.h \
+	viktrwlayer_wpwin.c viktrwlayer_wpwin.h \
 	viktrwlayer_propwin.c viktrwlayer_propwin.h \
 	viktrwlayer_analysis.c viktrwlayer_analysis.h \
 	viktrwlayer_tracklist.c viktrwlayer_tracklist.h \
@@ -94,6 +101,7 @@ libviking_a_SOURCES = \
 	vikroutingengine.c vikroutingengine.h \
 	vikroutingwebengine.c vikroutingwebengine.h \
 	vikutils.c vikutils.h \
+	toolbar.c toolbar.h toolbar.xml.h \
 	thumbnails.c thumbnails.h \
 	background.c background.h \
 	vikradiogroup.c vikradiogroup.h \
@@ -108,11 +116,14 @@ libviking_a_SOURCES = \
 	vikslippymapsource.c vikslippymapsource.h \
 	vikwmscmapsource.c vikwmscmapsource.h \
 	viktmsmapsource.c viktmsmapsource.h \
-        gpx.c gpx.h \
+	metatile.c metatile.h \
+	gpx.c gpx.h \
 	garminsymbols.c garminsymbols.h \
 	acquire.c acquire.h \
 	babel.c babel.h \
+	babel_ui.c babel_ui.h \
 	datasource_file.c \
+	datasource_geojson.c \
 	datasource_gps.c datasource_gps.h \
 	datasource_routing.c \
 	datasource_gc.c \
@@ -123,12 +134,14 @@ libviking_a_SOURCES = \
 	googlesearch.c googlesearch.h \
 	dem.c dem.h \
 	vikdemlayer.h vikdemlayer.c \
+	vikdatetime_edit_dialog.c vikdatetime_edit_dialog.h \
 	vikfilelist.c vikfilelist.h \
 	vikexttool.c vikexttool.h \
 	vikexttools.c vikexttools.h \
 	vikwebtool.c vikwebtool.h \
 	vikwebtoolcenter.c vikwebtoolcenter.h \
 	vikwebtoolbounds.c vikwebtoolbounds.h \
+	vikwebtoolformat.c vikwebtoolformat.h \
 	vikexttool_datasources.c vikexttool_datasources.h \
 	vikwebtool_datasource.c vikwebtool_datasource.h \
 	dems.c dems.h \
@@ -138,7 +151,9 @@ libviking_a_SOURCES = \
 	print.c print.h \
 	viklayer_defaults.c viklayer_defaults.h \
 	settings.c settings.h \
-	preferences.c preferences.h
+	preferences.c preferences.h \
+	misc/strtod.c misc/strtod.h \
+	misc/kdtree.c misc/kdtree.h
 
 if BING
 libviking_a_SOURCES += \
@@ -148,7 +163,7 @@ endif
 
 if GOOGLE
 libviking_a_SOURCES += \
-       google.c google.h
+	google.c google.h
 endif
 
 if TERRASERVER
@@ -181,18 +196,24 @@ libviking_a_SOURCES += \
 	geonamessearch.c geonamessearch.h
 endif
 
-#if SPOTMAPS
-libviking_a_SOURCES += \
-	spotmaps.c spotmaps.h
-#endif
-
 if GEOTAG
 libviking_a_SOURCES += \
 	datasource_geotag.c \
 	geotag_exif.c geotag_exif.h \
-	viktrwlayer_geotag.c viktrwlayer_geotag.h \
+	viktrwlayer_geotag.c viktrwlayer_geotag.h
+endif
+
+# libexif doesn't have write support of EXIF info - so reused this code from command line exif tool
+if LIBEXIF
+libviking_a_SOURCES += \
 	libjpeg/jpeg-data.c libjpeg/jpeg-data.h \
 	libjpeg/jpeg-marker.c libjpeg/jpeg-marker.h
+endif
+
+if MAPNIK
+libviking_a_SOURCES += \
+	vikmapniklayer.c vikmapniklayer.h \
+	mapnik_interface.cpp mapnik_interface.h
 endif
 
 viking_SOURCES = main.c
@@ -207,6 +228,7 @@ AM_CFLAGS		= -Wall -g -D_GNU_SOURCE \
 	$(PACKAGE_CFLAGS) \
 	@EXPAT_CFLAGS@ @LIBCURL_CPPFLAGS@
 AM_CPPFLAGS		= \
+	$(PACKAGE_CFLAGS) \
 	-DVIKING_DATADIR=\""$(pkgdatadir)"\" \
 	-DVIKING_SYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"
 

@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: Viking\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-09-03 21:58+0200\n"
-"PO-Revision-Date: 2010-11-17 22:50+0000\n"
-"Last-Translator: Guilhem Bonnefille <guilhem.bonnefille@gmail.com>\n"
+"PO-Revision-Date: 2014-04-09 17:21+0000\n"
+"Last-Translator: Po-Hsu Lin <po-hsu.lin@canonical.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Launchpad-Export-Date: 2013-10-12 09:04+0000\n"
-"X-Generator: Launchpad (build 16799)\n"
+"X-Launchpad-Export-Date: 2015-03-06 19:16+0000\n"
+"X-Generator: Launchpad (build 17383)\n"
 "X-Poedit-Language: Traditional Chinese\n"
 
 #: ../src/acquire.c:103 ../src/vikgpslayer.c:1235
@@ -20,7 +20,7 @@ msgstr "完成."
 
 #: ../src/acquire.c:112
 msgid "No data."
-msgstr ""
+msgstr "無資料。"
 
 #: ../src/acquire.c:154 ../src/acquire.c:424
 msgid "Error: acquisition failed."
@@ -69,7 +69,7 @@ msgstr "Viking 背景工作"
 
 #: ../src/bing.c:47
 msgid "Bing"
-msgstr ""
+msgstr "Bing"
 
 #. VIK_GTK_WINDOW_FROM_WIDGET(vp)
 #: ../src/bingmapsource.c:499
@@ -163,7 +163,7 @@ msgstr "(無)"
 
 #: ../src/dialog.c:326
 msgid "Time:"
-msgstr ""
+msgstr "時間："
 
 #. TODO: other checks (isalpha or whatever )
 #: ../src/dialog.c:363
@@ -337,7 +337,7 @@ msgstr ""
 
 #: ../src/geonamessearch.c:187 ../src/datasource_osm_my_traces.c:439
 msgid "Lat/Lon"
-msgstr ""
+msgstr "緯/經"
 
 #: ../src/geonamessearch.c:270 ../src/googlesearch.c:100 ../src/vikgoto.c:306
 msgid "couldn't map temp file"
@@ -357,15 +357,15 @@ msgstr ""
 
 #: ../src/globals.c:77
 msgid "Distance units:"
-msgstr ""
+msgstr "距離單位："
 
 #: ../src/globals.c:78
 msgid "Speed units:"
-msgstr ""
+msgstr "速度單位："
 
 #: ../src/globals.c:79
 msgid "Height units:"
-msgstr ""
+msgstr "高度單位："
 
 #: ../src/globals.c:80
 msgid "Use large waypoint icons:"
@@ -373,11 +373,11 @@ msgstr ""
 
 #: ../src/globals.c:81
 msgid "Default latitude:"
-msgstr ""
+msgstr "預設緯度："
 
 #: ../src/globals.c:82
 msgid "Default longitude:"
-msgstr ""
+msgstr "預設經度："
 
 #: ../src/globals.c:88
 msgid "Alphabetical"
@@ -419,7 +419,7 @@ msgstr ""
 
 #: ../src/globals.c:100
 msgid "Image Viewer:"
-msgstr ""
+msgstr "影像檢視器："
 
 #: ../src/globals.c:105
 msgid "External GPX Program 1:"
@@ -1747,15 +1747,15 @@ msgstr ""
 
 #: ../src/viklayerspanel.c:54 ../src/vikwindow.c:3753
 msgid "_Copy"
-msgstr "_C 拷貝"
+msgstr "複製(_C)"
 
 #: ../src/viklayerspanel.c:55 ../src/vikwindow.c:3754
 msgid "_Paste"
-msgstr "_P 黏貼"
+msgstr "貼上(_P)"
 
 #: ../src/viklayerspanel.c:56 ../src/vikwindow.c:3755
 msgid "_Delete"
-msgstr "_D 移除"
+msgstr "刪除(_D)"
 
 #: ../src/viklayerspanel.c:133
 msgid "New Layer"
@@ -4526,15 +4526,15 @@ msgstr ""
 
 #: ../src/vikwindow.c:3743
 msgid "Zoom _In"
-msgstr "_I 縮小"
+msgstr "放大(_I)"
 
 #: ../src/vikwindow.c:3744
 msgid "Zoom _Out"
-msgstr "_O 放大"
+msgstr "縮小(_O)"
 
 #: ../src/vikwindow.c:3745
 msgid "Zoom _To..."
-msgstr "_T 縮放到..."
+msgstr "縮放至(_T)..."
 
 #: ../src/vikwindow.c:3746
 msgid "Pan _North"
@@ -4558,7 +4558,7 @@ msgstr "_J 背景工作"
 
 #: ../src/vikwindow.c:3752
 msgid "Cu_t"
-msgstr "_t 剪取"
+msgstr "剪下(_t)"
 
 #: ../src/vikwindow.c:3756
 msgid "Delete All"

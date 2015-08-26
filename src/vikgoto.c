@@ -31,7 +31,6 @@
 #include <glib/gi18n.h>
 
 #include "viking.h"
-#include "util.h"
 #include "vikgototool.h"
 #include "vikgoto.h"
 
@@ -250,7 +249,7 @@ void a_vik_goto(VikWindow *vw, VikViewport *vvp)
       if (last_successful_goto_str)
         g_free(last_successful_goto_str);
       last_successful_goto_str = g_strdup(last_goto_str);
-      vik_viewport_set_center_coord(vvp, &new_center);
+      vik_viewport_set_center_coord(vvp, &new_center, TRUE);
       more = FALSE;
     }
     else if (!prompt_try_again(vw))

@@ -31,7 +31,6 @@
 #include <glib/gi18n.h>
 
 #include "viking.h"
-#include "util.h"
 #include "geonamessearch.h"
 
 /* Compatibility */
@@ -48,7 +47,7 @@
 //  ATM decided it's not essential enough to warrant putting in the preferences
 #define GEONAMES_MAX_ENTRIES 20
 
-#define GEONAMES_WIKIPEDIA_URL_FMT "http://ws.geonames.org/wikipediaBoundingBoxJSON?formatted=true&north=%s&south=%s&east=%s&west=%s&lang=%s&maxRows=%d"
+#define GEONAMES_WIKIPEDIA_URL_FMT "http://api.geonames.org/wikipediaBoundingBoxJSON?formatted=true&north=%s&south=%s&east=%s&west=%s&lang=%s&maxRows=%d&username=viking"
 
 #define GEONAMES_FEATURE_PATTERN "\"feature\": \""
 #define GEONAMES_LONGITUDE_PATTERN "\"lng\": "
@@ -476,7 +475,7 @@ void a_geonames_wikipedia_box ( VikWindow *vw, VikTrwLayer *vtl, struct LatLon m
   free_geoname_list(selected);
   g_free(uri);
   if (tmpname) {
-    g_remove(tmpname);
+    util_remove(tmpname);
     g_free(tmpname);
   }
 }

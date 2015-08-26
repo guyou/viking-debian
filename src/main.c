@@ -34,12 +34,11 @@
 #include "viklayer_defaults.h"
 #include "globals.h"
 #include "vikmapslayer.h"
+#include "vikgeoreflayer.h"
 #include "vikrouting.h"
 #include "vikutils.h"
-
-#ifdef VIK_CONFIG_GEOCACHES
-void a_datasource_gc_init();
-#endif
+#include "util.h"
+#include "toolbar.h"
 
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
@@ -99,12 +98,22 @@ static int myXErrorHandler(Display *display, XErrorEvent *theEvent)
 }
 #endif
 
+// Default values that won't actually get applied unless changed by command line parameter values
+static gdouble latitude = 0.0;
+static gdouble longitude = 0.0;
+static gint zoom_level_osm = -1;
+static gint map_id = -1;
+
 /* Options */
 static GOptionEntry entries[] = 
 {
   { "debug", 'd', 0, G_OPTION_ARG_NONE, &vik_debug, N_("Enable debug output"), NULL },
   { "verbose", 'V', 0, G_OPTION_ARG_NONE, &vik_verbose, N_("Enable verbose output"), NULL },
   { "version", 'v', 0, G_OPTION_ARG_NONE, &vik_version, N_("Show version"), NULL },
+  { "latitude", 0, 0, G_OPTION_ARG_DOUBLE, &latitude, N_("Latitude in decimal degrees"), NULL },
+  { "longitude", 0, 0, G_OPTION_ARG_DOUBLE, &longitude, N_("Longitude in decimal degrees"), NULL },
+  { "zoom", 'z', 0, G_OPTION_ARG_INT, &zoom_level_osm, N_("Zoom Level (OSM). Value can be 0 - 22"), NULL },
+  { "map", 'm', 0, G_OPTION_ARG_INT, &map_id, N_("Add a map layer by id value. Use 0 for the default map."), NULL },
   { NULL }
 };
 
@@ -170,6 +179,15 @@ int main( int argc, char *argv[] )
   a_settings_init ();
   a_preferences_init ();
 
+ /*
+  * First stage initialization
+  *
+  * Should not use a_preferences_get() yet
+  *
+  * Since the first time a_preferences_get() is called it loads any preferences values from disk,
+  *  but of course for preferences not registered yet it can't actually understand them
+  *  so subsequent initial attempts to get those preferences return the default value, until the values have changed
+  */
   a_vik_preferences_init ();
 
   a_layer_defaults_init ();
@@ -182,15 +200,26 @@ int main( int argc, char *argv[] )
   /* Init modules/plugins */
   modules_init();
 
+  vik_georef_layer_init ();
   maps_layer_init ();
   a_mapcache_init ();
   a_background_init ();
 
-#ifdef VIK_CONFIG_GEOCACHES
-  a_datasource_gc_init();
-#endif
-
+  a_toolbar_init();
   vik_routing_prefs_init();
+
+  /*
+   * Second stage initialization
+   *
+   * Can now use a_preferences_get()
+   */
+  a_background_post_init ();
+  a_babel_post_init ();
+  modules_post_init ();
+
+  // May need to initialize the Positonal TimeZone lookup
+  if ( a_vik_get_time_ref_frame() == VIK_TIME_REF_WORLD )
+    vu_setup_lat_lon_tz_lookup();
 
   /* Set the icon */
   main_icon = gdk_pixbuf_from_pixdata(&viking_pixbuf, FALSE, NULL);
@@ -225,11 +254,13 @@ int main( int argc, char *argv[] )
 
   vik_window_new_window_finish ( first_window );
 
+  vu_command_line ( first_window, latitude, longitude, zoom_level_osm, map_id );
+
   gtk_main ();
   gdk_threads_leave ();
 
   a_babel_uninit ();
-
+  a_toolbar_uninit ();
   a_background_uninit ();
   a_mapcache_uninit ();
   a_dems_uninit ();
@@ -237,7 +268,14 @@ int main( int argc, char *argv[] )
   a_preferences_uninit ();
   a_settings_uninit ();
 
+  modules_uninit();
+
   curl_download_uninit();
+
+  vu_finalize_lat_lon_tz_lookup ();
+
+  // Clean up any temporary files
+  util_remove_all_in_deletion_list ();
 
   return 0;
 }

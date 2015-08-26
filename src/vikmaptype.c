@@ -31,7 +31,9 @@
 
 #include "vikmaptype.h"
 #include "vikmapslayer_compat.h"
+#include "download.h"
 
+static const gchar *map_type_get_name (VikMapSource *self);
 static guint16 map_type_get_uniq_id (VikMapSource *self);
 static const gchar *map_type_get_label (VikMapSource *self);
 static guint16 map_type_get_tilesize_x (VikMapSource *self);
@@ -39,7 +41,7 @@ static guint16 map_type_get_tilesize_y (VikMapSource *self);
 static VikViewportDrawMode map_type_get_drawmode (VikMapSource *self);
 static gboolean map_type_coord_to_mapcoord (VikMapSource *self, const VikCoord *src, gdouble xzoom, gdouble yzoom, MapCoord *dest );
 static void map_type_mapcoord_to_center_coord (VikMapSource *self, MapCoord *src, VikCoord *dest);
-static int map_type_download (VikMapSource * self, MapCoord * src, const gchar * dest_fn, void * handle);
+static DownloadResult_t map_type_download (VikMapSource * self, MapCoord * src, const gchar * dest_fn, void * handle);
 static void * map_type_download_handle_init (VikMapSource * self);
 static void map_type_download_handle_cleanup (VikMapSource * self, void * handle);
 
@@ -47,6 +49,7 @@ typedef struct _VikMapTypePrivate VikMapTypePrivate;
 struct _VikMapTypePrivate
 {
 	gchar *label;
+	gchar *name;
 	VikMapsLayer_MapType map_type;
 };
 
@@ -60,6 +63,7 @@ vik_map_type_init (VikMapType *object)
 {
 	VikMapTypePrivate *priv = VIK_MAP_TYPE_PRIVATE(object);
 	priv->label = NULL;
+	priv->name = NULL;
 }
 
 VikMapType *
@@ -89,6 +93,7 @@ vik_map_type_class_init (VikMapTypeClass *klass)
 	VikMapSourceClass* parent_class = VIK_MAP_SOURCE_CLASS (klass);
 
 	/* Overiding methods */
+	parent_class->get_name =                 map_type_get_name;
 	parent_class->get_uniq_id =              map_type_get_uniq_id;
 	parent_class->get_label =                map_type_get_label;
 	parent_class->get_tilesize_x =           map_type_get_tilesize_x;
@@ -103,6 +108,15 @@ vik_map_type_class_init (VikMapTypeClass *klass)
 	g_type_class_add_private (klass, sizeof (VikMapTypePrivate));
 
 	object_class->finalize = vik_map_type_finalize;
+}
+
+static const gchar *
+map_type_get_name (VikMapSource *self)
+{
+	VikMapTypePrivate *priv = VIK_MAP_TYPE_PRIVATE(self);
+	g_return_val_if_fail (priv != NULL, NULL);
+
+	return priv->name;
 }
 
 static guint16
@@ -168,7 +182,7 @@ map_type_mapcoord_to_center_coord (VikMapSource *self, MapCoord *src, VikCoord *
 	(priv->map_type.mapcoord_to_center_coord)(src, dest);
 }
 
-static int
+static DownloadResult_t
 map_type_download (VikMapSource * self, MapCoord * src, const gchar * dest_fn, void * handle)
 {
     VikMapTypePrivate *priv = VIK_MAP_TYPE_PRIVATE(self);
@@ -194,4 +208,3 @@ map_type_download_handle_cleanup (VikMapSource * self, void * handle)
 
 	(priv->map_type.download_handle_cleanup)(handle);
 }
-

@@ -1,6 +1,7 @@
 /*
  *    Viking - GPS data editor
  *    Copyright (C) 2007, Guilhem Bonnefille <guilhem.bonnefille@gmail.com>
+ *    Copyright (C) 2014, Rob Norris <rw_norris@hotmail.com>
  *    Based on:
  *    Copyright (C) 2003-2007, Leandro A. F. Pereira <leandro@linuxmag.com.br>
  *
@@ -18,7 +19,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
  /*
-  * Ideally dependencies should just be on Glib, Gtk,
+  * Dependencies must be just on Glib
+  * see ui_utils for thing that depend on Gtk
   * see vikutils for things that further depend on other Viking types
   */
 #ifdef HAVE_CONFIG_H
@@ -30,69 +32,35 @@
 #include <glib/gprintf.h>
 
 #include "util.h"
-#include "dialog.h"
+#include "globals.h"
 
 #ifdef WINDOWS
 #include <windows.h>
-#endif
-
-/*
-#ifndef WINDOWS
-static gboolean spawn_command_line_async(const gchar * cmd,
-                                         const gchar * arg)
-{
-  gchar *cmdline = NULL;
-  gboolean status;
-
-  cmdline = g_strdup_printf("%s '%s'", cmd, arg);
-  g_debug("Running: %s", cmdline);
-    
-  status = g_spawn_command_line_async(cmdline, NULL);
-
-  g_free(cmdline);
- 
-  return status;
-}
-#endif
-*/
-
-// Annoyingly gtk_show_uri() doesn't work so resort to ShellExecute method
-//   (non working at least in our Windows build with GTK+2.24.10 on Windows 7)
-
-void open_url(GtkWindow *parent, const gchar * url)
-{
-#ifdef WINDOWS
-  ShellExecute(NULL, NULL, (char *) url, NULL, ".\\", 0);
 #else
-  GError *error = NULL;
-  gtk_show_uri ( gtk_widget_get_screen (GTK_WIDGET(parent)), url, GDK_CURRENT_TIME, &error );
-  if ( error ) {
-    a_dialog_error_msg_extra ( parent, _("Could not launch web browser. %s"), error->message );
-    g_error_free ( error );
-  }
+#include <unistd.h>
+#endif
+
+guint util_get_number_of_cpus ()
+{
+#if GLIB_CHECK_VERSION (2, 36, 0)
+  return g_get_num_processors();
+#else
+  long nprocs = 1;
+#ifdef WINDOWS
+  SYSTEM_INFO info;
+  GetSystemInfo(&info);
+  nprocs = info.dwNumberOfProcessors;
+#else
+#ifdef _SC_NPROCESSORS_ONLN
+  nprocs = sysconf(_SC_NPROCESSORS_ONLN);
+  if (nprocs < 1)
+    nprocs = 1;
+#endif
+#endif
+  return nprocs;
 #endif
 }
 
-void new_email(GtkWindow *parent, const gchar * address)
-{
-  gchar *uri = g_strdup_printf("mailto:%s", address);
-  GError *error = NULL;
-  gtk_show_uri ( gtk_widget_get_screen (GTK_WIDGET(parent)), uri, GDK_CURRENT_TIME, &error );
-  if ( error ) {
-    a_dialog_error_msg_extra ( parent, _("Could not create new email. %s"), error->message );
-    g_error_free ( error );
-  }
-  /*
-#ifdef WINDOWS
-  ShellExecute(NULL, NULL, (char *) uri, NULL, ".\\", 0);
-#else
-  if (!spawn_command_line_async("xdg-email", uri))
-    a_dialog_error_msg ( parent, _("Could not create new email.") );
-#endif
-  */
-  g_free(uri);
-  uri = NULL;
-}
 gchar *uri_escape(gchar *str)
 {
   gchar *esc_str = g_malloc(3*strlen(str));
@@ -166,6 +134,81 @@ gboolean split_string_from_file_on_equals ( const gchar *buf, gchar **key, gchar
   // Remove newline from val and also any other whitespace
   *key = g_strstrip ( *key );
   *val = g_strstrip ( *val );
-
   return TRUE;
+}
+
+static GSList* deletion_list = NULL;
+
+/**
+ * util_add_to_deletion_list:
+ *
+ * Add a name of a file into the list that is to be deleted on program exit
+ * Normally this is for files that get used asynchronously,
+ *  so we don't know when it's time to delete them - other than at this program's end
+ */
+void util_add_to_deletion_list ( const gchar* filename )
+{
+	deletion_list = g_slist_append ( deletion_list, g_strdup (filename) );
+}
+
+/**
+ * util_remove_all_in_deletion_list:
+ *
+ * Delete all the files in the deletion list
+ * This should only be called on program exit
+ */
+void util_remove_all_in_deletion_list ( void )
+{
+	while ( deletion_list )
+	{
+		g_remove ( deletion_list->data );
+		g_free ( deletion_list->data );
+		deletion_list = g_slist_delete_link ( deletion_list, deletion_list );
+	}
+}
+
+/**
+ *  Removes characters from a string, in place.
+ *
+ *  @param string String to search.
+ *  @param chars Characters to remove.
+ *
+ *  @return @a string - return value is only useful when nesting function calls, e.g.:
+ *  @code str = utils_str_remove_chars(g_strdup("f_o_o"), "_"); @endcode
+ *
+ *  @see @c g_strdelimit.
+ **/
+gchar *util_str_remove_chars(gchar *string, const gchar *chars)
+{
+	const gchar *r;
+	gchar *w = string;
+
+	g_return_val_if_fail(string, NULL);
+	if (G_UNLIKELY(EMPTY(chars)))
+		return string;
+
+	foreach_str(r, string)
+	{
+		if (!strchr(chars, *r))
+			*w++ = *r;
+	}
+	*w = 0x0;
+	return string;
+}
+
+/**
+ * In 'extreme' debug mode don't remove temporary files
+ *  thus the contents can be inspected if things go wrong
+ *  with the trade off the user may need to delete tmp files manually
+ * Only use this for 'occasional' downloaded temporary files that need interpretation,
+ *  rather than large volume items such as Bing attributions.
+ */
+int util_remove ( const gchar *filename )
+{
+	if ( vik_debug && vik_verbose ) {
+		g_warning ( "Not removing file: %s", filename );
+		return 0;
+	}
+	else
+		return g_remove ( filename );
 }

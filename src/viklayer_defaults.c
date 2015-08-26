@@ -308,11 +308,12 @@ gboolean a_layer_defaults_show_window ( GtkWindow *parent, const gchar *layernam
 	                                      layer_params_count,
 	                                      vik_layer_get_interface(layer)->params_groups,
 	                                      vik_layer_get_interface(layer)->params_groups_count,
-				                          (gboolean (*) (gpointer,guint16,VikLayerParamData,gpointer,gboolean)) defaults_run_setparam,
+	                                      (gboolean (*) (gpointer,guint16,VikLayerParamData,gpointer,gboolean)) defaults_run_setparam,
 	                                      GINT_TO_POINTER ( index ),
 	                                      params,
 	                                      defaults_run_getparam,
-	                                      GINT_TO_POINTER ( index ) ) ) {
+	                                      GINT_TO_POINTER ( index ),
+	                                      NULL ) ) {
 		// Save
 		layer_defaults_save_to_file();
     }
@@ -387,4 +388,26 @@ VikLayerParamData a_layer_defaults_get ( const gchar *layername, const gchar *pa
 	}
   
 	return get_default_data ( layername, param_name, param_type );
+}
+
+/**
+ * a_layer_defaults_save:
+ *
+ * Call this function to save the current layer defaults
+ * Normally should only be performed if any layer defaults have been changed via direct manipulation of the layer
+ *  rather than the user changing the preferences via the dialog window above
+ *
+ * This must only be performed once all layer parameters have been initialized
+ *
+ * Returns: %TRUE if saving was successful
+ */
+gboolean a_layer_defaults_save ()
+{
+	// Generate defaults
+	VikLayerTypeEnum layer;
+	for ( layer = 0; layer < VIK_LAYER_NUM_TYPES; layer++ ) {
+		use_internal_defaults_if_missing_default ( layer );
+	}
+
+	return layer_defaults_save_to_file();
 }

@@ -36,9 +36,10 @@ FILE_TYPE_GPSPOINT=1,
 FILE_TYPE_GPSMAPPER=2,
 FILE_TYPE_GPX=3,
 FILE_TYPE_KML=4,
+FILE_TYPE_GEOJSON=5,
 } VikFileType_t;
 
-gboolean check_file_ext ( const gchar *filename, const gchar *fileext );
+gboolean a_file_check_ext ( const gchar *filename, const gchar *fileext );
 
 /*
  * Function to determine if a filename is a 'viking' type file
@@ -55,14 +56,20 @@ typedef enum {
   LOAD_TYPE_OTHER_SUCCESS,
 } VikLoadType_t;
 
+gchar *append_file_ext ( const gchar *filename, VikFileType_t type );
+
 VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar *filename );
 gboolean a_file_save ( VikAggregateLayer *top, gpointer vp, const gchar *filename );
 /* Only need to define VikTrack if the file type is FILE_TYPE_GPX_TRACK */
 gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t file_type, VikTrack *trk, gboolean write_hidden );
+gboolean a_file_export_babel ( VikTrwLayer *vtl, const gchar *filename, const gchar *format,
+    gboolean tracks, gboolean routes, gboolean waypoints );
 
 void file_write_layer_param ( FILE *f, const gchar *name, VikLayerParamType type, VikLayerParamData data );
 
 char *file_realpath ( const char *path, char *real );
+
+char *file_realpath_dup ( const char *path );
 
 const gchar *file_GetRelativeFilename ( gchar *currentDirectory, gchar *absoluteFilename );
 

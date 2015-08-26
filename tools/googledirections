@@ -1,0 +1,4 @@
+#!/bin/bash
+FROM="$1"
+TO="$2"
+(wget -O - "http://maps.google.com/maps?q=$FROM to $TO&output=js" 2>/dev/null) | gpsbabel -i google -f - -o gpx -F -
