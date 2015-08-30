@@ -1,3 +1,16 @@
+viking (1.6-1) UNRELEASED; urgency=medium
+
+  * [11136d29] Imported Upstream version 1.6
+  * [8cca0e43] Add new upstream dependency: libsqlite3-dev
+  * [f1e62fef] Replace libexif by gexiv2
+  * [cb0ad3e5] Update patch no_doc-dir
+  * [d9a7723c] Remove patch set_subdir-objects as it is applied upstream
+  * [a8fb82f2] Disable mapnik support
+  * [73285b0f] Add patch to fix IT_PROG_INTLTOOL and AM_GNU_GETTEXT conflict
+  * [2d0081c0] Update gbp.conf to new rules
+
+ -- Guilhem Bonnefille <guilhem.bonnefille@gmail.com>  Sun, 30 Aug 2015 16:52:00 +0200
+
 viking (1.5.1-1) unstable; urgency=medium
 
   * [53625f28] Fixing watch file to handle .bz2 files.
