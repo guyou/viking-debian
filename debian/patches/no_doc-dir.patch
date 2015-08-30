@@ -1,30 +1,21 @@
-Description: don't specify VIKING_DOC
+Description: don't try to process doc sub directory
 
- - don't specify VIKING_DOC since we don't have doc sub directory
+ - remove declaration of Makefile inside doc subtree
  - GTK_DOC_CHECK cause parse error
 
 Forwarded: no
-Last-Update: 2013-10-23
+Last-Update: 2015-08-30
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -6,7 +6,6 @@ AC_INIT(viking, 1.5.1, , viking, http://
+@@ -6,7 +6,6 @@ AC_INIT(viking, 1.6, , viking, http://viking.sf.net/)
  AM_INIT_AUTOMAKE([dist-bzip2 dist-zip subdir-objects])
  dnl AC_CONFIG_SRCDIR([src/main.c])
  AC_CONFIG_HEADERS([src/config.h])
 -GTK_DOC_CHECK(1.0)
  
- # Checks for programs.
  AC_PROG_CC
-@@ -377,8 +376,6 @@ dnl correct flags to aclocal.
- ACLOCAL_AMFLAGS="\${ACLOCAL_FLAGS}"
- AC_SUBST(ACLOCAL_AMFLAGS)
- 
--AM_CONDITIONAL([VIKING_DOC], test x${enable_gtk_doc} = xyes)
--
- # Configuration
- AC_CONFIG_FILES([
- 		Makefile
+ AC_PROG_CC_STDC
 @@ -392,11 +389,6 @@ AC_CONFIG_FILES([
  		win32/installer/Makefile
  		win32/installer/pixmaps/Makefile
@@ -37,15 +28,3 @@ Last-Update: 2013-10-23
  
  AC_OUTPUT([
  	   viking.spec
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -1,8 +1,4 @@
--# Optionally build documentation bits
--if VIKING_DOC
--	DO_DOCS = "doc"
--endif
--SUBDIRS = src test data po win32 help $(DO_DOCS)
-+SUBDIRS = src test data po win32 help
- 
- INTLTOOL = \
- 	intltool-extract.in \
