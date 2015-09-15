@@ -1,6 +1,5 @@
-viking (1.6-0.1) UNRELEASED; urgency=medium
+viking (1.6-1) UNRELEASED; urgency=medium
 
-  * Non-maintainer upload.
   * [11136d29] Imported Upstream version 1.6
   * [8cca0e43] Add new upstream dependency: libsqlite3-dev
   * [f1e62fef] Replace libexif by gexiv2
