@@ -1,4 +1,4 @@
-viking (1.6-1) UNRELEASED; urgency=medium
+viking (1.6-1) unstable; urgency=medium
 
   * [11136d29] Imported Upstream version 1.6
   * [8cca0e43] Add new upstream dependency: libsqlite3-dev
@@ -8,6 +8,7 @@ viking (1.6-1) UNRELEASED; urgency=medium
   * [a8fb82f2] Disable mapnik support
   * [73285b0f] Add patch to fix IT_PROG_INTLTOOL and AM_GNU_GETTEXT conflict
   * [2d0081c0] Update gbp.conf to new rules
+  * [af25cd4b] Activate hardening options
 
  -- Guilhem Bonnefille <guilhem.bonnefille@gmail.com>  Sun, 30 Aug 2015 16:52:00 +0200
 
