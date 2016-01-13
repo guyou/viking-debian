@@ -250,6 +250,7 @@ INTLTOOL_V_MERGE_OPTIONS = @INTLTOOL_V_MERGE_OPTIONS@
 INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
+ISODATE = @ISODATE@
 LDFLAGS = @LDFLAGS@
 LIBCURL = @LIBCURL@
 LIBCURL_CPPFLAGS = @LIBCURL_CPPFLAGS@
@@ -683,12 +684,12 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-@GEN_MANPAGES_FALSE@install-data-local:
 @GEN_MANPAGES_FALSE@mostlyclean-local:
 @GEN_MANPAGES_FALSE@distclean-local:
-@GEN_MANPAGES_FALSE@maintainer-clean-local:
-@GEN_MANPAGES_FALSE@clean-local:
 @GEN_MANPAGES_FALSE@uninstall-local:
+@GEN_MANPAGES_FALSE@clean-local:
+@GEN_MANPAGES_FALSE@maintainer-clean-local:
+@GEN_MANPAGES_FALSE@install-data-local:
 clean: clean-am
 
 clean-am: clean-generic clean-local mostlyclean-am
