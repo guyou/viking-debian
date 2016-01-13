@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>viktrwlayer_export: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-viktrwlayer-analysis.html" title="viktrwlayer_analysis">
+<link rel="next" href="viking-viktrwlayer-geotag.html" title="viktrwlayer_geotag">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-viktrwlayer-export.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-viktrwlayer-analysis.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-viktrwlayer-geotag.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-viktrwlayer-export"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-viktrwlayer-export.top_of_page"></a>viktrwlayer_export</span></h2>
+<p>viktrwlayer_export</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-viktrwlayer-export.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrwlayer-export.html#vik-trw-layer-export" title="vik_trw_layer_export ()">vik_trw_layer_export</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrwlayer-export.html#vik-trw-layer-export-external-gpx" title="vik_trw_layer_export_external_gpx ()">vik_trw_layer_export_external_gpx</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrwlayer-export.html#vik-trw-layer-export-gpsbabel" title="vik_trw_layer_export_gpsbabel ()">vik_trw_layer_export_gpsbabel</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-viktrwlayer-export.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-viktrwlayer-export.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="vik-trw-layer-export"></a><h3>vik_trw_layer_export ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_export (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                      <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *title</code></em>,
+                      <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *default_name</code></em>,
+                      <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>,
+                      <em class="parameter"><code><a class="link" href="viking-file.html#VikFileType-t" title="enum VikFileType_t"><span class="type">VikFileType_t</span></a> file_type</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-export-external-gpx"></a><h3>vik_trw_layer_export_external_gpx ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_export_external_gpx (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                                   <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *external_program</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-export-gpsbabel"></a><h3>vik_trw_layer_export_gpsbabel ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_export_gpsbabel (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                               <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *title</code></em>,
+                               <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *default_name</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-viktrwlayer-export.other_details"></a><h2>Types and Values</h2>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

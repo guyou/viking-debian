@@ -1,0 +1,587 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikDataSource: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="ch01.html" title="[Insert title here]">
+<link rel="next" href="viking-addtr-18-pixmap.html" title="addtr_18_pixmap">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-VikDataSource.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="ch01.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-addtr-18-pixmap.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-VikDataSource"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-VikDataSource.top_of_page"></a>VikDataSource</span></h2>
+<p>VikDataSource</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-VikDataSource.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-VikDataSource.html#VikDataSourceInitFunc" title="VikDataSourceInitFunc ()">*VikDataSourceInitFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-VikDataSource.html#VikDataSourceCheckExistenceFunc" title="VikDataSourceCheckExistenceFunc ()">*VikDataSourceCheckExistenceFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-VikDataSource.html#VikDataSourceAddSetupWidgetsFunc" title="VikDataSourceAddSetupWidgetsFunc ()">*VikDataSourceAddSetupWidgetsFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-VikDataSource.html#VikDataSourceGetProcessOptionsFunc" title="VikDataSourceGetProcessOptionsFunc ()">*VikDataSourceGetProcessOptionsFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-VikDataSource.html#VikDataSourceProcessFunc" title="VikDataSourceProcessFunc ()">*VikDataSourceProcessFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-VikDataSource.html#VikDataSourceProgressFunc" title="VikDataSourceProgressFunc ()">*VikDataSourceProgressFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-VikDataSource.html#VikDataSourceAddProgressWidgetsFunc" title="VikDataSourceAddProgressWidgetsFunc ()">*VikDataSourceAddProgressWidgetsFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-VikDataSource.html#VikDataSourceCleanupFunc" title="VikDataSourceCleanupFunc ()">*VikDataSourceCleanupFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-VikDataSource.html#VikDataSourceOffFunc" title="VikDataSourceOffFunc ()">*VikDataSourceOffFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-VikDataSource.html#a-acquire" title="a_acquire ()">a_acquire</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-VikDataSource.html#a-acquire-trwlayer-menu" title="a_acquire_trwlayer_menu ()">a_acquire_trwlayer_menu</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-VikDataSource.html#a-acquire-trwlayer-track-menu" title="a_acquire_trwlayer_track_menu ()">a_acquire_trwlayer_track_menu</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-VikDataSource.html#a-acquire-track-menu" title="a_acquire_track_menu ()">a_acquire_track_menu</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-VikDataSource.html#a-acquire-set-filter-track" title="a_acquire_set_filter_track ()">a_acquire_set_filter_track</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-VikDataSource.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-VikDataSource.html#acq-vik-t" title="acq_vik_t">acq_vik_t</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-VikDataSource.html#acq-dialog-widgets-t" title="acq_dialog_widgets_t">acq_dialog_widgets_t</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="viking-VikDataSource.html#vik-datasource-mode-t" title="enum vik_datasource_mode_t">vik_datasource_mode_t</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="viking-VikDataSource.html#vik-datasource-inputtype-t" title="enum vik_datasource_inputtype_t">vik_datasource_inputtype_t</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="viking-VikDataSource.html#VikDataSourceInterface" title="struct VikDataSourceInterface">VikDataSourceInterface</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-VikDataSource.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-VikDataSource.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VikDataSourceInitFunc"></a><h3>VikDataSourceInitFunc ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+<span class="c_punctuation">(</span>*VikDataSourceInitFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="viking-VikDataSource.html#acq-vik-t" title="acq_vik_t"><span class="type">acq_vik_t</span></a> *avt</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.2.6.2.4"></a><h4>Returns</h4>
+<p> pointer to state if OK, otherwise <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikDataSourceCheckExistenceFunc"></a><h3>VikDataSourceCheckExistenceFunc ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+<span class="c_punctuation">(</span>*VikDataSourceCheckExistenceFunc<span class="c_punctuation">)</span> ();</pre>
+<div class="refsect3">
+<a name="id-1.2.2.6.3.4"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if OK, otherwise returns an error message.</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikDataSourceAddSetupWidgetsFunc"></a><h3>VikDataSourceAddSetupWidgetsFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikDataSourceAddSetupWidgetsFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *dialog</code></em>,
+                                     <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Create widgets to show in a setup dialog, set up state via user_data.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikDataSourceGetProcessOptionsFunc"></a><h3>VikDataSourceGetProcessOptionsFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikDataSourceGetProcessOptionsFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                                       <em class="parameter"><code><a class="link" href="viking-babel.html#ProcessOptions" title="ProcessOptions"><span class="type">ProcessOptions</span></a> *process_options</code></em>,
+                                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> download_options</code></em>,
+                                       <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *input_file_name</code></em>,
+                                       <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *input_track_file_name</code></em>);</pre>
+<p>set both to <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to signal refusal (ie already downloading).</p>
+<div class="refsect3">
+<a name="id-1.2.2.6.5.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>provided by <span class="type">VikDataSourceInterface.init_func</span> or dialog with params</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>process_options</p></td>
+<td class="parameter_description"><p>main options controlling the behaviour of <span class="type">VikDataSourceInterface.process_func</span></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>download_options</p></td>
+<td class="parameter_description"><p>optional options for downloads from URLs for <span class="type">VikDataSourceInterface.process_func</span></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikDataSourceProcessFunc"></a><h3>VikDataSourceProcessFunc ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikDataSourceProcessFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vtl</code></em>,
+                             <em class="parameter"><code><a class="link" href="viking-babel.html#ProcessOptions" title="ProcessOptions"><span class="type">ProcessOptions</span></a> *process_options</code></em>,
+                             <em class="parameter"><code><a class="link" href="viking-babel.html#BabelStatusFunc" title="BabelStatusFunc ()"><span class="type">BabelStatusFunc</span></a> Param3</code></em>,
+                             <em class="parameter"><code><a class="link" href="viking-VikDataSource.html#acq-dialog-widgets-t" title="acq_dialog_widgets_t"><span class="type">acq_dialog_widgets_t</span></a> *adw</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> download_options</code></em>);</pre>
+<p>The actual function to do stuff - must report success/failure.</p>
+<div class="refsect3">
+<a name="id-1.2.2.6.6.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>process_options</p></td>
+<td class="parameter_description"><p>options to control the behaviour of this function (see <a class="link" href="viking-babel.html#ProcessOptions" title="ProcessOptions"><span class="type">ProcessOptions</span></a>)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>status_cb</p></td>
+<td class="parameter_description"><p>the <span class="type">VikDataSourceInterface.progress_func</span></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>adw</p></td>
+<td class="parameter_description"><p>the widgets and data used by <span class="type">VikDataSourceInterface.progress_func</span></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>download_options</p></td>
+<td class="parameter_description"><p>Optional options used if downloads from URLs is used.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikDataSourceProgressFunc"></a><h3>VikDataSourceProgressFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikDataSourceProgressFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="viking-babel.html#BabelProgressCode" title="enum BabelProgressCode"><span class="type">BabelProgressCode</span></a> c</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>,
+                              <em class="parameter"><code><a class="link" href="viking-VikDataSource.html#acq-dialog-widgets-t" title="acq_dialog_widgets_t"><span class="type">acq_dialog_widgets_t</span></a> *w</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikDataSourceAddProgressWidgetsFunc"></a><h3>VikDataSourceAddProgressWidgetsFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikDataSourceAddProgressWidgetsFunc<span class="c_punctuation">)</span>
+                               (<em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *dialog</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Creates widgets to show in a progress dialog, may set up state via user_data.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikDataSourceCleanupFunc"></a><h3>VikDataSourceCleanupFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikDataSourceCleanupFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Frees any widgets created for the setup or progress dialogs, any allocated state, etc.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikDataSourceOffFunc"></a><h3>VikDataSourceOffFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikDataSourceOffFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **babelargs</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **file_descriptor</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-acquire"></a><h3>a_acquire ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_acquire (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+           <em class="parameter"><code><a class="link" href="VikLayersPanel.html" title="VikLayersPanel"><span class="type">VikLayersPanel</span></a> *vlp</code></em>,
+           <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+           <em class="parameter"><code><a class="link" href="viking-VikDataSource.html#vik-datasource-mode-t" title="enum vik_datasource_mode_t"><span class="type">vik_datasource_mode_t</span></a> mode</code></em>,
+           <em class="parameter"><code><a class="link" href="viking-VikDataSource.html#VikDataSourceInterface" title="struct VikDataSourceInterface"><span class="type">VikDataSourceInterface</span></a> *source_interface</code></em>,
+           <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> userdata</code></em>,
+           <em class="parameter"><code><a class="link" href="viking-VikDataSource.html#VikDataSourceCleanupFunc" title="VikDataSourceCleanupFunc ()"><span class="type">VikDataSourceCleanupFunc</span></a> cleanup_function</code></em>);</pre>
+<p>Process the given VikDataSourceInterface for sources with no input data.</p>
+<div class="refsect3">
+<a name="id-1.2.2.6.11.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vw</p></td>
+<td class="parameter_description"><p>The <a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> to work with</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>vlp</p></td>
+<td class="parameter_description"><p>The <a class="link" href="VikLayersPanel.html" title="VikLayersPanel"><span class="type">VikLayersPanel</span></a> in which a <a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> layer may be created/appended</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>vvp</p></td>
+<td class="parameter_description"><p>The <a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> defining the current view</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>mode</p></td>
+<td class="parameter_description"><p>How layers should be managed</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>source_interface</p></td>
+<td class="parameter_description"><p>The <a class="link" href="viking-VikDataSource.html#VikDataSourceInterface" title="struct VikDataSourceInterface"><span class="type">VikDataSourceInterface</span></a> determining how and what actions to take</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>userdata</p></td>
+<td class="parameter_description"><p>External data to be passed into the <a class="link" href="viking-VikDataSource.html#VikDataSourceInterface" title="struct VikDataSourceInterface"><span class="type">VikDataSourceInterface</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>cleanup_function</p></td>
+<td class="parameter_description"><p>The function to dispose the <a class="link" href="viking-VikDataSource.html#VikDataSourceInterface" title="struct VikDataSourceInterface"><span class="type">VikDataSourceInterface</span></a> if necessary</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-acquire-trwlayer-menu"></a><h3>a_acquire_trwlayer_menu ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+a_acquire_trwlayer_menu (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                         <em class="parameter"><code><a class="link" href="VikLayersPanel.html" title="VikLayersPanel"><span class="type">VikLayersPanel</span></a> *vlp</code></em>,
+                         <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                         <em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+<p>Create a sub menu intended for rightclicking on a TRWLayer's menu called "Filter".</p>
+<div class="refsect3">
+<a name="id-1.2.2.6.12.5"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if no filters.</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-acquire-trwlayer-track-menu"></a><h3>a_acquire_trwlayer_track_menu ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+a_acquire_trwlayer_track_menu (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                               <em class="parameter"><code><a class="link" href="VikLayersPanel.html" title="VikLayersPanel"><span class="type">VikLayersPanel</span></a> *vlp</code></em>,
+                               <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                               <em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+<p>Create a sub menu intended for rightclicking on a TRWLayer's menu called "Filter with Track "TRACKNAME"...".</p>
+<div class="refsect3">
+<a name="id-1.2.2.6.13.5"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if no filters or no filter track has been set.</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-acquire-track-menu"></a><h3>a_acquire_track_menu ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+a_acquire_track_menu (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                      <em class="parameter"><code><a class="link" href="VikLayersPanel.html" title="VikLayersPanel"><span class="type">VikLayersPanel</span></a> *vlp</code></em>,
+                      <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                      <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+<p>Create a sub menu intended for rightclicking on a track's menu called "Filter".</p>
+<div class="refsect3">
+<a name="id-1.2.2.6.14.5"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if no applicable filters</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-acquire-set-filter-track"></a><h3>a_acquire_set_filter_track ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_acquire_set_filter_track (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+<p>Sets application-wide track to use with filter. references the track.</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-VikDataSource.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="acq-vik-t"></a><h3>acq_vik_t</h3>
+<pre class="programlisting">typedef struct {
+  VikWindow *vw;
+  VikLayersPanel *vlp;
+  VikViewport *vvp;
+  gpointer userdata;
+} acq_vik_t;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="acq-dialog-widgets-t"></a><h3>acq_dialog_widgets_t</h3>
+<pre class="programlisting">typedef struct {
+  GtkWidget *status;
+  VikWindow *vw;
+  VikLayersPanel *vlp;
+  VikViewport *vvp;
+  GtkWidget *dialog;
+  gboolean running;
+  VikDataSourceInterface *source_interface;
+  gpointer user_data;
+} acq_dialog_widgets_t;
+</pre>
+<p>global data structure used to expose the progress dialog to the worker thread.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-datasource-mode-t"></a><h3>enum vik_datasource_mode_t</h3>
+<div class="refsect3">
+<a name="id-1.2.2.7.4.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-DATASOURCE-CREATENEWLAYER:CAPS"></a>VIK_DATASOURCE_CREATENEWLAYER</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-DATASOURCE-ADDTOLAYER:CAPS"></a>VIK_DATASOURCE_ADDTOLAYER</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-DATASOURCE-AUTO-LAYER-MANAGEMENT:CAPS"></a>VIK_DATASOURCE_AUTO_LAYER_MANAGEMENT</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-DATASOURCE-MANUAL-LAYER-MANAGEMENT:CAPS"></a>VIK_DATASOURCE_MANUAL_LAYER_MANAGEMENT</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-datasource-inputtype-t"></a><h3>enum vik_datasource_inputtype_t</h3>
+<div class="refsect3">
+<a name="id-1.2.2.7.5.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-DATASOURCE-INPUTTYPE-NONE:CAPS"></a>VIK_DATASOURCE_INPUTTYPE_NONE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-DATASOURCE-INPUTTYPE-TRWLAYER:CAPS"></a>VIK_DATASOURCE_INPUTTYPE_TRWLAYER</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-DATASOURCE-INPUTTYPE-TRACK:CAPS"></a>VIK_DATASOURCE_INPUTTYPE_TRACK</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-DATASOURCE-INPUTTYPE-TRWLAYER-TRACK:CAPS"></a>VIK_DATASOURCE_INPUTTYPE_TRWLAYER_TRACK</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikDataSourceInterface"></a><h3>struct VikDataSourceInterface</h3>
+<pre class="programlisting">struct VikDataSourceInterface {
+  const gchar *window_title;
+  const gchar *layer_title;
+  vik_datasource_mode_t mode;
+  vik_datasource_inputtype_t inputtype;
+  gboolean autoview;
+  gboolean keep_dialog_open; /* when done */
+
+  gboolean is_thread;
+
+  /*** Manual UI Building ***/
+  VikDataSourceInitFunc init_func;
+  VikDataSourceCheckExistenceFunc check_existence_func;
+  VikDataSourceAddSetupWidgetsFunc add_setup_widgets_func;      
+  /***                    ***/
+
+  VikDataSourceGetProcessOptionsFunc get_process_options_func;
+
+  VikDataSourceProcessFunc process_func;
+
+  VikDataSourceProgressFunc progress_func;
+  VikDataSourceAddProgressWidgetsFunc add_progress_widgets_func;
+  VikDataSourceCleanupFunc cleanup_func;
+  VikDataSourceOffFunc off_func;
+
+  /*** UI Building        ***/
+  VikLayerParam *                   params;
+  guint16                           params_count;
+  VikLayerParamData *               params_defaults;
+  gchar **                          params_groups;
+  guint8                            params_groups_count;
+};
+</pre>
+<p>Main interface.</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

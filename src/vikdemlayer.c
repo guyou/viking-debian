@@ -542,6 +542,10 @@ static void vik_dem_layer_draw_dem ( VikDEMLayer *vdl, VikViewport *vp, VikDEM *
 
     a_coords_utm_to_latlon(&dem_northeast_utm, &dem_northeast);
     a_coords_utm_to_latlon(&dem_southwest_utm, &dem_southwest);
+  } else {
+    // Unknown horiz_units - this shouldn't normally happen
+    // Thus can't work out positions to use
+    return;
   }
 
   if ( (max_lat > dem_northeast.lat && min_lat > dem_northeast.lat) ||
@@ -670,7 +674,8 @@ static void vik_dem_layer_draw_dem ( VikDEMLayer *vdl, VikViewport *vp, VikDEM *
 	  box_height -= box_y;
           // catch box at borders
 	  if(box_width < 0 || box_height < 0)
-		  continue; // skip this. this is out of our viewport anyway. FIXME: why?
+	    // skip this as is out of the viewport (e.g. zoomed in so this point is way off screen)
+	    continue;
 
 	  gboolean below_minimum = FALSE;
           if(vdl->type == DEM_TYPE_HEIGHT) {
@@ -684,9 +689,6 @@ static void vik_dem_layer_draw_dem ( VikDEMLayer *vdl, VikViewport *vp, VikDEM *
           }
 
           {
-	    if(box_width < 0 || box_height < 0) // FIXME: why does this happen?
-              continue;
-
             if(vdl->type == DEM_TYPE_GRADIENT) {
               if( elev == VIK_DEM_INVALID_ELEVATION ) {
                 /* don't draw it */
@@ -1144,7 +1146,7 @@ static gboolean dem_layer_add_file ( VikDEMLayer *vdl, const gchar *filename )
   if ( g_file_test(filename, G_FILE_TEST_EXISTS) == TRUE ) {
     /* only load if file size is not 0 (not in progress) */
     struct stat sb;
-    stat ( filename, &sb );
+    (void)stat ( filename, &sb );
     if ( sb.st_size ) {
       gchar *duped_path = g_strdup(filename);
       vdl->files = g_list_prepend ( vdl->files, duped_path );

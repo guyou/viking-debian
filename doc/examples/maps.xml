@@ -1,0 +1,68 @@
+<!-- This file is an example for map source definitions. -->
+<objects>
+  <!-- The VikSlippyMapSource allows to declare any map's source working like OpenStreetMap. -->
+  <object class="VikSlippyMapSource">
+    <property name="label">OpenStreetMap (Mapnik)</property>
+    <property name="hostname">tile.openstreetmap.org</property>
+    <property name="url">/%d/%d/%d.png</property>
+    <property name="zoom-min">0</property>
+    <property name="zoom-max">19</property>
+    <property name="id">13</property>
+    <property name="name">OSM-Mapnik</property>
+    <property name="copyright">© OpenStreetMap contributors</property>
+    <property name="license">CC-BY-SA</property>
+    <property name="license-url">http://www.openstreetmap.org/copyright</property>
+    <property name="file-extension">.png</property>
+  </object>
+  <!-- The VikTmsMapSource allows to declare any TMS service. -->
+  <!-- Note this service is no longer working
+  <object class="VikTmsMapSource">
+    <property name="id">50</property>
+    <property name="label">SPOTMaps</property>
+    <property name="hostname">spotmaps.youmapps.org</property>
+    <property name="url">/spotmaps4osm/1.0.0/spotmaps4osm/%d/%d/%d.jpg</property>
+    <property name="check-file-server-time">FALSE</property>
+    <property name="copyright">© Cnes/Spot Image</property>
+    <property name="license">CC-by-SA 2.0 / ODBl</property>
+    <property name="license-url">http://www.youmapps.org/licenses/EULA-OSM-en.html</property>
+  </object>
+  -->
+  <!-- Partial WMSC Example - No known public service to demonstrate this
+  <object class="VikWmscMapSource">
+    <property name="id">18</property>
+    <property name="label">WMSC</property>
+    <property name="hostname">example.com</property>
+    <property name="url">/wms</property>
+  </object>
+  -->
+  <!-- ArcGIS Server - Notice use of the "switch-xy" property -->
+  <object>
+    <object class="VikSlippyMapSource">
+    <property name="id">60</property>
+    <property name="name">ArcGIS</property>
+    <property name="label">ArcGIS World Street Map</property>
+    <property name="hostname">services.arcgisonline.com</property>
+    <property name="url">/ArcGIS/rest/services/World_Street_Map/MapServer/tile/%d/%d/%d</property>
+    <property name="switch-xy">TRUE</property>
+    <property name="copyright">Sources: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2013</property>
+    <property name="license">ArcGIS Specific</property>
+    <property name="license-url">http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer</property>
+  </object>
+
+  <!-- An example with zoom and area limits - UK Only -->
+  <object>
+    <object class="VikSlippyMapSource">
+    <property name="label">OS NPE</property>
+    <property name="hostname">ooc.openstreetmap.org</property>
+    <property name="url">/npe/%d/%d/%d.png</property>
+    <property name="id">245</property>
+    <property name="name">NPE</property>
+    <property name="file-extension">.png</property>
+    <property name="zoom-min">7</property>
+    <property name="zoom-max">18</property>
+    <property name="lat-min">49.8</property>
+    <property name="lat-max">55.8</property>
+    <property name="lon-min">-5.8</property>
+    <property name="lon-max">1.9</property>
+  </object>
+</objects>

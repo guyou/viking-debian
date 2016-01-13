@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>vikcoord: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-vikaggregatelayer-pixmap.html" title="vikaggregatelayer_pixmap">
+<link rel="next" href="VikCoordLayer.html" title="VikCoordLayer">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-vikcoord.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-vikaggregatelayer-pixmap.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="VikCoordLayer.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-vikcoord"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-vikcoord.top_of_page"></a>vikcoord</span></h2>
+<p>vikcoord</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-vikcoord.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#VIK-UTM:CAPS" title="VIK_UTM()">VIK_UTM</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#VIK-LATLON:CAPS" title="VIK_LATLON()">VIK_LATLON</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-convert" title="vik_coord_convert ()">vik_coord_convert</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-copy-convert" title="vik_coord_copy_convert ()">vik_coord_copy_convert</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-diff" title="vik_coord_diff ()">vik_coord_diff</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-load-from-latlon" title="vik_coord_load_from_latlon ()">vik_coord_load_from_latlon</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-load-from-utm" title="vik_coord_load_from_utm ()">vik_coord_load_from_utm</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-to-latlon" title="vik_coord_to_latlon ()">vik_coord_to_latlon</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-to-utm" title="vik_coord_to_utm ()">vik_coord_to_utm</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-equals" title="vik_coord_equals ()">vik_coord_equals</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-set-area" title="vik_coord_set_area ()">vik_coord_set_area</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikcoord.html#vik-coord-inside" title="vik_coord_inside ()">vik_coord_inside</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-vikcoord.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode">VikCoordMode</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-vikcoord.html#VIK-COORD-UTM:CAPS" title="VIK_COORD_UTM">VIK_COORD_UTM</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-vikcoord.html#VIK-COORD-LATLON:CAPS" title="VIK_COORD_LATLON">VIK_COORD_LATLON</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord">VikCoord</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-vikcoord.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-vikcoord.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-UTM:CAPS"></a><h3>VIK_UTM()</h3>
+<pre class="programlisting">#define VIK_UTM(x) ((struct UTM *)(x))
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-LATLON:CAPS"></a><h3>VIK_LATLON()</h3>
+<pre class="programlisting">#define VIK_LATLON(x) ((struct LatLon *)(x))
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-convert"></a><h3>vik_coord_convert ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_coord_convert (<em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                   <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="type">VikCoordMode</span></a> dest_mode</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-copy-convert"></a><h3>vik_coord_copy_convert ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_coord_copy_convert (<em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                        <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="type">VikCoordMode</span></a> dest_mode</code></em>,
+                        <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *dest</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-diff"></a><h3>vik_coord_diff ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_coord_diff (<em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *c1</code></em>,
+                <em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *c2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-load-from-latlon"></a><h3>vik_coord_load_from_latlon ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_coord_load_from_latlon (<em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                            <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="type">VikCoordMode</span></a> mode</code></em>,
+                            <em class="parameter"><code>const <span class="type">struct LatLon</span> *ll</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-load-from-utm"></a><h3>vik_coord_load_from_utm ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_coord_load_from_utm (<em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                         <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="type">VikCoordMode</span></a> mode</code></em>,
+                         <em class="parameter"><code>const <span class="type">struct UTM</span> *utm</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-to-latlon"></a><h3>vik_coord_to_latlon ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_coord_to_latlon (<em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                     <em class="parameter"><code><span class="type">struct LatLon</span> *dest</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-to-utm"></a><h3>vik_coord_to_utm ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_coord_to_utm (<em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                  <em class="parameter"><code><span class="type">struct UTM</span> *dest</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-equals"></a><h3>vik_coord_equals ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_coord_equals (<em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord1</code></em>,
+                  <em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-set-area"></a><h3>vik_coord_set_area ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_coord_set_area (<em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                    <em class="parameter"><code>const <span class="type">struct LatLon</span> *wh</code></em>,
+                    <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *tl</code></em>,
+                    <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *br</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-coord-inside"></a><h3>vik_coord_inside ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_coord_inside (<em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                  <em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *tl</code></em>,
+                  <em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *br</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-vikcoord.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="VikCoordMode"></a><h3>VikCoordMode</h3>
+<pre class="programlisting">typedef gshort VikCoordMode;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-COORD-UTM:CAPS"></a><h3>VIK_COORD_UTM</h3>
+<pre class="programlisting">#define VIK_COORD_UTM 0
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-COORD-LATLON:CAPS"></a><h3>VIK_COORD_LATLON</h3>
+<pre class="programlisting">#define VIK_COORD_LATLON 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikCoord"></a><h3>VikCoord</h3>
+<pre class="programlisting">typedef struct {
+  gdouble north_south; /* northing or lat */
+  gdouble east_west;   /* easting or lon */
+  gchar utm_zone;
+  gchar utm_letter;
+
+  VikCoordMode mode;
+} VikCoord;
+</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

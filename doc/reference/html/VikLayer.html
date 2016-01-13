@@ -1,0 +1,1529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikLayer: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-viking-pixmap.html" title="viking_pixmap">
+<link rel="next" href="viking-viklayer-defaults.html" title="viklayer_defaults">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikLayer.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikLayer.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_signals">  <span class="dim">|</span> 
+                  <a href="#VikLayer.signals" class="shortcut">Signals</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-viking-pixmap.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-viklayer-defaults.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikLayer"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikLayer.top_of_page"></a>VikLayer</span></h2>
+<p>VikLayer</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikLayer.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikLayer.html#VIK-LAYER-TYPE:CAPS" title="VIK_LAYER_TYPE">VIK_LAYER_TYPE</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikToolConstructorFunc" title="VikToolConstructorFunc ()">*VikToolConstructorFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikToolDestructorFunc" title="VikToolDestructorFunc ()">*VikToolDestructorFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html#VikLayerToolFuncStatus" title="enum VikLayerToolFuncStatus"><span class="returnvalue">VikLayerToolFuncStatus</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikToolMouseFunc" title="VikToolMouseFunc ()">*VikToolMouseFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html#VikLayerToolFuncStatus" title="enum VikLayerToolFuncStatus"><span class="returnvalue">VikLayerToolFuncStatus</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikToolMouseMoveFunc" title="VikToolMouseMoveFunc ()">*VikToolMouseMoveFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikToolActivationFunc" title="VikToolActivationFunc ()">*VikToolActivationFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikToolKeyFunc" title="VikToolKeyFunc ()">*VikToolKeyFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncCreate" title="VikLayerFuncCreate ()">*VikLayerFuncCreate</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncRealize" title="VikLayerFuncRealize ()">*VikLayerFuncRealize</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncPostRead" title="VikLayerFuncPostRead ()">*VikLayerFuncPostRead</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncFree" title="VikLayerFuncFree ()">*VikLayerFuncFree</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncProperties" title="VikLayerFuncProperties ()">*VikLayerFuncProperties</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncDraw" title="VikLayerFuncDraw ()">*VikLayerFuncDraw</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncChangeCoordMode" title="VikLayerFuncChangeCoordMode ()">*VikLayerFuncChangeCoordMode</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSetMenuItemsSelection" title="VikLayerFuncSetMenuItemsSelection ()">*VikLayerFuncSetMenuItemsSelection</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncGetMenuItemsSelection" title="VikLayerFuncGetMenuItemsSelection ()">*VikLayerFuncGetMenuItemsSelection</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncAddMenuItems" title="VikLayerFuncAddMenuItems ()">*VikLayerFuncAddMenuItems</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSublayerAddMenuItems" title="VikLayerFuncSublayerAddMenuItems ()">*VikLayerFuncSublayerAddMenuItems</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSublayerRenameRequest" title="VikLayerFuncSublayerRenameRequest ()">*VikLayerFuncSublayerRenameRequest</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSublayerToggleVisible" title="VikLayerFuncSublayerToggleVisible ()">*VikLayerFuncSublayerToggleVisible</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSublayerTooltip" title="VikLayerFuncSublayerTooltip ()">*VikLayerFuncSublayerTooltip</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncLayerTooltip" title="VikLayerFuncLayerTooltip ()">*VikLayerFuncLayerTooltip</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncLayerSelected" title="VikLayerFuncLayerSelected ()">*VikLayerFuncLayerSelected</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncMarshall" title="VikLayerFuncMarshall ()">*VikLayerFuncMarshall</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncUnmarshall" title="VikLayerFuncUnmarshall ()">*VikLayerFuncUnmarshall</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSetParam" title="VikLayerFuncSetParam ()">*VikLayerFuncSetParam</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncGetParam" title="VikLayerFuncGetParam ()">*VikLayerFuncGetParam</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncChangeParam" title="VikLayerFuncChangeParam ()">*VikLayerFuncChangeParam</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncReadFileData" title="VikLayerFuncReadFileData ()">*VikLayerFuncReadFileData</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncWriteFileData" title="VikLayerFuncWriteFileData ()">*VikLayerFuncWriteFileData</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncDeleteItem" title="VikLayerFuncDeleteItem ()">*VikLayerFuncDeleteItem</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncCutItem" title="VikLayerFuncCutItem ()">*VikLayerFuncCutItem</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncCopyItem" title="VikLayerFuncCopyItem ()">*VikLayerFuncCopyItem</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncPasteItem" title="VikLayerFuncPasteItem ()">*VikLayerFuncPasteItem</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncFreeCopiedItem" title="VikLayerFuncFreeCopiedItem ()">*VikLayerFuncFreeCopiedItem</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncDragDropRequest" title="VikLayerFuncDragDropRequest ()">*VikLayerFuncDragDropRequest</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSelectClick" title="VikLayerFuncSelectClick ()">*VikLayerFuncSelectClick</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSelectMove" title="VikLayerFuncSelectMove ()">*VikLayerFuncSelectMove</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSelectRelease" title="VikLayerFuncSelectRelease ()">*VikLayerFuncSelectRelease</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncSelectedViewportMenu" title="VikLayerFuncSelectedViewportMenu ()">*VikLayerFuncSelectedViewportMenu</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">time_t</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikLayer.html#VikLayerFuncGetTimestamp" title="VikLayerFuncGetTimestamp ()">*VikLayerFuncGetTimestamp</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html#VikLayerInterface" title="struct VikLayerInterface"><span class="returnvalue">VikLayerInterface</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-get-interface" title="vik_layer_get_interface ()">vik_layer_get_interface</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-set-type" title="vik_layer_set_type ()">vik_layer_set_type</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-draw" title="vik_layer_draw ()">vik_layer_draw</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-change-coord-mode" title="vik_layer_change_coord_mode ()">vik_layer_change_coord_mode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-rename" title="vik_layer_rename ()">vik_layer_rename</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-rename-no-copy" title="vik_layer_rename_no_copy ()">vik_layer_rename_no_copy</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-get-name" title="vik_layer_get_name ()">vik_layer_get_name</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">time_t</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-get-timestamp" title="vik_layer_get_timestamp ()">vik_layer_get_timestamp</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-set-param" title="vik_layer_set_param ()">vik_layer_set_param</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-set-defaults" title="vik_layer_set_defaults ()">vik_layer_set_defaults</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-emit-update" title="vik_layer_emit_update ()">vik_layer_emit_update</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-set-menu-items-selection" title="vik_layer_set_menu_items_selection ()">vik_layer_set_menu_items_selection</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-get-menu-items-selection" title="vik_layer_get_menu_items_selection ()">vik_layer_get_menu_items_selection</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-add-menu-items" title="vik_layer_add_menu_items ()">vik_layer_add_menu_items</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-create" title="vik_layer_create ()">vik_layer_create</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-properties" title="vik_layer_properties ()">vik_layer_properties</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-realize" title="vik_layer_realize ()">vik_layer_realize</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-post-read" title="vik_layer_post_read ()">vik_layer_post_read</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-sublayer-add-menu-items" title="vik_layer_sublayer_add_menu_items ()">vik_layer_sublayer_add_menu_items</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-copy" title="vik_layer_copy ()">vik_layer_copy</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-marshall" title="vik_layer_marshall ()">vik_layer_marshall</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-unmarshall" title="vik_layer_unmarshall ()">vik_layer_unmarshall</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-marshall-params" title="vik_layer_marshall_params ()">vik_layer_marshall_params</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-unmarshall-params" title="vik_layer_unmarshall_params ()">vik_layer_unmarshall_params</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-sublayer-rename-request" title="vik_layer_sublayer_rename_request ()">vik_layer_sublayer_rename_request</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-sublayer-toggle-visible" title="vik_layer_sublayer_toggle_visible ()">vik_layer_sublayer_toggle_visible</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-sublayer-tooltip" title="vik_layer_sublayer_tooltip ()">vik_layer_sublayer_tooltip</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-layer-tooltip" title="vik_layer_layer_tooltip ()">vik_layer_layer_tooltip</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-selected" title="vik_layer_selected ()">vik_layer_selected</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">GdkPixbuf</span> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-load-icon" title="vik_layer_load_icon ()">vik_layer_load_icon</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-get-and-reset-trigger" title="vik_layer_get_and_reset_trigger ()">vik_layer_get_and_reset_trigger</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-emit-update-secondary" title="vik_layer_emit_update_secondary ()">vik_layer_emit_update_secondary</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-emit-update-although-invisible" title="vik_layer_emit_update_although_invisible ()">vik_layer_emit_update_although_invisible</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-uibuilder.html#VikLayerTypeEnum" title="enum VikLayerTypeEnum"><span class="returnvalue">VikLayerTypeEnum</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-type-from-string" title="vik_layer_type_from_string ()">vik_layer_type_from_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-typed-param-data-free" title="vik_layer_typed_param_data_free ()">vik_layer_typed_param_data_free</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html#VikLayerTypedParamData" title="VikLayerTypedParamData"><span class="returnvalue">VikLayerTypedParamData</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-typed-param-data-copy-from-data" title="vik_layer_typed_param_data_copy_from_data ()">vik_layer_typed_param_data_copy_from_data</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html#VikLayerTypedParamData" title="VikLayerTypedParamData"><span class="returnvalue">VikLayerTypedParamData</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikLayer.html#vik-layer-data-typed-param-copy-from-string" title="vik_layer_data_typed_param_copy_from_string ()">vik_layer_data_typed_param_copy_from_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikLayer.signals"></a><h2>Signals</h2>
+<div class="informaltable"><table border="0">
+<colgroup>
+<col width="150px" class="signals_return">
+<col width="300px" class="signals_name">
+<col width="200px" class="signals_flags">
+</colgroup>
+<tbody><tr>
+<td class="signal_type"><span class="returnvalue">void</span></td>
+<td class="signal_name"><a class="link" href="VikLayer.html#VikLayer-update" title="The “update” signal">update</a></td>
+<td class="signal_flags"><a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-ACTION:CAPS">Action</a></td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikLayer.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="VikLayer.html#VikLayerToolFuncStatus" title="enum VikLayerToolFuncStatus">VikLayerToolFuncStatus</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="VikLayer.html#VikToolInterface" title="struct VikToolInterface">VikToolInterface</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="VikLayer.html#VikStdLayerMenuItem" title="enum VikStdLayerMenuItem">VikStdLayerMenuItem</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="VikLayer.html#VikLayerInterface" title="struct VikLayerInterface">VikLayerInterface</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="VikLayer.html#VikLayerTypedParamData" title="VikLayerTypedParamData">VikLayerTypedParamData</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikLayer.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> VikLayer
+        <span class="lineart">├──</span> <a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer">VikAggregateLayer</a>
+        <span class="lineart">├──</span> <a class="link" href="VikCoordLayer.html" title="VikCoordLayer">VikCoordLayer</a>
+        <span class="lineart">├──</span> <a class="link" href="VikDEMLayer.html" title="VikDEMLayer">VikDEMLayer</a>
+        <span class="lineart">├──</span> <a class="link" href="VikGeorefLayer.html" title="VikGeorefLayer">VikGeorefLayer</a>
+        <span class="lineart">├──</span> <a class="link" href="VikGpsLayer.html" title="VikGpsLayer">VikGpsLayer</a>
+        <span class="lineart">├──</span> <a class="link" href="viking-vikmapniklayer.html#VikMapnikLayer">VikMapnikLayer</a>
+        <span class="lineart">├──</span> <a class="link" href="VikMapsLayer.html" title="VikMapsLayer">VikMapsLayer</a>
+        <span class="lineart">╰──</span> <a class="link" href="VikTrwLayer.html" title="VikTrwLayer">VikTrwLayer</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikLayer.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="VikLayer.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-LAYER-TYPE:CAPS"></a><h3>VIK_LAYER_TYPE</h3>
+<pre class="programlisting">#define VIK_LAYER_TYPE            (vik_layer_get_type ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikToolConstructorFunc"></a><h3>VikToolConstructorFunc ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+<span class="c_punctuation">(</span>*VikToolConstructorFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *Param1</code></em>,
+                           <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikToolDestructorFunc"></a><h3>VikToolDestructorFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikToolDestructorFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param1</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikToolMouseFunc"></a><h3>VikToolMouseFunc ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html#VikLayerToolFuncStatus" title="enum VikLayerToolFuncStatus"><span class="returnvalue">VikLayerToolFuncStatus</span></a>
+<span class="c_punctuation">(</span>*VikToolMouseFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                     <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Event-Structures.html#GdkEventButton"><span class="type">GdkEventButton</span></a> *Param2</code></em>,
+                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikToolMouseMoveFunc"></a><h3>VikToolMouseMoveFunc ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html#VikLayerToolFuncStatus" title="enum VikLayerToolFuncStatus"><span class="returnvalue">VikLayerToolFuncStatus</span></a>
+<span class="c_punctuation">(</span>*VikToolMouseMoveFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                         <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Event-Structures.html#GdkEventMotion"><span class="type">GdkEventMotion</span></a> *Param2</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikToolActivationFunc"></a><h3>VikToolActivationFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikToolActivationFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikToolKeyFunc"></a><h3>VikToolKeyFunc ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikToolKeyFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                   <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Event-Structures.html#GdkEventKey"><span class="type">GdkEventKey</span></a> *Param2</code></em>,
+                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncCreate"></a><h3>VikLayerFuncCreate ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+<span class="c_punctuation">(</span>*VikLayerFuncCreate<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param1</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncRealize"></a><h3>VikLayerFuncRealize ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncRealize<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                        <em class="parameter"><code><a class="link" href="VikTreeview.html" title="VikTreeview"><span class="type">VikTreeview</span></a> *Param2</code></em>,
+                        <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncPostRead"></a><h3>VikLayerFuncPostRead ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncPostRead<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                         <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> from_file</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncFree"></a><h3>VikLayerFuncFree ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncFree<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncProperties"></a><h3>VikLayerFuncProperties ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncProperties<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                           <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncDraw"></a><h3>VikLayerFuncDraw ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncDraw<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                     <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncChangeCoordMode"></a><h3>VikLayerFuncChangeCoordMode ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncChangeCoordMode<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="type">VikCoordMode</span></a> Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSetMenuItemsSelection"></a><h3>VikLayerFuncSetMenuItemsSelection ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncSetMenuItemsSelection<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncGetMenuItemsSelection"></a><h3>VikLayerFuncGetMenuItemsSelection ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncGetMenuItemsSelection<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncAddMenuItems"></a><h3>VikLayerFuncAddMenuItems ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncAddMenuItems<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                             <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkMenu.html"><span class="type">GtkMenu</span></a> *Param2</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSublayerAddMenuItems"></a><h3>VikLayerFuncSublayerAddMenuItems ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncSublayerAddMenuItems<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                     <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkMenu.html"><span class="type">GtkMenu</span></a> *Param2</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSublayerRenameRequest"></a><h3>VikLayerFuncSublayerRenameRequest ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+<span class="c_punctuation">(</span>*VikLayerFuncSublayerRenameRequest<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                      <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *Param2</code></em>,
+                                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>,
+                                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param4</code></em>,
+                                      <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param5</code></em>,
+                                      <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *Param6</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSublayerToggleVisible"></a><h3>VikLayerFuncSublayerToggleVisible ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncSublayerToggleVisible<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param2</code></em>,
+                                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSublayerTooltip"></a><h3>VikLayerFuncSublayerTooltip ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+<span class="c_punctuation">(</span>*VikLayerFuncSublayerTooltip<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param2</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncLayerTooltip"></a><h3>VikLayerFuncLayerTooltip ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+<span class="c_punctuation">(</span>*VikLayerFuncLayerTooltip<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncLayerSelected"></a><h3>VikLayerFuncLayerSelected ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncLayerSelected<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param2</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param4</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param5</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncMarshall"></a><h3>VikLayerFuncMarshall ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncMarshall<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **Param2</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncUnmarshall"></a><h3>VikLayerFuncUnmarshall ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+<span class="c_punctuation">(</span>*VikLayerFuncUnmarshall<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *Param1</code></em>,
+                           <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param2</code></em>,
+                           <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSetParam"></a><h3>VikLayerFuncSetParam ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncSetParam<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> Param2</code></em>,
+                         <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="type">VikLayerParamData</span></a> Param3</code></em>,
+                         <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param4</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> Param5</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncGetParam"></a><h3>VikLayerFuncGetParam ()</h3>
+<pre class="programlisting"><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncGetParam<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> Param2</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncChangeParam"></a><h3>VikLayerFuncChangeParam ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncChangeParam<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *Param1</code></em>,
+                            <em class="parameter"><code><a class="link" href="viking-uibuilder.html#ui-change-values" title="ui_change_values"><span class="type">ui_change_values</span></a> Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncReadFileData"></a><h3>VikLayerFuncReadFileData ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncReadFileData<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                             <em class="parameter"><code><span class="type">FILE</span> *Param2</code></em>,
+                             <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncWriteFileData"></a><h3>VikLayerFuncWriteFileData ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncWriteFileData<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                              <em class="parameter"><code><span class="type">FILE</span> *Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncDeleteItem"></a><h3>VikLayerFuncDeleteItem ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncDeleteItem<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                           <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param2</code></em>,
+                           <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncCutItem"></a><h3>VikLayerFuncCutItem ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncCutItem<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param2</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncCopyItem"></a><h3>VikLayerFuncCopyItem ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncCopyItem<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param2</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **Param4</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *Param5</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncPasteItem"></a><h3>VikLayerFuncPasteItem ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncPasteItem<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param2</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *Param3</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> Param4</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncFreeCopiedItem"></a><h3>VikLayerFuncFreeCopiedItem ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncFreeCopiedItem<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param1</code></em>,
+                               <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncDragDropRequest"></a><h3>VikLayerFuncDragDropRequest ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikLayerFuncDragDropRequest<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                <em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param2</code></em>,
+                                <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *Param3</code></em>,
+                                <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreePath"><span class="type">GtkTreePath</span></a> *Param4</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSelectClick"></a><h3>VikLayerFuncSelectClick ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncSelectClick<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                            <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Event-Structures.html#GdkEventButton"><span class="type">GdkEventButton</span></a> *Param2</code></em>,
+                            <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param3</code></em>,
+                            <em class="parameter"><code><a class="link" href="VikWindow.html#tool-ed-t" title="tool_ed_t"><span class="type">tool_ed_t</span></a> *Param4</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSelectMove"></a><h3>VikLayerFuncSelectMove ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncSelectMove<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                           <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Event-Structures.html#GdkEventMotion"><span class="type">GdkEventMotion</span></a> *Param2</code></em>,
+                           <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param3</code></em>,
+                           <em class="parameter"><code><a class="link" href="VikWindow.html#tool-ed-t" title="tool_ed_t"><span class="type">tool_ed_t</span></a> *Param4</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSelectRelease"></a><h3>VikLayerFuncSelectRelease ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncSelectRelease<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                              <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Event-Structures.html#GdkEventButton"><span class="type">GdkEventButton</span></a> *Param2</code></em>,
+                              <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param3</code></em>,
+                              <em class="parameter"><code><a class="link" href="VikWindow.html#tool-ed-t" title="tool_ed_t"><span class="type">tool_ed_t</span></a> *Param4</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncSelectedViewportMenu"></a><h3>VikLayerFuncSelectedViewportMenu ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+<span class="c_punctuation">(</span>*VikLayerFuncSelectedViewportMenu<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                     <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Event-Structures.html#GdkEventButton"><span class="type">GdkEventButton</span></a> *Param2</code></em>,
+                                     <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerFuncGetTimestamp"></a><h3>VikLayerFuncGetTimestamp ()</h3>
+<pre class="programlisting"><span class="returnvalue">time_t</span>
+<span class="c_punctuation">(</span>*VikLayerFuncGetTimestamp<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-get-interface"></a><h3>vik_layer_get_interface ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html#VikLayerInterface" title="struct VikLayerInterface"><span class="returnvalue">VikLayerInterface</span></a> *
+vik_layer_get_interface (<em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerTypeEnum" title="enum VikLayerTypeEnum"><span class="type">VikLayerTypeEnum</span></a> type</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-set-type"></a><h3>vik_layer_set_type ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_set_type (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>,
+                    <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerTypeEnum" title="enum VikLayerTypeEnum"><span class="type">VikLayerTypeEnum</span></a> type</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-draw"></a><h3>vik_layer_draw ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_draw (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-change-coord-mode"></a><h3>vik_layer_change_coord_mode ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_change_coord_mode (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                             <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="type">VikCoordMode</span></a> mode</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-rename"></a><h3>vik_layer_rename ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_rename (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                  <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *new_name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-rename-no-copy"></a><h3>vik_layer_rename_no_copy ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_rename_no_copy (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *new_name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-get-name"></a><h3>vik_layer_get_name ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_layer_get_name (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-get-timestamp"></a><h3>vik_layer_get_timestamp ()</h3>
+<pre class="programlisting"><span class="returnvalue">time_t</span>
+vik_layer_get_timestamp (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-set-param"></a><h3>vik_layer_set_param ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_layer_set_param (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *layer</code></em>,
+                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> id</code></em>,
+                     <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="type">VikLayerParamData</span></a> data</code></em>,
+                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vp</code></em>,
+                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> is_file_operation</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-set-defaults"></a><h3>vik_layer_set_defaults ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_set_defaults (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>,
+                        <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+<p>Loop around all parameters for the specified layer to call the function to get the
+ default value for that parameter</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-emit-update"></a><h3>vik_layer_emit_update ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_emit_update (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-set-menu-items-selection"></a><h3>vik_layer_set_menu_items_selection ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_set_menu_items_selection (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> selection</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-get-menu-items-selection"></a><h3>vik_layer_get_menu_items_selection ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+vik_layer_get_menu_items_selection (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-add-menu-items"></a><h3>vik_layer_add_menu_items ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_add_menu_items (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                          <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkMenu.html"><span class="type">GtkMenu</span></a> *menu</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vlp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-create"></a><h3>vik_layer_create ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+vik_layer_create (<em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerTypeEnum" title="enum VikLayerTypeEnum"><span class="type">VikLayerTypeEnum</span></a> type</code></em>,
+                  <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>,
+                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> interactive</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-properties"></a><h3>vik_layer_properties ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_layer_properties (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *layer</code></em>,
+                      <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-realize"></a><h3>vik_layer_realize ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_realize (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                   <em class="parameter"><code><a class="link" href="VikTreeview.html" title="VikTreeview"><span class="type">VikTreeview</span></a> *vt</code></em>,
+                   <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *layer_iter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-post-read"></a><h3>vik_layer_post_read ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_post_read (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *layer</code></em>,
+                     <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>,
+                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> from_file</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-sublayer-add-menu-items"></a><h3>vik_layer_sublayer_add_menu_items ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_layer_sublayer_add_menu_items (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                                   <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkMenu.html"><span class="type">GtkMenu</span></a> *menu</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vlp</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> subtype</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> sublayer</code></em>,
+                                   <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *iter</code></em>,
+                                   <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-copy"></a><h3>vik_layer_copy ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+vik_layer_copy (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-marshall"></a><h3>vik_layer_marshall ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_marshall (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **data</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *len</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-unmarshall"></a><h3>vik_layer_unmarshall ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+vik_layer_unmarshall (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> len</code></em>,
+                      <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-marshall-params"></a><h3>vik_layer_marshall_params ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_marshall_params (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>,
+                           <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **data</code></em>,
+                           <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *len</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-unmarshall-params"></a><h3>vik_layer_unmarshall_params ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_unmarshall_params (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> len</code></em>,
+                             <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-sublayer-rename-request"></a><h3>vik_layer_sublayer_rename_request ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_layer_sublayer_rename_request (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                                   <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *newname</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vlp</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> subtype</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> sublayer</code></em>,
+                                   <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *iter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-sublayer-toggle-visible"></a><h3>vik_layer_sublayer_toggle_visible ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_layer_sublayer_toggle_visible (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> subtype</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> sublayer</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-sublayer-tooltip"></a><h3>vik_layer_sublayer_tooltip ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_layer_sublayer_tooltip (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                            <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> subtype</code></em>,
+                            <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> sublayer</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-layer-tooltip"></a><h3>vik_layer_layer_tooltip ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_layer_layer_tooltip (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-selected"></a><h3>vik_layer_selected ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_layer_selected (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> subtype</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> sublayer</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> type</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vlp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-load-icon"></a><h3>vik_layer_load_icon ()</h3>
+<pre class="programlisting"><span class="returnvalue">GdkPixbuf</span> *
+vik_layer_load_icon (<em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerTypeEnum" title="enum VikLayerTypeEnum"><span class="type">VikLayerTypeEnum</span></a> type</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-get-and-reset-trigger"></a><h3>vik_layer_get_and_reset_trigger ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+vik_layer_get_and_reset_trigger ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-emit-update-secondary"></a><h3>vik_layer_emit_update_secondary ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_emit_update_secondary (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-emit-update-although-invisible"></a><h3>vik_layer_emit_update_although_invisible ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_emit_update_although_invisible
+                               (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-type-from-string"></a><h3>vik_layer_type_from_string ()</h3>
+<pre class="programlisting"><a class="link" href="viking-uibuilder.html#VikLayerTypeEnum" title="enum VikLayerTypeEnum"><span class="returnvalue">VikLayerTypeEnum</span></a>
+vik_layer_type_from_string (<em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *str</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-typed-param-data-free"></a><h3>vik_layer_typed_param_data_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_layer_typed_param_data_free (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> gp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-typed-param-data-copy-from-data"></a><h3>vik_layer_typed_param_data_copy_from_data ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html#VikLayerTypedParamData" title="VikLayerTypedParamData"><span class="returnvalue">VikLayerTypedParamData</span></a> *
+vik_layer_typed_param_data_copy_from_data
+                               (<em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamType" title="enum VikLayerParamType"><span class="type">VikLayerParamType</span></a> type</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="type">VikLayerParamData</span></a> val</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-data-typed-param-copy-from-string"></a><h3>vik_layer_data_typed_param_copy_from_string ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html#VikLayerTypedParamData" title="VikLayerTypedParamData"><span class="returnvalue">VikLayerTypedParamData</span></a> *
+vik_layer_data_typed_param_copy_from_string
+                               (<em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamType" title="enum VikLayerParamType"><span class="type">VikLayerParamType</span></a> type</code></em>,
+                                <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *str</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikLayer.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="VikLayerToolFuncStatus"></a><h3>enum VikLayerToolFuncStatus</h3>
+<div class="refsect3">
+<a name="id-1.2.120.9.2.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-TOOL-IGNORED:CAPS"></a>VIK_LAYER_TOOL_IGNORED</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-TOOL-ACK:CAPS"></a>VIK_LAYER_TOOL_ACK</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-TOOL-ACK-REDRAW-ABOVE:CAPS"></a>VIK_LAYER_TOOL_ACK_REDRAW_ABOVE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-TOOL-ACK-REDRAW-ALL:CAPS"></a>VIK_LAYER_TOOL_ACK_REDRAW_ALL</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-TOOL-ACK-REDRAW-IF-VISIBLE:CAPS"></a>VIK_LAYER_TOOL_ACK_REDRAW_IF_VISIBLE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-TOOL-ACK-GRAB-FOCUS:CAPS"></a>VIK_LAYER_TOOL_ACK_GRAB_FOCUS</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikToolInterface"></a><h3>struct VikToolInterface</h3>
+<pre class="programlisting">struct VikToolInterface {
+  GtkRadioActionEntry radioActionEntry;
+  VikToolConstructorFunc create;
+  VikToolDestructorFunc destroy;
+  VikToolActivationFunc activate;
+  VikToolActivationFunc deactivate;
+  VikToolMouseFunc click;
+  VikToolMouseMoveFunc move;
+  VikToolMouseFunc release;
+  VikToolKeyFunc key_press; /* return FALSE if we don't use the key press -- should return FALSE most of the time if we want any shortcuts / UI keybindings to work! use sparingly. */
+  gboolean pan_handler; // Call click &amp; release funtions even when 'Pan Mode' is on
+  GdkCursorType cursor_type;
+  const GdkPixdata *cursor_data;
+  const GdkCursor *cursor;
+};
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikStdLayerMenuItem"></a><h3>enum VikStdLayerMenuItem</h3>
+<div class="refsect3">
+<a name="id-1.2.120.9.4.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-MENU-ITEM-PROPERTY:CAPS"></a>VIK_MENU_ITEM_PROPERTY</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-MENU-ITEM-CUT:CAPS"></a>VIK_MENU_ITEM_CUT</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-MENU-ITEM-COPY:CAPS"></a>VIK_MENU_ITEM_COPY</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-MENU-ITEM-PASTE:CAPS"></a>VIK_MENU_ITEM_PASTE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-MENU-ITEM-DELETE:CAPS"></a>VIK_MENU_ITEM_DELETE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-MENU-ITEM-ALL:CAPS"></a>VIK_MENU_ITEM_ALL</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerInterface"></a><h3>struct VikLayerInterface</h3>
+<pre class="programlisting">struct VikLayerInterface {
+  const gchar *                     fixed_layer_name; // Used in .vik files - this should never change to maintain file compatibility
+  const gchar *                     name;             // Translate-able name used for display purposes
+  const gchar *                     accelerator;
+  const GdkPixdata *                icon;
+
+  VikToolInterface *                tools;
+  guint16                           tools_count;
+
+  /* for I/O reading to and from .vik files -- params like coordline width, color, etc. */
+  VikLayerParam *                   params;
+  guint16                           params_count;
+  gchar **                          params_groups;
+  guint8                            params_groups_count;
+
+  /* menu items to be created */
+  VikStdLayerMenuItem               menu_items_selection;
+
+  VikLayerFuncCreate                create;
+  VikLayerFuncRealize               realize;
+  VikLayerFuncPostRead              post_read;
+  VikLayerFuncFree                  free;
+
+  VikLayerFuncProperties            properties;
+  VikLayerFuncDraw                  draw;
+  VikLayerFuncChangeCoordMode       change_coord_mode;
+
+  VikLayerFuncGetTimestamp          get_timestamp;
+
+  VikLayerFuncSetMenuItemsSelection set_menu_selection;
+  VikLayerFuncGetMenuItemsSelection get_menu_selection;
+
+  VikLayerFuncAddMenuItems          add_menu_items;
+  VikLayerFuncSublayerAddMenuItems  sublayer_add_menu_items;
+  VikLayerFuncSublayerRenameRequest sublayer_rename_request;
+  VikLayerFuncSublayerToggleVisible sublayer_toggle_visible;
+  VikLayerFuncSublayerTooltip       sublayer_tooltip;
+  VikLayerFuncLayerTooltip          layer_tooltip;
+  VikLayerFuncLayerSelected         layer_selected;
+
+  VikLayerFuncMarshall              marshall;
+  VikLayerFuncUnmarshall            unmarshall;
+
+  /* for I/O */
+  VikLayerFuncSetParam              set_param;
+  VikLayerFuncGetParam              get_param;
+  VikLayerFuncChangeParam           change_param;
+
+  /* for I/O -- extra non-param data like TrwLayer data */
+  VikLayerFuncReadFileData          read_file_data;
+  VikLayerFuncWriteFileData         write_file_data;
+
+  VikLayerFuncDeleteItem            delete_item;
+  VikLayerFuncCutItem               cut_item;
+  VikLayerFuncCopyItem              copy_item;
+  VikLayerFuncPasteItem             paste_item;
+  VikLayerFuncFreeCopiedItem        free_copied_item;
+
+  VikLayerFuncDragDropRequest       drag_drop_request;
+
+  VikLayerFuncSelectClick           select_click;
+  VikLayerFuncSelectMove            select_move;
+  VikLayerFuncSelectRelease         select_release;
+  VikLayerFuncSelectedViewportMenu  show_viewport_menu;
+};
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerTypedParamData"></a><h3>VikLayerTypedParamData</h3>
+<pre class="programlisting">typedef struct {
+  VikLayerParamData data;
+  VikLayerParamType type;
+} VikLayerTypedParamData;
+</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikLayer.signal-details"></a><h2>Signal Details</h2>
+<div class="refsect2">
+<a name="VikLayer-update"></a><h3>The <code class="literal">“update”</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+user_function (<a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *viklayer,
+               <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>  user_data)</pre>
+<p>Flags: <a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-ACTION:CAPS">Action</a></p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

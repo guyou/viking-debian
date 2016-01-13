@@ -59,6 +59,9 @@
 /* Define to 1 if you have the `gps' library (-lgps). */
 #define HAVE_LIBGPS 1
 
+/* Define to 1 if you have the `icuuc' library (-licuuc). */
+#define HAVE_LIBICUUC 1
+
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
@@ -233,7 +236,7 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 1.6"
+#define PACKAGE_STRING "viking 1.6.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
@@ -242,13 +245,13 @@
 #define PACKAGE_URL "http://viking.sf.net/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.6"
+#define PACKAGE_VERSION "1.6.1"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.6"
+#define VERSION "1.6.1"
 
 /* BING STUFF */
 #define VIK_CONFIG_BING /**/
@@ -285,15 +288,6 @@
 
 /* REALTIME GPS TRACKING STUFF */
 #define VIK_CONFIG_REALTIME_GPS_TRACKING /**/
-
-/* Method for the search */
-#define VIK_CONFIG_SEARCH VIK_CONFIG_SEARCH_GOOGLE
-
-/* Id. for searching via GEONAMES */
-#define VIK_CONFIG_SEARCH_GEONAMES 2
-
-/* Id. for searching via GOOGLE */
-#define VIK_CONFIG_SEARCH_GOOGLE 1
 
 /* TERRASERVER STUFF */
 /* #undef VIK_CONFIG_TERRASERVER */

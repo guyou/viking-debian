@@ -103,7 +103,7 @@ typedef struct {
   gint count;
   VikTrwLayer *vtl;
   VikTrack *track;
-  gchar *cmd_args;
+  gchar *babelargs;
   gchar *window_title;
   GtkWidget *dialog;
   GtkWidget *status_label;
@@ -374,7 +374,7 @@ static void gps_layer_inst_init ( VikGpsLayer *self )
 {
   gint new_proto = 0;
   // +1 for luck (i.e the NULL terminator)
-  gchar **new_protocols = g_malloc(1 + g_list_length(a_babel_device_list)*sizeof(gpointer));
+  gchar **new_protocols = g_malloc_n(1 + g_list_length(a_babel_device_list), sizeof(gpointer));
 
   GList *gl = g_list_first ( a_babel_device_list );
   while ( gl ) {
@@ -878,7 +878,7 @@ gboolean vik_gps_layer_is_empty ( VikGpsLayer *vgl )
 static void gps_session_delete(GpsSession *sess)
 {
   vik_mutex_free(sess->mutex);
-  g_free(sess->cmd_args);
+  g_free(sess->babelargs);
   g_free(sess);
 }
 
@@ -898,8 +898,9 @@ static void set_total_count(gint cnt, GpsSession *sess)
         {
           // Maybe a gpsbabel bug/feature (upto at least v1.4.3 or maybe my Garmin device) but the count always seems x2 too many for routepoints
           gint mycnt = (cnt / 2) + 1;
-          tmp_str = ngettext("Downloading %d routepoint...", "Downloading %d routepoints...", mycnt); break;
+          tmp_str = ngettext("Downloading %d routepoint...", "Downloading %d routepoints...", mycnt);
           sess->total_count = mycnt;
+          break;
         }
       }
     }
@@ -1179,11 +1180,12 @@ static void gps_comm_thread(GpsSession *sess)
 {
   gboolean result;
 
-  if (sess->direction == GPS_DOWN)
-    result = a_babel_convert_from (sess->vtl, sess->cmd_args, sess->port,
-        (BabelStatusFunc) gps_download_progress_func, sess, NULL);
+  if (sess->direction == GPS_DOWN) {
+    ProcessOptions po = { sess->babelargs, sess->port, NULL, NULL, NULL, NULL };
+    result = a_babel_convert_from (sess->vtl, &po, (BabelStatusFunc) gps_download_progress_func, sess, NULL);
+  }
   else {
-    result = a_babel_convert_to (sess->vtl, sess->track, sess->cmd_args, sess->port,
+    result = a_babel_convert_to (sess->vtl, sess->track, sess->babelargs, sess->port,
         (BabelStatusFunc) gps_upload_progress_func, sess);
   }
 
@@ -1202,11 +1204,12 @@ static void gps_comm_thread(GpsSession *sess)
       if (!sess->realtime_tracking)
 #endif
       {
-	if ( sess->vvp && sess->direction == GPS_DOWN ) {
-	  /* View the data available */
-	  vik_trw_layer_auto_set_view ( sess->vtl, sess->vvp) ;
-	  vik_layer_emit_update ( VIK_LAYER(sess->vtl) ); // NB update from background thread
-	}
+        if ( sess->vvp && sess->direction == GPS_DOWN ) {
+          vik_layer_post_read ( VIK_LAYER(sess->vtl), sess->vvp, TRUE );
+          /* View the data available */
+          vik_trw_layer_auto_set_view ( sess->vtl, sess->vvp ) ;
+          vik_layer_emit_update ( VIK_LAYER(sess->vtl) ); // NB update from background thread
+        }
       }
     } else {
       /* canceled */
@@ -1297,7 +1300,7 @@ gint vik_gps_comm ( VikTrwLayer *vtl,
   else
     waypoints = "";
 
-  sess->cmd_args = g_strdup_printf("-D 9 %s %s %s -%c %s",
+  sess->babelargs = g_strdup_printf("-D 9 %s %s %s -%c %s",
 				   tracks, routes, waypoints, (dir == GPS_DOWN) ? 'i' : 'o', protocol);
   tracks = NULL;
   waypoints = NULL;
@@ -1357,7 +1360,8 @@ gint vik_gps_comm ( VikTrwLayer *vtl,
     if ( turn_off ) {
       // No need for thread for powering off device (should be quick operation...) - so use babel command directly:
       gchar *device_off = g_strdup_printf("-i %s,%s", protocol, "power_off");
-      gboolean result = a_babel_convert_from (NULL, (const char*)device_off, (const char*)port, NULL, NULL, NULL);
+      ProcessOptions po = { device_off, port, NULL, NULL, NULL, NULL };
+      gboolean result = a_babel_convert_from (NULL, &po, NULL, NULL, NULL);
       if ( !result )
         a_dialog_error_msg ( VIK_GTK_WINDOW_FROM_LAYER(vtl), _("Could not turn off device.") );
       g_free ( device_off );

@@ -1,0 +1,391 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikRoutingEngine: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-vikrouting.html" title="vikrouting">
+<link rel="next" href="VikRoutingWebEngine.html" title="VikRoutingWebEngine">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikRoutingEngine.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikRoutingEngine.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_properties">  <span class="dim">|</span> 
+                  <a href="#VikRoutingEngine.properties" class="shortcut">Properties</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-vikrouting.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="VikRoutingWebEngine.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikRoutingEngine"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikRoutingEngine.top_of_page"></a>VikRoutingEngine</span></h2>
+<p>VikRoutingEngine — the base class to describe routing engine</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikRoutingEngine.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikRoutingEngine.html#VIK-ROUTING-ENGINE-TYPE:CAPS" title="VIK_ROUTING_ENGINE_TYPE">VIK_ROUTING_ENGINE_TYPE</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikRoutingEngine.html#vik-routing-engine-find" title="vik_routing_engine_find ()">vik_routing_engine_find</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikRoutingEngine.html#vik-routing-engine-refine" title="vik_routing_engine_refine ()">vik_routing_engine_refine</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikRoutingEngine.html#vik-routing-engine-get-url-from-directions" title="vik_routing_engine_get_url_from_directions ()">vik_routing_engine_get_url_from_directions</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikRoutingEngine.html#vik-routing-engine-get-id" title="vik_routing_engine_get_id ()">vik_routing_engine_get_id</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikRoutingEngine.html#vik-routing-engine-get-label" title="vik_routing_engine_get_label ()">vik_routing_engine_get_label</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikRoutingEngine.html#vik-routing-engine-get-format" title="vik_routing_engine_get_format ()">vik_routing_engine_get_format</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikRoutingEngine.html#vik-routing-engine-supports-direction" title="vik_routing_engine_supports_direction ()">vik_routing_engine_supports_direction</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikRoutingEngine.html#vik-routing-engine-supports-refine" title="vik_routing_engine_supports_refine ()">vik_routing_engine_supports_refine</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikRoutingEngine.properties"></a><h2>Properties</h2>
+<div class="informaltable"><table border="0">
+<colgroup>
+<col width="150px" class="properties_type">
+<col width="300px" class="properties_name">
+<col width="200px" class="properties_flags">
+</colgroup>
+<tbody>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="VikRoutingEngine.html#VikRoutingEngine--format" title="The “format” property">format</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="VikRoutingEngine.html#VikRoutingEngine--id" title="The “id” property">id</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="VikRoutingEngine.html#VikRoutingEngine--label" title="The “label” property">label</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikRoutingEngine.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> VikRoutingEngine
+        <span class="lineart">╰──</span> <a class="link" href="VikRoutingWebEngine.html" title="VikRoutingWebEngine">VikRoutingWebEngine</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikRoutingEngine.description"></a><h2>Description</h2>
+<p>The <a class="link" href="VikRoutingEngine.html" title="VikRoutingEngine"><span class="type">VikRoutingEngine</span></a> class is both the interface and the base class
+for the hierarchie of routing engines.</p>
+</div>
+<div class="refsect1">
+<a name="VikRoutingEngine.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-ROUTING-ENGINE-TYPE:CAPS"></a><h3>VIK_ROUTING_ENGINE_TYPE</h3>
+<pre class="programlisting">#define VIK_ROUTING_ENGINE_TYPE            (vik_routing_engine_get_type ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-routing-engine-find"></a><h3>vik_routing_engine_find ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_routing_engine_find (<em class="parameter"><code><a class="link" href="VikRoutingEngine.html" title="VikRoutingEngine"><span class="type">VikRoutingEngine</span></a> *self</code></em>,
+                         <em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                         <em class="parameter"><code><span class="type">struct LatLon</span> start</code></em>,
+                         <em class="parameter"><code><span class="type">struct LatLon</span> end</code></em>);</pre>
+<p>Retrieve a route between two coordinates.</p>
+<div class="refsect3">
+<a name="id-1.2.133.7.3.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>self object</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>start</p></td>
+<td class="parameter_description"><p>starting point</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>end</p></td>
+<td class="parameter_description"><p>ending point</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.133.7.3.6"></a><h4>Returns</h4>
+<p> indicates success or not.</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-routing-engine-refine"></a><h3>vik_routing_engine_refine ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_routing_engine_refine (<em class="parameter"><code><a class="link" href="VikRoutingEngine.html" title="VikRoutingEngine"><span class="type">VikRoutingEngine</span></a> *self</code></em>,
+                           <em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                           <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *vt</code></em>);</pre>
+<p>Retrieve a route refining the <em class="parameter"><code>vt</code></em>
+ track/route.</p>
+<p>A refined route is computed from <em class="parameter"><code>vt</code></em>
+.
+The route is computed from first trackpoint to last trackpoint,
+and going via all intermediate trackpoints.</p>
+<div class="refsect3">
+<a name="id-1.2.133.7.4.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>self object</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>vtl</p></td>
+<td class="parameter_description"><p>layer where to create new track</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>vt</p></td>
+<td class="parameter_description"><p>the simple route to refine</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.133.7.4.7"></a><h4>Returns</h4>
+<p> indicates success or not.</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-routing-engine-get-url-from-directions"></a><h3>vik_routing_engine_get_url_from_directions ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_routing_engine_get_url_from_directions
+                               (<em class="parameter"><code><a class="link" href="VikRoutingEngine.html" title="VikRoutingEngine"><span class="type">VikRoutingEngine</span></a> *self</code></em>,
+                                <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *start</code></em>,
+                                <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *end</code></em>);</pre>
+<p>Compute the URL used with the acquire framework.</p>
+<div class="refsect3">
+<a name="id-1.2.133.7.5.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>routing engine</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>start</p></td>
+<td class="parameter_description"><p>the start direction</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>end</p></td>
+<td class="parameter_description"><p>the end direction</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.133.7.5.6"></a><h4>Returns</h4>
+<p> the computed URL</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-routing-engine-get-id"></a><h3>vik_routing_engine_get_id ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_routing_engine_get_id (<em class="parameter"><code><a class="link" href="VikRoutingEngine.html" title="VikRoutingEngine"><span class="type">VikRoutingEngine</span></a> *self</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.133.7.6.4"></a><h4>Returns</h4>
+<p> the id of self</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-routing-engine-get-label"></a><h3>vik_routing_engine_get_label ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_routing_engine_get_label (<em class="parameter"><code><a class="link" href="VikRoutingEngine.html" title="VikRoutingEngine"><span class="type">VikRoutingEngine</span></a> *self</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.133.7.7.4"></a><h4>Returns</h4>
+<p> the label of self</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-routing-engine-get-format"></a><h3>vik_routing_engine_get_format ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_routing_engine_get_format (<em class="parameter"><code><a class="link" href="VikRoutingEngine.html" title="VikRoutingEngine"><span class="type">VikRoutingEngine</span></a> *self</code></em>);</pre>
+<p>GPSbabel's Format of result.</p>
+<div class="refsect3">
+<a name="id-1.2.133.7.8.5"></a><h4>Returns</h4>
+<p> the format of self</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-routing-engine-supports-direction"></a><h3>vik_routing_engine_supports_direction ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_routing_engine_supports_direction (<em class="parameter"><code><a class="link" href="VikRoutingEngine.html" title="VikRoutingEngine"><span class="type">VikRoutingEngine</span></a> *self</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.133.7.9.4"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if this engine supports the route finding based on directions</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-routing-engine-supports-refine"></a><h3>vik_routing_engine_supports_refine ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_routing_engine_supports_refine (<em class="parameter"><code><a class="link" href="VikRoutingEngine.html" title="VikRoutingEngine"><span class="type">VikRoutingEngine</span></a> *self</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.133.7.10.4"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>routing engine</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.133.7.10.5"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if this engine supports the refine of track</p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikRoutingEngine.other_details"></a><h2>Types and Values</h2>
+</div>
+<div class="refsect1">
+<a name="VikRoutingEngine.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="VikRoutingEngine--format"></a><h3>The <code class="literal">“format”</code> property</h3>
+<pre class="programlisting">  “format”                   <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The format of the output (see gpsbabel).</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: "&lt;no-set&gt;"</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikRoutingEngine--id"></a><h3>The <code class="literal">“id”</code> property</h3>
+<pre class="programlisting">  “id”                       <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The identifier of the routing engine.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: "&lt;no-set&gt;"</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikRoutingEngine--label"></a><h3>The <code class="literal">“label”</code> property</h3>
+<pre class="programlisting">  “label”                    <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The label of the routing engine.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: "&lt;no-set&gt;"</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

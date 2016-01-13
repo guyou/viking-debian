@@ -1282,15 +1282,15 @@ VikTrackpoint *vik_track_get_closest_tp_by_percentage_dist ( VikTrack *tr, gdoub
 
 VikTrackpoint *vik_track_get_closest_tp_by_percentage_time ( VikTrack *tr, gdouble reltime, time_t *seconds_from_start )
 {
+  if ( !tr->trackpoints )
+    return NULL;
+
   time_t t_pos, t_start, t_end, t_total;
   t_start = VIK_TRACKPOINT(tr->trackpoints->data)->timestamp;
   t_end = VIK_TRACKPOINT(g_list_last(tr->trackpoints)->data)->timestamp;
   t_total = t_end - t_start;
 
   t_pos = t_start + t_total * reltime;
-
-  if ( !tr->trackpoints )
-    return NULL;
 
   GList *iter = tr->trackpoints;
 
@@ -1592,7 +1592,11 @@ void vik_track_calculate_bounds ( VikTrack *trk )
 void vik_track_anonymize_times ( VikTrack *tr )
 {
   GTimeVal gtv;
-  g_time_val_from_iso8601 ( "1901-01-01T00:00:00Z", &gtv );
+  // Check result just to please Coverity - even though it shouldn't fail as it's a hard coded value here!
+  if ( !g_time_val_from_iso8601 ( "1901-01-01T00:00:00Z", &gtv ) ) {
+    g_critical ( "Calendar time value failure" );
+    return;
+  }
 
   time_t anon_timestamp = gtv.tv_sec;
   time_t offset = 0;

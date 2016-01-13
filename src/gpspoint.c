@@ -189,7 +189,7 @@ gboolean a_gpspoint_read_file(VikTrwLayer *trw, FILE *f, const gchar *dirpath ) 
       /* my addition: find first non-whitespace character. if the null, skip line. */
       while (*tag_start != '\0' && isspace(*tag_start))
         tag_start++;
-      if (tag_start == '\0')
+      if (*tag_start == '\0')
         break;
 
       if (*tag_start == '#')
@@ -208,7 +208,9 @@ gboolean a_gpspoint_read_file(VikTrwLayer *trw, FILE *f, const gchar *dirpath ) 
           inside_quote = !inside_quote;
       }
 
-      gpspoint_process_tag ( tag_start, tag_end - tag_start );
+      // Won't have super massively long strings, so potential truncation in cast to gint is acceptable.
+      gint len = (gint)(tag_end - tag_start);
+      gpspoint_process_tag ( tag_start, len );
 
       if (*tag_end == '\0' )
         break;
@@ -463,7 +465,7 @@ static void gpspoint_process_key_and_value ( const gchar *key, gint key_len, con
   {
     line_altitude = g_ascii_strtod(value, NULL);
   }
-  else if (key_len == 7 && strncasecmp( key, "visible", key_len ) == 0 && value[0] != 'y' && value[0] != 'Y' && value[0] != 't' && value[0] != 'T')
+  else if (key_len == 7 && strncasecmp( key, "visible", key_len ) == 0 && value != NULL && value[0] != 'y' && value[0] != 'Y' && value[0] != 't' && value[0] != 'T')
   {
     line_visible = FALSE;
   }
@@ -507,10 +509,12 @@ static void a_gpspoint_write_waypoint ( const gpointer id, const VikWaypoint *wp
 {
   static struct LatLon ll;
   gchar *s_lat, *s_lon;
-  // Sanity clause
-  if ( wp && !(wp->name) ) {
+  // Sanity clauses
+  if ( !wp )
     return;
-  }
+  if ( !(wp->name) )
+    return;
+
   vik_coord_to_latlon ( &(wp->coord), &ll );
   s_lat = a_coords_dtostr(ll.lat);
   s_lon = a_coords_dtostr(ll.lon);

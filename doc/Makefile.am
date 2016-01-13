@@ -1,0 +1,5 @@
+SUBDIRS = examples reference
+
+EXTRA_DIST = GPSMAPPER
+
+CLEANFILES=

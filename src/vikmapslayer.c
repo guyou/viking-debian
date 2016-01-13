@@ -514,7 +514,8 @@ static void maps_layer_mkdir_if_default_dir ( VikMapsLayer *vml )
 {
   if ( vml->cache_dir && strcmp ( vml->cache_dir, MAPS_CACHE_DIR ) == 0 && g_file_test ( vml->cache_dir, G_FILE_TEST_EXISTS ) == FALSE )
   {
-    g_mkdir ( vml->cache_dir, 0777 );
+    if ( g_mkdir ( vml->cache_dir, 0777 ) != 0 )
+      g_warning ( "%s: Failed to create directory %s", __FUNCTION__, vml->cache_dir );
   }
 }
 
@@ -535,16 +536,20 @@ static void maps_layer_set_cache_dir ( VikMapsLayer *vml, const gchar *dir )
 
   // Ensure cache_dir always ends with a separator
   guint len = strlen(canonical_dir);
-  if ( canonical_dir[len-1] != G_DIR_SEPARATOR )
+  // Unless the dir is not valid
+  if ( len > 0 )
   {
-    vml->cache_dir = g_strconcat ( canonical_dir, G_DIR_SEPARATOR_S, NULL );
-    g_free ( canonical_dir );
-  }
-  else {
-    vml->cache_dir = canonical_dir;
-  }
+    if ( canonical_dir[len-1] != G_DIR_SEPARATOR )
+    {
+      vml->cache_dir = g_strconcat ( canonical_dir, G_DIR_SEPARATOR_S, NULL );
+      g_free ( canonical_dir );
+    }
+    else {
+      vml->cache_dir = canonical_dir;
+    }
 
-  maps_layer_mkdir_if_default_dir ( vml );
+    maps_layer_mkdir_if_default_dir ( vml );
+  }
 }
 
 static void maps_layer_set_file ( VikMapsLayer *vml, const gchar *name )
@@ -674,15 +679,15 @@ static VikLayerParamData maps_layer_get_param ( VikMapsLayer *vml, guint16 id, g
         rv.s = "";
         set = TRUE;
       }
-      else if ( is_file_operation ) {
+      else if ( is_file_operation && vml->cache_dir ) {
         if ( a_vik_get_file_ref_format() == VIK_FILE_REF_FORMAT_RELATIVE ) {
           gchar *cwd = g_get_current_dir();
           if ( cwd ) {
             rv.s = file_GetRelativeFilename ( cwd, vml->cache_dir );
             if ( !rv.s ) rv.s = "";
             set = TRUE;
-	  }
-	}
+          }
+        }
       }
       if ( !set )
 	rv.s = vml->cache_dir ? vml->cache_dir : "";
@@ -708,7 +713,7 @@ static void maps_layer_change_param ( GtkWidget *widget, ui_change_values values
       // Get new value
       VikLayerParamData vlpd = a_uibuilder_widget_get_value ( widget, values[UI_CHG_PARAM] );
       // Is it *not* the OSM On Disk Tile Layout or the MBTiles type or the OSM Metatiles type
-      gboolean sensitive = ( 21 != vlpd.u && 23 != vlpd.u && 24 != vlpd.u );
+      gboolean sensitive = ( MAP_ID_OSM_ON_DISK != vlpd.u && MAP_ID_OSM_ON_DISK != vlpd.u && MAP_ID_OSM_ON_DISK != vlpd.u );
       GtkWidget **ww1 = values[UI_CHG_WIDGETS];
       GtkWidget **ww2 = values[UI_CHG_LABELS];
       GtkWidget *w1 = ww1[PARAM_ONLYMISSING];
@@ -730,7 +735,7 @@ static void maps_layer_change_param ( GtkWidget *widget, ui_change_values values
 
       // File only applicable for MBTiles type
       // Directory for all other types
-      sensitive = ( 23 == vlpd.u);
+      sensitive = ( MAP_ID_MBTILES == vlpd.u);
       GtkWidget *w5 = ww1[PARAM_FILE];
       GtkWidget *w6 = ww2[PARAM_FILE];
       GtkWidget *w7 = ww1[PARAM_CACHE_DIR];
@@ -847,10 +852,12 @@ static void maps_layer_post_read (VikLayer *vl, VikViewport *vp, gboolean from_f
 #endif
 
   // If the on Disk OSM Tile Layout type
-  if ( vml->maptype == 21 )
+  if ( vik_map_source_get_uniq_id(map) == MAP_ID_OSM_ON_DISK ) {
     // Copy the directory into filename
     //  thus the mapcache look up will be unique when using more than one of these map types
+    g_free ( vml->filename );
     vml->filename = g_strdup (vml->cache_dir);
+  }
 }
 
 static const gchar* maps_layer_tooltip ( VikMapsLayer *vml )
@@ -939,7 +946,7 @@ static GdkPixbuf *get_pixbuf_sql_exec ( sqlite3 *sql, gint xx, gint yy, gint zoo
             GInputStream *stream = g_memory_input_stream_new_from_data ( data, bytes, NULL );
             GError *error = NULL;
             pixbuf = gdk_pixbuf_new_from_stream ( stream, NULL, &error );
-            if (error || (!pixbuf)) {
+            if ( error ) {
               g_warning ( "%s: %s", __FUNCTION__, error->message );
               g_error_free ( error );
             }
@@ -958,7 +965,7 @@ static GdkPixbuf *get_pixbuf_sql_exec ( sqlite3 *sql, gint xx, gint yy, gint zoo
        break;
     }
   }
-  ans = sqlite3_finalize ( sql_stmt );
+  (void)sqlite3_finalize ( sql_stmt );
   
   g_free ( statement );
 
@@ -1001,7 +1008,7 @@ static GdkPixbuf *get_pixbuf_from_metatile ( VikMapsLayer *vml, gint xx, gint yy
   int len;
   int compressed;
 
-  buf = malloc(tile_max);
+  buf = g_malloc(tile_max);
   if (!buf) {
       return NULL;
   }
@@ -1013,6 +1020,7 @@ static GdkPixbuf *get_pixbuf_from_metatile ( VikMapsLayer *vml, gint xx, gint yy
     if (compressed) {
       // Not handled yet - I don't think this is used often - so implement later if necessary
       g_warning ( "Compressed metatiles not implemented:%s\n", __FUNCTION__);
+      g_free(buf);
       return NULL;
     }
 
@@ -1022,22 +1030,26 @@ static GdkPixbuf *get_pixbuf_from_metatile ( VikMapsLayer *vml, gint xx, gint yy
     GInputStream *stream = g_memory_input_stream_new_from_data ( buf, len, NULL );
     GError *error = NULL;
     pixbuf = gdk_pixbuf_new_from_stream ( stream, NULL, &error );
-    if (error || (!pixbuf)) {
+    if (error) {
       g_warning ( "%s: %s", __FUNCTION__, error->message );
       g_error_free ( error );
     }
     g_input_stream_close ( stream, NULL, NULL );
 
-    free(buf);
+    g_free(buf);
     return pixbuf;
   }
   else {
+    g_free(buf);
     g_warning ( "FAILED:%s %s", __FUNCTION__, err_msg);
     return NULL;
   }
 }
 
-
+/**
+ * Caller has to decrease reference counter of returned
+ * GdkPixbuf, when buffer is no longer needed.
+ */
 static GdkPixbuf *pixbuf_apply_settings ( GdkPixbuf *pixbuf, VikMapsLayer *vml, MapCoord *mapcoord, gdouble xshrinkfactor, gdouble yshrinkfactor )
 {
   // Apply alpha setting
@@ -1086,6 +1098,10 @@ static void get_filename ( const gchar *cache_dir,
   }
 }
 
+/**
+ * Caller has to decrease reference counter of returned
+ * GdkPixbuf, when buffer is no longer needed.
+ */
 static GdkPixbuf *get_pixbuf( VikMapsLayer *vml, guint16 id, const gchar* mapname, MapCoord *mapcoord, gchar *filename_buf, gint buf_len, gdouble xshrinkfactor, gdouble yshrinkfactor )
 {
   GdkPixbuf *pixbuf;
@@ -1204,6 +1220,7 @@ gboolean try_draw_scale_down (VikMapsLayer *vml, VikViewport *vvp, MapCoord ulm,
       gint src_x = (ulm.x % scale_factor) * tilesize_x_ceil;
       gint src_y = (ulm.y % scale_factor) * tilesize_y_ceil;
       vik_viewport_draw_pixbuf ( vvp, pixbuf, src_x, src_y, xx, yy, tilesize_x_ceil, tilesize_y_ceil );
+      g_object_unref(pixbuf);
       return TRUE;
     }
   }
@@ -1238,6 +1255,7 @@ gboolean try_draw_scale_up (VikMapsLayer *vml, VikViewport *vvp, MapCoord ulm, g
           gint dest_x = xx + pict_x * (tilesize_x_ceil / scale_factor);
           gint dest_y = yy + pict_y * (tilesize_y_ceil / scale_factor);
           vik_viewport_draw_pixbuf ( vvp, pixbuf, src_x, src_y, dest_x, dest_y, tilesize_x_ceil / scale_factor, tilesize_y_ceil / scale_factor );
+          g_object_unref(pixbuf);
           return TRUE;
         }
       }
@@ -1331,6 +1349,7 @@ static void maps_layer_draw_section ( VikMapsLayer *vml, VikViewport *vvp, VikCo
             yy -= (height/2);
 
             vik_viewport_draw_pixbuf ( vvp, pixbuf, 0, 0, xx, yy, width, height );
+            g_object_unref(pixbuf);
           }
         }
       }
@@ -1382,6 +1401,7 @@ static void maps_layer_draw_section ( VikMapsLayer *vml, VikViewport *vvp, VikCo
               gint src_x = (ulm.x % scale_factor) * tilesize_x_ceil;
               gint src_y = (ulm.y % scale_factor) * tilesize_y_ceil;
               vik_viewport_draw_pixbuf ( vvp, pixbuf, src_x, src_y, xx, yy, tilesize_x_ceil, tilesize_y_ceil );
+              g_object_unref(pixbuf);
             }
             else {
               // Otherwise try different scales
@@ -1575,7 +1595,8 @@ static int map_download_thread ( MapDownloadInfo *mdi, gpointer threaddata )
               GError *gx = NULL;
               GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file ( mdi->filename_buf, &gx );
               if (gx || (!pixbuf)) {
-                g_remove ( mdi->filename_buf );
+                if ( g_remove ( mdi->filename_buf ) )
+                  g_warning ( "REDOWNLOAD failed to remove: %s", mdi->filename_buf );
                 need_download = TRUE;
                 remove_mem_cache = TRUE;
                 g_error_free ( gx );
@@ -1593,7 +1614,8 @@ static int map_download_thread ( MapDownloadInfo *mdi, gpointer threaddata )
 
             case REDOWNLOAD_ALL:
               /* FIXME: need a better way than to erase file in case of server/network problem */
-              g_remove ( mdi->filename_buf );
+              if ( g_remove ( mdi->filename_buf ) )
+                g_warning ( "REDOWNLOAD failed to remove: %s", mdi->filename_buf );
               need_download = TRUE;
               remove_mem_cache = TRUE;
               break;
@@ -1664,7 +1686,8 @@ static void mdi_cancel_cleanup ( MapDownloadInfo *mdi )
                    vik_map_source_get_file_extension(MAPS_LAYER_NTH_TYPE(mdi->maptype)) );
     if ( g_file_test ( mdi->filename_buf, G_FILE_TEST_EXISTS ) == TRUE)
     {
-      g_remove ( mdi->filename_buf );
+      if ( g_remove ( mdi->filename_buf ) )
+        g_warning ( "Cleanup failed to remove: %s", mdi->filename_buf );
     }
   }
 }
@@ -1958,9 +1981,9 @@ static void maps_layer_tile_info ( VikMapsLayer *vml )
                    vik_map_source_get_name(map),
                    ulm.scale, ulm.z, ulm.x, ulm.y, filename, max_path_len,
                    vik_map_source_get_file_extension(map) );
-    source = g_strdup_printf ( "Source: http://%s%s",
-                               vik_map_source_default_get_hostname ( VIK_MAP_SOURCE_DEFAULT(map) ),
-                               vik_map_source_default_get_uri ( VIK_MAP_SOURCE_DEFAULT(map), &ulm ) );
+    source = g_markup_printf_escaped ( "Source: http://%s%s",
+                                       vik_map_source_default_get_hostname ( VIK_MAP_SOURCE_DEFAULT(map) ),
+                                       vik_map_source_default_get_uri ( VIK_MAP_SOURCE_DEFAULT(map), &ulm ) );
   }
 
   GArray *array = g_array_new (FALSE, TRUE, sizeof(gchar*));

@@ -76,6 +76,10 @@ static GSList *window_list = NULL;
 #define DRAW_IMAGE_DEFAULT_HEIGHT 1024
 #define DRAW_IMAGE_DEFAULT_SAVE_AS_PNG TRUE
 
+// The last used directories
+static gchar *last_folder_files_uri = NULL;
+static gchar *last_folder_images_uri = NULL;
+
 static void window_finalize ( GObject *gob );
 static GObjectClass *parent_class;
 
@@ -204,9 +208,6 @@ struct _VikWindow {
   gboolean modified;
   VikLoadType_t loaded_type;
 
-  GtkWidget *open_dia, *save_dia;
-  GtkWidget *save_img_dia, *save_img_dir_dia;
-
   gboolean only_updating_coord_mode_ui; /* hack for a bug in GTK */
   GtkUIManager *uim;
 
@@ -328,8 +329,11 @@ void vik_window_statusbar_update ( VikWindow *vw, const gchar* message, vik_stat
 static void destroy_window ( GtkWidget *widget,
                              gpointer   data )
 {
-    if ( ! --window_count )
+    if ( ! --window_count ) {
+      g_free ( last_folder_files_uri );
+      g_free ( last_folder_images_uri );
       gtk_main_quit ();
+    }
 }
 
 #define VIK_SETTINGS_WIN_SIDEPANEL "window_sidepanel"
@@ -493,12 +497,14 @@ void vik_window_new_window_finish ( VikWindow *vw )
 
 static void open_window ( VikWindow *vw, GSList *files )
 {
+  if ( !vw  )
+    return;
   gboolean change_fn = (g_slist_length(files) == 1); /* only change fn if one file */
   GSList *cur_file = files;
   while ( cur_file ) {
     // Only open a new window if a viking file
     gchar *file_name = cur_file->data;
-    if (vw != NULL && vw->filename && check_file_magic_vik ( file_name ) ) {
+    if (vw->filename && check_file_magic_vik ( file_name ) ) {
       VikWindow *newvw = vik_window_new_window ();
       if (newvw)
         vik_window_open_file ( newvw, file_name, TRUE );
@@ -894,11 +900,6 @@ static void vik_window_init ( VikWindow *vw )
   }
 
   gtk_window_set_default_size ( GTK_WINDOW(vw), width, height );
-
-  vw->open_dia = NULL;
-  vw->save_dia = NULL;
-  vw->save_img_dia = NULL;
-  vw->save_img_dir_dia = NULL;
 
   vw->show_side_panel = TRUE;
   vw->show_statusbar = TRUE;
@@ -3184,77 +3185,75 @@ static void load_file ( GtkAction *a, VikWindow *vw )
     g_critical("Houston, we've had a problem.");
     return;
   }
-    
-  if ( ! vw->open_dia )
-  {
-    vw->open_dia = gtk_file_chooser_dialog_new (_("Please select a GPS data file to open. "),
-                                                GTK_WINDOW(vw),
-                                                GTK_FILE_CHOOSER_ACTION_OPEN,
-                                                GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                                GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-                                                NULL);
-    gchar *cwd = g_get_current_dir();
-    if ( cwd ) {
-      gtk_file_chooser_set_current_folder ( GTK_FILE_CHOOSER(vw->open_dia), cwd );
-      g_free ( cwd );
-    }
 
-    GtkFileFilter *filter;
-    // NB file filters are listed this way for alphabetical ordering
+  GtkWidget *dialog = gtk_file_chooser_dialog_new (_("Please select a GPS data file to open. "),
+                                                   GTK_WINDOW(vw),
+                                                   GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                   GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                                   NULL);
+  if ( last_folder_files_uri )
+    gtk_file_chooser_set_current_folder_uri ( GTK_FILE_CHOOSER(dialog), last_folder_files_uri );
+
+  GtkFileFilter *filter;
+  // NB file filters are listed this way for alphabetical ordering
 #ifdef VIK_CONFIG_GEOCACHES
-    filter = gtk_file_filter_new ();
-    gtk_file_filter_set_name( filter, _("Geocaching") );
-    gtk_file_filter_add_pattern ( filter, "*.loc" ); // No MIME type available
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name( filter, _("Geocaching") );
+  gtk_file_filter_add_pattern ( filter, "*.loc" ); // No MIME type available
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 #endif
 
-    filter = gtk_file_filter_new ();
-    gtk_file_filter_set_name( filter, _("Google Earth") );
-    gtk_file_filter_add_mime_type ( filter, "application/vnd.google-earth.kml+xml");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name( filter, _("Google Earth") );
+  gtk_file_filter_add_mime_type ( filter, "application/vnd.google-earth.kml+xml");
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 
-    filter = gtk_file_filter_new ();
-    gtk_file_filter_set_name( filter, _("GPX") );
-    gtk_file_filter_add_pattern ( filter, "*.gpx" ); // No MIME type available
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name( filter, _("GPX") );
+  gtk_file_filter_add_pattern ( filter, "*.gpx" ); // No MIME type available
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 
-    filter = gtk_file_filter_new ();
-    gtk_file_filter_set_name ( filter, _("JPG") );
-    gtk_file_filter_add_mime_type ( filter, "image/jpeg");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name ( filter, _("JPG") );
+  gtk_file_filter_add_mime_type ( filter, "image/jpeg");
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 
-    filter = gtk_file_filter_new ();
-    gtk_file_filter_set_name( filter, _("Viking") );
-    gtk_file_filter_add_pattern ( filter, "*.vik" );
-    gtk_file_filter_add_pattern ( filter, "*.viking" );
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name( filter, _("Viking") );
+  gtk_file_filter_add_pattern ( filter, "*.vik" );
+  gtk_file_filter_add_pattern ( filter, "*.viking" );
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 
-    // NB could have filters for gpspoint (*.gps,*.gpsoint?) + gpsmapper (*.gsm,*.gpsmapper?)
-    // However assume this are barely used and thus not worthy of inclusion
-    //   as they'll just make the options too many and have no clear file pattern
-    //   one can always use the all option
-    filter = gtk_file_filter_new ();
-    gtk_file_filter_set_name( filter, _("All") );
-    gtk_file_filter_add_pattern ( filter, "*" );
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
-    // Default to any file - same as before open filters were added
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER(vw->open_dia), filter);
+  // NB could have filters for gpspoint (*.gps,*.gpsoint?) + gpsmapper (*.gsm,*.gpsmapper?)
+  // However assume this are barely used and thus not worthy of inclusion
+  //   as they'll just make the options too many and have no clear file pattern
+  //   one can always use the all option
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name( filter, _("All") );
+  gtk_file_filter_add_pattern ( filter, "*" );
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
+  // Default to any file - same as before open filters were added
+  gtk_file_chooser_set_filter (GTK_FILE_CHOOSER(dialog), filter);
 
-    gtk_file_chooser_set_select_multiple ( GTK_FILE_CHOOSER(vw->open_dia), TRUE );
-    gtk_window_set_transient_for ( GTK_WINDOW(vw->open_dia), GTK_WINDOW(vw) );
-    gtk_window_set_destroy_with_parent ( GTK_WINDOW(vw->open_dia), TRUE );
-  }
-  if ( gtk_dialog_run ( GTK_DIALOG(vw->open_dia) ) == GTK_RESPONSE_ACCEPT )
+  gtk_file_chooser_set_select_multiple ( GTK_FILE_CHOOSER(dialog), TRUE );
+  gtk_window_set_transient_for ( GTK_WINDOW(dialog), GTK_WINDOW(vw) );
+  gtk_window_set_destroy_with_parent ( GTK_WINDOW(dialog), TRUE );
+
+  if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT )
   {
-    gtk_widget_hide ( vw->open_dia );
+    g_free ( last_folder_files_uri );
+    last_folder_files_uri = gtk_file_chooser_get_current_folder_uri ( GTK_FILE_CHOOSER(dialog) );
+
 #ifdef VIKING_PROMPT_IF_MODIFIED
     if ( (vw->modified || vw->filename) && newwindow )
 #else
     if ( vw->filename && newwindow )
 #endif
-      g_signal_emit ( G_OBJECT(vw), window_signals[VW_OPENWINDOW_SIGNAL], 0, gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER(vw->open_dia) ) );
+      g_signal_emit ( G_OBJECT(vw), window_signals[VW_OPENWINDOW_SIGNAL], 0, gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER(dialog) ) );
     else {
-      files = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER(vw->open_dia) );
+
+      files = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER(dialog) );
       gboolean change_fn = newwindow && (g_slist_length(files)==1); /* only change fn if one file */
       gboolean first_vik_file = TRUE;
       cur_file = files;
@@ -3284,65 +3283,64 @@ static void load_file ( GtkAction *a, VikWindow *vw )
       g_slist_free (files);
     }
   }
-  else
-    gtk_widget_hide ( vw->open_dia );
+  gtk_widget_destroy ( dialog );
 }
 
 static gboolean save_file_as ( GtkAction *a, VikWindow *vw )
 {
   gboolean rv = FALSE;
   const gchar *fn;
-  if ( ! vw->save_dia )
-  {
-    vw->save_dia = gtk_file_chooser_dialog_new (_("Save as Viking File."),
-                                                GTK_WINDOW(vw),
-                                                GTK_FILE_CHOOSER_ACTION_SAVE,
-                                                GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                                GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-                                                NULL);
-    gchar *cwd = g_get_current_dir();
-    if ( cwd ) {
-      gtk_file_chooser_set_current_folder ( GTK_FILE_CHOOSER(vw->save_dia), cwd );
-      g_free ( cwd );
-    }
 
-    GtkFileFilter *filter;
-    filter = gtk_file_filter_new ();
-    gtk_file_filter_set_name( filter, _("All") );
-    gtk_file_filter_add_pattern ( filter, "*" );
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->save_dia), filter);
+  GtkWidget *dialog = gtk_file_chooser_dialog_new (_("Save as Viking File."),
+                                                   GTK_WINDOW(vw),
+                                                   GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                   GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                                                   NULL);
+  if ( last_folder_files_uri )
+    gtk_file_chooser_set_current_folder_uri ( GTK_FILE_CHOOSER(dialog), last_folder_files_uri );
 
-    filter = gtk_file_filter_new ();
-    gtk_file_filter_set_name( filter, _("Viking") );
-    gtk_file_filter_add_pattern ( filter, "*.vik" );
-    gtk_file_filter_add_pattern ( filter, "*.viking" );
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(vw->save_dia), filter);
-    // Default to a Viking file
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER(vw->save_dia), filter);
+  GtkFileFilter *filter;
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name( filter, _("All") );
+  gtk_file_filter_add_pattern ( filter, "*" );
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 
-    gtk_window_set_transient_for ( GTK_WINDOW(vw->save_dia), GTK_WINDOW(vw) );
-    gtk_window_set_destroy_with_parent ( GTK_WINDOW(vw->save_dia), TRUE );
-  }
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name( filter, _("Viking") );
+  gtk_file_filter_add_pattern ( filter, "*.vik" );
+  gtk_file_filter_add_pattern ( filter, "*.viking" );
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
+  // Default to a Viking file
+  gtk_file_chooser_set_filter (GTK_FILE_CHOOSER(dialog), filter);
+
+  gtk_window_set_transient_for ( GTK_WINDOW(dialog), GTK_WINDOW(vw) );
+  gtk_window_set_destroy_with_parent ( GTK_WINDOW(dialog), TRUE );
+
   // Auto append / replace extension with '.vik' to the suggested file name as it's going to be a Viking File
   gchar* auto_save_name = g_strdup ( window_get_filename ( vw ) );
   if ( ! a_file_check_ext ( auto_save_name, ".vik" ) )
     auto_save_name = g_strconcat ( auto_save_name, ".vik", NULL );
 
-  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(vw->save_dia), auto_save_name);
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog), auto_save_name);
 
-  while ( gtk_dialog_run ( GTK_DIALOG(vw->save_dia) ) == GTK_RESPONSE_ACCEPT )
+  while ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT )
   {
-    fn = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(vw->save_dia) );
-    if ( g_file_test ( fn, G_FILE_TEST_EXISTS ) == FALSE || a_dialog_yes_or_no ( GTK_WINDOW(vw->save_dia), _("The file \"%s\" exists, do you wish to overwrite it?"), a_file_basename ( fn ) ) )
+    fn = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog) );
+    if ( g_file_test ( fn, G_FILE_TEST_EXISTS ) == FALSE || a_dialog_yes_or_no ( GTK_WINDOW(dialog), _("The file \"%s\" exists, do you wish to overwrite it?"), a_file_basename ( fn ) ) )
     {
       window_set_filename ( vw, fn );
       rv = window_save ( vw );
-      vw->modified = FALSE;
+      if ( rv ) {
+        vw->modified = FALSE;
+        g_free ( last_folder_files_uri );
+        last_folder_files_uri = gtk_file_chooser_get_current_folder_uri ( GTK_FILE_CHOOSER(dialog) );
+      }
       break;
     }
   }
   g_free ( auto_save_name );
-  gtk_widget_hide ( vw->save_dia );
+  gtk_widget_destroy ( dialog );
   return rv;
 }
 
@@ -3625,7 +3623,7 @@ static void menu_copy_centre_cb ( GtkAction *a, VikWindow *vw )
   vik_coord_to_utm ( coord, &utm );
 
   gboolean full_format = FALSE;
-  a_settings_get_boolean ( VIK_SETTINGS_WIN_COPY_CENTRE_FULL_FORMAT, &full_format );
+  (void)a_settings_get_boolean ( VIK_SETTINGS_WIN_COPY_CENTRE_FULL_FORMAT, &full_format );
 
   if ( full_format )
     // Bells & Whistles - may include degrees, minutes and second symbols
@@ -3877,7 +3875,8 @@ static void save_image_dir ( VikWindow *vw, const gchar *fn, guint w, guint h, g
 
   g_assert ( vik_viewport_get_coord_mode ( vw->viking_vvp ) == VIK_COORD_UTM );
 
-  g_mkdir(fn,0777);
+  if ( g_mkdir(fn,0777) != 0 )
+    g_warning ( "%s: Failed to create directory %s", __FUNCTION__, fn );
 
   utm_orig = *((const struct UTM *)vik_viewport_get_center ( vw->viking_vvp ));
 
@@ -3995,55 +3994,52 @@ static gchar* draw_image_filename ( VikWindow *vw, gboolean one_image_only )
   if ( one_image_only )
   {
     // Single file
-    if (!vw->save_img_dia) {
-      vw->save_img_dia = gtk_file_chooser_dialog_new (_("Save Image"),
-                                                      GTK_WINDOW(vw),
-                                                      GTK_FILE_CHOOSER_ACTION_SAVE,
-                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                                      GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-                                                      NULL);
+    GtkWidget *dialog = gtk_file_chooser_dialog_new (_("Save Image"),
+                                                     GTK_WINDOW(vw),
+                                                     GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                     GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                                                     NULL);
+    if ( last_folder_images_uri )
+      gtk_file_chooser_set_current_folder_uri ( GTK_FILE_CHOOSER(dialog), last_folder_images_uri );
 
-      gchar *cwd = g_get_current_dir();
-      if ( cwd ) {
-        gtk_file_chooser_set_current_folder ( GTK_FILE_CHOOSER(vw->save_img_dia), cwd );
-        g_free ( cwd );
-      }
+    GtkFileChooser *chooser = GTK_FILE_CHOOSER ( dialog );
+    /* Add filters */
+    GtkFileFilter *filter;
+    filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name ( filter, _("All") );
+    gtk_file_filter_add_pattern ( filter, "*" );
+    gtk_file_chooser_add_filter ( chooser, filter );
 
-      GtkFileChooser *chooser = GTK_FILE_CHOOSER ( vw->save_img_dia );
-      /* Add filters */
-      GtkFileFilter *filter;
-      filter = gtk_file_filter_new ();
-      gtk_file_filter_set_name ( filter, _("All") );
-      gtk_file_filter_add_pattern ( filter, "*" );
-      gtk_file_chooser_add_filter ( chooser, filter );
+    filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name ( filter, _("JPG") );
+    gtk_file_filter_add_mime_type ( filter, "image/jpeg");
+    gtk_file_chooser_add_filter ( chooser, filter );
 
-      filter = gtk_file_filter_new ();
-      gtk_file_filter_set_name ( filter, _("JPG") );
-      gtk_file_filter_add_mime_type ( filter, "image/jpeg");
-      gtk_file_chooser_add_filter ( chooser, filter );
+    if ( !vw->draw_image_save_as_png )
+      gtk_file_chooser_set_filter ( chooser, filter );
 
-      if ( !vw->draw_image_save_as_png )
-        gtk_file_chooser_set_filter ( chooser, filter );
+    filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name ( filter, _("PNG") );
+    gtk_file_filter_add_mime_type ( filter, "image/png");
+    gtk_file_chooser_add_filter ( chooser, filter );
 
-      filter = gtk_file_filter_new ();
-      gtk_file_filter_set_name ( filter, _("PNG") );
-      gtk_file_filter_add_mime_type ( filter, "image/png");
-      gtk_file_chooser_add_filter ( chooser, filter );
+    if ( vw->draw_image_save_as_png )
+      gtk_file_chooser_set_filter ( chooser, filter );
 
-      if ( vw->draw_image_save_as_png )
-        gtk_file_chooser_set_filter ( chooser, filter );
+    gtk_window_set_transient_for ( GTK_WINDOW(dialog), GTK_WINDOW(vw) );
+    gtk_window_set_destroy_with_parent ( GTK_WINDOW(dialog), TRUE );
 
-      gtk_window_set_transient_for ( GTK_WINDOW(vw->save_img_dia), GTK_WINDOW(vw) );
-      gtk_window_set_destroy_with_parent ( GTK_WINDOW(vw->save_img_dia), TRUE );
-    }
+    if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT ) {
+      g_free ( last_folder_images_uri );
+      last_folder_images_uri = gtk_file_chooser_get_current_folder_uri ( GTK_FILE_CHOOSER(dialog) );
 
-    if ( gtk_dialog_run ( GTK_DIALOG(vw->save_img_dia) ) == GTK_RESPONSE_ACCEPT ) {
-      fn = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(vw->save_img_dia) );
+      fn = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog) );
       if ( g_file_test ( fn, G_FILE_TEST_EXISTS ) )
-	if ( ! a_dialog_yes_or_no ( GTK_WINDOW(vw->save_img_dia), _("The file \"%s\" exists, do you wish to overwrite it?"), a_file_basename ( fn ) ) )
-	  fn = NULL;
+        if ( ! a_dialog_yes_or_no ( GTK_WINDOW(dialog), _("The file \"%s\" exists, do you wish to overwrite it?"), a_file_basename ( fn ) ) )
+          fn = NULL;
     }
-    gtk_widget_hide ( vw->save_img_dia );
+    gtk_widget_destroy ( dialog );
   }
   else {
     // A directory
@@ -4053,21 +4049,19 @@ static gchar* draw_image_filename ( VikWindow *vw, gboolean one_image_only )
       return fn;
     }
 
-    if (!vw->save_img_dir_dia) {
-      vw->save_img_dir_dia = gtk_file_chooser_dialog_new (_("Choose a directory to hold images"),
-                                                          GTK_WINDOW(vw),
-                                                          GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                                          GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
-                                                          NULL);
-      gtk_window_set_transient_for ( GTK_WINDOW(vw->save_img_dir_dia), GTK_WINDOW(vw) );
-      gtk_window_set_destroy_with_parent ( GTK_WINDOW(vw->save_img_dir_dia), TRUE );
-    }
+    GtkWidget *dialog = gtk_file_chooser_dialog_new (_("Choose a directory to hold images"),
+                                                     GTK_WINDOW(vw),
+                                                     GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                     GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+                                                     NULL);
+    gtk_window_set_transient_for ( GTK_WINDOW(dialog), GTK_WINDOW(vw) );
+    gtk_window_set_destroy_with_parent ( GTK_WINDOW(dialog), TRUE );
 
-    if ( gtk_dialog_run ( GTK_DIALOG(vw->save_img_dir_dia) ) == GTK_RESPONSE_ACCEPT ) {
-      fn = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(vw->save_img_dir_dia) );
+    if ( gtk_dialog_run ( GTK_DIALOG(dialog) ) == GTK_RESPONSE_ACCEPT ) {
+      fn = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog) );
     }
-    gtk_widget_hide ( vw->save_img_dir_dia );
+    gtk_widget_destroy ( dialog );
   }
   return fn;
 }
@@ -4375,7 +4369,7 @@ static GtkActionEntry entries[] = {
   { "Save",      GTK_STOCK_SAVE,         N_("_Save"),                         "<control>S", N_("Save the file"),                                (GCallback)save_file             },
   { "SaveAs",    GTK_STOCK_SAVE_AS,      N_("Save _As..."),                      NULL,  N_("Save the file under different name"),           (GCallback)save_file_as          },
   { "FileProperties", NULL,              N_("Properties..."),                    NULL,  N_("File Properties"),                              (GCallback)file_properties_cb },
-  { "GenImg",    GTK_STOCK_CLEAR,        N_("_Generate Image File..."),          NULL,  N_("Save a snapshot of the workspace into a file"), (GCallback)draw_to_image_file_cb },
+  { "GenImg",    GTK_STOCK_FILE,         N_("_Generate Image File..."),          NULL,  N_("Save a snapshot of the workspace into a file"), (GCallback)draw_to_image_file_cb },
   { "GenImgDir", GTK_STOCK_DND_MULTIPLE, N_("Generate _Directory of Images..."), NULL,  N_("Generate _Directory of Images"),                (GCallback)draw_to_image_dir_cb },
   { "Print",    GTK_STOCK_PRINT,        N_("_Print..."),          NULL,         N_("Print maps"), (GCallback)print_cb },
   { "Exit",      GTK_STOCK_QUIT,         N_("E_xit"),                         "<control>W", N_("Exit the program"),                             (GCallback)window_close          },

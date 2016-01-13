@@ -492,8 +492,8 @@ void vik_viewport_draw_scale ( VikViewport *vvp )
     PangoLayout *pl;
     gchar s[128];
 
-    vik_viewport_screen_to_coord ( vvp, 0, vvp->height, &left );
-    vik_viewport_screen_to_coord ( vvp, vvp->width/SCSIZE, vvp->height, &right );
+    vik_viewport_screen_to_coord ( vvp, 0, vvp->height/2, &left );
+    vik_viewport_screen_to_coord ( vvp, vvp->width/SCSIZE, vvp->height/2, &right );
 
     vik_units_distance_t dist_units = a_vik_get_units_distance ();
     switch (dist_units) {
@@ -547,9 +547,9 @@ void vik_viewport_draw_scale ( VikViewport *vvp )
       int i;
       for (i=1; i<5; i++) {
         vik_viewport_draw_line(vvp, vvp->scale_bg_gc, 
-			     PAD+i*len/5, vvp->height-PAD, PAD+i*len/5, vvp->height-PAD-((i==5)?(2*HEIGHT/3):(HEIGHT/2)));
+                               PAD+i*len/5, vvp->height-PAD, PAD+i*len/5, vvp->height-PAD-(HEIGHT/2));
         vik_viewport_draw_line(vvp, gtk_widget_get_style(GTK_WIDGET(&vvp->drawing_area))->black_gc,
-			     PAD+i*len/5, vvp->height-PAD, PAD+i*len/5, vvp->height-PAD-((i==5)?(2*HEIGHT/3):(HEIGHT/2)));
+                               PAD+i*len/5, vvp->height-PAD, PAD+i*len/5, vvp->height-PAD-(HEIGHT/2));
       }
     } else {
       int i;
@@ -1411,7 +1411,6 @@ static gboolean calcxy_rev(double *lg, double *lt, gint x, gint y, double zero_l
   px = (mapSizeX2 - x) * pixelfact_x;
   py = (-mapSizeY2 + y) * pixelfact_y;
 
-  lat = zero_lat - py / Ra;
   lat = zero_lat - py / Ra;
   lon =
     zero_long -

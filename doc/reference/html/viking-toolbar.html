@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>toolbar: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-thumbnails-pixmap.html" title="thumbnails_pixmap">
+<link rel="next" href="viking-ui-util.html" title="ui_util">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-toolbar.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#viking-toolbar.object-hierarchy" class="shortcut">Object Hierarchy</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-thumbnails-pixmap.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-ui-util.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-toolbar"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-toolbar.top_of_page"></a>toolbar</span></h2>
+<p>toolbar</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-toolbar.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-toolbar.html#VIK-TOOLBAR-TYPE:CAPS" title="VIK_TOOLBAR_TYPE">VIK_TOOLBAR_TYPE</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-toolbar.html#VikToolbar"><span class="returnvalue">VikToolbar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#vik-toolbar-new" title="vik_toolbar_new ()">vik_toolbar_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#vik-toolbar-finalize" title="vik_toolbar_finalize ()">vik_toolbar_finalize</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-get-widget-by-name" title="toolbar_get_widget_by_name ()">toolbar_get_widget_by_name</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gtk2/GtkAction.html"><span class="returnvalue">GtkAction</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-get-action-by-name" title="toolbar_get_action_by_name ()">toolbar_get_action_by_name</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-action-tool-entry-register" title="toolbar_action_tool_entry_register ()">toolbar_action_tool_entry_register</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-action-mode-entry-register" title="toolbar_action_mode_entry_register ()">toolbar_action_mode_entry_register</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-action-toggle-entry-register" title="toolbar_action_toggle_entry_register ()">toolbar_action_toggle_entry_register</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-action-entry-register" title="toolbar_action_entry_register ()">toolbar_action_entry_register</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-action-set-sensitive" title="toolbar_action_set_sensitive ()">toolbar_action_set_sensitive</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-init" title="toolbar_init ()">toolbar_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-apply-settings" title="toolbar_apply_settings ()">toolbar_apply_settings</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#toolbar-get-widget" title="toolbar_get_widget ()">toolbar_get_widget</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#a-toolbar-init" title="a_toolbar_init ()">a_toolbar_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-toolbar.html#a-toolbar-uninit" title="a_toolbar_uninit ()">a_toolbar_uninit</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<a name="VikToolbar"></a><div class="refsect1">
+<a name="viking-toolbar.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> VikToolbar
+</pre>
+</div>
+<div class="refsect1">
+<a name="viking-toolbar.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-toolbar.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-TOOLBAR-TYPE:CAPS"></a><h3>VIK_TOOLBAR_TYPE</h3>
+<pre class="programlisting">#define VIK_TOOLBAR_TYPE             (vik_toolbar_get_type ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-toolbar-new"></a><h3>vik_toolbar_new ()</h3>
+<pre class="programlisting"><a class="link" href="viking-toolbar.html#VikToolbar"><span class="returnvalue">VikToolbar</span></a> *
+vik_toolbar_new (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-toolbar-finalize"></a><h3>vik_toolbar_finalize ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_toolbar_finalize (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>);</pre>
+<p>Memory cleanups upon toolbar destruction</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-get-widget-by-name"></a><h3>toolbar_get_widget_by_name ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+toolbar_get_widget_by_name (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>,
+                            <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-get-action-by-name"></a><h3>toolbar_get_action_by_name ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gtk2/GtkAction.html"><span class="returnvalue">GtkAction</span></a> *
+toolbar_get_action_by_name (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>,
+                            <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+<p>Find an action in the specified toolbar via the action name</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-action-tool-entry-register"></a><h3>toolbar_action_tool_entry_register ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+toolbar_action_tool_entry_register (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>,
+                                    <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkActionGroup.html#GtkRadioActionEntry"><span class="type">GtkRadioActionEntry</span></a> *action</code></em>);</pre>
+<p>Register a tool button in the specified toolbar
+ Only one of these tools can be active at a time (hence it is a GtkRadioActionEntry)</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-action-mode-entry-register"></a><h3>toolbar_action_mode_entry_register ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+toolbar_action_mode_entry_register (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>,
+                                    <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkActionGroup.html#GtkRadioActionEntry"><span class="type">GtkRadioActionEntry</span></a> *action</code></em>);</pre>
+<p>Register a drawing projection mode button in the specified toolbar
+ Only one of these modes can be active at a time (hence it is a GtkRadioActionEntry)</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-action-toggle-entry-register"></a><h3>toolbar_action_toggle_entry_register ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+toolbar_action_toggle_entry_register (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>,
+                                      <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkActionGroup.html#GtkToggleActionEntry"><span class="type">GtkToggleActionEntry</span></a> *action</code></em>,
+                                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> callback</code></em>);</pre>
+<p>Register a toggle button in the specified toolbar with the specified callback
+Used in preventing circluar callbacks of a toolbar toggle event calling the menu toggle event
+ (that then calls toolbar callback and so on and so on...)
+The toggle action must be given a pointer to a function that is used on the callback for toolbar only
+ (that must offer a way to have a finite call chain!)</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-action-entry-register"></a><h3>toolbar_action_entry_register ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+toolbar_action_entry_register (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>,
+                               <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkActionGroup.html#GtkActionEntry"><span class="type">GtkActionEntry</span></a> *action</code></em>);</pre>
+<p>Register a standard action button in the specified toolbar</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-action-set-sensitive"></a><h3>toolbar_action_set_sensitive ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+toolbar_action_set_sensitive (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>,
+                              <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> sensitive</code></em>);</pre>
+<p>Set sensitivity of a particular action</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-init"></a><h3>toolbar_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+toolbar_init (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>,
+              <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWindow.html"><span class="type">GtkWindow</span></a> *parent</code></em>,
+              <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *vbox</code></em>,
+              <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *hbox</code></em>,
+              <em class="parameter"><code><span class="type">ToolCB</span> tool_cb</code></em>,
+              <em class="parameter"><code><span class="type">ReloadCB</span> reload_cb</code></em>,
+              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Initialize the specified toolbar using the given values</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-apply-settings"></a><h3>toolbar_apply_settings ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+toolbar_apply_settings (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>,
+                        <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *vbox</code></em>,
+                        <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *hbox</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> reset</code></em>);</pre>
+<p>Updates the specified toolbar with current setting values</p>
+<div class="refsect3">
+<a name="id-1.2.90.7.13.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vbox</p></td>
+<td class="parameter_description"><p>Potential vertical container for the specified toolbar</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>hbox</p></td>
+<td class="parameter_description"><p>Potential horizontal container for the specified toolbar</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>Reset</p></td>
+<td class="parameter_description"><p>Specify if the toolbar should be reparented
+(when called externally this should always be TRUE)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="toolbar-get-widget"></a><h3>toolbar_get_widget ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+toolbar_get_widget (<em class="parameter"><code><a class="link" href="viking-toolbar.html#VikToolbar"><span class="type">VikToolbar</span></a> *vtb</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-toolbar-init"></a><h3>a_toolbar_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_toolbar_init (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<p>Initialize stuff for the toolbar.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-toolbar-uninit"></a><h3>a_toolbar_uninit ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_toolbar_uninit (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<p>Uninitialize toolbar related stuff.</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-toolbar.other_details"></a><h2>Types and Values</h2>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

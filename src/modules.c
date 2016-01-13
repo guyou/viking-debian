@@ -235,6 +235,11 @@ register_loadable_types(void)
  */
 void modules_init()
 {
+// OSM done first so this will be the default service for searching/routing/etc...
+#ifdef VIK_CONFIG_OPENSTREETMAP
+  osm_init();
+  osm_traces_init();
+#endif
 #ifdef VIK_CONFIG_BING
   bing_init();
 #endif
@@ -246,10 +251,6 @@ void modules_init()
 #endif
 #ifdef VIK_CONFIG_TERRASERVER
   terraserver_init();
-#endif
-#ifdef VIK_CONFIG_OPENSTREETMAP
-  osm_init();
-  osm_traces_init();
 #endif
 #ifdef VIK_CONFIG_BLUEMARBLE
   bluemarble_init();
@@ -275,10 +276,13 @@ void modules_init()
  * modules_post_init:
  *
  * Secondary stage initialization
- * Can now use a_get_preferences()
+ * Can now use a_get_preferences() and a_babel_available()
  */
 void modules_post_init ()
 {
+#ifdef VIK_CONFIG_GOOGLE
+  google_post_init();
+#endif
 #ifdef HAVE_LIBMAPNIK
   vik_mapnik_layer_post_init();
 #endif

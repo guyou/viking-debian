@@ -270,7 +270,7 @@ static void string_list_set_param (gint i, GList *list, gpointer *layer_and_vp)
  */
 static gboolean file_read ( VikAggregateLayer *top, FILE *f, const gchar *dirpath, VikViewport *vp )
 {
-  Stack *stack;
+  Stack *stack = NULL;
   struct LatLon ll = { 0.0, 0.0 };
   gchar buffer[4096];
   gchar *line;
@@ -692,7 +692,8 @@ VikLoadType_t a_file_load ( VikAggregateLayer *top, VikViewport *vp, const gchar
     // In fact both kml & gpx files start the same as they are in xml
     if ( a_file_check_ext ( filename, ".kml" ) && check_magic ( f, GPX_MAGIC ) ) {
       // Implicit Conversion
-      if ( ! ( success = a_babel_convert_from ( VIK_TRW_LAYER(vtl), "-i kml", filename, NULL, NULL, NULL ) ) ) {
+      ProcessOptions po = { "-i kml", filename, NULL, NULL, NULL, NULL };
+      if ( ! ( success = a_babel_convert_from ( VIK_TRW_LAYER(vtl), &po, NULL, NULL, NULL ) ) ) {
         load_answer = LOAD_TYPE_GPSBABEL_FAILURE;
       }
     }
@@ -830,7 +831,6 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
           break;
         case FILE_TYPE_KML:
 	  fclose ( f );
-	  f = NULL;
 	  switch ( a_vik_get_kml_export_units () ) {
 	    case VIK_KML_EXPORT_UNITS_STATUTE:
 	      return a_babel_convert_to ( vtl, NULL, "-o kml", filename, NULL, NULL );
@@ -849,7 +849,6 @@ gboolean a_file_export ( VikTrwLayer *vtl, const gchar *filename, VikFileType_t 
       }
     }
     fclose ( f );
-    f = NULL;
     return result;
   }
   return FALSE;
@@ -941,7 +940,7 @@ const gchar *file_GetRelativeFilename ( gchar *currentDirectory, gchar *absolute
   // Handle DOS names that are on different drives:
   if (currentDirectory[0] != absoluteFilename[0]) {
     // not on the same drive, so only absolute filename will do
-    strcpy(relativeFilename, absoluteFilename);
+    g_strlcpy(relativeFilename, absoluteFilename, MAXPATHLEN+1);
     return relativeFilename;
   }
 
@@ -962,7 +961,7 @@ const gchar *file_GetRelativeFilename ( gchar *currentDirectory, gchar *absolute
       i++;
     }
 
-    strcpy(relativeFilename, &absoluteFilename[i]);
+    g_strlcpy(relativeFilename, &absoluteFilename[i], MAXPATHLEN+1);
     return relativeFilename;
   }
 

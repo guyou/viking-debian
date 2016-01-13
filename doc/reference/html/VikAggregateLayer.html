@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikAggregateLayer: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-vik-new-route-18-pixmap.html" title="vik_new_route_18_pixmap">
+<link rel="next" href="viking-vikaggregatelayer-pixmap.html" title="vikaggregatelayer_pixmap">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikAggregateLayer.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikAggregateLayer.object-hierarchy" class="shortcut">Object Hierarchy</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-vik-new-route-18-pixmap.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-vikaggregatelayer-pixmap.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikAggregateLayer"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikAggregateLayer.top_of_page"></a>VikAggregateLayer</span></h2>
+<p>VikAggregateLayer</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikAggregateLayer.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikAggregateLayer.html#VIK-AGGREGATE-LAYER-TYPE:CAPS" title="VIK_AGGREGATE_LAYER_TYPE">VIK_AGGREGATE_LAYER_TYPE</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="returnvalue">VikAggregateLayer</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-new" title="vik_aggregate_layer_new ()">vik_aggregate_layer_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-add-layer" title="vik_aggregate_layer_add_layer ()">vik_aggregate_layer_add_layer</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-insert-layer" title="vik_aggregate_layer_insert_layer ()">vik_aggregate_layer_insert_layer</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-move-layer" title="vik_aggregate_layer_move_layer ()">vik_aggregate_layer_move_layer</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-draw" title="vik_aggregate_layer_draw ()">vik_aggregate_layer_draw</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-free" title="vik_aggregate_layer_free ()">vik_aggregate_layer_free</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-clear" title="vik_aggregate_layer_clear ()">vik_aggregate_layer_clear</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-delete" title="vik_aggregate_layer_delete ()">vik_aggregate_layer_delete</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="returnvalue">VikAggregateLayer</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-create" title="vik_aggregate_layer_create ()">vik_aggregate_layer_create</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-get-top-visible-layer-of-type" title="vik_aggregate_layer_get_top_visible_layer_of_type ()">vik_aggregate_layer_get_top_visible_layer_of_type</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-realize" title="vik_aggregate_layer_realize ()">vik_aggregate_layer_realize</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-load-layers" title="vik_aggregate_layer_load_layers ()">vik_aggregate_layer_load_layers</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-is-empty" title="vik_aggregate_layer_is_empty ()">vik_aggregate_layer_is_empty</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-get-children" title="vik_aggregate_layer_get_children ()">vik_aggregate_layer_get_children</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikAggregateLayer.html#vik-aggregate-layer-get-all-layers-of-type" title="vik_aggregate_layer_get_all_layers_of_type ()">vik_aggregate_layer_get_all_layers_of_type</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikAggregateLayer.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> <a class="link" href="VikLayer.html" title="VikLayer">VikLayer</a>
+        <span class="lineart">╰──</span> VikAggregateLayer
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikAggregateLayer.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="VikAggregateLayer.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-AGGREGATE-LAYER-TYPE:CAPS"></a><h3>VIK_AGGREGATE_LAYER_TYPE</h3>
+<pre class="programlisting">#define VIK_AGGREGATE_LAYER_TYPE            (vik_aggregate_layer_get_type ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-new"></a><h3>vik_aggregate_layer_new ()</h3>
+<pre class="programlisting"><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="returnvalue">VikAggregateLayer</span></a> *
+vik_aggregate_layer_new ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-add-layer"></a><h3>vik_aggregate_layer_add_layer ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_aggregate_layer_add_layer (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>,
+                               <em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                               <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> allow_reordering</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.96.6.4.4"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>allow_reordering</p></td>
+<td class="parameter_description"><p>should be set for GUI interactions,
+whereas loading from a file needs strict ordering and so should be FALSE</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-insert-layer"></a><h3>vik_aggregate_layer_insert_layer ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_aggregate_layer_insert_layer (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>,
+                                  <em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *l</code></em>,
+                                  <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *replace_layer</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-move-layer"></a><h3>vik_aggregate_layer_move_layer ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_aggregate_layer_move_layer (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>,
+                                <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *child_iter</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> up</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-draw"></a><h3>vik_aggregate_layer_draw ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_aggregate_layer_draw (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>,
+                          <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-free"></a><h3>vik_aggregate_layer_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_aggregate_layer_free (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-clear"></a><h3>vik_aggregate_layer_clear ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_aggregate_layer_clear (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-delete"></a><h3>vik_aggregate_layer_delete ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_aggregate_layer_delete (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>,
+                            <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *iter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-create"></a><h3>vik_aggregate_layer_create ()</h3>
+<pre class="programlisting"><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="returnvalue">VikAggregateLayer</span></a> *
+vik_aggregate_layer_create (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-get-top-visible-layer-of-type"></a><h3>vik_aggregate_layer_get_top_visible_layer_of_type ()</h3>
+<pre class="programlisting"><a class="link" href="VikLayer.html" title="VikLayer"><span class="returnvalue">VikLayer</span></a> *
+vik_aggregate_layer_get_top_visible_layer_of_type
+                               (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerTypeEnum" title="enum VikLayerTypeEnum"><span class="type">VikLayerTypeEnum</span></a> type</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-realize"></a><h3>vik_aggregate_layer_realize ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_aggregate_layer_realize (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>,
+                             <em class="parameter"><code><a class="link" href="VikTreeview.html" title="VikTreeview"><span class="type">VikTreeview</span></a> *vt</code></em>,
+                             <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkTreeModel.html#GtkTreeIter"><span class="type">GtkTreeIter</span></a> *layer_iter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-load-layers"></a><h3>vik_aggregate_layer_load_layers ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_aggregate_layer_load_layers (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>,
+                                 <em class="parameter"><code><span class="type">FILE</span> *f</code></em>,
+                                 <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-is-empty"></a><h3>vik_aggregate_layer_is_empty ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_aggregate_layer_is_empty (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-get-children"></a><h3>vik_aggregate_layer_get_children ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+vik_aggregate_layer_get_children (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-aggregate-layer-get-all-layers-of-type"></a><h3>vik_aggregate_layer_get_all_layers_of_type ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+vik_aggregate_layer_get_all_layers_of_type
+                               (<em class="parameter"><code><a class="link" href="VikAggregateLayer.html" title="VikAggregateLayer"><span class="type">VikAggregateLayer</span></a> *val</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *layers</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerTypeEnum" title="enum VikLayerTypeEnum"><span class="type">VikLayerTypeEnum</span></a> type</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> include_invisible</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikAggregateLayer.other_details"></a><h2>Types and Values</h2>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

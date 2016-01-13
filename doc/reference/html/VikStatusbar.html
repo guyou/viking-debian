@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikStatusbar: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="VikSlippyMapSource.html" title="VikSlippyMapSource">
+<link rel="next" href="VikTmsMapSource.html" title="VikTmsMapSource">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikStatusbar.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikStatusbar.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_signals">  <span class="dim">|</span> 
+                  <a href="#VikStatusbar.signals" class="shortcut">Signals</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="VikSlippyMapSource.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="VikTmsMapSource.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikStatusbar"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikStatusbar.top_of_page"></a>VikStatusbar</span></h2>
+<p>VikStatusbar</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikStatusbar.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikStatusbar.html#VIK-STATUSBAR-TYPE:CAPS" title="VIK_STATUSBAR_TYPE">VIK_STATUSBAR_TYPE</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikStatusbar.html" title="VikStatusbar"><span class="returnvalue">VikStatusbar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikStatusbar.html#vik-statusbar-new" title="vik_statusbar_new ()">vik_statusbar_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikStatusbar.html#vik-statusbar-set-message" title="vik_statusbar_set_message ()">vik_statusbar_set_message</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikStatusbar.signals"></a><h2>Signals</h2>
+<div class="informaltable"><table border="0">
+<colgroup>
+<col width="150px" class="signals_return">
+<col width="300px" class="signals_name">
+<col width="200px" class="signals_flags">
+</colgroup>
+<tbody><tr>
+<td class="signal_type"><span class="returnvalue">void</span></td>
+<td class="signal_name"><a class="link" href="VikStatusbar.html#VikStatusbar-clicked" title="The “clicked” signal">clicked</a></td>
+<td class="signal_flags"><a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-FIRST:CAPS">Run First</a></td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikStatusbar.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody><tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="VikStatusbar.html#vik-statusbar-type-t" title="enum vik_statusbar_type_t">vik_statusbar_type_t</a></td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikStatusbar.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GInitiallyUnowned">GInitiallyUnowned</a>
+        <span class="lineart">╰──</span> <a href="http://library.gnome.org/devel/gtk3/GtkObject.html">GtkObject</a>
+            <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkWidget.html">GtkWidget</a>
+                <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkContainer.html">GtkContainer</a>
+                    <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkBox.html">GtkBox</a>
+                        <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkHBox.html">GtkHBox</a>
+                            <span class="lineart">╰──</span> VikStatusbar
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikStatusbar.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="VikStatusbar.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-STATUSBAR-TYPE:CAPS"></a><h3>VIK_STATUSBAR_TYPE</h3>
+<pre class="programlisting">#define VIK_STATUSBAR_TYPE            (vik_statusbar_get_type ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-statusbar-new"></a><h3>vik_statusbar_new ()</h3>
+<pre class="programlisting"><a class="link" href="VikStatusbar.html" title="VikStatusbar"><span class="returnvalue">VikStatusbar</span></a> *
+vik_statusbar_new ();</pre>
+<p>Creates a new <a class="link" href="VikStatusbar.html" title="VikStatusbar"><span class="type">VikStatusbar</span></a> widget.</p>
+<div class="refsect3">
+<a name="id-1.2.136.8.3.5"></a><h4>Returns</h4>
+<p> the new <a class="link" href="VikStatusbar.html" title="VikStatusbar"><span class="type">VikStatusbar</span></a> widget.</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-statusbar-set-message"></a><h3>vik_statusbar_set_message ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_statusbar_set_message (<em class="parameter"><code><a class="link" href="VikStatusbar.html" title="VikStatusbar"><span class="type">VikStatusbar</span></a> *vs</code></em>,
+                           <em class="parameter"><code><a class="link" href="VikStatusbar.html#vik-statusbar-type-t" title="enum vik_statusbar_type_t"><span class="type">vik_statusbar_type_t</span></a> field</code></em>,
+                           <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *message</code></em>);</pre>
+<p>Update the message of the given field.</p>
+<div class="refsect3">
+<a name="id-1.2.136.8.4.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vs</p></td>
+<td class="parameter_description"><p>the <a class="link" href="VikStatusbar.html" title="VikStatusbar"><span class="type">VikStatusbar</span></a> itself</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>field</p></td>
+<td class="parameter_description"><p>the field to update</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>message</p></td>
+<td class="parameter_description"><p>the message to use</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikStatusbar.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="vik-statusbar-type-t"></a><h3>enum vik_statusbar_type_t</h3>
+<div class="refsect3">
+<a name="id-1.2.136.9.2.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-STATUSBAR-TOOL:CAPS"></a>VIK_STATUSBAR_TOOL</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-STATUSBAR-ITEMS:CAPS"></a>VIK_STATUSBAR_ITEMS</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-STATUSBAR-ZOOM:CAPS"></a>VIK_STATUSBAR_ZOOM</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-STATUSBAR-INFO:CAPS"></a>VIK_STATUSBAR_INFO</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-STATUSBAR-POSITION:CAPS"></a>VIK_STATUSBAR_POSITION</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-STATUSBAR-NUM-TYPES:CAPS"></a>VIK_STATUSBAR_NUM_TYPES</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikStatusbar.signal-details"></a><h2>Signal Details</h2>
+<div class="refsect2">
+<a name="VikStatusbar-clicked"></a><h3>The <code class="literal">“clicked”</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+user_function (<a class="link" href="VikStatusbar.html" title="VikStatusbar"><span class="type">VikStatusbar</span></a> *vikstatusbar,
+               <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>          arg1,
+               <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>      user_data)</pre>
+<p>Flags: <a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-FIRST:CAPS">Run First</a></p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

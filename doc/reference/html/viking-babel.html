@@ -1,0 +1,501 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>babel: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-addwp-18-pixmap.html" title="addwp_18_pixmap">
+<link rel="next" href="viking-babel-ui.html" title="babel_ui">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-babel.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-addwp-18-pixmap.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-babel-ui.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-babel"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-babel.top_of_page"></a>babel</span></h2>
+<p>babel — running external programs and redirecting to TRWLayers.</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-babel.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-babel.html#BabelStatusFunc" title="BabelStatusFunc ()">*BabelStatusFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-babel.html#a-babel-foreach-file-with-mode" title="a_babel_foreach_file_with_mode ()">a_babel_foreach_file_with_mode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-babel.html#a-babel-foreach-file-read-any" title="a_babel_foreach_file_read_any ()">a_babel_foreach_file_read_any</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-babel.html#a-babel-convert-from" title="a_babel_convert_from ()">a_babel_convert_from</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-babel.html#a-babel-convert-to" title="a_babel_convert_to ()">a_babel_convert_to</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-babel.html#a-babel-init" title="a_babel_init ()">a_babel_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-babel.html#a-babel-post-init" title="a_babel_post_init ()">a_babel_post_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-babel.html#a-babel-uninit" title="a_babel_uninit ()">a_babel_uninit</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-babel.html#a-babel-available" title="a_babel_available ()">a_babel_available</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-babel.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="viking-babel.html#BabelProgressCode" title="enum BabelProgressCode">BabelProgressCode</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-babel.html#ProcessOptions" title="ProcessOptions">ProcessOptions</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-babel.html#BabelMode" title="BabelMode">BabelMode</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-babel.html#BabelDevice" title="BabelDevice">BabelDevice</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-babel.html#BabelFile" title="BabelFile">BabelFile</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-babel.description"></a><h2>Description</h2>
+<p>GPSBabel may not be necessary for everything,
+ one can use shell_command option but this will be OS platform specific</p>
+</div>
+<div class="refsect1">
+<a name="viking-babel.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="BabelStatusFunc"></a><h3>BabelStatusFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*BabelStatusFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="viking-babel.html#BabelProgressCode" title="enum BabelProgressCode"><span class="type">BabelProgressCode</span></a> Param1</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param2</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param3</code></em>);</pre>
+<p>Callback function.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-babel-foreach-file-with-mode"></a><h3>a_babel_foreach_file_with_mode ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_babel_foreach_file_with_mode (<em class="parameter"><code><a class="link" href="viking-babel.html#BabelMode" title="BabelMode"><span class="type">BabelMode</span></a> mode</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GFunc"><span class="type">GFunc</span></a> func</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-babel-foreach-file-read-any"></a><h3>a_babel_foreach_file_read_any ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_babel_foreach_file_read_any (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GFunc"><span class="type">GFunc</span></a> func</code></em>,
+                               <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Run a function on all file formats with any kind of read method
+ (which is almost all but not quite - e.g. with GPSBabel v1.4.4 - PalmDoc is write only waypoints)</p>
+<div class="refsect3">
+<a name="id-1.2.5.6.4.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>func</p></td>
+<td class="parameter_description"><p>The function to be called on any file format with a read method</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>Data passed into the function</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-babel-convert-from"></a><h3>a_babel_convert_from ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+a_babel_convert_from (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vt</code></em>,
+                      <em class="parameter"><code><a class="link" href="viking-babel.html#ProcessOptions" title="ProcessOptions"><span class="type">ProcessOptions</span></a> *process_options</code></em>,
+                      <em class="parameter"><code><a class="link" href="viking-babel.html#BabelStatusFunc" title="BabelStatusFunc ()"><span class="type">BabelStatusFunc</span></a> cb</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> download_options</code></em>);</pre>
+<p>Loads data into a trw layer from a file, using gpsbabel.  This routine is synchronous;
+that is, it will block the calling program until the conversion is done. To avoid blocking, call
+this routine from a worker thread.</p>
+<div class="refsect3">
+<a name="id-1.2.5.6.5.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vt</p></td>
+<td class="parameter_description"><p>The TRW layer to place data into. Duplicate items will be overwritten.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>process_options</p></td>
+<td class="parameter_description"><p>The options to control the appropriate processing function. See <a class="link" href="viking-babel.html#ProcessOptions" title="ProcessOptions"><span class="type">ProcessOptions</span></a> for more detail</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>cb</p></td>
+<td class="parameter_description"><p>Optional callback function. Same usage as in <code class="function">a_babel_convert()</code>.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>passed along to cb</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>download_options</p></td>
+<td class="parameter_description"><p>If downloading from a URL use these options (may be NULL)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.5.6.5.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-babel-convert-to"></a><h3>a_babel_convert_to ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+a_babel_convert_to (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vt</code></em>,
+                    <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *track</code></em>,
+                    <em class="parameter"><code>const <span class="type">char</span> *babelargs</code></em>,
+                    <em class="parameter"><code>const <span class="type">char</span> *file</code></em>,
+                    <em class="parameter"><code><a class="link" href="viking-babel.html#BabelStatusFunc" title="BabelStatusFunc ()"><span class="type">BabelStatusFunc</span></a> cb</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Exports data using gpsbabel.  This routine is synchronous;
+that is, it will block the calling program until the conversion is done. To avoid blocking, call
+this routine from a worker thread.</p>
+<div class="refsect3">
+<a name="id-1.2.5.6.6.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vt</p></td>
+<td class="parameter_description"><p>The TRW layer from which data is taken.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>track</p></td>
+<td class="parameter_description"><p>Operate on the individual track if specified. Use NULL when operating on a TRW layer</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>babelargs</p></td>
+<td class="parameter_description"><p>A string containing gpsbabel command line options.  In addition to any filters, this string
+must include the input file type (-i) option.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>to</p></td>
+<td class="parameter_description"><p>Filename or device the data is written to.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>cb</p></td>
+<td class="parameter_description"><p>Optional callback function. Same usage as in a_babel_convert.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>passed along to cb</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.5.6.6.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on successful invocation of GPSBabel command</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-babel-init"></a><h3>a_babel_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_babel_init ();</pre>
+<p>Just setup preferences first</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-babel-post-init"></a><h3>a_babel_post_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_babel_post_init ();</pre>
+<p>Initialises babel module.
+Mainly check existence of gpsbabel progam
+and load all features available in that version.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-babel-uninit"></a><h3>a_babel_uninit ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_babel_uninit ();</pre>
+<p>Free resources acquired by a_babel_init.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-babel-available"></a><h3>a_babel_available ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+a_babel_available ();</pre>
+<p>Indicates if babel is available or not.</p>
+<div class="refsect3">
+<a name="id-1.2.5.6.10.5"></a><h4>Returns</h4>
+<p> true if babel available</p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-babel.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="BabelProgressCode"></a><h3>enum BabelProgressCode</h3>
+<p>Used when calling <a class="link" href="viking-babel.html#BabelStatusFunc" title="BabelStatusFunc ()"><span class="type">BabelStatusFunc</span></a>.</p>
+<div class="refsect3">
+<a name="id-1.2.5.7.2.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="BABEL-DIAG-OUTPUT:CAPS"></a>BABEL_DIAG_OUTPUT</p></td>
+<td class="enum_member_description">
+<p>a line of diagnostic output is available. The pointer is to a 
+                    NULL-terminated line of diagnostic output from gpsbabel.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="BABEL-DONE:CAPS"></a>BABEL_DONE</p></td>
+<td class="enum_member_description">
+<p>gpsbabel finished, or <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if no callback is needed.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="ProcessOptions"></a><h3>ProcessOptions</h3>
+<pre class="programlisting">typedef struct {
+  gchar* babelargs; // The standard initial arguments to gpsbabel (if gpsbabel is to be used) - normally should include the input file type (-i) option.
+  gchar* filename; // Input filename (or device port e.g. /dev/ttyS0)
+  gchar* input_file_type; // If NULL then uses internal file format handler (GPX only ATM), otherwise specify gpsbabel input type like "kml","tcx", etc...
+  gchar* url; // URL input rather than a filename
+  gchar* babel_filters; // Optional filter arguments to gpsbabel
+  gchar* shell_command; // Optional shell command to run instead of gpsbabel - but will be (Unix) platform specific
+} ProcessOptions;
+</pre>
+<p>All values are defaulted to NULL</p>
+<p>Need to specify at least one of babelargs, URL or shell_command</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="BabelMode"></a><h3>BabelMode</h3>
+<pre class="programlisting">typedef struct {
+    unsigned waypointsRead : 1;
+    unsigned waypointsWrite : 1;
+    unsigned tracksRead : 1;
+    unsigned tracksWrite : 1;
+    unsigned routesRead : 1;
+    unsigned routesWrite : 1;
+} BabelMode;
+</pre>
+<p>Store the Read/Write support offered by gpsbabel for a given format.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="BabelDevice"></a><h3>BabelDevice</h3>
+<pre class="programlisting">typedef struct {
+    BabelMode mode;
+    gchar *name;
+    gchar *label;
+} BabelDevice;
+</pre>
+<p>Representation of a supported device.</p>
+<div class="refsect3">
+<a name="id-1.2.5.7.5.5"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="struct_members_name">
+<col class="struct_members_description">
+<col width="200px" class="struct_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="struct_member_name"><p><a class="link" href="viking-babel.html#BabelMode" title="BabelMode"><span class="type">BabelMode</span></a> <em class="structfield"><code><a name="BabelDevice.mode"></a>mode</code></em>;</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="BabelDevice.name"></a>name</code></em>;</p></td>
+<td class="struct_member_description"><p>gpsbabel's identifier of the device</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="BabelDevice.label"></a>label</code></em>;</p></td>
+<td class="struct_member_description"><p>human readable label</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="BabelFile"></a><h3>BabelFile</h3>
+<pre class="programlisting">typedef struct {
+    BabelMode mode;
+    gchar *name;
+    gchar *ext;
+    gchar *label;
+} BabelFile;
+</pre>
+<p>Representation of a supported file format.</p>
+<div class="refsect3">
+<a name="id-1.2.5.7.6.5"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="struct_members_name">
+<col class="struct_members_description">
+<col width="200px" class="struct_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="struct_member_name"><p><a class="link" href="viking-babel.html#BabelMode" title="BabelMode"><span class="type">BabelMode</span></a> <em class="structfield"><code><a name="BabelFile.mode"></a>mode</code></em>;</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="BabelFile.name"></a>name</code></em>;</p></td>
+<td class="struct_member_description"><p>gpsbabel's identifier of the format</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="BabelFile.ext"></a>ext</code></em>;</p></td>
+<td class="struct_member_description"><p>file's extension for this format</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="BabelFile.label"></a>label</code></em>;</p></td>
+<td class="struct_member_description"><p>human readable label</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

@@ -441,7 +441,7 @@ static void trw_layer_track_list_add ( vik_trw_track_list_t *vtdl,
 #if GLIB_CHECK_VERSION(2,26,0)
 		GDateTime* gdt = g_date_time_new_from_unix_utc ( VIK_TRACKPOINT(trk->trackpoints->data)->timestamp );
 		gchar *time = g_date_time_format ( gdt, TRACK_LIST_DATE_FORMAT );
-		strncpy ( time_buf, time, sizeof(time_buf) );
+		g_strlcpy ( time_buf, time, sizeof(time_buf) );
 		g_free ( time );
 		g_date_time_unref ( gdt);
 #else
@@ -456,12 +456,12 @@ static void trw_layer_track_list_add ( vik_trw_track_list_t *vtdl,
 	gboolean visible = VIK_LAYER(vtl)->visible && trk->visible;
 	visible = visible && (trk->is_route ? vik_trw_layer_get_routes_visibility(vtl) : vik_trw_layer_get_tracks_visibility(vtl));
 
-	guint trk_len_time = 0;
+	guint trk_len_time = 0; // In minutes
 	if ( trk->trackpoints ) {
 		time_t t1, t2;
 		t1 = VIK_TRACKPOINT(g_list_first(trk->trackpoints)->data)->timestamp;
 		t2 = VIK_TRACKPOINT(g_list_last(trk->trackpoints)->data)->timestamp;
-		trk_len_time = (int)round (labs(t2-t1)/60);
+		trk_len_time = (int)round(labs(t2-t1)/60.0);
 	}
 
 	gdouble av_speed = 0.0;
@@ -627,7 +627,7 @@ static void vik_trw_layer_track_list_internal ( GtkWidget *dialog,
 	// Apply own formatting of the data
 	gtk_tree_view_column_set_cell_data_func ( column, renderer, format_1f_cell_data_func, GINT_TO_POINTER(column_runner-1), NULL);
 
-	column = my_new_column_text ( _("Length\n(minutes)"), renderer, view, column_runner++ );
+	(void)my_new_column_text ( _("Length\n(minutes)"), renderer, view, column_runner++ );
 
 	gchar *spd_units = NULL;
 	switch (speed_units) {
@@ -651,9 +651,9 @@ static void vik_trw_layer_track_list_internal ( GtkWidget *dialog,
 	g_free ( spd_units );
 
 	if ( height_units == VIK_UNITS_HEIGHT_FEET )
-		column = my_new_column_text ( _("Max Height\n(Feet)"), renderer, view, column_runner++ );
+		(void)my_new_column_text ( _("Max Height\n(Feet)"), renderer, view, column_runner++ );
 	else
-		column = my_new_column_text ( _("Max Height\n(Metres)"), renderer, view, column_runner++ );
+		(void)my_new_column_text ( _("Max Height\n(Metres)"), renderer, view, column_runner++ );
 
 	gtk_tree_view_set_model ( GTK_TREE_VIEW(view), GTK_TREE_MODEL(store) );
 	gtk_tree_selection_set_mode ( gtk_tree_view_get_selection(GTK_TREE_VIEW(view)), GTK_SELECTION_MULTIPLE );

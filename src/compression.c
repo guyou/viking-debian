@@ -35,6 +35,7 @@
 #endif
 
 #include "compression.h"
+#include "string.h"
 #include <gio/gio.h>
 #include <glib/gstdio.h>
 
@@ -85,6 +86,7 @@ void *unzip_file(gchar *zip_file, gulong *unzip_size)
 	goto end;
 #else
 	gchar *zip_data;
+	// See http://en.wikipedia.org/wiki/Zip_(file_format)
 	struct _lfh {
 		guint32 sig;
 		guint16 extract_version;
@@ -97,12 +99,16 @@ void *unzip_file(gchar *zip_file, gulong *unzip_size)
 		guint32 uncompressed_size;
 		guint16 filename_len;
 		guint16 extra_field_len;
-	}  __attribute__ ((__packed__)) *local_file_header = NULL;
+	}  __attribute__ ((gcc_struct,__packed__)) *local_file_header = NULL;
 
+	if ( sizeof(struct _lfh) != 30 ) {
+		g_critical ("Incorrect internal zip header size, should be 30 but is %zd", sizeof(struct _lfh) );
+		goto end;
+	}
 
 	local_file_header = (struct _lfh *) zip_file;
 	if (GUINT32_FROM_LE(local_file_header->sig) != 0x04034b50) {
-		g_warning("%s(): wrong format", __PRETTY_FUNCTION__);
+		g_warning("%s(): wrong format (%d)", __PRETTY_FUNCTION__, GUINT32_FROM_LE(local_file_header->sig));
 		g_free(unzip_data);
 		goto end;
 	}
@@ -112,6 +118,23 @@ void *unzip_file(gchar *zip_file, gulong *unzip_size)
 		+ GUINT16_FROM_LE(local_file_header->extra_field_len);
 	gulong uncompressed_size = GUINT32_FROM_LE(local_file_header->uncompressed_size);
 	unzip_data = g_malloc(uncompressed_size);
+
+	// Protection against malloc failures
+	// ATM not normally been checking malloc failures in Viking but sometimes using zip files can be quite large
+	//  (e.g. when using DEMs) so more potential for failure.
+	if ( !unzip_data )
+		goto end;
+
+	g_debug ("%s: method %d: from size %d to %ld", __FUNCTION__, GUINT16_FROM_LE(local_file_header->comp_method), GUINT32_FROM_LE(local_file_header->compressed_size), uncompressed_size);
+
+	if ( GUINT16_FROM_LE(local_file_header->comp_method) == 0 &&
+		(uncompressed_size == GUINT32_FROM_LE(local_file_header->compressed_size)) ) {
+		// Stored only - no need to 'uncompress'
+		// Thus just copy
+		memcpy ( unzip_data, zip_data, uncompressed_size );
+		*unzip_size = uncompressed_size;
+		goto end;
+	}
 
 	if (!(*unzip_size = uncompress_data(unzip_data, uncompressed_size, zip_data, GUINT32_FROM_LE(local_file_header->compressed_size)))) {
 		g_free(unzip_data);
@@ -136,7 +159,9 @@ end:
 gchar* uncompress_bzip2 ( gchar *name )
 {
 #ifdef HAVE_BZLIB_H
-	FILE *ff = g_fopen ( name, "r" );
+	g_debug ( "%s: bzip2 %s", __FUNCTION__, BZ2_bzlibVersion() );
+
+	FILE *ff = g_fopen ( name, "rb" );
 	if ( !ff )
 		return NULL;
 
@@ -175,7 +200,7 @@ gchar* uncompress_bzip2 ( gchar *name )
 	// Process in arbitary sized chunks
 	char buf[4096];
 	bzerror = BZ_OK;
-	int nBuf;
+	int nBuf = 0;
 	// Now process the actual compression data
 	while ( bzerror == BZ_OK ) {
 		nBuf = BZ2_bzRead ( &bzerror, bf, buf, 4096 );
@@ -191,12 +216,15 @@ gchar* uncompress_bzip2 ( gchar *name )
 	}
 	if ( bzerror != BZ_STREAM_END ) {
 		// handle error...
-		g_warning ( "%s: BZ error :( %d", __FUNCTION__, bzerror );
+		g_warning ( "%s: BZ error :( %d. read %d", __FUNCTION__, bzerror, nBuf );
 	}
 	BZ2_bzReadClose ( &bzerror, bf );
 	g_output_stream_close ( gos, NULL, &error );
 
  end:
+	g_object_unref ( gios );
+	fclose ( ff );
+
 	return tmpname;
 #else
 	return NULL;

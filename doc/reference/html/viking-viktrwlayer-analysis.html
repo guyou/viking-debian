@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>viktrwlayer_analysis: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="VikTrwLayer.html" title="VikTrwLayer">
+<link rel="next" href="viking-viktrwlayer-export.html" title="viktrwlayer_export">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-viktrwlayer-analysis.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="VikTrwLayer.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-viktrwlayer-export.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-viktrwlayer-analysis"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-viktrwlayer-analysis.top_of_page"></a>viktrwlayer_analysis</span></h2>
+<p>viktrwlayer_analysis</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-viktrwlayer-analysis.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-viktrwlayer-analysis.html#VikTrwlayerAnalyseCloseFunc" title="VikTrwlayerAnalyseCloseFunc ()">*VikTrwlayerAnalyseCloseFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrwlayer-analysis.html#vik-trw-layer-analyse-this" title="vik_trw_layer_analyse_this ()">vik_trw_layer_analyse_this</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-viktrwlayer-analysis.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-viktrwlayer-analysis.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VikTrwlayerAnalyseCloseFunc"></a><h3>VikTrwlayerAnalyseCloseFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*VikTrwlayerAnalyseCloseFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *Param1</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> Param2</code></em>,
+                                <em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-analyse-this"></a><h3>vik_trw_layer_analyse_this ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+vik_trw_layer_analyse_this (<em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWindow.html"><span class="type">GtkWindow</span></a> *window</code></em>,
+                            <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                            <em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *vl</code></em>,
+                            <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                            <em class="parameter"><code><a class="link" href="VikTrwLayer.html#VikTrwlayerGetTracksAndLayersFunc" title="VikTrwlayerGetTracksAndLayersFunc ()"><span class="type">VikTrwlayerGetTracksAndLayersFunc</span></a> get_tracks_and_layers_cb</code></em>,
+                            <em class="parameter"><code><a class="link" href="viking-viktrwlayer-analysis.html#VikTrwlayerAnalyseCloseFunc" title="VikTrwlayerAnalyseCloseFunc ()"><span class="type">VikTrwlayerAnalyseCloseFunc</span></a> on_close_cb</code></em>);</pre>
+<p>Display a dialog with stats across many tracks</p>
+<div class="refsect3">
+<a name="id-1.2.141.5.3.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>window</p></td>
+<td class="parameter_description"><p>A window from which the dialog will be derived</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>name</p></td>
+<td class="parameter_description"><p>The name to be shown</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>vl</p></td>
+<td class="parameter_description"><p>The <a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> passed on into <code class="function">get_tracks_and_layers_cb()</code></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>Data passed on into <code class="function">get_tracks_and_layers_cb()</code></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>get_tracks_and_layers_cb</p></td>
+<td class="parameter_description"><p>The function to call to construct items to be analysed</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.141.5.3.6"></a><h4>Returns</h4>
+<p> The dialog that is created to display the analyse information</p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-viktrwlayer-analysis.other_details"></a><h2>Types and Values</h2>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

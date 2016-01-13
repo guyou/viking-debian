@@ -825,15 +825,17 @@ static void vik_trwlayer_class_init ( VikTrwLayerClass *klass )
       else if ( mystderr )
         tokens = g_strsplit(mystderr, " ", 0);
 
-      gint num = 0;
-      gchar *token = tokens[num];
-      while ( token && num < 2 ) {
-        if (num == 1) {
-          if ( viking_version_to_number(token) >= viking_version_to_number("1.7.3") )
-            have_diary_program = TRUE;
+      if ( tokens ) {
+        gint num = 0;
+        gchar *token = tokens[num];
+        while ( token && num < 2 ) {
+          if (num == 1) {
+            if ( viking_version_to_number(token) >= viking_version_to_number("1.7.3") )
+              have_diary_program = TRUE;
+          }
+          num++;
+          token = tokens[num];
         }
-        num++;
-        token = tokens[num];
       }
       g_strfreev ( tokens );
     }
@@ -2112,6 +2114,16 @@ static void trw_layer_draw_track ( const gpointer id, VikTrack *track, struct Dr
       tp = VIK_TRACKPOINT(list->data);
       tp_size = (list == dp->vtl->current_tpl) ? tp_size_cur : tp_size_reg;
 
+      VikTrackpoint *tp2 = VIK_TRACKPOINT(list->prev->data);
+      // See if in a different lat/lon 'quadrant' so don't draw massively long lines (presumably wrong way around the Earth)
+      //  Mainly to prevent wrong lines drawn when a track crosses the 180 degrees East-West longitude boundary
+      //  (since vik_viewport_draw_line() only copes with pixel value and has no concept of the globe)
+      if ( dp->lat_lon &&
+           (( tp2->coord.east_west < -90.0 && tp->coord.east_west > 90.0 ) ||
+            ( tp2->coord.east_west > 90.0 && tp->coord.east_west < -90.0 )) ) {
+        useoldvals = FALSE;
+        continue;
+      }
       /* check some stuff -- but only if we're in UTM and there's only ONE ZONE; or lat lon */
       if ( (!dp->one_zone && !dp->lat_lon) ||     /* UTM & zones; do everything */
              ( ((!dp->one_zone) || tp->coord.utm_zone == dp->center->utm_zone) &&   /* only check zones if UTM & one_zone */
@@ -2133,7 +2145,6 @@ static void trw_layer_draw_track ( const gpointer id, VikTrack *track, struct Dr
 	  goto skip;
 	}
 
-        VikTrackpoint *tp2 = VIK_TRACKPOINT(list->prev->data);
         if ( drawpoints || dp->vtl->drawlines ) {
           // setup main_gc for both point and line drawing
           if ( !drawing_highlight && (dp->vtl->drawmode == DRAWMODE_BY_SPEED) ) {
@@ -2231,7 +2242,6 @@ static void trw_layer_draw_track ( const gpointer id, VikTrack *track, struct Dr
       else {
         if (useoldvals && dp->vtl->drawlines && (!tp->newsegment))
         {
-          VikTrackpoint *tp2 = VIK_TRACKPOINT(list->prev->data);
           if ( dp->vtl->coord_mode != VIK_COORD_UTM || tp->coord.utm_zone == dp->center->utm_zone )
           {
             vik_viewport_coord_to_screen ( dp->vp, &(tp->coord), &x, &y );
@@ -2763,6 +2773,7 @@ static void trw_layer_realize ( VikTrwLayer *vtl, VikTreeview *vt, GtkTreeIter *
     vik_treeview_item_set_visible ( (VikTreeview *) vt, &(vtl->waypoints_iter), vtl->waypoints_visible );
   }
 
+  trw_layer_verify_thumbnails ( vtl, NULL );
 }
 
 static gboolean trw_layer_sublayer_toggle_visible ( VikTrwLayer *l, gint subtype, gpointer sublayer )
@@ -2930,9 +2941,9 @@ static const gchar* trw_layer_layer_tooltip ( VikTrwLayer *vtl )
       // Timing information if available
       tbuf1[0] = '\0';
       if ( tt.duration > 0 ) {
-	g_snprintf (tbuf1, sizeof(tbuf1),
-		    _(" in %d:%02d hrs:mins"),
-		    (int)round(tt.duration/3600), (int)round((tt.duration/60)%60));
+        g_snprintf (tbuf1, sizeof(tbuf1),
+                    _(" in %d:%02d hrs:mins"),
+                    (int)(tt.duration/3600), (int)round(tt.duration/60.0)%60);
       }
       g_snprintf (tbuf2, sizeof(tbuf2),
 		  _("\n%sTotal Length %.1f %s%s"),
@@ -3023,7 +3034,7 @@ static const gchar* trw_layer_sublayer_tooltip ( VikTrwLayer *l, gint subtype, g
 	  strftime (time_buf1, sizeof(time_buf1), "%x: ", gmtime(&(vik_track_get_tp_first(tr)->timestamp)));
 	  time_t dur = vik_track_get_duration ( tr );
 	  if ( dur > 0 )
-	    g_snprintf ( time_buf2, sizeof(time_buf2), _("- %d:%02d hrs:mins"), (int)round(dur/3600), (int)round((dur/60)%60) );
+	    g_snprintf ( time_buf2, sizeof(time_buf2), _("- %d:%02d hrs:mins"), (int)(dur/3600), (int)round(dur/60.0)%60 );
 	}
 	// Get length and consider the appropriate distance units
 	gdouble tr_len = vik_track_get_length(tr);
@@ -3924,9 +3935,10 @@ static void trw_layer_new_wp ( menu_array_layer values )
   VikLayersPanel *vlp = VIK_LAYERS_PANEL(values[MA_VLP]);
   /* TODO longone: okay, if layer above (aggregate) is invisible but vtl->visible is true, this redraws for no reason.
      instead return true if you want to update. */
-  if ( vik_trw_layer_new_waypoint ( vtl, VIK_GTK_WINDOW_FROM_LAYER(vtl), vik_viewport_get_center(vik_layers_panel_get_viewport(vlp))) && VIK_LAYER(vtl)->visible ) {
+  if ( vik_trw_layer_new_waypoint ( vtl, VIK_GTK_WINDOW_FROM_LAYER(vtl), vik_viewport_get_center(vik_layers_panel_get_viewport(vlp))) ) {
     trw_layer_calculate_bounds_waypoints ( vtl );
-    vik_layers_panel_emit_update ( vlp );
+    if ( VIK_LAYER(vtl)->visible )
+      vik_layers_panel_emit_update ( vlp );
   }
 }
 
@@ -4626,19 +4638,17 @@ static void trw_layer_enum_item ( gpointer id, GList **tr, GList **l )
  */
 static void trw_layer_move_item ( VikTrwLayer *vtl_src, VikTrwLayer *vtl_dest, gpointer id, gint type )
 {
+  // When an item is moved the name is checked to see if it clashes with an existing name
+  //  in the destination layer and if so then it is allocated a new name
+
   // TODO reconsider strategy when moving within layer (if anything...)
-  gboolean rename = ( vtl_src != vtl_dest );
-  if ( ! rename )
+  if ( vtl_src == vtl_dest )
     return;
 
   if (type == VIK_TRW_LAYER_SUBLAYER_TRACK) {
     VikTrack *trk = g_hash_table_lookup ( vtl_src->tracks, id );
 
-    gchar *newname;
-    if ( rename )
-      newname = trw_layer_new_unique_sublayer_name ( vtl_dest, type, trk->name );
-    else
-      newname = g_strdup ( trk->name );
+    gchar *newname = trw_layer_new_unique_sublayer_name ( vtl_dest, type, trk->name );
 
     VikTrack *trk2 = vik_track_copy ( trk, TRUE );
     vik_trw_layer_add_track ( vtl_dest, newname, trk2 );
@@ -4652,11 +4662,7 @@ static void trw_layer_move_item ( VikTrwLayer *vtl_src, VikTrwLayer *vtl_dest, g
   if (type == VIK_TRW_LAYER_SUBLAYER_ROUTE) {
     VikTrack *trk = g_hash_table_lookup ( vtl_src->routes, id );
 
-    gchar *newname;
-    if ( rename )
-      newname = trw_layer_new_unique_sublayer_name ( vtl_dest, type, trk->name );
-    else
-      newname = g_strdup ( trk->name );
+    gchar *newname = trw_layer_new_unique_sublayer_name ( vtl_dest, type, trk->name );
 
     VikTrack *trk2 = vik_track_copy ( trk, TRUE );
     vik_trw_layer_add_route ( vtl_dest, newname, trk2 );
@@ -4667,11 +4673,7 @@ static void trw_layer_move_item ( VikTrwLayer *vtl_src, VikTrwLayer *vtl_dest, g
   if (type == VIK_TRW_LAYER_SUBLAYER_WAYPOINT) {
     VikWaypoint *wp = g_hash_table_lookup ( vtl_src->waypoints, id );
 
-    gchar *newname;
-    if ( rename )
-      newname = trw_layer_new_unique_sublayer_name ( vtl_dest, type, wp->name );
-    else
-      newname = g_strdup ( wp->name );
+    gchar *newname = trw_layer_new_unique_sublayer_name ( vtl_dest, type, wp->name );
 
     VikWaypoint *wp2 = vik_waypoint_copy ( wp );
     vik_trw_layer_add_waypoint ( vtl_dest, newname, wp2 );
@@ -6797,7 +6799,12 @@ static void trw_layer_astro_open ( VikTrwLayer *vtl, const gchar *date_str, cons
 {
   GError *err = NULL;
   gchar *tmp;
-  g_file_open_tmp ( "vik-astro-XXXXXX.ini", &tmp, NULL );
+  gint fd = g_file_open_tmp ( "vik-astro-XXXXXX.ini", &tmp, &err );
+  if (fd < 0) {
+    g_warning ( "%s: Failed to open temporary file: %s", __FUNCTION__, err->message );
+    g_clear_error ( &err );
+    return;
+  }
   gchar *cmd = g_strdup_printf ( "%s %s %s %s %s %s %s %s %s %s %s %s %s %s",
                                   astro_program, "-c", tmp, "--full-screen no", "--sky-date", date_str, "--sky-time", time_str, "--latitude", lat_str, "--longitude", lon_str, "--altitude", alt_str );
   g_warning ( "%s", cmd );
@@ -7823,11 +7830,13 @@ static gboolean is_valid_geocache_name ( gchar *str )
   return len >= 3 && len <= 7 && str[0] == 'G' && str[1] == 'C' && isalnum(str[2]) && (len < 4 || isalnum(str[3])) && (len < 5 || isalnum(str[4])) && (len < 6 || isalnum(str[5])) && (len < 7 || isalnum(str[6]));
 }
 
+#ifndef WINDOWS
 static void trw_layer_track_use_with_filter ( menu_array_sublayer values )
 {
   VikTrack *trk = g_hash_table_lookup ( VIK_TRW_LAYER(values[MA_VTL])->tracks, values[MA_SUBLAYER_ID] );
   a_acquire_set_filter_track ( trk );
 }
+#endif
 
 #ifdef VIK_CONFIG_GOOGLE
 static gboolean is_valid_google_route ( VikTrwLayer *vtl, const gpointer track_id )
@@ -8663,11 +8672,14 @@ static gboolean trw_layer_sublayer_add_menu_items ( VikTrwLayer *l, GtkMenu *men
     gtk_widget_show ( item );
 #endif
 
+    // Currently filter with functions all use shellcommands and thus don't work in Windows
+#ifndef WINDOWS
     item = gtk_image_menu_item_new_with_mnemonic ( _("Use with _Filter") );
     gtk_image_menu_item_set_image ( (GtkImageMenuItem*)item, gtk_image_new_from_stock (GTK_STOCK_INDEX, GTK_ICON_SIZE_MENU) );
     g_signal_connect_swapped ( G_OBJECT(item), "activate", G_CALLBACK(trw_layer_track_use_with_filter), pass_along );
     gtk_menu_shell_append ( GTK_MENU_SHELL(menu), item );
     gtk_widget_show ( item );
+#endif
 
     /* ATM This function is only available via the layers panel, due to needing a vlp */
     if ( vlp ) {
@@ -10134,9 +10146,10 @@ static gboolean tool_new_waypoint_click ( VikTrwLayer *vtl, GdkEventButton *even
   if (!vtl || vtl->vl.type != VIK_LAYER_TRW)
     return FALSE;
   vik_viewport_screen_to_coord ( vvp, event->x, event->y, &coord );
-  if (vik_trw_layer_new_waypoint ( vtl, VIK_GTK_WINDOW_FROM_LAYER(vtl), &coord ) && VIK_LAYER(vtl)->visible) {
+  if ( vik_trw_layer_new_waypoint (vtl, VIK_GTK_WINDOW_FROM_LAYER(vtl), &coord) ) {
     trw_layer_calculate_bounds_waypoints ( vtl );
-    vik_layer_emit_update ( VIK_LAYER(vtl) );
+    if ( VIK_LAYER(vtl)->visible )
+      vik_layer_emit_update ( VIK_LAYER(vtl) );
   }
   return TRUE;
 }
@@ -10306,7 +10319,8 @@ static gboolean tool_edit_trackpoint_release ( VikTrwLayer *vtl, GdkEventButton 
 
     /* diff dist is diff from orig */
     if ( vtl->tpwin )
-      my_tpwin_set_tp ( vtl );
+      if ( vtl->current_tp_track )
+        my_tpwin_set_tp ( vtl );
 
     vik_layer_emit_update ( VIK_LAYER(vtl) );
     return TRUE;
@@ -11046,8 +11060,8 @@ static void trw_layer_download_map_along_track_cb ( menu_array_sublayer values )
   }
 
   // Convert from list of vmls to list of names. Allowing the user to select one of them
-  gchar **map_names = g_malloc(1 + num_maps * sizeof(gpointer));
-  VikMapsLayer **map_layers = g_malloc(1 + num_maps * sizeof(gpointer));
+  gchar **map_names = g_malloc_n(1 + num_maps, sizeof(gpointer));
+  VikMapsLayer **map_layers = g_malloc_n(1 + num_maps, sizeof(gpointer));
 
   gchar **np = map_names;
   VikMapsLayer **lp = map_layers;

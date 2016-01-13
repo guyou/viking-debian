@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>BingMapSource: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-bing-maps-pixmap.html" title="bing_maps_pixmap">
+<link rel="next" href="viking-bluemarble.html" title="bluemarble">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#BingMapSource.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#BingMapSource.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_properties">  <span class="dim">|</span> 
+                  <a href="#BingMapSource.properties" class="shortcut">Properties</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-bing-maps-pixmap.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-bluemarble.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="BingMapSource"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="BingMapSource.top_of_page"></a>BingMapSource</span></h2>
+<p>BingMapSource — the class for Bing Maps</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="BingMapSource.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody><tr>
+<td class="function_type">
+<a class="link" href="BingMapSource.html" title="BingMapSource"><span class="returnvalue">BingMapSource</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="BingMapSource.html#bing-map-source-new-with-id" title="bing_map_source_new_with_id ()">bing_map_source_new_with_id</a> <span class="c_punctuation">()</span>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="BingMapSource.properties"></a><h2>Properties</h2>
+<div class="informaltable"><table border="0">
+<colgroup>
+<col width="150px" class="properties_type">
+<col width="300px" class="properties_name">
+<col width="200px" class="properties_flags">
+</colgroup>
+<tbody>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="BingMapSource.html#BingMapSource--api-key" title="The “api-key” property">api-key</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="BingMapSource.html#BingMapSource--hostname" title="The “hostname” property">hostname</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="BingMapSource.html#BingMapSource--url" title="The “url” property">url</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="BingMapSource.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> <a class="link" href="VikMapSource.html" title="VikMapSource">VikMapSource</a>
+        <span class="lineart">╰──</span> <a class="link" href="VikMapSourceDefault.html" title="VikMapSourceDefault">VikMapSourceDefault</a>
+            <span class="lineart">╰──</span> <a class="link" href="VikSlippyMapSource.html" title="VikSlippyMapSource">VikSlippyMapSource</a>
+                <span class="lineart">╰──</span> BingMapSource
+</pre>
+</div>
+<div class="refsect1">
+<a name="BingMapSource.description"></a><h2>Description</h2>
+<p>The <a class="link" href="BingMapSource.html" title="BingMapSource"><span class="type">BingMapSource</span></a> class handles Bing map source.</p>
+<p>License and term of use are available here:
+http://wiki.openstreetmap.org/wiki/File:Bing_license.pdf</p>
+<p>Technical details are available here:
+http://msdn.microsoft.com/en-us/library/dd877180.aspx</p>
+</div>
+<div class="refsect1">
+<a name="BingMapSource.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="bing-map-source-new-with-id"></a><h3>bing_map_source_new_with_id ()</h3>
+<pre class="programlisting"><a class="link" href="BingMapSource.html" title="BingMapSource"><span class="returnvalue">BingMapSource</span></a> *
+bing_map_source_new_with_id (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> id</code></em>,
+                             <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *label</code></em>,
+                             <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *key</code></em>);</pre>
+<p>Constructor for Bing map source.</p>
+<div class="refsect3">
+<a name="id-1.2.12.7.2.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>id</p></td>
+<td class="parameter_description"><p>internal identifier.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>label</p></td>
+<td class="parameter_description"><p>the label to display in map provider selector.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>key</p></td>
+<td class="parameter_description"><p>the API key to access Bing's services.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.12.7.2.6"></a><h4>Returns</h4>
+<p> a newly allocated BingMapSource GObject.</p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="BingMapSource.other_details"></a><h2>Types and Values</h2>
+</div>
+<div class="refsect1">
+<a name="BingMapSource.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="BingMapSource--api-key"></a><h3>The <code class="literal">“api-key”</code> property</h3>
+<pre class="programlisting">  “api-key”                  <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The API key to access Bing.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: "&lt;no-set&gt;"</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="BingMapSource--hostname"></a><h3>The <code class="literal">“hostname”</code> property</h3>
+<pre class="programlisting">  “hostname”                 <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The hostname of the map server.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: "&lt;no-set&gt;"</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="BingMapSource--url"></a><h3>The <code class="literal">“url”</code> property</h3>
+<pre class="programlisting">  “url”                      <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The template of the tiles' URL.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: "&lt;no-set&gt;"</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

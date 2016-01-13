@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>osm-traces: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-osm.html" title="osm">
+<link rel="next" href="viking-preferences.html" title="preferences">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-osm-traces.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-osm.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-preferences.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-osm-traces"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-osm-traces.top_of_page"></a>osm-traces</span></h2>
+<p>osm-traces</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-osm-traces.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-osm-traces.html#osm-traces-init" title="osm_traces_init ()">osm_traces_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-osm-traces.html#osm-traces-uninit" title="osm_traces_uninit ()">osm_traces_uninit</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-osm-traces.html#osm-traces-upload-viktrwlayer" title="osm_traces_upload_viktrwlayer ()">osm_traces_upload_viktrwlayer</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-osm-traces.html#osm-set-login" title="osm_set_login ()">osm_set_login</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-osm-traces.html#osm-get-login" title="osm_get_login ()">osm_get_login</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-osm-traces.html#osm-login-widgets" title="osm_login_widgets ()">osm_login_widgets</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-osm-traces.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-osm-traces.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="osm-traces-init"></a><h3>osm_traces_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+osm_traces_init ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="osm-traces-uninit"></a><h3>osm_traces_uninit ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+osm_traces_uninit ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="osm-traces-upload-viktrwlayer"></a><h3>osm_traces_upload_viktrwlayer ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+osm_traces_upload_viktrwlayer (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                               <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="osm-set-login"></a><h3>osm_set_login ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+osm_set_login (<em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *user</code></em>,
+               <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *password</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="osm-get-login"></a><h3>osm_get_login ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+osm_get_login ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="osm-login-widgets"></a><h3>osm_login_widgets ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+osm_login_widgets (<em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *user_entry</code></em>,
+                   <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *password_entry</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-osm-traces.other_details"></a><h2>Types and Values</h2>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

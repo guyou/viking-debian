@@ -231,8 +231,10 @@ static VikLayerParamData plugins_default ( void )
 #else
 	if ( g_file_test ( "/usr/lib/mapnik/input", G_FILE_TEST_EXISTS ) )
 		data.s = g_strdup ( "/usr/lib/mapnik/input" );
+		// Current Debian locations
+	else if ( g_file_test ( "/usr/lib/mapnik/3.0/input", G_FILE_TEST_EXISTS ) )
+		data.s = g_strdup ( "/usr/lib/mapnik/3.0/input" );
 	else if ( g_file_test ( "/usr/lib/mapnik/2.2/input", G_FILE_TEST_EXISTS ) )
-		// Current Debian location
 		data.s = g_strdup ( "/usr/lib/mapnik/2.2/input" );
 	else
 		data.s = g_strdup ( "" );
@@ -333,9 +335,14 @@ void vik_mapnik_layer_uninit ()
 // NB Only performed once per program run
 static void mapnik_layer_class_init ( VikMapnikLayerClass *klass )
 {
-	mapnik_interface_initialize ( a_preferences_get (MAPNIK_PREFS_NAMESPACE"plugins_directory")->s,
-	                              a_preferences_get (MAPNIK_PREFS_NAMESPACE"fonts_directory")->s,
-	                              a_preferences_get (MAPNIK_PREFS_NAMESPACE"recurse_fonts_directory")->b );
+	VikLayerParamData *pd = a_preferences_get (MAPNIK_PREFS_NAMESPACE"plugins_directory");
+	VikLayerParamData *fd = a_preferences_get (MAPNIK_PREFS_NAMESPACE"fonts_directory");
+	VikLayerParamData *rfd = a_preferences_get (MAPNIK_PREFS_NAMESPACE"recurse_fonts_directory");
+
+	if ( pd && fd && rfd )
+		mapnik_interface_initialize ( pd->s, fd->s, rfd->b );
+	else
+		g_critical ( "Unable to initialize mapnik interface from preferences" );
 }
 
 GType vik_mapnik_layer_get_type ()
@@ -630,7 +637,8 @@ static void possibly_save_pixbuf ( VikMapnikLayer *vml, GdkPixbuf *pixbuf, MapCo
 
 			gchar *dir = g_path_get_dirname ( filename );
 			if ( !g_file_test ( filename, G_FILE_TEST_EXISTS ) )
-				g_mkdir_with_parents ( dir , 0777 );
+				if ( g_mkdir_with_parents ( dir , 0777 ) != 0 )
+					g_warning ("%s: Failed to mkdir %s", __FUNCTION__, dir );
 			g_free ( dir );
 
 			if ( !gdk_pixbuf_save (pixbuf, filename, "png", &error, NULL ) ) {
@@ -671,8 +679,9 @@ static void render ( VikMapnikLayer *vml, VikCoord *ul, VikCoord *br, MapCoord *
 
 	// NB Mapnik can apply alpha, but use our own function for now
 	if ( vml->alpha < 255 )
-		pixbuf = ui_pixbuf_set_alpha ( pixbuf, vml->alpha );
+		pixbuf = ui_pixbuf_scale_alpha ( pixbuf, vml->alpha );
 	a_mapcache_add ( pixbuf, (mapcache_extra_t){ tt }, ulm->x, ulm->y, ulm->z, MAP_ID_MAPNIK_RENDER, ulm->scale, vml->alpha, 0.0, 0.0, vml->filename_xml );
+	g_object_unref(pixbuf);
 }
 
 static void render_info_free ( RenderInfo *data )
@@ -753,6 +762,9 @@ void thread_add (VikMapnikLayer *vml, MapCoord *mul, VikCoord *ul, VikCoord *br,
 
 /**
  * load_pixbuf:
+ *
+ * If function returns GdkPixbuf properly, reference counter to this
+ * buffer has to be decreased, when buffer is no longer needed.
  */
 static GdkPixbuf *load_pixbuf ( VikMapnikLayer *vml, MapCoord *ulm, MapCoord *brm, gboolean *rerender )
 {
@@ -785,7 +797,8 @@ static GdkPixbuf *load_pixbuf ( VikMapnikLayer *vml, MapCoord *ulm, MapCoord *br
 }
 
 /**
- *
+ * Caller has to decrease reference counter of returned
+ * GdkPixbuf, when buffer is no longer needed.
  */
 static GdkPixbuf *get_pixbuf ( VikMapnikLayer *vml, MapCoord *ulm, MapCoord *brm )
 {
@@ -872,6 +885,7 @@ static void mapnik_layer_draw ( VikMapnikLayer *vml, VikViewport *vvp )
 					map_utils_iTMS_to_vikcoord ( &ulm, &coord );
 					vik_viewport_coord_to_screen ( vvp, &coord, &xx, &yy );
 					vik_viewport_draw_pixbuf ( vvp, pixbuf, 0, 0, xx, yy, vml->tile_size_x, vml->tile_size_x );
+					g_object_unref(pixbuf);
 				}
 			}
 		}

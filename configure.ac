@@ -2,11 +2,17 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.64)
-AC_INIT(viking, 1.6, , viking, http://viking.sf.net/)
+AC_INIT(viking, 1.6.1, , viking, http://viking.sf.net/)
 AM_INIT_AUTOMAKE([dist-bzip2 dist-zip subdir-objects])
 dnl AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
-GTK_DOC_CHECK(1.0)
+
+# check for gtk-doc
+m4_ifdef([GTK_DOC_CHECK], [
+GTK_DOC_CHECK([1.0],[--flavour no-tmpl])
+],[
+AM_CONDITIONAL([ENABLE_GTK_DOC], false)
+])
 
 AC_PROG_CC
 AC_PROG_CC_STDC
@@ -283,7 +289,7 @@ esac
 AM_CONDITIONAL([REALTIME_GPS_TRACKING], [test x$ac_cv_enable_realtimegpstracking = xyes])
 
 # BZIP2
-AC_ARG_ENABLE(bz2, AC_HELP_STRING([--enable-bzip2],
+AC_ARG_ENABLE(bzip2, AC_HELP_STRING([--enable-bzip2],
 	      [enable bzip2 Support (default is enable).]),
               [ac_cv_enable_bzip2=$enableval],
               [ac_cv_enable_bzip2=yes])
@@ -340,12 +346,17 @@ case $ac_cv_enable_mapnik in
     AC_LANG_CPLUSPLUS
     AC_LANG_SAVE
     AC_PROG_CXX
+    # Mapnik3 requires C++11. Viking will use C++11 as well.
+    CXXFLAGS="$CXXFLAGS -std=c++11"
     # Too difficult to get check working under Windows (extra dependencies needed probably Boost)- so just skip it
     if test "x$ac_cv_enable_windows" = "xno"; then
       AC_CHECK_HEADER([mapnik/map.hpp],[],[AC_MSG_ERROR([mapnik/map.hpp is needed but not found - you will need to install package 'libmapnik-dev' or similar. The feature can be disabled with --disable-mapnik])])
     fi
     AC_CHECK_LIB([mapnik], [main], [], [AC_MSG_ERROR([libmapnik is needed but not found.])])
     AC_CHECK_LIB([stdc++], [main], [], [AC_MSG_ERROR([libstdc++ is needed but not found.])])
+    # Required for Mapnik3 build (it's also in Mapnik2 but does not need to be specified for some reason)
+    #  it's part of libmapnik install dependencies
+    AC_CHECK_LIB([icuuc], [main], [], [AC_MSG_ERROR([libicuuc is needed but not found.])])
     AC_LANG_RESTORE
     ;;
 esac
@@ -357,27 +368,6 @@ m4_pushdef([AC_MSG_ERROR])
 AC_PROG_CXX
 m4_popdef([AC_MSG_ERROR])
 ##
-
-AC_ARG_WITH(search,
-            [AC_HELP_STRING([--with-search],
-                            [specify google or geonames for searching (default is google)])],
-            [case "x$withval" in
-               "xgoogle")
-                 VIK_CONFIG_SEARCH=VIK_CONFIG_SEARCH_GOOGLE
-                 ;;
-               "xgeonames")
-                 VIK_CONFIG_SEARCH=VIK_CONFIG_SEARCH_GEONAMES
-                 ;;
-               *)
-                AC_MSG_ERROR([Please, set a value for search method])
-             esac],
-             [VIK_CONFIG_SEARCH=VIK_CONFIG_SEARCH_GOOGLE])
-AC_DEFINE_UNQUOTED(VIK_CONFIG_SEARCH_GOOGLE, 1,
-                   [Id. for searching via GOOGLE])
-AC_DEFINE_UNQUOTED(VIK_CONFIG_SEARCH_GEONAMES, 2,
-                   [Id. for searching via GEONAMES])
-AC_DEFINE_UNQUOTED(VIK_CONFIG_SEARCH, ${VIK_CONFIG_SEARCH},
-                   [Method for the search])
 
 
 AC_ARG_WITH(mapcache,
@@ -415,14 +405,8 @@ DB2MAN_XSL=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl
 AC_SUBST(DB2MAN_XSL)
 AC_PATH_PROG(XP,xsltproc)
 AM_CONDITIONAL([HAVE_XSLTPROC],[test "x$XP" != "x"])
-AM_CONDITIONAL([GEN_MANPAGES],[test "x$XP" != "x" && test -r "$DB2MAN_XSL"])
-
-dnl This will cause the automake generated makefiles to pass the
-dnl correct flags to aclocal.
-ACLOCAL_AMFLAGS="\${ACLOCAL_FLAGS}"
-AC_SUBST(ACLOCAL_AMFLAGS)
-
-AM_CONDITIONAL([VIKING_DOC], test x${enable_gtk_doc} = xyes)
+AC_CHECK_PROG([HAVE_SCROLLKEEPER],scrollkeeper-config,"yes")
+AM_CONDITIONAL([GEN_MANPAGES],[test "x$XP" != "x" && test -r "$DB2MAN_XSL"] && test "${HAVE_SCROLLKEEPER}" == "yes" )
 
 # Configuration
 AC_CONFIG_FILES([
@@ -434,15 +418,14 @@ AC_CONFIG_FILES([
 		tools/Makefile
 		test/Makefile
 		help/Makefile
+		help/viking.xml
 		win32/Makefile
 		win32/installer/Makefile
 		win32/installer/pixmaps/Makefile
-		win32/installer/translations/Makefile])
-AM_COND_IF([VIKING_DOC],
-	[AC_CONFIG_FILES([
+		win32/installer/translations/Makefile
 		doc/Makefile
 		doc/reference/Makefile
-		doc/examples/Makefile])])
+		doc/examples/Makefile])
 
 AC_OUTPUT([
 	   viking.spec
@@ -470,6 +453,8 @@ echo "MBTiles Support (SQLite3)        : $ac_cv_enable_mbtiles"
 echo "Mapnik Rendering Support (C++)   : $ac_cv_enable_mapnik"
 echo "Size of map cache (in memory)    : ${VIK_CONFIG_MAPCACHE_SIZE}"
 echo "Age of tiles (in seconds)        : ${VIK_CONFIG_DEFAULT_TILE_AGE}"
+echo -n "Man page generation              : "
+AM_COND_IF([GEN_MANPAGES], [echo "yes"], [echo "no"])
 echo "Documentation (+HTML)            : ${enable_gtk_doc} (HTML: ${enable_gtk_doc_html})"
 echo "-------------------------------------------"
 echo ""

@@ -1,8 +1,4 @@
-# Optionally build documentation bits
-if VIKING_DOC
-	DO_DOCS = "doc"
-endif
-SUBDIRS = src test data po win32 help tools $(DO_DOCS)
+SUBDIRS = src test data po win32 help tools doc
 
 INTLTOOL = \
 	intltool-extract.in \
@@ -14,6 +10,7 @@ full:
 	make
 
 EXTRA_DIST = \
+	HACKING \
 	gnome-doc-utils.make \
 	ChangeLog.0 \
 	viking.spec \

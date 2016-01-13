@@ -1,4 +1,249 @@
 
+2015-11-24
+Rob Norris <rw_norris@hotmail.com>:
+	* Shift the reference scale to be generated from the centre of the display.
+	* Update viking.doap file
+
+2015-11-17
+Rob Norris <rw_norris@hotmail.com>:
+	* [DOC] Words about various operations from the File menu not previously mentioned.
+
+2015-11-15
+Rob Norris <rw_norris@hotmail.com>:
+	* Ensure calculation of the waypoint bounds even when the layer is not currently visible.
+
+2015-11-14
+Rob Norris <rw_norris@hotmail.com>:
+	* Better reporting of failing to load any latlontz.txt file.
+	* CID#34578: Remove logically dead code.
+	* CID#132266: Fix potential dereference null return value
+	* [QA] Clang-Analyzer: Don't store values that aren't subsequently used.
+	* [QA] Clang-Analyzer - remove duplicate line
+	* Ensure removing temporary file when it contains no wikipedia places.
+	* [QA] Explicitly ignore return values when removing temporary generated files
+	* [QA] CID#34606+CID#34607: Time of check time of use (TOCTOU) issues.
+	* Ensure memory is freed if errors are encountered in acquiring My OSM traces
+	* CID#34579: Fix logically dead code.
+	* Coverity: Prevent deference after null checks
+	* CID#34561+CID#34569: Check return values
+	* CID#34586: Avoid potential explicit null deferenced
+	* CID#34612: Fix incorrect break statement location.
+	* CID#132255: Fix stray semicolon introduced by recent commit.
+	* CID#34592: Explicit handling of potential truncation of integer value
+	* Coverity: Fix deference after null checks
+	* CID#34600+CID#34601: Fix deference before null checks
+	* [QA] CID#34594: Remove unsigned compared against 0 (as it has no effect)
+
+2015-11-10
+Rob Norris <rw_norris@hotmail.com>:
+	* Document previous translation updates
+	* Import Launchpad translation updates
+	* Include HACKING file in distribution.
+
+2015-11-08
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix Georef mpp from coords.
+	* Make OSM services the default by including these modules first.
+	* Simplify filter actually uses the unsigned integer value.
+	* Fix Google maps positional web link.
+	* [QA] Fix issue spotted with cppcheck 1.70
+	* Remove unused northernHemisphere variable
+	* [QA] Output console message if g_mkdir_with_parents() is unsuccessful.
+	* CID#34603: Protection in copying into fixed size buffer
+	* CID#34584+CID#34583: Prevent deference after null check
+	* CID#34611+CID#34611: Prevent use of uninitialized scalar variables
+	* [QA] CID#34576: Remove logically dead code
+	* [QA] CID#34575: Remove logically dead code.
+	* [QA] CID#34543: Adjust curl_get_etag_func to use pointer to structure rather than the raw address.
+	* CID#131392: Avoid potential null pointer dereference
+	* CID#34574: Fix freeing the appropriate variable.
+	* [QA] Generally print warnings to the console for low level file operations (since they don't normally go wrong)
+	* [QA] CID#34547: Path value is checked so not worried about function return value.
+	* [QA] Coverity: Unchecked return value from library
+	* Fix track tooltips minutes value should be rounded.
+	* CID#101113: Result not floating point
+	* [QA] CID#101114+CID#101115: Result not floating point
+	* [QA] CID#131384: Check function return value.
+	* [QA] CID#131386: Check function result
+	* [QA] CID#131385+CID#131387: Be more explicit that we don't care about the result of this function call.
+	* [QA] CID#131393: Missing break in switch
+	* [QA] CID#131394: Check result of g_fopen()
+	* [QA] CID#131401+CID131400 - Improve printf arg types.
+	* [QA] CID#131402: Fix resource leak in handling metatile errors.
+	* Fix creating waypoints from JPGs when using gexiv2
+
+2015-09-25
+Szymon Bigos <szybig@gmail.com>:
+	* SF Bugs#126: Fix crash in gdk_rgb_convert_0888 due to using deallocated memory.
+
+2015-09-25
+Rob Norris <rw_norris@hotmail.com>:
+	* Disable Search and Routing with Google as they no longer support the APIs Viking used.
+	* Fix availability of Geotag consistency checks when using gexiv2
+
+2015-09-24
+Rob Norris <rw_norris@hotmail.com>:
+	* Remove --with-search configure options since they are not used.
+
+2015-09-22
+Rob Norris <rw_norris@hotmail.com>:
+	* Improve place search failure message to say if it is a service level issue.
+
+2015-09-21
+Rob Norris <rw_norris@hotmail.com>:
+	* Protect against possible out of bounds array access.
+
+2015-09-15
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Coverity 'Uninitialized pointer read' CID#34608 + CID#34609.
+	* [QA] Coverity 'Buffer not null terminated' issues CID#34544 + CID#34545
+
+2015-09-13
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix DEM height points on track graphs when height units is in feet and non-zero minimum height.
+	* [DOC] Improved introduction.
+
+2015-09-12
+Rob Norris <rw_norris@hotmail.com>:
+	* Only perform man page generation when scrollkeeper is also installed.
+	* [QA] Remove repeated statements in configure.ac
+	* Fix mapnik preferences initialisation to not crash if preferences are not available.
+	* Enable reference documentation generation by disabling optional components.
+
+2015-09-12
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Reactivate doc subtree
+
+2015-09-10
+Rob Norris <rw_norris@hotmail.com>:
+	* Ensure thumbnails are created when opening JPG files.
+
+2015-09-02
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Insert parameter for Viking's version in viking.xml
+
+2015-08-31
+Roman Lebedev <lebedev.ri@gmail.com>:
+	* Fix 2 heap-buffer-overflows in trw_layer_download_map_along_track_cb()
+	* Fix heap-buffer-overflow on Layers -> New GPS Layer
+
+2015-08-31
+Rob Norris <rw_norris@hotmail.com>:
+	* SF Bugs#121: Additional race condition crash protection.
+
+2015-08-31
+Szymon Bigos <szybig@gmail.com>:
+	* SF Bugs#121: Fix crash when invalidating previously acquired tiles.
+
+2015-08-30
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* QA: extract effective code from g_assert
+	* DOC: Fix typo
+
+2015-08-29
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* DOC: fixed typo
+
+2015-08-22
+Guilhem Bonnefille <guilhem.bonnefille@gmail.com>:
+	* Fixed typo on the bzip2 option's name in configure
+
+2015-07-29
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Extra info on magic usage.
+	* [QA] Extra info when using bzip2.
+	* SF BugsZZ#123: Fix bzip2 decompression on Windows.
+
+2015-07-16
+Loic Pefferkorn <loic@loicp.eu>:
+	* Fix Geocaches acquiring with latest geo-* software
+
+2015-07-11
+Rob Norris <rw_norris@hotmail.com>:
+	* Mapnik3 support.
+	* More correct menu icon
+
+2015-07-10
+Rob Norris <rw_norris@hotmail.com>:
+	* Don't attempt download if temporary file can't be opened.
+	* [QA] Fix spelling in a comment and add function comment
+
+2015-07-08
+Rob Norris <rw_norris@hotmail.com>:
+	* Ensure layer visibility is retained when copying layers.
+
+2015-07-07
+Rob Norris <rw_norris@hotmail.com>:
+	* SF Bugs#121: Provisional fix
+	* [WINDOWS] Fix reading zip files on Windows due to compiler alignment defaults changing.
+	* Read zip files contents which are stored with no compression.
+	* [QA] Protection from large malloc failures
+
+2015-07-05
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix logic for comparing timestamps
+	* [QA] Use correct type in sizeof function for memory allocation.
+
+2015-05-31
+Rob Norris <rw_norris@hotmail.com>:
+	* Don't retain GTK Dialogs in memory.
+	* Re-fix SF Features #82. Simplify usage of restoring the last used directory.
+	* [QA] Don't need copy this string.
+	* [QA] Use map ids
+	* SF Bugs#122: Fix memory cache confusion with multiple "On Disk OSM Tile Format" maps
+
+2015-05-04
+Rob Norris <rw_norris@hotmail.com>:
+	* Prevent Gtk-Critical warnings after viewing the Track property dialog.
+	* Support all values of GPS Mode fixType.
+
+2015-05-03
+Rob Norris <rw_norris@hotmail.com>:
+	* [QA] Fix typo in (an unused) macro definition.
+
+2015-05-03
+Matthew Hague <matthewhague@zoho.com>:
+	* keep alpha channel on mapnik rendering, scale alpha to alpha of mapnik layer
+
+2015-05-02
+Rob Norris <rw_norris@hotmail.com>:
+	* SF Bugs#120: Fix Track drawing bug across the 180th Meridian.
+	* Red Hat Bugzilla – Bug 1210403: Only download and process one Bing attribution list.
+	* Simplify debug output of loaded Bing attributions.
+	* [QA] Make function names more unique to simplify use of debugger breakpoints.
+
+2015-04-28
+Rob Norris <rw_norris@hotmail.com>:
+	* Make simple GPSBabel filter options use the updated acquire framework options.
+	* Rework Acquire framework process function options for maintainability and understanding.
+
+2015-04-21
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix stability of some 32 bit builds.
+
+2015-04-18
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix tracks and routes not displayed when downloaded via the GPS Layer.
+
+2015-04-17
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix availability of the Google routing direction engine
+	* Prevent crashing on direction requests when no engine is available.
+	* [QA] Rename routing engine function as it gives URLs
+
+2015-04-16
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix display of map tile source information when it has extended characters.
+	* [WINDOWS] Remove usage of 'filter with' functions as these don't work in Windows.
+	* [WINDOWS] Fix a missing \ in a potential gpsbabel location.
+	* Update Help to wiki conversion method as the wiki is now in Markdown.
+	* datasources.xml file should be packaged
+
+2015-04-04
+Rob Norris <rw_norris@hotmail.com>:
+	* Fix warning in a test program.
+	* [DOC] Update copyright year
+
 2015-03-29
 Rob Norris <rw_norris@hotmail.com>:
 	* Fix potential broken builds.

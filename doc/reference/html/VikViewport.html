@@ -1,0 +1,1742 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikViewport: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-vikutils.html" title="vikutils">
+<link rel="next" href="viking-vikwaypoint.html" title="vikwaypoint">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikViewport.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikViewport.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_signals">  <span class="dim">|</span> 
+                  <a href="#VikViewport.signals" class="shortcut">Signals</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-vikutils.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-vikwaypoint.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikViewport"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikViewport.top_of_page"></a>VikViewport</span></h2>
+<p>VikViewport</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikViewport.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikViewport.html#VIK-VIEWPORT-TYPE:CAPS" title="VIK_VIEWPORT_TYPE">VIK_VIEWPORT_TYPE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikViewport.html#VIK-VIEWPORT-MIN-ZOOM:CAPS" title="VIK_VIEWPORT_MIN_ZOOM">VIK_VIEWPORT_MIN_ZOOM</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikViewport.html" title="VikViewport"><span class="returnvalue">VikViewport</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-new" title="vik_viewport_new ()">vik_viewport_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-configure-manually" title="vik_viewport_configure_manually ()">vik_viewport_configure_manually</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-configure" title="vik_viewport_configure ()">vik_viewport_configure</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-screen-to-coord" title="vik_viewport_screen_to_coord ()">vik_viewport_screen_to_coord</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-coord-to-screen" title="vik_viewport_coord_to_screen ()">vik_viewport_coord_to_screen</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-ympp" title="vik_viewport_set_ympp ()">vik_viewport_set_ympp</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-xmpp" title="vik_viewport_set_xmpp ()">vik_viewport_set_xmpp</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-ympp" title="vik_viewport_get_ympp ()">vik_viewport_get_ympp</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-xmpp" title="vik_viewport_get_xmpp ()">vik_viewport_get_xmpp</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-zoom" title="vik_viewport_set_zoom ()">vik_viewport_set_zoom</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-zoom" title="vik_viewport_get_zoom ()">vik_viewport_get_zoom</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-zoom-in" title="vik_viewport_zoom_in ()">vik_viewport_zoom_in</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-zoom-out" title="vik_viewport_zoom_out ()">vik_viewport_zoom_out</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="returnvalue">VikCoord</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-center" title="vik_viewport_get_center ()">vik_viewport_get_center</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-center-coord" title="vik_viewport_set_center_coord ()">vik_viewport_set_center_coord</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-center-screen" title="vik_viewport_set_center_screen ()">vik_viewport_set_center_screen</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-center-for-zonen" title="vik_viewport_center_for_zonen ()">vik_viewport_center_for_zonen</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-leftmost-zone" title="vik_viewport_leftmost_zone ()">vik_viewport_leftmost_zone</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-rightmost-zone" title="vik_viewport_rightmost_zone ()">vik_viewport_rightmost_zone</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-center-utm" title="vik_viewport_set_center_utm ()">vik_viewport_set_center_utm</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-center-latlon" title="vik_viewport_set_center_latlon ()">vik_viewport_set_center_latlon</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-corners-for-zonen" title="vik_viewport_corners_for_zonen ()">vik_viewport_corners_for_zonen</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-min-max-lat-lon" title="vik_viewport_get_min_max_lat_lon ()">vik_viewport_get_min_max_lat_lon</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-go-back" title="vik_viewport_go_back ()">vik_viewport_go_back</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-go-forward" title="vik_viewport_go_forward ()">vik_viewport_go_forward</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-back-available" title="vik_viewport_back_available ()">vik_viewport_back_available</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-forward-available" title="vik_viewport_forward_available ()">vik_viewport_forward_available</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-show-centers" title="vik_viewport_show_centers ()">vik_viewport_show_centers</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="returnvalue">VikCoordMode</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-coord-mode" title="vik_viewport_get_coord_mode ()">vik_viewport_get_coord_mode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-is-one-zone" title="vik_viewport_is_one_zone ()">vik_viewport_is_one_zone</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-drawmode-name" title="vik_viewport_get_drawmode_name ()">vik_viewport_get_drawmode_name</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-drawmode" title="vik_viewport_set_drawmode ()">vik_viewport_set_drawmode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode"><span class="returnvalue">VikViewportDrawMode</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-drawmode" title="vik_viewport_get_drawmode ()">vik_viewport_get_drawmode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-trigger" title="vik_viewport_set_trigger ()">vik_viewport_set_trigger</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-trigger" title="vik_viewport_get_trigger ()">vik_viewport_get_trigger</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-snapshot-save" title="vik_viewport_snapshot_save ()">vik_viewport_snapshot_save</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-snapshot-load" title="vik_viewport_snapshot_load ()">vik_viewport_snapshot_load</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-half-drawn" title="vik_viewport_set_half_drawn ()">vik_viewport_set_half_drawn</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-half-drawn" title="vik_viewport_get_half_drawn ()">vik_viewport_get_half_drawn</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://library.gnome.org/devel/gdk3/gdk2-Bitmaps-and-Pixmaps.html#GdkPixmap"><span class="returnvalue">GdkPixmap</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-pixmap" title="vik_viewport_get_pixmap ()">vik_viewport_get_pixmap</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-sync" title="vik_viewport_sync ()">vik_viewport_sync</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-pan-sync" title="vik_viewport_pan_sync ()">vik_viewport_pan_sync</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-clear" title="vik_viewport_clear ()">vik_viewport_clear</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-pixbuf-with-alpha" title="vik_viewport_draw_pixbuf_with_alpha ()">vik_viewport_draw_pixbuf_with_alpha</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-pixbuf" title="vik_viewport_draw_pixbuf ()">vik_viewport_draw_pixbuf</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-width" title="vik_viewport_get_width ()">vik_viewport_get_width</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-height" title="vik_viewport_get_height ()">vik_viewport_get_height</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-reset-copyrights" title="vik_viewport_reset_copyrights ()">vik_viewport_reset_copyrights</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-add-copyright" title="vik_viewport_add_copyright ()">vik_viewport_add_copyright</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-reset-logos" title="vik_viewport_reset_logos ()">vik_viewport_reset_logos</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-add-logo" title="vik_viewport_add_logo ()">vik_viewport_add_logo</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-scale" title="vik_viewport_draw_scale ()">vik_viewport_draw_scale</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-draw-scale" title="vik_viewport_set_draw_scale ()">vik_viewport_set_draw_scale</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-draw-scale" title="vik_viewport_get_draw_scale ()">vik_viewport_get_draw_scale</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-copyright" title="vik_viewport_draw_copyright ()">vik_viewport_draw_copyright</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-centermark" title="vik_viewport_draw_centermark ()">vik_viewport_draw_centermark</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-draw-centermark" title="vik_viewport_set_draw_centermark ()">vik_viewport_set_draw_centermark</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-draw-centermark" title="vik_viewport_get_draw_centermark ()">vik_viewport_get_draw_centermark</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-logo" title="vik_viewport_draw_logo ()">vik_viewport_draw_logo</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-draw-highlight" title="vik_viewport_set_draw_highlight ()">vik_viewport_set_draw_highlight</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-draw-highlight" title="vik_viewport_get_draw_highlight ()">vik_viewport_get_draw_highlight</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-background-color" title="vik_viewport_set_background_color ()">vik_viewport_set_background_color</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-background-color" title="vik_viewport_get_background_color ()">vik_viewport_get_background_color</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gdk2/gdk3-Colors.html#GdkColor"><span class="returnvalue">GdkColor</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-background-gdkcolor" title="vik_viewport_get_background_gdkcolor ()">vik_viewport_get_background_gdkcolor</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-background-gdkcolor" title="vik_viewport_set_background_gdkcolor ()">vik_viewport_set_background_gdkcolor</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-gc-get-fg-color" title="vik_gc_get_fg_color ()">vik_gc_get_fg_color</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="returnvalue">GdkGC</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-new-gc" title="vik_viewport_new_gc ()">vik_viewport_new_gc</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="returnvalue">GdkGC</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-new-gc-from-color" title="vik_viewport_new_gc_from_color ()">vik_viewport_new_gc_from_color</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkFunction"><span class="returnvalue">GdkFunction</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-gc-get-function" title="vik_gc_get_function ()">vik_gc_get_function</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-highlight-color" title="vik_viewport_set_highlight_color ()">vik_viewport_set_highlight_color</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-highlight-color" title="vik_viewport_get_highlight_color ()">vik_viewport_get_highlight_color</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gdk2/gdk3-Colors.html#GdkColor"><span class="returnvalue">GdkColor</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-highlight-gdkcolor" title="vik_viewport_get_highlight_gdkcolor ()">vik_viewport_get_highlight_gdkcolor</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-highlight-gdkcolor" title="vik_viewport_set_highlight_gdkcolor ()">vik_viewport_set_highlight_gdkcolor</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="returnvalue">GdkGC</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-get-gc-highlight" title="vik_viewport_get_gc_highlight ()">vik_viewport_get_gc_highlight</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-set-highlight-thickness" title="vik_viewport_set_highlight_thickness ()">vik_viewport_set_highlight_thickness</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#a-viewport-clip-line" title="a_viewport_clip_line ()">a_viewport_clip_line</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-line" title="vik_viewport_draw_line ()">vik_viewport_draw_line</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-rectangle" title="vik_viewport_draw_rectangle ()">vik_viewport_draw_rectangle</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-string" title="vik_viewport_draw_string ()">vik_viewport_draw_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-arc" title="vik_viewport_draw_arc ()">vik_viewport_draw_arc</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-polygon" title="vik_viewport_draw_polygon ()">vik_viewport_draw_polygon</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-draw-layout" title="vik_viewport_draw_layout ()">vik_viewport_draw_layout</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikViewport.html#vik-viewport-compute-bearing" title="vik_viewport_compute_bearing ()">vik_viewport_compute_bearing</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikViewport.signals"></a><h2>Signals</h2>
+<div class="informaltable"><table border="0">
+<colgroup>
+<col width="150px" class="signals_return">
+<col width="300px" class="signals_name">
+<col width="200px" class="signals_flags">
+</colgroup>
+<tbody><tr>
+<td class="signal_type"><span class="returnvalue">void</span></td>
+<td class="signal_name"><a class="link" href="VikViewport.html#VikViewport-updated-center" title="The “updated-center” signal">updated-center</a></td>
+<td class="signal_flags"><a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-ACTION:CAPS">Action</a></td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikViewport.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikViewport.html#VIK-VIEWPORT-MAX-ZOOM:CAPS" title="VIK_VIEWPORT_MAX_ZOOM">VIK_VIEWPORT_MAX_ZOOM</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikViewport.html#VIK-VIEWPORT-UTM-WRONG-ZONE:CAPS" title="VIK_VIEWPORT_UTM_WRONG_ZONE">VIK_VIEWPORT_UTM_WRONG_ZONE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikViewport.html#VIK-VIEWPORT-OFF-SCREEN-DOUBLE:CAPS" title="VIK_VIEWPORT_OFF_SCREEN_DOUBLE">VIK_VIEWPORT_OFF_SCREEN_DOUBLE</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode">VikViewportDrawMode</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikViewport.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-Enumeration-and-Flag-Types.html">GEnum</a>
+    <span class="lineart">╰──</span> VikViewportDrawMode
+    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GInitiallyUnowned">GInitiallyUnowned</a>
+        <span class="lineart">╰──</span> <a href="http://library.gnome.org/devel/gtk3/GtkObject.html">GtkObject</a>
+            <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkWidget.html">GtkWidget</a>
+                <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkDrawingArea.html">GtkDrawingArea</a>
+                    <span class="lineart">╰──</span> VikViewport
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikViewport.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="VikViewport.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-VIEWPORT-TYPE:CAPS"></a><h3>VIK_VIEWPORT_TYPE</h3>
+<pre class="programlisting">#define VIK_VIEWPORT_TYPE            (vik_viewport_get_type ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-VIEWPORT-MIN-ZOOM:CAPS"></a><h3>VIK_VIEWPORT_MIN_ZOOM</h3>
+<pre class="programlisting">#define VIK_VIEWPORT_MIN_ZOOM (1 / 32.0)
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-new"></a><h3>vik_viewport_new ()</h3>
+<pre class="programlisting"><a class="link" href="VikViewport.html" title="VikViewport"><span class="returnvalue">VikViewport</span></a> *
+vik_viewport_new ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-configure-manually"></a><h3>vik_viewport_configure_manually ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_configure_manually (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                 <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> width</code></em>,
+                                 <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-configure"></a><h3>vik_viewport_configure ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_configure (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-screen-to-coord"></a><h3>vik_viewport_screen_to_coord ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_screen_to_coord (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                              <em class="parameter"><code><span class="type">int</span> x</code></em>,
+                              <em class="parameter"><code><span class="type">int</span> y</code></em>,
+                              <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-coord-to-screen"></a><h3>vik_viewport_coord_to_screen ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_coord_to_screen (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                              <em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                              <em class="parameter"><code><span class="type">int</span> *x</code></em>,
+                              <em class="parameter"><code><span class="type">int</span> *y</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-ympp"></a><h3>vik_viewport_set_ympp ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_ympp (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> ympp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-xmpp"></a><h3>vik_viewport_set_xmpp ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_xmpp (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> xmpp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-ympp"></a><h3>vik_viewport_get_ympp ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_viewport_get_ympp (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-xmpp"></a><h3>vik_viewport_get_xmpp ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_viewport_get_xmpp (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-zoom"></a><h3>vik_viewport_set_zoom ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_zoom (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> mpp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-zoom"></a><h3>vik_viewport_get_zoom ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_viewport_get_zoom (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-zoom-in"></a><h3>vik_viewport_zoom_in ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_zoom_in (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-zoom-out"></a><h3>vik_viewport_zoom_out ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_zoom_out (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-center"></a><h3>vik_viewport_get_center ()</h3>
+<pre class="programlisting">const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="returnvalue">VikCoord</span></a> *
+vik_viewport_get_center (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-center-coord"></a><h3>vik_viewport_set_center_coord ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_center_coord (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                               <em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                               <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> save_position</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.151.8.18.4"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vvp</p></td>
+<td class="parameter_description"><p>The viewport to reposition.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>coord</p></td>
+<td class="parameter_description"><p>The new center position in a VikCoord type</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>save_position</p></td>
+<td class="parameter_description"><p>Whether this new position should be saved into the history of positions
+Normally only specific user requests should be saved (i.e. to not include Pan and Zoom repositions)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-center-screen"></a><h3>vik_viewport_set_center_screen ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_center_screen (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                <em class="parameter"><code><span class="type">int</span> x</code></em>,
+                                <em class="parameter"><code><span class="type">int</span> y</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-center-for-zonen"></a><h3>vik_viewport_center_for_zonen ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_center_for_zonen (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                               <em class="parameter"><code><span class="type">struct UTM</span> *center</code></em>,
+                               <em class="parameter"><code><span class="type">int</span> zone</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-leftmost-zone"></a><h3>vik_viewport_leftmost_zone ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>
+vik_viewport_leftmost_zone (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-rightmost-zone"></a><h3>vik_viewport_rightmost_zone ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>
+vik_viewport_rightmost_zone (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-center-utm"></a><h3>vik_viewport_set_center_utm ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_center_utm (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                             <em class="parameter"><code>const <span class="type">struct UTM</span> *utm</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> save_position</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.151.8.23.4"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vvp</p></td>
+<td class="parameter_description"><p>The viewport to reposition.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>utm</p></td>
+<td class="parameter_description"><p>The new center position in UTM format</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>save_position</p></td>
+<td class="parameter_description"><p>Whether this new position should be saved into the history of positions
+Normally only specific user requests should be saved (i.e. to not include Pan and Zoom repositions)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-center-latlon"></a><h3>vik_viewport_set_center_latlon ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_center_latlon (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                <em class="parameter"><code>const <span class="type">struct LatLon</span> *ll</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> save_position</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.151.8.24.4"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vvp</p></td>
+<td class="parameter_description"><p>The viewport to reposition.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>ll</p></td>
+<td class="parameter_description"><p>The new center position in Lat/Lon format</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>save_position</p></td>
+<td class="parameter_description"><p>Whether this new position should be saved into the history of positions
+Normally only specific user requests should be saved (i.e. to not include Pan and Zoom repositions)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-corners-for-zonen"></a><h3>vik_viewport_corners_for_zonen ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_corners_for_zonen (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                <em class="parameter"><code><span class="type">int</span> zone</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *ul</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *br</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-min-max-lat-lon"></a><h3>vik_viewport_get_min_max_lat_lon ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_get_min_max_lat_lon (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *min_lat</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *max_lat</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *min_lon</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *max_lon</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-go-back"></a><h3>vik_viewport_go_back ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_go_back (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+<p>Move back in the position history</p>
+<div class="refsect3">
+<a name="id-1.2.151.8.27.5"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> one success</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-go-forward"></a><h3>vik_viewport_go_forward ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_go_forward (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+<p>Move forward in the position history</p>
+<div class="refsect3">
+<a name="id-1.2.151.8.28.5"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> one success</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-back-available"></a><h3>vik_viewport_back_available ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_back_available (<em class="parameter"><code>const <a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.151.8.29.4"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> when a previous position in the history is available</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-forward-available"></a><h3>vik_viewport_forward_available ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_forward_available (<em class="parameter"><code>const <a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.151.8.30.4"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> when a next position in the history is available</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-show-centers"></a><h3>vik_viewport_show_centers ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_show_centers (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                           <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWindow.html"><span class="type">GtkWindow</span></a> *parent</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-coord-mode"></a><h3>vik_viewport_get_coord_mode ()</h3>
+<pre class="programlisting"><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="returnvalue">VikCoordMode</span></a>
+vik_viewport_get_coord_mode (<em class="parameter"><code>const <a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-is-one-zone"></a><h3>vik_viewport_is_one_zone ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_is_one_zone (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-drawmode-name"></a><h3>vik_viewport_get_drawmode_name ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_viewport_get_drawmode_name (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vv</code></em>,
+                                <em class="parameter"><code><a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode"><span class="type">VikViewportDrawMode</span></a> mode</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-drawmode"></a><h3>vik_viewport_set_drawmode ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_drawmode (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                           <em class="parameter"><code><a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode"><span class="type">VikViewportDrawMode</span></a> drawmode</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-drawmode"></a><h3>vik_viewport_get_drawmode ()</h3>
+<pre class="programlisting"><a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode"><span class="returnvalue">VikViewportDrawMode</span></a>
+vik_viewport_get_drawmode (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-trigger"></a><h3>vik_viewport_set_trigger ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_trigger (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> trigger</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-trigger"></a><h3>vik_viewport_get_trigger ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+vik_viewport_get_trigger (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-snapshot-save"></a><h3>vik_viewport_snapshot_save ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_snapshot_save (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-snapshot-load"></a><h3>vik_viewport_snapshot_load ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_snapshot_load (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-half-drawn"></a><h3>vik_viewport_set_half_drawn ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_half_drawn (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> half_drawn</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-half-drawn"></a><h3>vik_viewport_get_half_drawn ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_get_half_drawn (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-pixmap"></a><h3>vik_viewport_get_pixmap ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/gdk3/gdk2-Bitmaps-and-Pixmaps.html#GdkPixmap"><span class="returnvalue">GdkPixmap</span></a> *
+vik_viewport_get_pixmap (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-sync"></a><h3>vik_viewport_sync ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_sync (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-pan-sync"></a><h3>vik_viewport_pan_sync ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_pan_sync (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x_off</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y_off</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-clear"></a><h3>vik_viewport_clear ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_clear (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+<p>Clear the whole viewport.</p>
+<div class="refsect3">
+<a name="id-1.2.151.8.46.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>vvp</p></td>
+<td class="parameter_description"><p>self object</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-pixbuf-with-alpha"></a><h3>vik_viewport_draw_pixbuf_with_alpha ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_pixbuf_with_alpha (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                     <em class="parameter"><code><span class="type">GdkPixbuf</span> *pixbuf</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> alpha</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> src_x</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> src_y</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> dest_x</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> dest_y</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> w</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> h</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-pixbuf"></a><h3>vik_viewport_draw_pixbuf ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_pixbuf (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                          <em class="parameter"><code><span class="type">GdkPixbuf</span> *pixbuf</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> src_x</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> src_y</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> dest_x</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> dest_y</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> w</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> h</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-width"></a><h3>vik_viewport_get_width ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+vik_viewport_get_width (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-height"></a><h3>vik_viewport_get_height ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+vik_viewport_get_height (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-reset-copyrights"></a><h3>vik_viewport_reset_copyrights ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_reset_copyrights (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-add-copyright"></a><h3>vik_viewport_add_copyright ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_add_copyright (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>,
+                            <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *copyright</code></em>);</pre>
+<p>Add a copyright to display on viewport.</p>
+<div class="refsect3">
+<a name="id-1.2.151.8.52.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vp</p></td>
+<td class="parameter_description"><p>self object</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>copyright</p></td>
+<td class="parameter_description"><p>new copyright to display</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-reset-logos"></a><h3>vik_viewport_reset_logos ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_reset_logos (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-add-logo"></a><h3>vik_viewport_add_logo ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_add_logo (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>,
+                       <em class="parameter"><code>const <span class="type">GdkPixbuf</span> *logo</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-scale"></a><h3>vik_viewport_draw_scale ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_scale (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-draw-scale"></a><h3>vik_viewport_set_draw_scale ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_draw_scale (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> draw_scale</code></em>);</pre>
+<p>Enable/Disable display of scale.</p>
+<div class="refsect3">
+<a name="id-1.2.151.8.56.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vvp</p></td>
+<td class="parameter_description"><p>self</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>draw_scale</p></td>
+<td class="parameter_description"><p>new value</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-draw-scale"></a><h3>vik_viewport_get_draw_scale ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_get_draw_scale (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-copyright"></a><h3>vik_viewport_draw_copyright ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_copyright (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-centermark"></a><h3>vik_viewport_draw_centermark ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_centermark (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-draw-centermark"></a><h3>vik_viewport_set_draw_centermark ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_draw_centermark (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> draw_centermark</code></em>);</pre>
+<p>Enable/Disable display of center mark.</p>
+<div class="refsect3">
+<a name="id-1.2.151.8.60.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vvp</p></td>
+<td class="parameter_description"><p>self object</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>draw_centermark</p></td>
+<td class="parameter_description"><p>new value</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-draw-centermark"></a><h3>vik_viewport_get_draw_centermark ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_get_draw_centermark (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-logo"></a><h3>vik_viewport_draw_logo ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_logo (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-draw-highlight"></a><h3>vik_viewport_set_draw_highlight ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_draw_highlight (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                 <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> draw_highlight</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-draw-highlight"></a><h3>vik_viewport_get_draw_highlight ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_viewport_get_draw_highlight (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-background-color"></a><h3>vik_viewport_set_background_color ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_background_color (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                   <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *color</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-background-color"></a><h3>vik_viewport_get_background_color ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_viewport_get_background_color (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-background-gdkcolor"></a><h3>vik_viewport_get_background_gdkcolor ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gdk2/gdk3-Colors.html#GdkColor"><span class="returnvalue">GdkColor</span></a> *
+vik_viewport_get_background_gdkcolor (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-background-gdkcolor"></a><h3>vik_viewport_set_background_gdkcolor ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_background_gdkcolor (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                      <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Colors.html#GdkColor"><span class="type">GdkColor</span></a> *Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-gc-get-fg-color"></a><h3>vik_gc_get_fg_color ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_gc_get_fg_color (<em class="parameter"><code><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="type">GdkGC</span></a> *gc</code></em>,
+                     <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Colors.html#GdkColor"><span class="type">GdkColor</span></a> *dest</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-new-gc"></a><h3>vik_viewport_new_gc ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="returnvalue">GdkGC</span></a> *
+vik_viewport_new_gc (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                     <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *colorname</code></em>,
+                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> thickness</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-new-gc-from-color"></a><h3>vik_viewport_new_gc_from_color ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="returnvalue">GdkGC</span></a> *
+vik_viewport_new_gc_from_color (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Colors.html#GdkColor"><span class="type">GdkColor</span></a> *color</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> thickness</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-gc-get-function"></a><h3>vik_gc_get_function ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkFunction"><span class="returnvalue">GdkFunction</span></a>
+vik_gc_get_function (<em class="parameter"><code><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="type">GdkGC</span></a> *gc</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-highlight-color"></a><h3>vik_viewport_set_highlight_color ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_highlight_color (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                  <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *color</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-highlight-color"></a><h3>vik_viewport_get_highlight_color ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_viewport_get_highlight_color (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-highlight-gdkcolor"></a><h3>vik_viewport_get_highlight_gdkcolor ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gdk2/gdk3-Colors.html#GdkColor"><span class="returnvalue">GdkColor</span></a> *
+vik_viewport_get_highlight_gdkcolor (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-highlight-gdkcolor"></a><h3>vik_viewport_set_highlight_gdkcolor ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_highlight_gdkcolor (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                     <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Colors.html#GdkColor"><span class="type">GdkColor</span></a> *Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-get-gc-highlight"></a><h3>vik_viewport_get_gc_highlight ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="returnvalue">GdkGC</span></a> *
+vik_viewport_get_gc_highlight (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-set-highlight-thickness"></a><h3>vik_viewport_set_highlight_thickness ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_set_highlight_thickness (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> thickness</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-viewport-clip-line"></a><h3>a_viewport_clip_line ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_viewport_clip_line (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *x1</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *y1</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *x2</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *y2</code></em>);</pre>
+<p>Due to the seemingly undocumented behaviour of <a href="http://library.gnome.org/devel/gdk3/gdk2-Drawing-Primitives.html#gdk-draw-line"><code class="function">gdk_draw_line()</code></a>, we need to restrict the range of values passed in.
+So despite it accepting gints, the effective range seems to be the actually the minimum C int range (2^16).
+This seems to be limitations coming from the X Window System.</p>
+<p>See http://www.rahul.net/kenton/40errs.html
+ERROR 7. Boundary conditions.
+"The X coordinate space is not infinite.
+ Most drawing functions limit position, width, and height to 16 bit integers (sometimes signed, sometimes unsigned) of accuracy.
+ Because most C compilers use 32 bit integers, Xlib will not complain if you exceed the 16 bit limit, but your results will usually not be what you expected.
+ You should be especially careful of this if you are implementing higher level scalable graphics packages."</p>
+<p>This function should be called before calling <a href="http://library.gnome.org/devel/gdk3/gdk2-Drawing-Primitives.html#gdk-draw-line"><code class="function">gdk_draw_line()</code></a>.</p>
+<div class="refsect3">
+<a name="id-1.2.151.8.79.7"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>x1</p></td>
+<td class="parameter_description"><p>screen coord</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>y1</p></td>
+<td class="parameter_description"><p>screen coord</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>x2</p></td>
+<td class="parameter_description"><p>screen coord</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>y2</p></td>
+<td class="parameter_description"><p>screen coord</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-line"></a><h3>vik_viewport_draw_line ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_line (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                        <em class="parameter"><code><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="type">GdkGC</span></a> *gc</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x1</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y1</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x2</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-rectangle"></a><h3>vik_viewport_draw_rectangle ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_rectangle (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                             <em class="parameter"><code><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="type">GdkGC</span></a> *gc</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> filled</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x1</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y1</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x2</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-string"></a><h3>vik_viewport_draw_string ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_string (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                          <em class="parameter"><code><a href="http://library.gnome.org/devel/gdk3/gdk2-Fonts.html#GdkFont"><span class="type">GdkFont</span></a> *font</code></em>,
+                          <em class="parameter"><code><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="type">GdkGC</span></a> *gc</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x1</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y1</code></em>,
+                          <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *string</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-arc"></a><h3>vik_viewport_draw_arc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_arc (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                       <em class="parameter"><code><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="type">GdkGC</span></a> *gc</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> filled</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> width</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> height</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> angle1</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> angle2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-polygon"></a><h3>vik_viewport_draw_polygon ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_polygon (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                           <em class="parameter"><code><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="type">GdkGC</span></a> *gc</code></em>,
+                           <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> filled</code></em>,
+                           <em class="parameter"><code><a href="http://developer.gnome.org/gdk2/gdk3-Points-Rectangles-and-Regions.html#GdkPoint"><span class="type">GdkPoint</span></a> *points</code></em>,
+                           <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> npoints</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-draw-layout"></a><h3>vik_viewport_draw_layout ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_draw_layout (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                          <em class="parameter"><code><a href="http://library.gnome.org/devel/gdk3/gdk2-Graphics-Contexts.html#GdkGC"><span class="type">GdkGC</span></a> *gc</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y</code></em>,
+                          <em class="parameter"><code><span class="type">PangoLayout</span> *layout</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-viewport-compute-bearing"></a><h3>vik_viewport_compute_bearing ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_viewport_compute_bearing (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vp</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x1</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y1</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x2</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y2</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *angle</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *baseangle</code></em>);</pre>
+<p>Compute bearing.</p>
+<div class="refsect3">
+<a name="id-1.2.151.8.86.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vp</p></td>
+<td class="parameter_description"><p>self object</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>x1</p></td>
+<td class="parameter_description"><p>screen coord</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>y1</p></td>
+<td class="parameter_description"><p>screen coord</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>x2</p></td>
+<td class="parameter_description"><p>screen coord</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>y2</p></td>
+<td class="parameter_description"><p>screen coord</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>angle</p></td>
+<td class="parameter_description"><p>bearing in Radian (output)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>baseangle</p></td>
+<td class="parameter_description"><p>UTM base angle in Radian (output)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikViewport.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="VIK-VIEWPORT-MAX-ZOOM:CAPS"></a><h3>VIK_VIEWPORT_MAX_ZOOM</h3>
+<pre class="programlisting">#define VIK_VIEWPORT_MAX_ZOOM 32768.0
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-VIEWPORT-UTM-WRONG-ZONE:CAPS"></a><h3>VIK_VIEWPORT_UTM_WRONG_ZONE</h3>
+<pre class="programlisting">#define VIK_VIEWPORT_UTM_WRONG_ZONE -9999999
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-VIEWPORT-OFF-SCREEN-DOUBLE:CAPS"></a><h3>VIK_VIEWPORT_OFF_SCREEN_DOUBLE</h3>
+<pre class="programlisting">#define VIK_VIEWPORT_OFF_SCREEN_DOUBLE -9999999.9
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikViewportDrawMode"></a><h3>enum VikViewportDrawMode</h3>
+<div class="refsect3">
+<a name="id-1.2.151.9.5.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-VIEWPORT-DRAWMODE-UTM:CAPS"></a>VIK_VIEWPORT_DRAWMODE_UTM</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-VIEWPORT-DRAWMODE-EXPEDIA:CAPS"></a>VIK_VIEWPORT_DRAWMODE_EXPEDIA</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-VIEWPORT-DRAWMODE-MERCATOR:CAPS"></a>VIK_VIEWPORT_DRAWMODE_MERCATOR</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-VIEWPORT-DRAWMODE-LATLON:CAPS"></a>VIK_VIEWPORT_DRAWMODE_LATLON</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-VIEWPORT-NUM-DRAWMODES:CAPS"></a>VIK_VIEWPORT_NUM_DRAWMODES</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikViewport.signal-details"></a><h2>Signal Details</h2>
+<div class="refsect2">
+<a name="VikViewport-updated-center"></a><h3>The <code class="literal">“updated-center”</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+user_function (<a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vikviewport,
+               <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)</pre>
+<p>Flags: <a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-ACTION:CAPS">Action</a></p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

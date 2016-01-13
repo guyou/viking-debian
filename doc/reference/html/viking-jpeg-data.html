@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>jpeg-data: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-icons.html" title="icons">
+<link rel="next" href="viking-jpeg-marker.html" title="jpeg-marker">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-jpeg-data.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-icons.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-jpeg-marker.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-jpeg-data"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-jpeg-data.top_of_page"></a>jpeg-data</span></h2>
+<p>jpeg-data</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-jpeg-data.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="returnvalue">JPEGData</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-new" title="jpeg_data_new ()">jpeg_data_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="returnvalue">JPEGData</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-new-from-file" title="jpeg_data_new_from_file ()">jpeg_data_new_from_file</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="returnvalue">JPEGData</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-new-from-data" title="jpeg_data_new_from_data ()">jpeg_data_new_from_data</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-ref" title="jpeg_data_ref ()">jpeg_data_ref</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-unref" title="jpeg_data_unref ()">jpeg_data_unref</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-free" title="jpeg_data_free ()">jpeg_data_free</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-load-data" title="jpeg_data_load_data ()">jpeg_data_load_data</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-save-data" title="jpeg_data_save_data ()">jpeg_data_save_data</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-load-file" title="jpeg_data_load_file ()">jpeg_data_load_file</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-save-file" title="jpeg_data_save_file ()">jpeg_data_save_file</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-set-exif-data" title="jpeg_data_set_exif_data ()">jpeg_data_set_exif_data</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">ExifData</span> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-get-exif-data" title="jpeg_data_get_exif_data ()">jpeg_data_get_exif_data</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-dump" title="jpeg_data_dump ()">jpeg_data_dump</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-append-section" title="jpeg_data_append_section ()">jpeg_data_append_section</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-jpeg-data.html#jpeg-data-log" title="jpeg_data_log ()">jpeg_data_log</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-jpeg-data.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="viking-jpeg-data.html#JPEGContentAPP1" title="JPEGContentAPP1">JPEGContentAPP1</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="viking-jpeg-data.html#JPEGContentGeneric" title="struct JPEGContentGeneric">JPEGContentGeneric</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">union</td>
+<td class="function_name"><a class="link" href="viking-jpeg-data.html#JPEGContent" title="union JPEGContent">JPEGContent</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="viking-jpeg-data.html#JPEGSection" title="struct JPEGSection">JPEGSection</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData">JPEGData</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-jpeg-data.html#JPEGDataPrivate" title="JPEGDataPrivate">JPEGDataPrivate</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-jpeg-data.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-jpeg-data.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="jpeg-data-new"></a><h3>jpeg_data_new ()</h3>
+<pre class="programlisting"><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="returnvalue">JPEGData</span></a> *
+jpeg_data_new (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-new-from-file"></a><h3>jpeg_data_new_from_file ()</h3>
+<pre class="programlisting"><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="returnvalue">JPEGData</span></a> *
+jpeg_data_new_from_file (<em class="parameter"><code>const <span class="type">char</span> *path</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-new-from-data"></a><h3>jpeg_data_new_from_data ()</h3>
+<pre class="programlisting"><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="returnvalue">JPEGData</span></a> *
+jpeg_data_new_from_data (<em class="parameter"><code>const unsigned <span class="type">char</span> *data</code></em>,
+                         <em class="parameter"><code>unsigned <span class="type">int</span> size</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-ref"></a><h3>jpeg_data_ref ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_ref (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-unref"></a><h3>jpeg_data_unref ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_unref (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-free"></a><h3>jpeg_data_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_free (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-load-data"></a><h3>jpeg_data_load_data ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_load_data (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>,
+                     <em class="parameter"><code>const unsigned <span class="type">char</span> *d</code></em>,
+                     <em class="parameter"><code>unsigned <span class="type">int</span> size</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-save-data"></a><h3>jpeg_data_save_data ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_save_data (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>,
+                     <em class="parameter"><code>unsigned <span class="type">char</span> **d</code></em>,
+                     <em class="parameter"><code>unsigned <span class="type">int</span> *size</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-load-file"></a><h3>jpeg_data_load_file ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_load_file (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>,
+                     <em class="parameter"><code>const <span class="type">char</span> *path</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-save-file"></a><h3>jpeg_data_save_file ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+jpeg_data_save_file (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>,
+                     <em class="parameter"><code>const <span class="type">char</span> *path</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-set-exif-data"></a><h3>jpeg_data_set_exif_data ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_set_exif_data (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>,
+                         <em class="parameter"><code><span class="type">ExifData</span> *exif_data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-get-exif-data"></a><h3>jpeg_data_get_exif_data ()</h3>
+<pre class="programlisting"><span class="returnvalue">ExifData</span> *
+jpeg_data_get_exif_data (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-dump"></a><h3>jpeg_data_dump ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_dump (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-append-section"></a><h3>jpeg_data_append_section ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_append_section (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="jpeg-data-log"></a><h3>jpeg_data_log ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+jpeg_data_log (<em class="parameter"><code><a class="link" href="viking-jpeg-data.html#JPEGData" title="struct JPEGData"><span class="type">JPEGData</span></a> *data</code></em>,
+               <em class="parameter"><code><span class="type">ExifLog</span> *log</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-jpeg-data.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="JPEGContentAPP1"></a><h3>JPEGContentAPP1</h3>
+<pre class="programlisting">typedef ExifData * JPEGContentAPP1;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="JPEGContentGeneric"></a><h3>struct JPEGContentGeneric</h3>
+<pre class="programlisting">struct JPEGContentGeneric {
+	unsigned char *data;
+	unsigned int size;
+};
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="JPEGContent"></a><h3>union JPEGContent</h3>
+</div>
+<hr>
+<div class="refsect2">
+<a name="JPEGSection"></a><h3>struct JPEGSection</h3>
+<pre class="programlisting">struct JPEGSection {
+	JPEGMarker marker;
+	JPEGContent content;
+};
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="JPEGData"></a><h3>struct JPEGData</h3>
+<pre class="programlisting">struct JPEGData {
+	JPEGSection *sections;
+	unsigned int count;
+
+	unsigned char *data;
+	unsigned int size;
+
+	JPEGDataPrivate *priv;
+};
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="JPEGDataPrivate"></a><h3>JPEGDataPrivate</h3>
+<pre class="programlisting">typedef struct _JPEGDataPrivate JPEGDataPrivate;</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>
