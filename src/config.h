@@ -236,7 +236,7 @@
 #define PACKAGE_NAME "viking"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "viking 1.6.1"
+#define PACKAGE_STRING "viking 1.6.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "viking"
@@ -245,13 +245,16 @@
 #define PACKAGE_URL "http://viking.sf.net/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.6.1"
+#define PACKAGE_VERSION "1.6.2"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
+/* The Year */
+#define THEYEAR "2015"
+
 /* Version number of package */
-#define VERSION "1.6.1"
+#define VERSION "1.6.2"
 
 /* BING STUFF */
 #define VIK_CONFIG_BING /**/

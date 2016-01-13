@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.64)
-AC_INIT(viking, 1.6.1, , viking, http://viking.sf.net/)
+AC_INIT(viking, 1.6.2, , viking, http://viking.sf.net/)
 AM_INIT_AUTOMAKE([dist-bzip2 dist-zip subdir-objects])
 dnl AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
@@ -407,6 +407,11 @@ AC_PATH_PROG(XP,xsltproc)
 AM_CONDITIONAL([HAVE_XSLTPROC],[test "x$XP" != "x"])
 AC_CHECK_PROG([HAVE_SCROLLKEEPER],scrollkeeper-config,"yes")
 AM_CONDITIONAL([GEN_MANPAGES],[test "x$XP" != "x" && test -r "$DB2MAN_XSL"] && test "${HAVE_SCROLLKEEPER}" == "yes" )
+
+ISODATE=`date +%Y-%m-%d`
+AC_SUBST(ISODATE)
+
+AC_DEFINE_UNQUOTED(THEYEAR, "`date +%Y`", [The Year])
 
 # Configuration
 AC_CONFIG_FILES([

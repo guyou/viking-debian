@@ -627,7 +627,7 @@ void a_dialog_about ( GtkWindow *parent )
   const gchar *program_name = PACKAGE_NAME;
   const gchar *version = VIKING_VERSION;
   const gchar *website = VIKING_URL;
-  const gchar *copyright = "2003-2008, Evan Battaglia\n2008-2015, Viking's contributors";
+  const gchar *copyright = "2003-2008, Evan Battaglia\n2008-"THEYEAR", Viking's contributors";
   const gchar *comments = _("GPS Data and Topo Analyzer, Explorer, and Manager.");
   const gchar *license = _("This program is free software; you can redistribute it and/or modify "
 			"it under the terms of the GNU General Public License as published by "
@@ -662,6 +662,9 @@ void a_dialog_about ( GtkWindow *parent )
 #endif
 #ifdef HAVE_LIBCURL
     "libcurl",
+#endif
+#ifdef HAVE_EXPAT_H
+    "libexpat",
 #endif
     // Actually optional libs
 #ifdef HAVE_LIBGPS
