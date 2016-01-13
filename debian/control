@@ -25,7 +25,8 @@ Build-Depends: debhelper (>= 7.2.14),
  libbz2-dev,
  libmagic-dev,
  gnome-common,
- libsqlite3-dev
+ libsqlite3-dev,
+ libmapnik-dev
 Standards-Version: 3.8.4
 Homepage: http://viking.sf.net
 Vcs-Git: git://git.debian.org/collab-maint/viking.git
