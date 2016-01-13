@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikMapSourceDefault: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="VikMapSource.html" title="VikMapSource">
+<link rel="next" href="VikMapType.html" title="VikMapType">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikMapSourceDefault.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikMapSourceDefault.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_properties">  <span class="dim">|</span> 
+                  <a href="#VikMapSourceDefault.properties" class="shortcut">Properties</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="VikMapSource.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="VikMapType.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikMapSourceDefault"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikMapSourceDefault.top_of_page"></a>VikMapSourceDefault</span></h2>
+<p>VikMapSourceDefault — the base class implementing most of generic features</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikMapSourceDefault.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSourceDefault.html#vik-map-source-default-get-uri" title="vik_map_source_default_get_uri ()">vik_map_source_default_get_uri</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSourceDefault.html#vik-map-source-default-get-hostname" title="vik_map_source_default_get_hostname ()">vik_map_source_default_get_hostname</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-download.html#DownloadMapOptions" title="DownloadMapOptions"><span class="returnvalue">DownloadMapOptions</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSourceDefault.html#vik-map-source-default-get-download-options" title="vik_map_source_default_get_download_options ()">vik_map_source_default_get_download_options</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikMapSourceDefault.properties"></a><h2>Properties</h2>
+<div class="informaltable"><table border="0">
+<colgroup>
+<col width="150px" class="properties_type">
+<col width="300px" class="properties_name">
+<col width="200px" class="properties_flags">
+</colgroup>
+<tbody>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--copyright" title="The “copyright” property">copyright</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode"><span class="type">VikViewportDrawMode</span></a></td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--drawmode" title="The “drawmode” property">drawmode</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--file-extension" title="The “file-extension” property">file-extension</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--id" title="The “id” property">id</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--label" title="The “label” property">label</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--license" title="The “license” property">license</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--license-url" title="The “license-url” property">license-url</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--name" title="The “name” property">name</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--tilesize-x" title="The “tilesize-x” property">tilesize-x</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></td>
+<td class="property_name"><a class="link" href="VikMapSourceDefault.html#VikMapSourceDefault--tilesize-y" title="The “tilesize-y” property">tilesize-y</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikMapSourceDefault.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> <a class="link" href="VikMapSource.html" title="VikMapSource">VikMapSource</a>
+        <span class="lineart">╰──</span> VikMapSourceDefault
+            <span class="lineart">├──</span> <a class="link" href="VikSlippyMapSource.html" title="VikSlippyMapSource">VikSlippyMapSource</a>
+            <span class="lineart">├──</span> <a class="link" href="VikTmsMapSource.html" title="VikTmsMapSource">VikTmsMapSource</a>
+            <span class="lineart">╰──</span> <a class="link" href="VikWmscMapSource.html" title="VikWmscMapSource">VikWmscMapSource</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikMapSourceDefault.description"></a><h2>Description</h2>
+<p>The <a class="link" href="VikMapSourceDefault.html" title="VikMapSourceDefault"><span class="type">VikMapSourceDefault</span></a> class is the base class implementing most of
+generic feature, using properties or reducing complexity of some
+functions.</p>
+</div>
+<div class="refsect1">
+<a name="VikMapSourceDefault.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="vik-map-source-default-get-uri"></a><h3>vik_map_source_default_get_uri ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_map_source_default_get_uri (<em class="parameter"><code><a class="link" href="VikMapSourceDefault.html" title="VikMapSourceDefault"><span class="type">VikMapSourceDefault</span></a> *self</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-mapcoord.html#MapCoord" title="MapCoord"><span class="type">MapCoord</span></a> *src</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-default-get-hostname"></a><h3>vik_map_source_default_get_hostname ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_map_source_default_get_hostname (<em class="parameter"><code><a class="link" href="VikMapSourceDefault.html" title="VikMapSourceDefault"><span class="type">VikMapSourceDefault</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-default-get-download-options"></a><h3>vik_map_source_default_get_download_options ()</h3>
+<pre class="programlisting"><a class="link" href="viking-download.html#DownloadMapOptions" title="DownloadMapOptions"><span class="returnvalue">DownloadMapOptions</span></a> *
+vik_map_source_default_get_download_options
+                               (<em class="parameter"><code><a class="link" href="VikMapSourceDefault.html" title="VikMapSourceDefault"><span class="type">VikMapSourceDefault</span></a> *self</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikMapSourceDefault.other_details"></a><h2>Types and Values</h2>
+</div>
+<div class="refsect1">
+<a name="VikMapSourceDefault.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="VikMapSourceDefault--copyright"></a><h3>The <code class="literal">“copyright”</code> property</h3>
+<pre class="programlisting">  “copyright”                <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The copyright of the map source.</p>
+<p>Flags: Read / Write</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikMapSourceDefault--drawmode"></a><h3>The <code class="literal">“drawmode”</code> property</h3>
+<pre class="programlisting">  “drawmode”                 <a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode"><span class="type">VikViewportDrawMode</span></a></pre>
+<p>The mode used to draw map.</p>
+<p>Flags: Read / Write</p>
+<p>Default value: VIK_VIEWPORT_DRAWMODE_UTM</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikMapSourceDefault--file-extension"></a><h3>The <code class="literal">“file-extension”</code> property</h3>
+<pre class="programlisting">  “file-extension”           <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The file extension of tile files on disk.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: ".png"</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikMapSourceDefault--id"></a><h3>The <code class="literal">“id”</code> property</h3>
+<pre class="programlisting">  “id”                       <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></pre>
+<p>Set the id.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikMapSourceDefault--label"></a><h3>The <code class="literal">“label”</code> property</h3>
+<pre class="programlisting">  “label”                    <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The label of the map source.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: "&lt;no-set&gt;"</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikMapSourceDefault--license"></a><h3>The <code class="literal">“license”</code> property</h3>
+<pre class="programlisting">  “license”                  <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The license of the map source.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikMapSourceDefault--license-url"></a><h3>The <code class="literal">“license-url”</code> property</h3>
+<pre class="programlisting">  “license-url”              <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The URL of the license of the map source.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikMapSourceDefault--name"></a><h3>The <code class="literal">“name”</code> property</h3>
+<pre class="programlisting">  “name”                     <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *</pre>
+<p>The name of the map that may be used as the file cache directory.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: "Unknown"</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikMapSourceDefault--tilesize-x"></a><h3>The <code class="literal">“tilesize-x”</code> property</h3>
+<pre class="programlisting">  “tilesize-x”               <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></pre>
+<p>Set the size of the tile (x).</p>
+<p>Flags: Read / Write</p>
+<p>Allowed values: &lt;= 65535</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikMapSourceDefault--tilesize-y"></a><h3>The <code class="literal">“tilesize-y”</code> property</h3>
+<pre class="programlisting">  “tilesize-y”               <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></pre>
+<p>Set the size of the tile (y).</p>
+<p>Flags: Read / Write</p>
+<p>Allowed values: &lt;= 65535</p>
+<p>Default value: 0</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

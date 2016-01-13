@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>datasource_gps: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-cursor-zoom-pixmap.html" title="cursor_zoom_pixmap">
+<link rel="next" href="viking-datasources.html" title="datasources">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-datasource-gps.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-cursor-zoom-pixmap.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-datasources.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-datasource-gps"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-datasource-gps.top_of_page"></a>datasource_gps</span></h2>
+<p>datasource_gps</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-datasource-gps.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-datasource-gps.html#datasource-gps-setup" title="datasource_gps_setup ()">datasource_gps_setup</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-datasource-gps.html#datasource-gps-clean-up" title="datasource_gps_clean_up ()">datasource_gps_clean_up</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-datasource-gps.html#datasource-gps-get-protocol" title="datasource_gps_get_protocol ()">datasource_gps_get_protocol</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-datasource-gps.html#datasource-gps-get-descriptor" title="datasource_gps_get_descriptor ()">datasource_gps_get_descriptor</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-datasource-gps.html#datasource-gps-get-do-tracks" title="datasource_gps_get_do_tracks ()">datasource_gps_get_do_tracks</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-datasource-gps.html#datasource-gps-get-do-routes" title="datasource_gps_get_do_routes ()">datasource_gps_get_do_routes</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-datasource-gps.html#datasource-gps-get-do-waypoints" title="datasource_gps_get_do_waypoints ()">datasource_gps_get_do_waypoints</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-datasource-gps.html#datasource-gps-get-off" title="datasource_gps_get_off ()">datasource_gps_get_off</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-datasource-gps.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-datasource-gps.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="datasource-gps-setup"></a><h3>datasource_gps_setup ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+datasource_gps_setup (<em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *dialog</code></em>,
+                      <em class="parameter"><code><a class="link" href="VikGpsLayer.html#vik-gps-xfer-type" title="enum vik_gps_xfer_type"><span class="type">vik_gps_xfer_type</span></a> xfer</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> xfer_all</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.33.5.2.4"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>dialog</p></td>
+<td class="parameter_description"><p>The GTK dialog. The caller is responsible for managing the dialog creation/deletion</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>xfer</p></td>
+<td class="parameter_description"><p>The default type of items enabled for transfer, others disabled.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>xfer_all</p></td>
+<td class="parameter_description"><p>When specified all items are enabled for transfer.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.33.5.2.5"></a><h4>Returns</h4>
+<p> A gpointer to the private structure for GPS progress/information widgets
+Pass this pointer back into the other exposed datasource_gps_X functions</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="datasource-gps-clean-up"></a><h3>datasource_gps_clean_up ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+datasource_gps_clean_up (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>External method to tidy up</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="datasource-gps-get-protocol"></a><h3>datasource_gps_get_protocol ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+datasource_gps_get_protocol (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Method to get the communication protocol of the GPS device from the widget structure</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="datasource-gps-get-descriptor"></a><h3>datasource_gps_get_descriptor ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+datasource_gps_get_descriptor (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Method to get the descriptor from the widget structure
+"Everything is a file"
+Could actually be normal file or a serial port</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="datasource-gps-get-do-tracks"></a><h3>datasource_gps_get_do_tracks ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+datasource_gps_get_do_tracks (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Method to get the track handling behaviour from the widget structure</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="datasource-gps-get-do-routes"></a><h3>datasource_gps_get_do_routes ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+datasource_gps_get_do_routes (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Method to get the route handling behaviour from the widget structure</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="datasource-gps-get-do-waypoints"></a><h3>datasource_gps_get_do_waypoints ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+datasource_gps_get_do_waypoints (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Method to get the waypoint handling behaviour from the widget structure</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="datasource-gps-get-off"></a><h3>datasource_gps_get_off ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+datasource_gps_get_off (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<p>Method to get the off behaviour from the widget structure</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-datasource-gps.other_details"></a><h2>Types and Values</h2>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

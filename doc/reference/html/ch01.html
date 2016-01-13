@@ -1,0 +1,1105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>[Insert title here]: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="index.html" title="viking Reference Manual">
+<link rel="prev" href="index.html" title="viking Reference Manual">
+<link rel="next" href="viking-VikDataSource.html" title="VikDataSource">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts"></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><img src="up-insensitive.png" width="16" height="16" border="0"></td>
+<td><a accesskey="p" href="index.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-VikDataSource.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="chapter">
+<div class="titlepage"><div><div><h1 class="title">
+<a name="id-1.2"></a>[Insert title here]</h1></div></div></div>
+<div class="toc"><dl class="toc">
+<dt>
+<span class="refentrytitle"><a href="viking-VikDataSource.html">VikDataSource</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-addtr-18-pixmap.html">addtr_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-addwp-18-pixmap.html">addwp_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-babel.html">babel</a></span><span class="refpurpose"> — running external programs and redirecting to TRWLayers.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-babel-ui.html">babel_ui</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-background.html">background</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-bbox.html">bbox</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-begintr-18-pixmap.html">begintr_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-bing.html">bing</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-bing-maps-pixmap.html">bing_maps_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="BingMapSource.html">BingMapSource</a></span><span class="refpurpose"> — the class for Bing Maps</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-bluemarble.html">bluemarble</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-clipboard.html">clipboard</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-compression.html">compression</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-config.html">config</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-coords.html">coords</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-curl-download.html">curl_download</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-addtr-pixmap.html">cursor_addtr_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-addwp-pixmap.html">cursor_addwp_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-begintr-pixmap.html">cursor_begintr_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-demdl-pixmap.html">cursor_demdl_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-edtr-pixmap.html">cursor_edtr_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-edwp-pixmap.html">cursor_edwp_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-geomove-pixmap.html">cursor_geomove_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-geozoom-pixmap.html">cursor_geozoom_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-mapdl-pixmap.html">cursor_mapdl_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-new-route-pixmap.html">cursor_new_route_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-route-finder-pixmap.html">cursor_route_finder_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-ruler-pixmap.html">cursor_ruler_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-showpic-pixmap.html">cursor_showpic_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-cursor-zoom-pixmap.html">cursor_zoom_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-datasource-gps.html">datasource_gps</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-datasources.html">datasources</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-degrees-converters.html">degrees_converters</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-dem.html">dem</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-demdl-18-pixmap.html">demdl_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-dems.html">dems</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-dialog.html">dialog</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-dir.html">dir</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-download.html">download</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-edtr-18-pixmap.html">edtr_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-edwp-18-pixmap.html">edwp_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-expedia.html">expedia</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-file.html">file</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-fileutils.html">fileutils</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-garminsymbols.html">garminsymbols</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-geojson.html">geojson</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-geomove-18-pixmap.html">geomove_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-geonames.html">geonames</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-geonamessearch.html">geonamessearch</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-geotag-exif.html">geotag_exif</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-geozoom-18-pixmap.html">geozoom_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-glibcurl.html">glibcurl</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-globals.html">globals</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-google.html">google</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GoogleGotoTool.html">GoogleGotoTool</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-gpsmapper.html">gpsmapper</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-gpspoint.html">gpspoint</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-gpx.html">gpx</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-icons.html">icons</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-jpeg-data.html">jpeg-data</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-jpeg-marker.html">jpeg-marker</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-jpg.html">jpg</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-kdtree.html">kdtree</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-map-ids.html">map_ids</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-mapcache.html">mapcache</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-mapcoord.html">mapcoord</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-mapdl-18-pixmap.html">mapdl_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-mapnik-interface.html">mapnik_interface</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-maputils.html">maputils</a></span><span class="refpurpose"> — Notes about TMS / Spherical Mercator conversion</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-metatile.html">metatile</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-modules.html">modules</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-mover-22-pixmap.html">mover_22_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-osm.html">osm</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-osm-traces.html">osm-traces</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-preferences.html">preferences</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-print.html">print</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikPrintPreview.html">VikPrintPreview</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-route-finder-18-pixmap.html">route_finder_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-ruler-18-pixmap.html">ruler_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-select-18-pixmap.html">select_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-settings.html">settings</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-showpic-18-pixmap.html">showpic_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-strtod.html">strtod</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-terraserver.html">terraserver</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-TerraserverMapSource.html">TerraserverMapSource</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-thumbnails.html">thumbnails</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-thumbnails-pixmap.html">thumbnails_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-toolbar.html">toolbar</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-ui-util.html">ui_util</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-uibuilder.html">uibuilder</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-util.html">util</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vik-compat.html">vik_compat</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vik-new-route-18-pixmap.html">vik_new_route_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikAggregateLayer.html">VikAggregateLayer</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikaggregatelayer-pixmap.html">vikaggregatelayer_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikcoord.html">vikcoord</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikCoordLayer.html">VikCoordLayer</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikcoordlayer-pixmap.html">vikcoordlayer_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikdatetime-edit-dialog.html">vikdatetime_edit_dialog</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikDEMLayer.html">VikDEMLayer</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikdemlayer-pixmap.html">vikdemlayer_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-GeanyEntryAction.html">GeanyEntryAction</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikenumtypes.html">vikenumtypes</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikExtTool.html">VikExtTool</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikexttool-datasources.html">vikexttool_datasources</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikexttools.html">vikexttools</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikFileEntry.html">VikFileEntry</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikFileList.html">VikFileList</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikGeorefLayer.html">VikGeorefLayer</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikgeoreflayer-pixmap.html">vikgeoreflayer_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikGobjectBuilder.html">VikGobjectBuilder</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikgoto.html">vikgoto</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikGotoTool.html">VikGotoTool</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikGotoXmlTool.html">VikGotoXmlTool</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikGpsLayer.html">VikGpsLayer</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikgpslayer-pixmap.html">vikgpslayer_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viking-pixmap.html">viking_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikLayer.html">VikLayer</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viklayer-defaults.html">viklayer_defaults</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikLayersPanel.html">VikLayersPanel</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikmapniklayer.html">vikmapniklayer</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikmapniklayer-pixmap.html">vikmapniklayer_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikMapsLayer.html">VikMapsLayer</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikmapslayer-compat.html">vikmapslayer_compat</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikmapslayer-pixmap.html">vikmapslayer_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikMapSource.html">VikMapSource</a></span><span class="refpurpose"> — the base class to describe map source</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikMapSourceDefault.html">VikMapSourceDefault</a></span><span class="refpurpose"> — the base class implementing most of generic features</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikMapType.html">VikMapType</a></span><span class="refpurpose"> — the adapter class to support old map source declaration</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikRadioGroup.html">VikRadioGroup</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikrouting.html">vikrouting</a></span><span class="refpurpose"> — the routing framework</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikRoutingEngine.html">VikRoutingEngine</a></span><span class="refpurpose"> — the base class to describe routing engine</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikRoutingWebEngine.html">VikRoutingWebEngine</a></span><span class="refpurpose"> — A generic class for WEB based routing engine</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikSlippyMapSource.html">VikSlippyMapSource</a></span><span class="refpurpose"> — the class for SlippyMap oriented map sources</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikStatusbar.html">VikStatusbar</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikTmsMapSource.html">VikTmsMapSource</a></span><span class="refpurpose"> — the class for TMS oriented map sources</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viktrack.html">viktrack</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikTreeview.html">VikTreeview</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikTrwLayer.html">VikTrwLayer</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viktrwlayer-analysis.html">viktrwlayer_analysis</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viktrwlayer-export.html">viktrwlayer_export</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viktrwlayer-geotag.html">viktrwlayer_geotag</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viktrwlayer-pixmap.html">viktrwlayer_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viktrwlayer-propwin.html">viktrwlayer_propwin</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikTrwLayerTpwin.html">VikTrwLayerTpwin</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viktrwlayer-tracklist.html">viktrwlayer_tracklist</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viktrwlayer-waypointlist.html">viktrwlayer_waypointlist</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-viktrwlayer-wpwin.html">viktrwlayer_wpwin</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikutils.html">vikutils</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikViewport.html">VikViewport</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-vikwaypoint.html">vikwaypoint</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikWebtool.html">VikWebtool</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikWebtoolDatasource.html">VikWebtoolDatasource</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikWebtoolBounds.html">VikWebtoolBounds</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikWebtoolCenter.html">VikWebtoolCenter</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikWebtoolFormat.html">VikWebtoolFormat</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikWindow.html">VikWindow</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="VikWmscMapSource.html">VikWmscMapSource</a></span><span class="refpurpose"> — the class for WMS/WMS-C oriented map sources</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-1st-aid-large-pixmap.html">wp_1st_aid_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-1st-aid-pixmap.html">wp_1st_aid_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-airplane-large-pixmap.html">wp_airplane_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-airplane-pixmap.html">wp_airplane_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-amuse-pk-large-pixmap.html">wp_amuse_pk_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-anchor-large-pixmap.html">wp_anchor_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-anchor-pixmap.html">wp_anchor_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-ball-large-pixmap.html">wp_ball_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-ball-pixmap.html">wp_ball_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-beach-large-pixmap.html">wp_beach_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-beach-pixmap.html">wp_beach_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-bell-large-pixmap.html">wp_bell_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-bell-pixmap.html">wp_bell_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-bike-trail-large-pixmap.html">wp_bike_trail_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-block-blue-large-pixmap.html">wp_block_blue_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-block-green-large-pixmap.html">wp_block_green_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-block-red-large-pixmap.html">wp_block_red_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-boat-ramp-large-pixmap.html">wp_boat_ramp_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-boat-ramp-pixmap.html">wp_boat_ramp_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-bowling-large-pixmap.html">wp_bowling_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-bridge-large-pixmap.html">wp_bridge_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-bridge-pixmap.html">wp_bridge_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-building-large-pixmap.html">wp_building_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-building-pixmap.html">wp_building_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-ambr-large-pixmap.html">wp_buoy_ambr_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-ambr-pixmap.html">wp_buoy_ambr_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-blck-large-pixmap.html">wp_buoy_blck_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-blck-pixmap.html">wp_buoy_blck_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-blue-large-pixmap.html">wp_buoy_blue_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-blue-pixmap.html">wp_buoy_blue_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-grn-large-pixmap.html">wp_buoy_grn_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-grn-pixmap.html">wp_buoy_grn_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-grn-red-large-pixmap.html">wp_buoy_grn_red_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-grn-red-pixmap.html">wp_buoy_grn_red_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-grn-wht-large-pixmap.html">wp_buoy_grn_wht_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-grn-wht-pixmap.html">wp_buoy_grn_wht_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-orng-large-pixmap.html">wp_buoy_orng_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-orng-pixmap.html">wp_buoy_orng_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-red-grn-large-pixmap.html">wp_buoy_red_grn_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-red-grn-pixmap.html">wp_buoy_red_grn_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-red-large-pixmap.html">wp_buoy_red_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-red-pixmap.html">wp_buoy_red_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-red-wht-large-pixmap.html">wp_buoy_red_wht_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-red-wht-pixmap.html">wp_buoy_red_wht_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-violet-large-pixmap.html">wp_buoy_violet_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-violet-pixmap.html">wp_buoy_violet_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-wht-grn-large-pixmap.html">wp_buoy_wht_grn_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-wht-grn-pixmap.html">wp_buoy_wht_grn_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-wht-large-pixmap.html">wp_buoy_wht_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-wht-pixmap.html">wp_buoy_wht_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-wht-red-large-pixmap.html">wp_buoy_wht_red_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-buoy-wht-red-pixmap.html">wp_buoy_wht_red_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-camp-large-pixmap.html">wp_camp_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-camp-pixmap.html">wp_camp_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-cap-cty-pixmap.html">wp_cap_cty_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-car-large-pixmap.html">wp_car_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-car-pixmap.html">wp_car_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-car-rental-large-pixmap.html">wp_car_rental_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-car-repair-large-pixmap.html">wp_car_repair_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-cemetery-large-pixmap.html">wp_cemetery_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-cemetery-pixmap.html">wp_cemetery_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-church-large-pixmap.html">wp_church_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-church-pixmap.html">wp_church_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-civil-large-pixmap.html">wp_civil_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-controlled-large-pixmap.html">wp_controlled_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-controlled-pixmap.html">wp_controlled_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-conv-store-large-pixmap.html">wp_conv_store_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-crossing-large-pixmap.html">wp_crossing_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-dam-large-pixmap.html">wp_dam_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-dam-pixmap.html">wp_dam_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-danger-large-pixmap.html">wp_danger_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-danger-pixmap.html">wp_danger_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-deer-large-pixmap.html">wp_deer_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-deer-pixmap.html">wp_deer_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-diamond-grn-pixmap.html">wp_diamond_grn_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-diamond-red-pixmap.html">wp_diamond_red_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-dive1-large-pixmap.html">wp_dive1_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-dive1-pixmap.html">wp_dive1_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-dive2-large-pixmap.html">wp_dive2_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-dive2-pixmap.html">wp_dive2_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-dollar-large-pixmap.html">wp_dollar_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-dollar-pixmap.html">wp_dollar_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-dot-pixmap.html">wp_dot_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-drinking-wtr-large-pixmap.html">wp_drinking_wtr_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-drinking-wtr-pixmap.html">wp_drinking_wtr_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-exit-large-pixmap.html">wp_exit_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-fastfood-large-pixmap.html">wp_fastfood_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-fhs-facility-large-pixmap.html">wp_fhs_facility_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-fish-large-pixmap.html">wp_fish_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-fish-pixmap.html">wp_fish_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-fitness-large-pixmap.html">wp_fitness_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-flag-blue-large-pixmap.html">wp_flag_blue_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-flag-green-large-pixmap.html">wp_flag_green_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-flag-pixmap.html">wp_flag_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-flag-red-large-pixmap.html">wp_flag_red_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-forest-large-pixmap.html">wp_forest_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-forest-pixmap.html">wp_forest_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-fuel-large-pixmap.html">wp_fuel_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-fuel-pixmap.html">wp_fuel_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-geocache-fnd-large-pixmap.html">wp_geocache_fnd_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-geocache-fnd-pixmap.html">wp_geocache_fnd_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-geocache-large-pixmap.html">wp_geocache_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-geocache-pixmap.html">wp_geocache_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-glider-large-pixmap.html">wp_glider_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-golf-large-pixmap.html">wp_golf_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-golf-pixmap.html">wp_golf_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-grnd-trans-large-pixmap.html">wp_grnd_trans_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-helipad-large-pixmap.html">wp_helipad_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-horn-large-pixmap.html">wp_horn_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-horn-pixmap.html">wp_horn_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-house-large-pixmap.html">wp_house_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-house-pixmap.html">wp_house_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-ice-skating-large-pixmap.html">wp_ice_skating_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-ice-skating-pixmap.html">wp_ice_skating_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-info-large-pixmap.html">wp_info_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-info-pixmap.html">wp_info_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-knife-large-pixmap.html">wp_knife_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-knife-pixmap.html">wp_knife_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-light-large-pixmap.html">wp_light_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-light-pixmap.html">wp_light_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-lodging-large-pixmap.html">wp_lodging_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-lrg-cty-large-pixmap.html">wp_lrg_cty_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-lrg-cty-pixmap.html">wp_lrg_cty_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-med-cty-large-pixmap.html">wp_med_cty_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-med-cty-pixmap.html">wp_med_cty_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-military-pixmap.html">wp_military_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-mine-large-pixmap.html">wp_mine_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-mine-pixmap.html">wp_mine_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-mob-large-pixmap.html">wp_mob_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-mob-pixmap.html">wp_mob_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-movie-large-pixmap.html">wp_movie_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-mug-large-pixmap.html">wp_mug_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-mug-pixmap.html">wp_mug_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-museum-large-pixmap.html">wp_museum_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-null-pixmap.html">wp_null_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-oil-field-large-pixmap.html">wp_oil_field_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-parachute-large-pixmap.html">wp_parachute_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-park-large-pixmap.html">wp_park_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-park-pixmap.html">wp_park_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-parking-large-pixmap.html">wp_parking_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-parking-pixmap.html">wp_parking_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-pharmacy-large-pixmap.html">wp_pharmacy_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-phone-large-pixmap.html">wp_phone_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-phone-pixmap.html">wp_phone_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-picnic-large-pixmap.html">wp_picnic_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-picnic-pixmap.html">wp_picnic_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-pin-blue-large-pixmap.html">wp_pin_blue_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-pin-green-large-pixmap.html">wp_pin_green_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-pin-red-large-pixmap.html">wp_pin_red_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-pizza-large-pixmap.html">wp_pizza_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-police-large-pixmap.html">wp_police_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-post-ofc-large-pixmap.html">wp_post_ofc_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-rbcn-large-pixmap.html">wp_rbcn_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-rbcn-pixmap.html">wp_rbcn_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-restricted-large-pixmap.html">wp_restricted_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-restricted-pixmap.html">wp_restricted_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-restroom-large-pixmap.html">wp_restroom_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-restroom-pixmap.html">wp_restroom_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-rv-park-large-pixmap.html">wp_rv_park_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-rv-park-pixmap.html">wp_rv_park_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-scenic-large-pixmap.html">wp_scenic_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-scenic-pixmap.html">wp_scenic_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-school-large-pixmap.html">wp_school_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-school-pixmap.html">wp_school_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-shopping-large-pixmap.html">wp_shopping_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-short-tower-large-pixmap.html">wp_short_tower_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-shower-large-pixmap.html">wp_shower_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-shower-pixmap.html">wp_shower_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-ski-resort-large-pixmap.html">wp_ski_resort_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-skiing-large-pixmap.html">wp_skiing_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-skiing-pixmap.html">wp_skiing_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-skull-large-pixmap.html">wp_skull_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-skull-pixmap.html">wp_skull_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-sml-cty-large-pixmap.html">wp_sml_cty_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-sml-cty-pixmap.html">wp_sml_cty_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-square-grn-pixmap.html">wp_square_grn_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-square-red-pixmap.html">wp_square_red_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-stadium-large-pixmap.html">wp_stadium_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-store-large-pixmap.html">wp_store_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-summit-large-pixmap.html">wp_summit_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-summit-pixmap.html">wp_summit_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-swimming-large-pixmap.html">wp_swimming_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-swimming-pixmap.html">wp_swimming_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-tall-tower-large-pixmap.html">wp_tall_tower_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-theater-large-pixmap.html">wp_theater_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-toll-booth-large-pixmap.html">wp_toll_booth_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-trail-head-large-pixmap.html">wp_trail_head_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-truck-stop-large-pixmap.html">wp_truck_stop_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-tunnel-large-pixmap.html">wp_tunnel_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-tunnel-pixmap.html">wp_tunnel_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-ultralight-large-pixmap.html">wp_ultralight_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-wbuoy-large-pixmap.html">wp_wbuoy_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-wbuoy-pixmap.html">wp_wbuoy_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-weigh-station-large-pixmap.html">wp_weigh_station_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-wpt-dot-pixmap.html">wp_wpt_dot_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-wreck-large-pixmap.html">wp_wreck_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-wreck-pixmap.html">wp_wreck_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-wrecker-large-pixmap.html">wp_wrecker_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-wp-zoo-large-pixmap.html">wp_zoo_large_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="viking-zoom-18-pixmap.html">zoom_18_pixmap</a></span><span class="refpurpose"></span>
+</dt>
+</dl></div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

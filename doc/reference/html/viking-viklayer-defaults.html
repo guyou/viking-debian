@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>viklayer_defaults: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="VikLayer.html" title="VikLayer">
+<link rel="next" href="VikLayersPanel.html" title="VikLayersPanel">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-viklayer-defaults.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="VikLayer.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="VikLayersPanel.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-viklayer-defaults"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-viklayer-defaults.top_of_page"></a>viklayer_defaults</span></h2>
+<p>viklayer_defaults</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-viklayer-defaults.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viklayer-defaults.html#a-layer-defaults-init" title="a_layer_defaults_init ()">a_layer_defaults_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viklayer-defaults.html#a-layer-defaults-uninit" title="a_layer_defaults_uninit ()">a_layer_defaults_uninit</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viklayer-defaults.html#a-layer-defaults-register" title="a_layer_defaults_register ()">a_layer_defaults_register</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viklayer-defaults.html#a-layer-defaults-show-window" title="a_layer_defaults_show_window ()">a_layer_defaults_show_window</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viklayer-defaults.html#a-layer-defaults-get" title="a_layer_defaults_get ()">a_layer_defaults_get</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viklayer-defaults.html#a-layer-defaults-save" title="a_layer_defaults_save ()">a_layer_defaults_save</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-viklayer-defaults.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-viklayer-defaults.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="a-layer-defaults-init"></a><h3>a_layer_defaults_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_layer_defaults_init ();</pre>
+<p>Call this function at startup</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-layer-defaults-uninit"></a><h3>a_layer_defaults_uninit ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_layer_defaults_uninit ();</pre>
+<p>Call this function on program exit</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-layer-defaults-register"></a><h3>a_layer_defaults_register ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_layer_defaults_register (<em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParam" title="VikLayerParam"><span class="type">VikLayerParam</span></a> *vlp</code></em>,
+                           <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="type">VikLayerParamData</span></a> defaultval</code></em>,
+                           <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *layername</code></em>);</pre>
+<p>Call this function on to set the default value for the particular parameter</p>
+<div class="refsect3">
+<a name="id-1.2.121.5.4.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vlp</p></td>
+<td class="parameter_description"><p>The parameter</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>defaultval</p></td>
+<td class="parameter_description"><p>The default value</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>layername</p></td>
+<td class="parameter_description"><p>The layer in which the parameter resides</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-layer-defaults-show-window"></a><h3>a_layer_defaults_show_window ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+a_layer_defaults_show_window (<em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWindow.html"><span class="type">GtkWindow</span></a> *parent</code></em>,
+                              <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *layername</code></em>);</pre>
+<p>This displays a Window showing the default parameter values for the selected layer
+It allows the parameters to be changed.</p>
+<div class="refsect3">
+<a name="id-1.2.121.5.5.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>parent</p></td>
+<td class="parameter_description"><p>The Window</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>layername</p></td>
+<td class="parameter_description"><p>The layer</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.121.5.5.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the window is displayed (because there are parameters to view)</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-layer-defaults-get"></a><h3>a_layer_defaults_get ()</h3>
+<pre class="programlisting"><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+a_layer_defaults_get (<em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *layername</code></em>,
+                      <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *param_name</code></em>,
+                      <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamType" title="enum VikLayerParamType"><span class="type">VikLayerParamType</span></a> param_type</code></em>);</pre>
+<p>Call this function to get the default value for the parameter requested</p>
+<div class="refsect3">
+<a name="id-1.2.121.5.6.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>layername</p></td>
+<td class="parameter_description"><p>String name of the layer</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>param_name</p></td>
+<td class="parameter_description"><p>String name of the parameter</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>param_type</p></td>
+<td class="parameter_description"><p>The parameter type</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-layer-defaults-save"></a><h3>a_layer_defaults_save ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+a_layer_defaults_save ();</pre>
+<p>Call this function to save the current layer defaults
+Normally should only be performed if any layer defaults have been changed via direct manipulation of the layer
+ rather than the user changing the preferences via the dialog window above</p>
+<p>This must only be performed once all layer parameters have been initialized</p>
+<div class="refsect3">
+<a name="id-1.2.121.5.7.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if saving was successful</p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-viklayer-defaults.other_details"></a><h2>Types and Values</h2>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

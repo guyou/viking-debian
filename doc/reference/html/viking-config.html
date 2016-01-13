@@ -1,0 +1,868 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>config: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-compression.html" title="compression">
+<link rel="next" href="viking-coords.html" title="coords">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-config.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-compression.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-coords.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-config"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-config.top_of_page"></a>config</span></h2>
+<p>config</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-config.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#ENABLE-NLS:CAPS" title="ENABLE_NLS">ENABLE_NLS</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#GETTEXT-PACKAGE:CAPS" title="GETTEXT_PACKAGE">GETTEXT_PACKAGE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-BIND-TEXTDOMAIN-CODESET:CAPS" title="HAVE_BIND_TEXTDOMAIN_CODESET">HAVE_BIND_TEXTDOMAIN_CODESET</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-BZLIB-H:CAPS" title="HAVE_BZLIB_H">HAVE_BZLIB_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-DCGETTEXT:CAPS" title="HAVE_DCGETTEXT">HAVE_DCGETTEXT</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-EXPAT-H:CAPS" title="HAVE_EXPAT_H">HAVE_EXPAT_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-GETTEXT:CAPS" title="HAVE_GETTEXT">HAVE_GETTEXT</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-INTTYPES-H:CAPS" title="HAVE_INTTYPES_H">HAVE_INTTYPES_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LC-MESSAGES:CAPS" title="HAVE_LC_MESSAGES">HAVE_LC_MESSAGES</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBBZ2:CAPS" title="HAVE_LIBBZ2">HAVE_LIBBZ2</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBCURL:CAPS" title="HAVE_LIBCURL">HAVE_LIBCURL</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBGEXIV2:CAPS" title="HAVE_LIBGEXIV2">HAVE_LIBGEXIV2</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBGPS:CAPS" title="HAVE_LIBGPS">HAVE_LIBGPS</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBICUUC:CAPS" title="HAVE_LIBICUUC">HAVE_LIBICUUC</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBM:CAPS" title="HAVE_LIBM">HAVE_LIBM</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBMAGIC:CAPS" title="HAVE_LIBMAGIC">HAVE_LIBMAGIC</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBMAPNIK:CAPS" title="HAVE_LIBMAPNIK">HAVE_LIBMAPNIK</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBSQLITE3:CAPS" title="HAVE_LIBSQLITE3">HAVE_LIBSQLITE3</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBSTDC--:CAPS" title="HAVE_LIBSTDC__">HAVE_LIBSTDC__</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBX11:CAPS" title="HAVE_LIBX11">HAVE_LIBX11</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LIBZ:CAPS" title="HAVE_LIBZ">HAVE_LIBZ</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-LOCALE-H:CAPS" title="HAVE_LOCALE_H">HAVE_LOCALE_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-MAGIC-H:CAPS" title="HAVE_MAGIC_H">HAVE_MAGIC_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-MALLOC-H:CAPS" title="HAVE_MALLOC_H">HAVE_MALLOC_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-MATH-H:CAPS" title="HAVE_MATH_H">HAVE_MATH_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-MEMORY-H:CAPS" title="HAVE_MEMORY_H">HAVE_MEMORY_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-MEMSET:CAPS" title="HAVE_MEMSET">HAVE_MEMSET</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-MKDTEMP:CAPS" title="HAVE_MKDTEMP">HAVE_MKDTEMP</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-REALPATH:CAPS" title="HAVE_REALPATH">HAVE_REALPATH</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-SQLITE3-H:CAPS" title="HAVE_SQLITE3_H">HAVE_SQLITE3_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-STDINT-H:CAPS" title="HAVE_STDINT_H">HAVE_STDINT_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-STDLIB-H:CAPS" title="HAVE_STDLIB_H">HAVE_STDLIB_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-STRCASECMP:CAPS" title="HAVE_STRCASECMP">HAVE_STRCASECMP</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-STRCHR:CAPS" title="HAVE_STRCHR">HAVE_STRCHR</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-STRINGS-H:CAPS" title="HAVE_STRINGS_H">HAVE_STRINGS_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-STRING-H:CAPS" title="HAVE_STRING_H">HAVE_STRING_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-STRNCASECMP:CAPS" title="HAVE_STRNCASECMP">HAVE_STRNCASECMP</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-STRTOL:CAPS" title="HAVE_STRTOL">HAVE_STRTOL</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-STRTOUL:CAPS" title="HAVE_STRTOUL">HAVE_STRTOUL</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-SYS-PARAM-H:CAPS" title="HAVE_SYS_PARAM_H">HAVE_SYS_PARAM_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-SYS-STAT-H:CAPS" title="HAVE_SYS_STAT_H">HAVE_SYS_STAT_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-SYS-TYPES-H:CAPS" title="HAVE_SYS_TYPES_H">HAVE_SYS_TYPES_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-UNISTD-H:CAPS" title="HAVE_UNISTD_H">HAVE_UNISTD_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-UTIME-H:CAPS" title="HAVE_UTIME_H">HAVE_UTIME_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-VIKING:CAPS" title="HAVE_VIKING">HAVE_VIKING</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#HAVE-X11-XLIB-H:CAPS" title="HAVE_X11_XLIB_H">HAVE_X11_XLIB_H</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-FEATURE-ASYNCHDNS:CAPS" title="LIBCURL_FEATURE_ASYNCHDNS">LIBCURL_FEATURE_ASYNCHDNS</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-FEATURE-IDN:CAPS" title="LIBCURL_FEATURE_IDN">LIBCURL_FEATURE_IDN</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-FEATURE-IPV6:CAPS" title="LIBCURL_FEATURE_IPV6">LIBCURL_FEATURE_IPV6</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-FEATURE-LIBZ:CAPS" title="LIBCURL_FEATURE_LIBZ">LIBCURL_FEATURE_LIBZ</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-FEATURE-NTLM:CAPS" title="LIBCURL_FEATURE_NTLM">LIBCURL_FEATURE_NTLM</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-FEATURE-SSL:CAPS" title="LIBCURL_FEATURE_SSL">LIBCURL_FEATURE_SSL</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-PROTOCOL-DICT:CAPS" title="LIBCURL_PROTOCOL_DICT">LIBCURL_PROTOCOL_DICT</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-PROTOCOL-FILE:CAPS" title="LIBCURL_PROTOCOL_FILE">LIBCURL_PROTOCOL_FILE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-PROTOCOL-FTP:CAPS" title="LIBCURL_PROTOCOL_FTP">LIBCURL_PROTOCOL_FTP</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-PROTOCOL-FTPS:CAPS" title="LIBCURL_PROTOCOL_FTPS">LIBCURL_PROTOCOL_FTPS</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-PROTOCOL-HTTP:CAPS" title="LIBCURL_PROTOCOL_HTTP">LIBCURL_PROTOCOL_HTTP</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-PROTOCOL-HTTPS:CAPS" title="LIBCURL_PROTOCOL_HTTPS">LIBCURL_PROTOCOL_HTTPS</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-PROTOCOL-LDAP:CAPS" title="LIBCURL_PROTOCOL_LDAP">LIBCURL_PROTOCOL_LDAP</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-PROTOCOL-TELNET:CAPS" title="LIBCURL_PROTOCOL_TELNET">LIBCURL_PROTOCOL_TELNET</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LIBCURL-PROTOCOL-TFTP:CAPS" title="LIBCURL_PROTOCOL_TFTP">LIBCURL_PROTOCOL_TFTP</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LOCALEDIR:CAPS" title="LOCALEDIR">LOCALEDIR</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#LSTAT-FOLLOWS-SLASHED-SYMLINK:CAPS" title="LSTAT_FOLLOWS_SLASHED_SYMLINK">LSTAT_FOLLOWS_SLASHED_SYMLINK</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#PACKAGE:CAPS" title="PACKAGE">PACKAGE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#PACKAGE-BUGREPORT:CAPS" title="PACKAGE_BUGREPORT">PACKAGE_BUGREPORT</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#PACKAGE-NAME:CAPS" title="PACKAGE_NAME">PACKAGE_NAME</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#PACKAGE-STRING:CAPS" title="PACKAGE_STRING">PACKAGE_STRING</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#PACKAGE-TARNAME:CAPS" title="PACKAGE_TARNAME">PACKAGE_TARNAME</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#PACKAGE-URL:CAPS" title="PACKAGE_URL">PACKAGE_URL</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#PACKAGE-VERSION:CAPS" title="PACKAGE_VERSION">PACKAGE_VERSION</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#STDC-HEADERS:CAPS" title="STDC_HEADERS">STDC_HEADERS</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VERSION:CAPS" title="VERSION">VERSION</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VIK-CONFIG-BING:CAPS" title="VIK_CONFIG_BING">VIK_CONFIG_BING</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VIK-CONFIG-BLUEMARBLE:CAPS" title="VIK_CONFIG_BLUEMARBLE">VIK_CONFIG_BLUEMARBLE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VIK-CONFIG-DEFAULT-TILE-AGE:CAPS" title="VIK_CONFIG_DEFAULT_TILE_AGE">VIK_CONFIG_DEFAULT_TILE_AGE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VIK-CONFIG-GEONAMES:CAPS" title="VIK_CONFIG_GEONAMES">VIK_CONFIG_GEONAMES</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VIK-CONFIG-GEOTAG:CAPS" title="VIK_CONFIG_GEOTAG">VIK_CONFIG_GEOTAG</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VIK-CONFIG-GOOGLE:CAPS" title="VIK_CONFIG_GOOGLE">VIK_CONFIG_GOOGLE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VIK-CONFIG-MAPCACHE-SIZE:CAPS" title="VIK_CONFIG_MAPCACHE_SIZE">VIK_CONFIG_MAPCACHE_SIZE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VIK-CONFIG-OPENSTREETMAP:CAPS" title="VIK_CONFIG_OPENSTREETMAP">VIK_CONFIG_OPENSTREETMAP</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="viking-config.html#VIK-CONFIG-REALTIME-GPS-TRACKING:CAPS" title="VIK_CONFIG_REALTIME_GPS_TRACKING">VIK_CONFIG_REALTIME_GPS_TRACKING</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-config.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-config.functions_details"></a><h2>Functions</h2>
+<p></p>
+</div>
+<div class="refsect1">
+<a name="viking-config.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="ENABLE-NLS:CAPS"></a><h3>ENABLE_NLS</h3>
+<pre class="programlisting">#define ENABLE_NLS 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GETTEXT-PACKAGE:CAPS"></a><h3>GETTEXT_PACKAGE</h3>
+<pre class="programlisting">#define GETTEXT_PACKAGE "viking"
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-BIND-TEXTDOMAIN-CODESET:CAPS"></a><h3>HAVE_BIND_TEXTDOMAIN_CODESET</h3>
+<pre class="programlisting">#define HAVE_BIND_TEXTDOMAIN_CODESET 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-BZLIB-H:CAPS"></a><h3>HAVE_BZLIB_H</h3>
+<pre class="programlisting">#define HAVE_BZLIB_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-DCGETTEXT:CAPS"></a><h3>HAVE_DCGETTEXT</h3>
+<pre class="programlisting">#define HAVE_DCGETTEXT 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-EXPAT-H:CAPS"></a><h3>HAVE_EXPAT_H</h3>
+<pre class="programlisting">#define HAVE_EXPAT_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-GETTEXT:CAPS"></a><h3>HAVE_GETTEXT</h3>
+<pre class="programlisting">#define HAVE_GETTEXT 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-INTTYPES-H:CAPS"></a><h3>HAVE_INTTYPES_H</h3>
+<pre class="programlisting">#define HAVE_INTTYPES_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LC-MESSAGES:CAPS"></a><h3>HAVE_LC_MESSAGES</h3>
+<pre class="programlisting">#define HAVE_LC_MESSAGES 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBBZ2:CAPS"></a><h3>HAVE_LIBBZ2</h3>
+<pre class="programlisting">#define HAVE_LIBBZ2 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBCURL:CAPS"></a><h3>HAVE_LIBCURL</h3>
+<pre class="programlisting">#define HAVE_LIBCURL 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBGEXIV2:CAPS"></a><h3>HAVE_LIBGEXIV2</h3>
+<pre class="programlisting">#define HAVE_LIBGEXIV2 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBGPS:CAPS"></a><h3>HAVE_LIBGPS</h3>
+<pre class="programlisting">#define HAVE_LIBGPS 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBICUUC:CAPS"></a><h3>HAVE_LIBICUUC</h3>
+<pre class="programlisting">#define HAVE_LIBICUUC 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBM:CAPS"></a><h3>HAVE_LIBM</h3>
+<pre class="programlisting">#define HAVE_LIBM 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBMAGIC:CAPS"></a><h3>HAVE_LIBMAGIC</h3>
+<pre class="programlisting">#define HAVE_LIBMAGIC 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBMAPNIK:CAPS"></a><h3>HAVE_LIBMAPNIK</h3>
+<pre class="programlisting">#define HAVE_LIBMAPNIK 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBSQLITE3:CAPS"></a><h3>HAVE_LIBSQLITE3</h3>
+<pre class="programlisting">#define HAVE_LIBSQLITE3 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBSTDC--:CAPS"></a><h3>HAVE_LIBSTDC__</h3>
+<pre class="programlisting">#define HAVE_LIBSTDC__ 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBX11:CAPS"></a><h3>HAVE_LIBX11</h3>
+<pre class="programlisting">#define HAVE_LIBX11 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LIBZ:CAPS"></a><h3>HAVE_LIBZ</h3>
+<pre class="programlisting">#define HAVE_LIBZ 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-LOCALE-H:CAPS"></a><h3>HAVE_LOCALE_H</h3>
+<pre class="programlisting">#define HAVE_LOCALE_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-MAGIC-H:CAPS"></a><h3>HAVE_MAGIC_H</h3>
+<pre class="programlisting">#define HAVE_MAGIC_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-MALLOC-H:CAPS"></a><h3>HAVE_MALLOC_H</h3>
+<pre class="programlisting">#define HAVE_MALLOC_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-MATH-H:CAPS"></a><h3>HAVE_MATH_H</h3>
+<pre class="programlisting">#define HAVE_MATH_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-MEMORY-H:CAPS"></a><h3>HAVE_MEMORY_H</h3>
+<pre class="programlisting">#define HAVE_MEMORY_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-MEMSET:CAPS"></a><h3>HAVE_MEMSET</h3>
+<pre class="programlisting">#define HAVE_MEMSET 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-MKDTEMP:CAPS"></a><h3>HAVE_MKDTEMP</h3>
+<pre class="programlisting">#define HAVE_MKDTEMP 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-REALPATH:CAPS"></a><h3>HAVE_REALPATH</h3>
+<pre class="programlisting">#define HAVE_REALPATH 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-SQLITE3-H:CAPS"></a><h3>HAVE_SQLITE3_H</h3>
+<pre class="programlisting">#define HAVE_SQLITE3_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-STDINT-H:CAPS"></a><h3>HAVE_STDINT_H</h3>
+<pre class="programlisting">#define HAVE_STDINT_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-STDLIB-H:CAPS"></a><h3>HAVE_STDLIB_H</h3>
+<pre class="programlisting">#define HAVE_STDLIB_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-STRCASECMP:CAPS"></a><h3>HAVE_STRCASECMP</h3>
+<pre class="programlisting">#define HAVE_STRCASECMP 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-STRCHR:CAPS"></a><h3>HAVE_STRCHR</h3>
+<pre class="programlisting">#define HAVE_STRCHR 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-STRINGS-H:CAPS"></a><h3>HAVE_STRINGS_H</h3>
+<pre class="programlisting">#define HAVE_STRINGS_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-STRING-H:CAPS"></a><h3>HAVE_STRING_H</h3>
+<pre class="programlisting">#define HAVE_STRING_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-STRNCASECMP:CAPS"></a><h3>HAVE_STRNCASECMP</h3>
+<pre class="programlisting">#define HAVE_STRNCASECMP 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-STRTOL:CAPS"></a><h3>HAVE_STRTOL</h3>
+<pre class="programlisting">#define HAVE_STRTOL 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-STRTOUL:CAPS"></a><h3>HAVE_STRTOUL</h3>
+<pre class="programlisting">#define HAVE_STRTOUL 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-SYS-PARAM-H:CAPS"></a><h3>HAVE_SYS_PARAM_H</h3>
+<pre class="programlisting">#define HAVE_SYS_PARAM_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-SYS-STAT-H:CAPS"></a><h3>HAVE_SYS_STAT_H</h3>
+<pre class="programlisting">#define HAVE_SYS_STAT_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-SYS-TYPES-H:CAPS"></a><h3>HAVE_SYS_TYPES_H</h3>
+<pre class="programlisting">#define HAVE_SYS_TYPES_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-UNISTD-H:CAPS"></a><h3>HAVE_UNISTD_H</h3>
+<pre class="programlisting">#define HAVE_UNISTD_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-UTIME-H:CAPS"></a><h3>HAVE_UTIME_H</h3>
+<pre class="programlisting">#define HAVE_UTIME_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-VIKING:CAPS"></a><h3>HAVE_VIKING</h3>
+<pre class="programlisting">#define HAVE_VIKING 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="HAVE-X11-XLIB-H:CAPS"></a><h3>HAVE_X11_XLIB_H</h3>
+<pre class="programlisting">#define HAVE_X11_XLIB_H 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-FEATURE-ASYNCHDNS:CAPS"></a><h3>LIBCURL_FEATURE_ASYNCHDNS</h3>
+<pre class="programlisting">#define LIBCURL_FEATURE_ASYNCHDNS 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-FEATURE-IDN:CAPS"></a><h3>LIBCURL_FEATURE_IDN</h3>
+<pre class="programlisting">#define LIBCURL_FEATURE_IDN 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-FEATURE-IPV6:CAPS"></a><h3>LIBCURL_FEATURE_IPV6</h3>
+<pre class="programlisting">#define LIBCURL_FEATURE_IPV6 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-FEATURE-LIBZ:CAPS"></a><h3>LIBCURL_FEATURE_LIBZ</h3>
+<pre class="programlisting">#define LIBCURL_FEATURE_LIBZ 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-FEATURE-NTLM:CAPS"></a><h3>LIBCURL_FEATURE_NTLM</h3>
+<pre class="programlisting">#define LIBCURL_FEATURE_NTLM 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-FEATURE-SSL:CAPS"></a><h3>LIBCURL_FEATURE_SSL</h3>
+<pre class="programlisting">#define LIBCURL_FEATURE_SSL 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-PROTOCOL-DICT:CAPS"></a><h3>LIBCURL_PROTOCOL_DICT</h3>
+<pre class="programlisting">#define LIBCURL_PROTOCOL_DICT 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-PROTOCOL-FILE:CAPS"></a><h3>LIBCURL_PROTOCOL_FILE</h3>
+<pre class="programlisting">#define LIBCURL_PROTOCOL_FILE 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-PROTOCOL-FTP:CAPS"></a><h3>LIBCURL_PROTOCOL_FTP</h3>
+<pre class="programlisting">#define LIBCURL_PROTOCOL_FTP 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-PROTOCOL-FTPS:CAPS"></a><h3>LIBCURL_PROTOCOL_FTPS</h3>
+<pre class="programlisting">#define LIBCURL_PROTOCOL_FTPS 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-PROTOCOL-HTTP:CAPS"></a><h3>LIBCURL_PROTOCOL_HTTP</h3>
+<pre class="programlisting">#define LIBCURL_PROTOCOL_HTTP 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-PROTOCOL-HTTPS:CAPS"></a><h3>LIBCURL_PROTOCOL_HTTPS</h3>
+<pre class="programlisting">#define LIBCURL_PROTOCOL_HTTPS 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-PROTOCOL-LDAP:CAPS"></a><h3>LIBCURL_PROTOCOL_LDAP</h3>
+<pre class="programlisting">#define LIBCURL_PROTOCOL_LDAP 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-PROTOCOL-TELNET:CAPS"></a><h3>LIBCURL_PROTOCOL_TELNET</h3>
+<pre class="programlisting">#define LIBCURL_PROTOCOL_TELNET 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LIBCURL-PROTOCOL-TFTP:CAPS"></a><h3>LIBCURL_PROTOCOL_TFTP</h3>
+<pre class="programlisting">#define LIBCURL_PROTOCOL_TFTP 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LOCALEDIR:CAPS"></a><h3>LOCALEDIR</h3>
+<pre class="programlisting">#define LOCALEDIR "/usr/local/share/locale"
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="LSTAT-FOLLOWS-SLASHED-SYMLINK:CAPS"></a><h3>LSTAT_FOLLOWS_SLASHED_SYMLINK</h3>
+<pre class="programlisting">#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PACKAGE:CAPS"></a><h3>PACKAGE</h3>
+<pre class="programlisting">#define PACKAGE "viking"
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PACKAGE-BUGREPORT:CAPS"></a><h3>PACKAGE_BUGREPORT</h3>
+<pre class="programlisting">#define PACKAGE_BUGREPORT ""
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PACKAGE-NAME:CAPS"></a><h3>PACKAGE_NAME</h3>
+<pre class="programlisting">#define PACKAGE_NAME "viking"
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PACKAGE-STRING:CAPS"></a><h3>PACKAGE_STRING</h3>
+<pre class="programlisting">#define PACKAGE_STRING "viking 1.6.1"
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PACKAGE-TARNAME:CAPS"></a><h3>PACKAGE_TARNAME</h3>
+<pre class="programlisting">#define PACKAGE_TARNAME "viking"
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PACKAGE-URL:CAPS"></a><h3>PACKAGE_URL</h3>
+<pre class="programlisting">#define PACKAGE_URL "http://viking.sf.net/"
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PACKAGE-VERSION:CAPS"></a><h3>PACKAGE_VERSION</h3>
+<pre class="programlisting">#define PACKAGE_VERSION "1.6.1"
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="STDC-HEADERS:CAPS"></a><h3>STDC_HEADERS</h3>
+<pre class="programlisting">#define STDC_HEADERS 1
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VERSION:CAPS"></a><h3>VERSION</h3>
+<pre class="programlisting">#define VERSION "1.6.1"
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-CONFIG-BING:CAPS"></a><h3>VIK_CONFIG_BING</h3>
+<pre class="programlisting">#define VIK_CONFIG_BING /**/
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-CONFIG-BLUEMARBLE:CAPS"></a><h3>VIK_CONFIG_BLUEMARBLE</h3>
+<pre class="programlisting">#define VIK_CONFIG_BLUEMARBLE /**/
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-CONFIG-DEFAULT-TILE-AGE:CAPS"></a><h3>VIK_CONFIG_DEFAULT_TILE_AGE</h3>
+<pre class="programlisting">#define VIK_CONFIG_DEFAULT_TILE_AGE 604800
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-CONFIG-GEONAMES:CAPS"></a><h3>VIK_CONFIG_GEONAMES</h3>
+<pre class="programlisting">#define VIK_CONFIG_GEONAMES /**/
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-CONFIG-GEOTAG:CAPS"></a><h3>VIK_CONFIG_GEOTAG</h3>
+<pre class="programlisting">#define VIK_CONFIG_GEOTAG /**/
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-CONFIG-GOOGLE:CAPS"></a><h3>VIK_CONFIG_GOOGLE</h3>
+<pre class="programlisting">#define VIK_CONFIG_GOOGLE /**/
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-CONFIG-MAPCACHE-SIZE:CAPS"></a><h3>VIK_CONFIG_MAPCACHE_SIZE</h3>
+<pre class="programlisting">#define VIK_CONFIG_MAPCACHE_SIZE 128
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-CONFIG-OPENSTREETMAP:CAPS"></a><h3>VIK_CONFIG_OPENSTREETMAP</h3>
+<pre class="programlisting">#define VIK_CONFIG_OPENSTREETMAP /**/
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-CONFIG-REALTIME-GPS-TRACKING:CAPS"></a><h3>VIK_CONFIG_REALTIME_GPS_TRACKING</h3>
+<pre class="programlisting">#define VIK_CONFIG_REALTIME_GPS_TRACKING /**/
+</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

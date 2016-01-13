@@ -1,0 +1,621 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikWindow: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="VikWebtoolFormat.html" title="VikWebtoolFormat">
+<link rel="next" href="VikWmscMapSource.html" title="VikWmscMapSource">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikWindow.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikWindow.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_signals">  <span class="dim">|</span> 
+                  <a href="#VikWindow.signals" class="shortcut">Signals</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="VikWebtoolFormat.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="VikWmscMapSource.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikWindow"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikWindow.top_of_page"></a>VikWindow</span></h2>
+<p>VikWindow</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikWindow.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikWindow.html#VIK-WINDOW-TYPE:CAPS" title="VIK_WINDOW_TYPE">VIK_WINDOW_TYPE</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikWindow.html" title="VikWindow"><span class="returnvalue">VikWindow</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-new-window" title="vik_window_new_window ()">vik_window_new_window</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-new-window-finish" title="vik_window_new_window_finish ()">vik_window_new_window_finish</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-drawmode-button" title="vik_window_get_drawmode_button ()">vik_window_get_drawmode_button</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-pan-move" title="vik_window_get_pan_move ()">vik_window_get_pan_move</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-open-file" title="vik_window_open_file ()">vik_window_open_file</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-selected-layer" title="vik_window_selected_layer ()">vik_window_selected_layer</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">struct <a class="link" href="VikViewport.html" title="VikViewport"><span class="returnvalue">_VikViewport</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-viewport" title="vik_window_viewport ()">vik_window_viewport</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">struct <a class="link" href="VikLayersPanel.html" title="VikLayersPanel"><span class="returnvalue">_VikLayersPanel</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-layers-panel" title="vik_window_layers_panel ()">vik_window_layers_panel</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">struct <a class="link" href="VikStatusbar.html" title="VikStatusbar"><span class="returnvalue">_VikStatusbar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-statusbar" title="vik_window_get_statusbar ()">vik_window_get_statusbar</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-filename" title="vik_window_get_filename ()">vik_window_get_filename</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-statusbar-update" title="vik_window_statusbar_update ()">vik_window_statusbar_update</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-set-redraw-trigger" title="vik_window_set_redraw_trigger ()">vik_window_set_redraw_trigger</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-enable-layer-tool" title="vik_window_enable_layer_tool ()">vik_window_enable_layer_tool</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-selected-trw-layer" title="vik_window_get_selected_trw_layer ()">vik_window_get_selected_trw_layer</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-set-selected-trw-layer" title="vik_window_set_selected_trw_layer ()">vik_window_set_selected_trw_layer</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-selected-tracks" title="vik_window_get_selected_tracks ()">vik_window_get_selected_tracks</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-set-selected-tracks" title="vik_window_set_selected_tracks ()">vik_window_set_selected_tracks</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-selected-track" title="vik_window_get_selected_track ()">vik_window_get_selected_track</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-set-selected-track" title="vik_window_set_selected_track ()">vik_window_set_selected_track</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-selected-waypoints" title="vik_window_get_selected_waypoints ()">vik_window_get_selected_waypoints</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-set-selected-waypoints" title="vik_window_set_selected_waypoints ()">vik_window_set_selected_waypoints</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-selected-waypoint" title="vik_window_get_selected_waypoint ()">vik_window_get_selected_waypoint</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-set-selected-waypoint" title="vik_window_set_selected_waypoint ()">vik_window_set_selected_waypoint</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-containing-trw-layer" title="vik_window_get_containing_trw_layer ()">vik_window_get_containing_trw_layer</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-clear-highlight" title="vik_window_clear_highlight ()">vik_window_clear_highlight</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Threads.html#GThread"><span class="returnvalue">GThread</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-get-thread" title="vik_window_get_thread ()">vik_window_get_thread</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-set-busy-cursor" title="vik_window_set_busy_cursor ()">vik_window_set_busy_cursor</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#vik-window-clear-busy-cursor" title="vik_window_clear_busy_cursor ()">vik_window_clear_busy_cursor</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="VikWindow.html#VIK-WINDOW-FROM-WIDGET:CAPS" title="VIK_WINDOW_FROM_WIDGET()">VIK_WINDOW_FROM_WIDGET</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikWindow.signals"></a><h2>Signals</h2>
+<div class="informaltable"><table border="0">
+<colgroup>
+<col width="150px" class="signals_return">
+<col width="300px" class="signals_name">
+<col width="200px" class="signals_flags">
+</colgroup>
+<tbody>
+<tr>
+<td class="signal_type"><span class="returnvalue">void</span></td>
+<td class="signal_name"><a class="link" href="VikWindow.html#VikWindow-newwindow" title="The “newwindow” signal">newwindow</a></td>
+<td class="signal_flags"><a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-ACTION:CAPS">Action</a></td>
+</tr>
+<tr>
+<td class="signal_type"><span class="returnvalue">void</span></td>
+<td class="signal_name"><a class="link" href="VikWindow.html#VikWindow-openwindow" title="The “openwindow” signal">openwindow</a></td>
+<td class="signal_flags"><a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-ACTION:CAPS">Action</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikWindow.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody><tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="VikWindow.html#tool-ed-t" title="tool_ed_t">tool_ed_t</a></td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikWindow.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GInitiallyUnowned">GInitiallyUnowned</a>
+        <span class="lineart">╰──</span> <a href="http://library.gnome.org/devel/gtk3/GtkObject.html">GtkObject</a>
+            <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkWidget.html">GtkWidget</a>
+                <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkContainer.html">GtkContainer</a>
+                    <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkBin.html">GtkBin</a>
+                        <span class="lineart">╰──</span> <a href="http://developer.gnome.org/gtk2/GtkWindow.html">GtkWindow</a>
+                            <span class="lineart">╰──</span> VikWindow
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikWindow.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="VikWindow.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-WINDOW-TYPE:CAPS"></a><h3>VIK_WINDOW_TYPE</h3>
+<pre class="programlisting">#define VIK_WINDOW_TYPE            (vik_window_get_type ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-new-window"></a><h3>vik_window_new_window ()</h3>
+<pre class="programlisting"><a class="link" href="VikWindow.html" title="VikWindow"><span class="returnvalue">VikWindow</span></a> *
+vik_window_new_window ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-new-window-finish"></a><h3>vik_window_new_window_finish ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_new_window_finish (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-drawmode-button"></a><h3>vik_window_get_drawmode_button ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+vik_window_get_drawmode_button (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                                <em class="parameter"><code><a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode"><span class="type">VikViewportDrawMode</span></a> mode</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-pan-move"></a><h3>vik_window_get_pan_move ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_window_get_pan_move (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+<p>Retrieves <em class="parameter"><code>vw</code></em>
+'s pan_move.</p>
+<p>Should be removed as soon as possible.</p>
+<div class="refsect3">
+<a name="id-1.2.158.8.6.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>vw</p></td>
+<td class="parameter_description"><p>some VikWindow</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.158.8.6.7"></a><h4>Returns</h4>
+<p> <em class="parameter"><code>vw</code></em>
+'s pan_move</p>
+</div>
+<p class="since">Since: 0.9.96</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-open-file"></a><h3>vik_window_open_file ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_open_file (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                      <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *filename</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> changefilename</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-selected-layer"></a><h3>vik_window_selected_layer ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_selected_layer (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                           <em class="parameter"><code><span class="type">struct _VikLayer</span> *vl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-viewport"></a><h3>vik_window_viewport ()</h3>
+<pre class="programlisting">struct <a class="link" href="VikViewport.html" title="VikViewport"><span class="returnvalue">_VikViewport</span></a> *
+vik_window_viewport (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-layers-panel"></a><h3>vik_window_layers_panel ()</h3>
+<pre class="programlisting">struct <a class="link" href="VikLayersPanel.html" title="VikLayersPanel"><span class="returnvalue">_VikLayersPanel</span></a> *
+vik_window_layers_panel (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-statusbar"></a><h3>vik_window_get_statusbar ()</h3>
+<pre class="programlisting">struct <a class="link" href="VikStatusbar.html" title="VikStatusbar"><span class="returnvalue">_VikStatusbar</span></a> *
+vik_window_get_statusbar (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-filename"></a><h3>vik_window_get_filename ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_window_get_filename (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-statusbar-update"></a><h3>vik_window_statusbar_update ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_statusbar_update (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                             <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *message</code></em>,
+                             <em class="parameter"><code><a class="link" href="VikStatusbar.html#vik-statusbar-type-t" title="enum vik_statusbar_type_t"><span class="type">vik_statusbar_type_t</span></a> vs_type</code></em>);</pre>
+<p>This updates any part of the statusbar with the new string.
+It handles calling from the main thread or any background thread
+ATM this mostly used from background threads - as from the main thread
+ one may use the <a class="link" href="VikStatusbar.html#vik-statusbar-set-message" title="vik_statusbar_set_message ()"><code class="function">vik_statusbar_set_message()</code></a> directly.</p>
+<div class="refsect3">
+<a name="id-1.2.158.8.13.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vw</p></td>
+<td class="parameter_description"><p>The main window in which the statusbar will be updated.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>message</p></td>
+<td class="parameter_description"><p>The string to be displayed. This is copied.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>vs_type</p></td>
+<td class="parameter_description"><p>The part of the statusbar to be updated.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-set-redraw-trigger"></a><h3>vik_window_set_redraw_trigger ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_set_redraw_trigger (<em class="parameter"><code><span class="type">struct _VikLayer</span> *vl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-enable-layer-tool"></a><h3>vik_window_enable_layer_tool ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_enable_layer_tool (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> layer_id</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> tool_id</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-selected-trw-layer"></a><h3>vik_window_get_selected_trw_layer ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+vik_window_get_selected_trw_layer (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-set-selected-trw-layer"></a><h3>vik_window_set_selected_trw_layer ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_set_selected_trw_layer (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-selected-tracks"></a><h3>vik_window_get_selected_tracks ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+vik_window_get_selected_tracks (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-set-selected-tracks"></a><h3>vik_window_set_selected_tracks ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_set_selected_tracks (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="type">GHashTable</span></a> *ght</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-selected-track"></a><h3>vik_window_get_selected_track ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+vik_window_get_selected_track (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-set-selected-track"></a><h3>vik_window_set_selected_track ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_set_selected_track (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                               <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> *vt</code></em>,
+                               <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-selected-waypoints"></a><h3>vik_window_get_selected_waypoints ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+vik_window_get_selected_waypoints (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-set-selected-waypoints"></a><h3>vik_window_set_selected_waypoints ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_set_selected_waypoints (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="type">GHashTable</span></a> *ght</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-selected-waypoint"></a><h3>vik_window_get_selected_waypoint ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+vik_window_get_selected_waypoint (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-set-selected-waypoint"></a><h3>vik_window_set_selected_waypoint ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_set_selected_waypoint (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> *vwp</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-containing-trw-layer"></a><h3>vik_window_get_containing_trw_layer ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
+vik_window_get_containing_trw_layer (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-clear-highlight"></a><h3>vik_window_clear_highlight ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_window_clear_highlight (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-get-thread"></a><h3>vik_window_get_thread ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Threads.html#GThread"><span class="returnvalue">GThread</span></a> *
+vik_window_get_thread (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-set-busy-cursor"></a><h3>vik_window_set_busy_cursor ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_set_busy_cursor (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-window-clear-busy-cursor"></a><h3>vik_window_clear_busy_cursor ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_window_clear_busy_cursor (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-WINDOW-FROM-WIDGET:CAPS"></a><h3>VIK_WINDOW_FROM_WIDGET()</h3>
+<pre class="programlisting">#define VIK_WINDOW_FROM_WIDGET(x) VIK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(x)))
+</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikWindow.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="tool-ed-t"></a><h3>tool_ed_t</h3>
+<pre class="programlisting">typedef struct {
+  VikWindow *vw;
+  VikViewport *vvp;
+  gpointer *vtl; // VikTrwlayer
+  gboolean holding;
+  gboolean moving;
+  gboolean is_waypoint; // otherwise a track
+  GdkGC *gc;
+  int oldx, oldy;
+} tool_ed_t;
+</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikWindow.signal-details"></a><h2>Signal Details</h2>
+<div class="refsect2">
+<a name="VikWindow-newwindow"></a><h3>The <code class="literal">“newwindow”</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+user_function (<a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vikwindow,
+               <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)</pre>
+<p>Flags: <a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-ACTION:CAPS">Action</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikWindow-openwindow"></a><h3>The <code class="literal">“openwindow”</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+user_function (<a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vikwindow,
+               <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   arg1,
+               <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)</pre>
+<p>Flags: <a href="https://developer.gnome.org/gobject/unstable/gobject-Signals.html#G-SIGNAL-ACTION:CAPS">Action</a></p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

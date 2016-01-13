@@ -1,0 +1,635 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>uibuilder: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-ui-util.html" title="ui_util">
+<link rel="next" href="viking-util.html" title="util">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-uibuilder.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-ui-util.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-util.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-uibuilder"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-uibuilder.top_of_page"></a>uibuilder</span></h2>
+<p>uibuilder</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-uibuilder.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-uibuilder.html#VikLayerDefaultFunc" title="VikLayerDefaultFunc ()">*VikLayerDefaultFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="viking-uibuilder.html#VikLayerConvertFunc" title="VikLayerConvertFunc ()">*VikLayerConvertFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#VIK-LPD-BOOLEAN:CAPS" title="VIK_LPD_BOOLEAN()">VIK_LPD_BOOLEAN</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#VIK-LPD-INT:CAPS" title="VIK_LPD_INT()">VIK_LPD_INT</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#VIK-LPD-UINT:CAPS" title="VIK_LPD_UINT()">VIK_LPD_UINT</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#VIK-LPD-COLOR:CAPS" title="VIK_LPD_COLOR()">VIK_LPD_COLOR</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#VIK-LPD-DOUBLE:CAPS" title="VIK_LPD_DOUBLE()">VIK_LPD_DOUBLE</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#vik-lpd-true-default" title="vik_lpd_true_default ()">vik_lpd_true_default</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#vik-lpd-false-default" title="vik_lpd_false_default ()">vik_lpd_false_default</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#a-uibuilder-new-widget" title="a_uibuilder_new_widget ()">a_uibuilder_new_widget</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#a-uibuilder-widget-get-value" title="a_uibuilder_widget_get_value ()">a_uibuilder_widget_get_value</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#a-uibuilder-properties-factory" title="a_uibuilder_properties_factory ()">a_uibuilder_properties_factory</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#a-uibuilder-run-dialog" title="a_uibuilder_run_dialog ()">a_uibuilder_run_dialog</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-uibuilder.html#a-uibuilder-free-paramdatas" title="a_uibuilder_free_paramdatas ()">a_uibuilder_free_paramdatas</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-uibuilder.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData">VikLayerParamData</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="viking-uibuilder.html#VikLayerWidgetType" title="enum VikLayerWidgetType">VikLayerWidgetType</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="viking-uibuilder.html#VikLayerParamType" title="enum VikLayerParamType">VikLayerParamType</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="viking-uibuilder.html#VikLayerTypeEnum" title="enum VikLayerTypeEnum">VikLayerTypeEnum</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-uibuilder.html#VikLayerParam" title="VikLayerParam">VikLayerParam</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-uibuilder.html#VikLayerParamScale" title="VikLayerParamScale">VikLayerParamScale</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="viking-uibuilder.html#ui-change-index" title="enum ui_change_index">ui_change_index</a></td>
+</tr>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="viking-uibuilder.html#ui-change-values" title="ui_change_values">ui_change_values</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="viking-uibuilder.html#vik-layer-sort-order-t" title="enum vik_layer_sort_order_t">vik_layer_sort_order_t</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-uibuilder.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-uibuilder.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VikLayerDefaultFunc"></a><h3>VikLayerDefaultFunc ()</h3>
+<pre class="programlisting"><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+<span class="c_punctuation">(</span>*VikLayerDefaultFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerConvertFunc"></a><h3>VikLayerConvertFunc ()</h3>
+<pre class="programlisting"><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+<span class="c_punctuation">(</span>*VikLayerConvertFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="type">VikLayerParamData</span></a> Param1</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-LPD-BOOLEAN:CAPS"></a><h3>VIK_LPD_BOOLEAN()</h3>
+<pre class="programlisting">#define VIK_LPD_BOOLEAN(X)     (VikLayerParamData) { .b = (X) }
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-LPD-INT:CAPS"></a><h3>VIK_LPD_INT()</h3>
+<pre class="programlisting">#define VIK_LPD_INT(X)         (VikLayerParamData) { .u = (X) }
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-LPD-UINT:CAPS"></a><h3>VIK_LPD_UINT()</h3>
+<pre class="programlisting">#define VIK_LPD_UINT(X)        (VikLayerParamData) { .i = (X) }
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-LPD-COLOR:CAPS"></a><h3>VIK_LPD_COLOR()</h3>
+<pre class="programlisting">#define VIK_LPD_COLOR(X,Y,Z,A) (VikLayerParamData) { .c = (GdkColor){ (X), (Y), (Z), (A) } }
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-LPD-DOUBLE:CAPS"></a><h3>VIK_LPD_DOUBLE()</h3>
+<pre class="programlisting">#define VIK_LPD_DOUBLE(X)      (VikLayerParamData) { .d = (X) }
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-lpd-true-default"></a><h3>vik_lpd_true_default ()</h3>
+<pre class="programlisting"><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+vik_lpd_true_default (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-lpd-false-default"></a><h3>vik_lpd_false_default ()</h3>
+<pre class="programlisting"><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+vik_lpd_false_default (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-uibuilder-new-widget"></a><h3>a_uibuilder_new_widget ()</h3>
+<pre class="programlisting"><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
+a_uibuilder_new_widget (<em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParam" title="VikLayerParam"><span class="type">VikLayerParam</span></a> *param</code></em>,
+                        <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="type">VikLayerParamData</span></a> data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-uibuilder-widget-get-value"></a><h3>a_uibuilder_widget_get_value ()</h3>
+<pre class="programlisting"><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a>
+a_uibuilder_widget_get_value (<em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *widget</code></em>,
+                              <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParam" title="VikLayerParam"><span class="type">VikLayerParam</span></a> *param</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-uibuilder-properties-factory"></a><h3>a_uibuilder_properties_factory ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+a_uibuilder_properties_factory (<em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *dialog_name</code></em>,
+                                <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWindow.html"><span class="type">GtkWindow</span></a> *parent</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParam" title="VikLayerParam"><span class="type">VikLayerParam</span></a> *params</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> params_count</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **groups</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> groups_count</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> (*setparam) (gpointer,guint16,VikLayerParamData,gpointer,gboolean)</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-uibuilder-run-dialog"></a><h3>a_uibuilder_run_dialog ()</h3>
+<pre class="programlisting"><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="returnvalue">VikLayerParamData</span></a> *
+a_uibuilder_run_dialog (<em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *dialog_name</code></em>,
+                        <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWindow.html"><span class="type">GtkWindow</span></a> *parent</code></em>,
+                        <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParam" title="VikLayerParam"><span class="type">VikLayerParam</span></a> *params</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> params_count</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **groups</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> groups_count</code></em>,
+                        <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="type">VikLayerParamData</span></a> *params_defaults</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-uibuilder-free-paramdatas"></a><h3>a_uibuilder_free_paramdatas ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_uibuilder_free_paramdatas (<em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParamData" title="VikLayerParamData"><span class="type">VikLayerParamData</span></a> *paramdatas</code></em>,
+                             <em class="parameter"><code><a class="link" href="viking-uibuilder.html#VikLayerParam" title="VikLayerParam"><span class="type">VikLayerParam</span></a> *params</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> params_count</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-uibuilder.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="VikLayerParamData"></a><h3>VikLayerParamData</h3>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerWidgetType"></a><h3>enum VikLayerWidgetType</h3>
+<div class="refsect3">
+<a name="id-1.2.92.7.3.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-CHECKBUTTON:CAPS"></a>VIK_LAYER_WIDGET_CHECKBUTTON</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-RADIOGROUP:CAPS"></a>VIK_LAYER_WIDGET_RADIOGROUP</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-RADIOGROUP-STATIC:CAPS"></a>VIK_LAYER_WIDGET_RADIOGROUP_STATIC</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-SPINBUTTON:CAPS"></a>VIK_LAYER_WIDGET_SPINBUTTON</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-ENTRY:CAPS"></a>VIK_LAYER_WIDGET_ENTRY</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-PASSWORD:CAPS"></a>VIK_LAYER_WIDGET_PASSWORD</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-FILEENTRY:CAPS"></a>VIK_LAYER_WIDGET_FILEENTRY</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-FOLDERENTRY:CAPS"></a>VIK_LAYER_WIDGET_FOLDERENTRY</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-HSCALE:CAPS"></a>VIK_LAYER_WIDGET_HSCALE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-COLOR:CAPS"></a>VIK_LAYER_WIDGET_COLOR</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-COMBOBOX:CAPS"></a>VIK_LAYER_WIDGET_COMBOBOX</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-FILELIST:CAPS"></a>VIK_LAYER_WIDGET_FILELIST</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-WIDGET-BUTTON:CAPS"></a>VIK_LAYER_WIDGET_BUTTON</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerParamType"></a><h3>enum VikLayerParamType</h3>
+<div class="refsect3">
+<a name="id-1.2.92.7.4.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-PARAM-DOUBLE:CAPS"></a>VIK_LAYER_PARAM_DOUBLE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-PARAM-UINT:CAPS"></a>VIK_LAYER_PARAM_UINT</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-PARAM-INT:CAPS"></a>VIK_LAYER_PARAM_INT</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-PARAM-STRING:CAPS"></a>VIK_LAYER_PARAM_STRING</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-PARAM-BOOLEAN:CAPS"></a>VIK_LAYER_PARAM_BOOLEAN</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-PARAM-COLOR:CAPS"></a>VIK_LAYER_PARAM_COLOR</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-PARAM-STRING-LIST:CAPS"></a>VIK_LAYER_PARAM_STRING_LIST</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-PARAM-PTR:CAPS"></a>VIK_LAYER_PARAM_PTR</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerTypeEnum"></a><h3>enum VikLayerTypeEnum</h3>
+<div class="refsect3">
+<a name="id-1.2.92.7.5.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-AGGREGATE:CAPS"></a>VIK_LAYER_AGGREGATE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-TRW:CAPS"></a>VIK_LAYER_TRW</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-COORD:CAPS"></a>VIK_LAYER_COORD</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-GEOREF:CAPS"></a>VIK_LAYER_GEOREF</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-GPS:CAPS"></a>VIK_LAYER_GPS</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-MAPS:CAPS"></a>VIK_LAYER_MAPS</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-DEM:CAPS"></a>VIK_LAYER_DEM</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-MAPNIK:CAPS"></a>VIK_LAYER_MAPNIK</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-LAYER-NUM-TYPES:CAPS"></a>VIK_LAYER_NUM_TYPES</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerParam"></a><h3>VikLayerParam</h3>
+<pre class="programlisting">typedef struct {
+  VikLayerTypeEnum layer;
+  const gchar *name;
+  VikLayerParamType type;
+  gint16 group;
+  const gchar *title;
+  VikLayerWidgetType widget_type;
+  gpointer widget_data;
+  gpointer extra_widget_data;
+  const gchar *tooltip;
+  VikLayerDefaultFunc default_value;
+  VikLayerConvertFunc convert_to_display;
+  VikLayerConvertFunc convert_to_internal;
+} VikLayerParam;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikLayerParamScale"></a><h3>VikLayerParamScale</h3>
+<pre class="programlisting">typedef struct {
+  gdouble min;
+  gdouble max;
+  gdouble step;
+  guint8 digits;
+} VikLayerParamScale;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="ui-change-index"></a><h3>enum ui_change_index</h3>
+<div class="refsect3">
+<a name="id-1.2.92.7.8.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="UI-CHG-LAYER:CAPS"></a>UI_CHG_LAYER</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="UI-CHG-PARAM:CAPS"></a>UI_CHG_PARAM</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="UI-CHG-PARAM-ID:CAPS"></a>UI_CHG_PARAM_ID</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="UI-CHG-WIDGETS:CAPS"></a>UI_CHG_WIDGETS</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="UI-CHG-LABELS:CAPS"></a>UI_CHG_LABELS</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="UI-CHG-LAST:CAPS"></a>UI_CHG_LAST</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="ui-change-values"></a><h3>ui_change_values</h3>
+<pre class="programlisting">typedef gpointer ui_change_values[UI_CHG_LAST];
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-layer-sort-order-t"></a><h3>enum vik_layer_sort_order_t</h3>
+<div class="refsect3">
+<a name="id-1.2.92.7.10.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VL-SO-NONE:CAPS"></a>VL_SO_NONE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VL-SO-ALPHABETICAL-ASCENDING:CAPS"></a>VL_SO_ALPHABETICAL_ASCENDING</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VL-SO-ALPHABETICAL-DESCENDING:CAPS"></a>VL_SO_ALPHABETICAL_DESCENDING</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VL-SO-DATE-ASCENDING:CAPS"></a>VL_SO_DATE_ASCENDING</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VL-SO-DATE-DESCENDING:CAPS"></a>VL_SO_DATE_DESCENDING</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VL-SO-LAST:CAPS"></a>VL_SO_LAST</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

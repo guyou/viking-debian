@@ -85,7 +85,8 @@ static gboolean preferences_load_from_file()
 
   if ( f ) {
     gchar buf[4096];
-    gchar *key, *val;
+    gchar *key = NULL;
+    gchar *val = NULL;
     VikLayerTypedParamData *oldval, *newval;
     while ( ! feof (f) ) {
       if (fgets(buf,sizeof(buf),f) == NULL)
@@ -153,12 +154,12 @@ gboolean a_preferences_save_to_file()
 {
   gchar *fn = g_build_filename(a_get_viking_dir(), VIKING_PREFS_FILE, NULL);
 
-  // TODO: error checking
   FILE *f = g_fopen(fn, "w");
   /* Since preferences files saves OSM login credentials,
    * it'll be better to store it in secret.
    */
-  g_chmod(fn, 0600);
+  if ( g_chmod(fn, 0600) != 0 )
+    g_warning ( "%s: Failed to set permissions on %s", __FUNCTION__, fn );
   g_free ( fn );
 
   if ( f ) {

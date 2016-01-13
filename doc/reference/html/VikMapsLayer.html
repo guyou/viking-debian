@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikMapsLayer: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-vikmapniklayer-pixmap.html" title="vikmapniklayer_pixmap">
+<link rel="next" href="viking-vikmapslayer-compat.html" title="vikmapslayer_compat">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikMapsLayer.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikMapsLayer.object-hierarchy" class="shortcut">Object Hierarchy</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-vikmapniklayer-pixmap.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-vikmapslayer-compat.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikMapsLayer"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikMapsLayer.top_of_page"></a>VikMapsLayer</span></h2>
+<p>VikMapsLayer</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikMapsLayer.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikMapsLayer.html#VIK-MAPS-LAYER-TYPE:CAPS" title="VIK_MAPS_LAYER_TYPE">VIK_MAPS_LAYER_TYPE</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#maps-layer-init" title="maps_layer_init ()">maps_layer_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#maps-layer-set-autodownload-default" title="maps_layer_set_autodownload_default ()">maps_layer_set_autodownload_default</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#maps-layer-set-cache-default" title="maps_layer_set_cache_default ()">maps_layer_set_cache_default</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#vik-maps-layer-get-default-map-type" title="vik_maps_layer_get_default_map_type ()">vik_maps_layer_get_default_map_type</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#maps-layer-register-map-source" title="maps_layer_register_map_source ()">maps_layer_register_map_source</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#vik-maps-layer-download-section" title="vik_maps_layer_download_section ()">vik_maps_layer_download_section</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#vik-maps-layer-get-map-type" title="vik_maps_layer_get_map_type ()">vik_maps_layer_get_map_type</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#vik-maps-layer-set-map-type" title="vik_maps_layer_set_map_type ()">vik_maps_layer_set_map_type</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#vik-maps-layer-get-map-label" title="vik_maps_layer_get_map_label ()">vik_maps_layer_get_map_label</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#maps-layer-default-dir" title="maps_layer_default_dir ()">maps_layer_default_dir</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapsLayer.html#vik-maps-layer-download" title="vik_maps_layer_download ()">vik_maps_layer_download</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikMapsLayer.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody><tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="VikMapsLayer.html#VikMapsCacheLayout" title="enum VikMapsCacheLayout">VikMapsCacheLayout</a></td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikMapsLayer.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> <a class="link" href="VikLayer.html" title="VikLayer">VikLayer</a>
+        <span class="lineart">╰──</span> VikMapsLayer
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikMapsLayer.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="VikMapsLayer.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-MAPS-LAYER-TYPE:CAPS"></a><h3>VIK_MAPS_LAYER_TYPE</h3>
+<pre class="programlisting">#define VIK_MAPS_LAYER_TYPE            (vik_maps_layer_get_type ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="maps-layer-init"></a><h3>maps_layer_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+maps_layer_init ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="maps-layer-set-autodownload-default"></a><h3>maps_layer_set_autodownload_default ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+maps_layer_set_autodownload_default (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> autodownload</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="maps-layer-set-cache-default"></a><h3>maps_layer_set_cache_default ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+maps_layer_set_cache_default (<em class="parameter"><code><a class="link" href="VikMapsLayer.html#VikMapsCacheLayout" title="enum VikMapsCacheLayout"><span class="type">VikMapsCacheLayout</span></a> layout</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-maps-layer-get-default-map-type"></a><h3>vik_maps_layer_get_default_map_type ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+vik_maps_layer_get_default_map_type ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="maps-layer-register-map-source"></a><h3>maps_layer_register_map_source ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+maps_layer_register_map_source (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *map</code></em>);</pre>
+<p>Register a new VikMapSource.
+Override existing one (equality of id).</p>
+<div class="refsect3">
+<a name="id-1.2.125.7.7.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>map</p></td>
+<td class="parameter_description"><p>the new VikMapSource</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-maps-layer-download-section"></a><h3>vik_maps_layer_download_section ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_maps_layer_download_section (<em class="parameter"><code><a class="link" href="VikMapsLayer.html" title="VikMapsLayer"><span class="type">VikMapsLayer</span></a> *vml</code></em>,
+                                 <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                 <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *ul</code></em>,
+                                 <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *br</code></em>,
+                                 <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> zoom</code></em>);</pre>
+<p>Download a specified map area at a certain zoom level</p>
+<div class="refsect3">
+<a name="id-1.2.125.7.8.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>vml</p></td>
+<td class="parameter_description"><p>The Map Layer</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>vvp</p></td>
+<td class="parameter_description"><p>The Viewport that the map is on</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>ul</p></td>
+<td class="parameter_description"><p>Upper left coordinate of the area to be downloaded</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>br</p></td>
+<td class="parameter_description"><p>Bottom right coordinate of the area to be downloaded</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>zoom</p></td>
+<td class="parameter_description"><p>The zoom level at which the maps are to be download</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-maps-layer-get-map-type"></a><h3>vik_maps_layer_get_map_type ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+vik_maps_layer_get_map_type (<em class="parameter"><code><a class="link" href="VikMapsLayer.html" title="VikMapsLayer"><span class="type">VikMapsLayer</span></a> *vml</code></em>);</pre>
+<p>Returns the actual map id (rather than the internal type index value)</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-maps-layer-set-map-type"></a><h3>vik_maps_layer_set_map_type ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_maps_layer_set_map_type (<em class="parameter"><code><a class="link" href="VikMapsLayer.html" title="VikMapsLayer"><span class="type">VikMapsLayer</span></a> *vml</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> map_type</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-maps-layer-get-map-label"></a><h3>vik_maps_layer_get_map_label ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_maps_layer_get_map_label (<em class="parameter"><code><a class="link" href="VikMapsLayer.html" title="VikMapsLayer"><span class="type">VikMapsLayer</span></a> *vml</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="maps-layer-default-dir"></a><h3>maps_layer_default_dir ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+maps_layer_default_dir ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-maps-layer-download"></a><h3>vik_maps_layer_download ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_maps_layer_download (<em class="parameter"><code><a class="link" href="VikMapsLayer.html" title="VikMapsLayer"><span class="type">VikMapsLayer</span></a> *vml</code></em>,
+                         <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> only_new</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikMapsLayer.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="VikMapsCacheLayout"></a><h3>enum VikMapsCacheLayout</h3>
+<div class="refsect3">
+<a name="id-1.2.125.8.2.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-MAPS-CACHE-LAYOUT-VIKING:CAPS"></a>VIK_MAPS_CACHE_LAYOUT_VIKING</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-MAPS-CACHE-LAYOUT-OSM:CAPS"></a>VIK_MAPS_CACHE_LAYOUT_OSM</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="VIK-MAPS-CACHE-LAYOUT-NUM:CAPS"></a>VIK_MAPS_CACHE_LAYOUT_NUM</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

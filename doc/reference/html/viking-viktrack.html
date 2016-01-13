@@ -1,0 +1,1281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>viktrack: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="VikTmsMapSource.html" title="VikTmsMapSource">
+<link rel="next" href="VikTreeview.html" title="VikTreeview">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-viktrack.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="VikTmsMapSource.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="VikTreeview.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-viktrack"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-viktrack.top_of_page"></a>viktrack</span></h2>
+<p>viktrack</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-viktrack.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#VIK-TRACK:CAPS" title="VIK_TRACK()">VIK_TRACK</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#VIK-TRACKPOINT:CAPS" title="VIK_TRACKPOINT()">VIK_TRACKPOINT</a><span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-new" title="vik_track_new ()">vik_track_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-set-defaults" title="vik_track_set_defaults ()">vik_track_set_defaults</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-set-name" title="vik_track_set_name ()">vik_track_set_name</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-set-comment" title="vik_track_set_comment ()">vik_track_set_comment</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-set-description" title="vik_track_set_description ()">vik_track_set_description</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-ref" title="vik_track_ref ()">vik_track_ref</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-free" title="vik_track_free ()">vik_track_free</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-copy" title="vik_track_copy ()">vik_track_copy</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-set-comment-no-copy" title="vik_track_set_comment_no_copy ()">vik_track_set_comment_no_copy</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-trackpoint-new" title="vik_trackpoint_new ()">vik_trackpoint_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-trackpoint-free" title="vik_trackpoint_free ()">vik_trackpoint_free</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-trackpoint-copy" title="vik_trackpoint_copy ()">vik_trackpoint_copy</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-trackpoint-set-name" title="vik_trackpoint_set_name ()">vik_trackpoint_set_name</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-add-trackpoint" title="vik_track_add_trackpoint ()">vik_track_add_trackpoint</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-length-to-trackpoint" title="vik_track_get_length_to_trackpoint ()">vik_track_get_length_to_trackpoint</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-length" title="vik_track_get_length ()">vik_track_get_length</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-length-including-gaps" title="vik_track_get_length_including_gaps ()">vik_track_get_length_including_gaps</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-tp-count" title="vik_track_get_tp_count ()">vik_track_get_tp_count</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-segment-count" title="vik_track_get_segment_count ()">vik_track_get_segment_count</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> **
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-split-into-segments" title="vik_track_split_into_segments ()">vik_track_split_into_segments</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-merge-segments" title="vik_track_merge_segments ()">vik_track_merge_segments</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-reverse" title="vik_track_reverse ()">vik_track_reverse</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">time_t</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-duration" title="vik_track_get_duration ()">vik_track_get_duration</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-dup-point-count" title="vik_track_get_dup_point_count ()">vik_track_get_dup_point_count</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-remove-dup-points" title="vik_track_remove_dup_points ()">vik_track_remove_dup_points</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-same-time-point-count" title="vik_track_get_same_time_point_count ()">vik_track_get_same_time_point_count</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-remove-same-time-points" title="vik_track_remove_same_time_points ()">vik_track_remove_same_time_points</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-to-routepoints" title="vik_track_to_routepoints ()">vik_track_to_routepoints</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-max-speed" title="vik_track_get_max_speed ()">vik_track_get_max_speed</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-average-speed" title="vik_track_get_average_speed ()">vik_track_get_average_speed</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-average-speed-moving" title="vik_track_get_average_speed_moving ()">vik_track_get_average_speed_moving</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-convert" title="vik_track_convert ()">vik_track_convert</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-make-elevation-map" title="vik_track_make_elevation_map ()">vik_track_make_elevation_map</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-total-elevation-gain" title="vik_track_get_total_elevation_gain ()">vik_track_get_total_elevation_gain</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-tp-by-dist" title="vik_track_get_tp_by_dist ()">vik_track_get_tp_by_dist</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-closest-tp-by-percentage-dist" title="vik_track_get_closest_tp_by_percentage_dist ()">vik_track_get_closest_tp_by_percentage_dist</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-closest-tp-by-percentage-time" title="vik_track_get_closest_tp_by_percentage_time ()">vik_track_get_closest_tp_by_percentage_time</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-tp-by-max-speed" title="vik_track_get_tp_by_max_speed ()">vik_track_get_tp_by_max_speed</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-tp-by-max-alt" title="vik_track_get_tp_by_max_alt ()">vik_track_get_tp_by_max_alt</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-tp-by-min-alt" title="vik_track_get_tp_by_min_alt ()">vik_track_get_tp_by_min_alt</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-tp-first" title="vik_track_get_tp_first ()">vik_track_get_tp_first</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-tp-last" title="vik_track_get_tp_last ()">vik_track_get_tp_last</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-tp-prev" title="vik_track_get_tp_prev ()">vik_track_get_tp_prev</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-make-gradient-map" title="vik_track_make_gradient_map ()">vik_track_make_gradient_map</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-make-speed-map" title="vik_track_make_speed_map ()">vik_track_make_speed_map</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-make-distance-map" title="vik_track_make_distance_map ()">vik_track_make_distance_map</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-make-elevation-time-map" title="vik_track_make_elevation_time_map ()">vik_track_make_elevation_time_map</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-make-speed-dist-map" title="vik_track_make_speed_dist_map ()">vik_track_make_speed_dist_map</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-get-minmax-alt" title="vik_track_get_minmax_alt ()">vik_track_get_minmax_alt</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-marshall" title="vik_track_marshall ()">vik_track_marshall</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-unmarshall" title="vik_track_unmarshall ()">vik_track_unmarshall</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-calculate-bounds" title="vik_track_calculate_bounds ()">vik_track_calculate_bounds</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-anonymize-times" title="vik_track_anonymize_times ()">vik_track_anonymize_times</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-interpolate-times" title="vik_track_interpolate_times ()">vik_track_interpolate_times</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-apply-dem-data" title="vik_track_apply_dem_data ()">vik_track_apply_dem_data</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-apply-dem-data-last-trackpoint" title="vik_track_apply_dem_data_last_trackpoint ()">vik_track_apply_dem_data_last_trackpoint</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-smooth-missing-elevation-data" title="vik_track_smooth_missing_elevation_data ()">vik_track_smooth_missing_elevation_data</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-steal-and-append-trackpoints" title="vik_track_steal_and_append_trackpoints ()">vik_track_steal_and_append_trackpoints</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="returnvalue">VikCoord</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-cut-back-to-double-point" title="vik_track_cut_back_to_double_point ()">vik_track_cut_back_to_double_point</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-compare-timestamp" title="vik_track_compare_timestamp ()">vik_track_compare_timestamp</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-set-property-dialog" title="vik_track_set_property_dialog ()">vik_track_set_property_dialog</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-viktrack.html#vik-track-clear-property-dialog" title="vik_track_clear_property_dialog ()">vik_track_clear_property_dialog</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-viktrack.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint">VikTrackpoint</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="viking-viktrack.html#VikTrackDrawnameType" title="enum VikTrackDrawnameType">VikTrackDrawnameType</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack">VikTrack</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-viktrack.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-viktrack.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-TRACK:CAPS"></a><h3>VIK_TRACK()</h3>
+<pre class="programlisting">#define VIK_TRACK(x) ((VikTrack *)(x))
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VIK-TRACKPOINT:CAPS"></a><h3>VIK_TRACKPOINT()</h3>
+<pre class="programlisting">#define VIK_TRACKPOINT(x) ((VikTrackpoint *)(x))
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-new"></a><h3>vik_track_new ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> *
+vik_track_new ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-set-defaults"></a><h3>vik_track_set_defaults ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_set_defaults (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+<p>Set some default values for a track.
+ATM This uses the 'settings' method to get values,
+ so there is no GUI way to control these yet...</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-set-name"></a><h3>vik_track_set_name ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_set_name (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                    <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-set-comment"></a><h3>vik_track_set_comment ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_set_comment (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                       <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *comment</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-set-description"></a><h3>vik_track_set_description ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_set_description (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                           <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-ref"></a><h3>vik_track_ref ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_ref (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-free"></a><h3>vik_track_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_free (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-copy"></a><h3>vik_track_copy ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> *
+vik_track_copy (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> copy_points</code></em>);</pre>
+<p>Normally for copying the track it's best to copy all the trackpoints
+However for some operations such as splitting tracks the trackpoints will be managed separately, so no need to copy them.</p>
+<div class="refsect3">
+<a name="id-1.2.138.6.11.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>tr</p></td>
+<td class="parameter_description"><p>The Track to copy</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>copy_points</p></td>
+<td class="parameter_description"><p>Whether to copy the track points or not</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.138.6.11.6"></a><h4>Returns</h4>
+<p> the copied VikTrack</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-set-comment-no-copy"></a><h3>vik_track_set_comment_no_copy ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_set_comment_no_copy (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                               <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *comment</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trackpoint-new"></a><h3>vik_trackpoint_new ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_trackpoint_new ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trackpoint-free"></a><h3>vik_trackpoint_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trackpoint_free (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="type">VikTrackpoint</span></a> *tp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trackpoint-copy"></a><h3>vik_trackpoint_copy ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_trackpoint_copy (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="type">VikTrackpoint</span></a> *tp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trackpoint-set-name"></a><h3>vik_trackpoint_set_name ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trackpoint_set_name (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="type">VikTrackpoint</span></a> *tp</code></em>,
+                         <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-add-trackpoint"></a><h3>vik_track_add_trackpoint ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_add_trackpoint (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                          <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="type">VikTrackpoint</span></a> *tp</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> recalculate</code></em>);</pre>
+<p>The trackpoint is added to the end of the existing trackpoint list</p>
+<div class="refsect3">
+<a name="id-1.2.138.6.17.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>tr</p></td>
+<td class="parameter_description"><p>The track to which the trackpoint will be added</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>tp</p></td>
+<td class="parameter_description"><p>The trackpoint to add</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>recalculate</p></td>
+<td class="parameter_description"><p>Whether to perform any associated properties recalculations
+Generally one should avoid recalculation via this method if adding lots of points
+(But ensure <code class="function">calculate_bounds()</code> is called after adding all points!!)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-length-to-trackpoint"></a><h3>vik_track_get_length_to_trackpoint ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_track_get_length_to_trackpoint (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                                    <em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="type">VikTrackpoint</span></a> *tp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-length"></a><h3>vik_track_get_length ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_track_get_length (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-length-including-gaps"></a><h3>vik_track_get_length_including_gaps ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_track_get_length_including_gaps (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-tp-count"></a><h3>vik_track_get_tp_count ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+vik_track_get_tp_count (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-segment-count"></a><h3>vik_track_get_segment_count ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+vik_track_get_segment_count (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-split-into-segments"></a><h3>vik_track_split_into_segments ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> **
+vik_track_split_into_segments (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                               <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *ret_len</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-merge-segments"></a><h3>vik_track_merge_segments ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+vik_track_merge_segments (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-reverse"></a><h3>vik_track_reverse ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_reverse (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-duration"></a><h3>vik_track_get_duration ()</h3>
+<pre class="programlisting"><span class="returnvalue">time_t</span>
+vik_track_get_duration (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.138.6.26.4"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>trk</p></td>
+<td class="parameter_description"><p>The track</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.138.6.26.5"></a><h4>Returns</h4>
+<p> The time in seconds that covers the whole track including gaps
+NB this may be negative particularly if the track has been reversed</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-dup-point-count"></a><h3>vik_track_get_dup_point_count ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+vik_track_get_dup_point_count (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *vt</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-remove-dup-points"></a><h3>vik_track_remove_dup_points ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+vik_track_remove_dup_points (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *vt</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-same-time-point-count"></a><h3>vik_track_get_same_time_point_count ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+vik_track_get_same_time_point_count (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *vt</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-remove-same-time-points"></a><h3>vik_track_remove_same_time_points ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+vik_track_remove_same_time_points (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *vt</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-to-routepoints"></a><h3>vik_track_to_routepoints ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_to_routepoints (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-max-speed"></a><h3>vik_track_get_max_speed ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_track_get_max_speed (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-average-speed"></a><h3>vik_track_get_average_speed ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_track_get_average_speed (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-average-speed-moving"></a><h3>vik_track_get_average_speed_moving ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_track_get_average_speed_moving (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                                    <em class="parameter"><code><span class="type">int</span> stop_length_seconds</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-convert"></a><h3>vik_track_convert ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_convert (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                   <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="type">VikCoordMode</span></a> dest_mode</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-make-elevation-map"></a><h3>vik_track_make_elevation_map ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+vik_track_make_elevation_map (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> num_chunks</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-total-elevation-gain"></a><h3>vik_track_get_total_elevation_gain ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_get_total_elevation_gain (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *up</code></em>,
+                                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *down</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-tp-by-dist"></a><h3>vik_track_get_tp_by_dist ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_track_get_tp_by_dist (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> meters_from_start</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> get_next_point</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *tp_metres_from_start</code></em>);</pre>
+<p>TODO: Consider changing the boolean get_next_point into an enum with these options PREVIOUS, NEXT, NEAREST</p>
+<div class="refsect3">
+<a name="id-1.2.138.6.38.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>trk</p></td>
+<td class="parameter_description"><p>The Track on which to find a Trackpoint</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>meters_from_start</p></td>
+<td class="parameter_description"><p>The distance along a track that the trackpoint returned is near</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>get_next_point</p></td>
+<td class="parameter_description"><p>Since there is a choice of trackpoints, this determines which one to return</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>tp_metres_from_start</p></td>
+<td class="parameter_description"><p>For the returned Trackpoint, returns the distance along the track</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.138.6.38.6"></a><h4>Returns</h4>
+<p> The <a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="type">VikTrackpoint</span></a> fitting the criteria or NULL</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-closest-tp-by-percentage-dist"></a><h3>vik_track_get_closest_tp_by_percentage_dist ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_track_get_closest_tp_by_percentage_dist
+                               (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> reldist</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *meters_from_start</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-closest-tp-by-percentage-time"></a><h3>vik_track_get_closest_tp_by_percentage_time ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_track_get_closest_tp_by_percentage_time
+                               (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> reldist</code></em>,
+                                <em class="parameter"><code><span class="type">time_t</span> *seconds_from_start</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-tp-by-max-speed"></a><h3>vik_track_get_tp_by_max_speed ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_track_get_tp_by_max_speed (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-tp-by-max-alt"></a><h3>vik_track_get_tp_by_max_alt ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_track_get_tp_by_max_alt (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-tp-by-min-alt"></a><h3>vik_track_get_tp_by_min_alt ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_track_get_tp_by_min_alt (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-tp-first"></a><h3>vik_track_get_tp_first ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_track_get_tp_first (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-tp-last"></a><h3>vik_track_get_tp_last ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_track_get_tp_last (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-tp-prev"></a><h3>vik_track_get_tp_prev ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="returnvalue">VikTrackpoint</span></a> *
+vik_track_get_tp_prev (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                       <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrackpoint" title="struct VikTrackpoint"><span class="type">VikTrackpoint</span></a> *tp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-make-gradient-map"></a><h3>vik_track_make_gradient_map ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+vik_track_make_gradient_map (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> num_chunks</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-make-speed-map"></a><h3>vik_track_make_speed_map ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+vik_track_make_speed_map (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> num_chunks</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-make-distance-map"></a><h3>vik_track_make_distance_map ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+vik_track_make_distance_map (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                             <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> num_chunks</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-make-elevation-time-map"></a><h3>vik_track_make_elevation_time_map ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+vik_track_make_elevation_time_map (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> num_chunks</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-make-speed-dist-map"></a><h3>vik_track_make_speed_dist_map ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *
+vik_track_make_speed_dist_map (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                               <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> num_chunks</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-get-minmax-alt"></a><h3>vik_track_get_minmax_alt ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_track_get_minmax_alt (<em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *min_alt</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *max_alt</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-marshall"></a><h3>vik_track_marshall ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_marshall (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **data</code></em>,
+                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *len</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-unmarshall"></a><h3>vik_track_unmarshall ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> *
+vik_track_unmarshall (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> datalen</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-calculate-bounds"></a><h3>vik_track_calculate_bounds ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_calculate_bounds (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-anonymize-times"></a><h3>vik_track_anonymize_times ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_anonymize_times (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+<p>Shift all timestamps to be relatively offset from 1901-01-01</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-interpolate-times"></a><h3>vik_track_interpolate_times ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_interpolate_times (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+<p>Interpolate the timestamps between first and last trackpoint,
+so that the track is driven at equal speed, regardless of the
+distance between individual trackpoints.</p>
+<p>NB This will overwrite any existing trackpoint timestamps</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-apply-dem-data"></a><h3>vik_track_apply_dem_data ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+vik_track_apply_dem_data (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                          <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> skip_existing</code></em>);</pre>
+<p>Set elevation data for a track using any available DEM information</p>
+<div class="refsect3">
+<a name="id-1.2.138.6.58.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>skip_existing</p></td>
+<td class="parameter_description"><p>When TRUE, don't change the elevation if the trackpoint already has a value</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-apply-dem-data-last-trackpoint"></a><h3>vik_track_apply_dem_data_last_trackpoint ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_apply_dem_data_last_trackpoint
+                               (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-smooth-missing-elevation-data"></a><h3>vik_track_smooth_missing_elevation_data ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gulong"><span class="returnvalue">gulong</span></a>
+vik_track_smooth_missing_elevation_data
+                               (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flat</code></em>);</pre>
+<p>For each point with a missing elevation, set it to use the last known available elevation value.
+Primarily of use for smallish DEM holes where it is missing elevation data.
+Eg see Austria: around N47.3 &amp; E13.8</p>
+<div class="refsect3">
+<a name="id-1.2.138.6.60.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>flat</p></td>
+<td class="parameter_description"><p>Specify how the missing elevations will be set.
+When TRUE it uses a simple flat method, using the last known elevation
+When FALSE is uses an interpolation method to the next known elevation</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.138.6.60.6"></a><h4>Returns</h4>
+<p> The number of points that were adjusted</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-steal-and-append-trackpoints"></a><h3>vik_track_steal_and_append_trackpoints ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_steal_and_append_trackpoints
+                               (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *t1</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *t2</code></em>);</pre>
+<p>appends t2 to t1, leaving t2 with no trackpoints</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-cut-back-to-double-point"></a><h3>vik_track_cut_back_to_double_point ()</h3>
+<pre class="programlisting"><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="returnvalue">VikCoord</span></a> *
+vik_track_cut_back_to_double_point (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+<p>starting at the end, looks backwards for the last "double point", a duplicate trackpoint.
+If there is no double point, deletes all the trackpoints.</p>
+<div class="refsect3">
+<a name="id-1.2.138.6.62.5"></a><h4>Returns</h4>
+<p> the new end of the track (or the start if there are no double points)</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-compare-timestamp"></a><h3>vik_track_compare_timestamp ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+vik_track_compare_timestamp (<em class="parameter"><code>const <span class="type">void</span> *x</code></em>,
+                             <em class="parameter"><code>const <span class="type">void</span> *y</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-set-property-dialog"></a><h3>vik_track_set_property_dialog ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_set_property_dialog (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>,
+                               <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *dialog</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-track-clear-property-dialog"></a><h3>vik_track_clear_property_dialog ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_track_clear_property_dialog (<em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-viktrack.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="VikTrackpoint"></a><h3>struct VikTrackpoint</h3>
+<pre class="programlisting">struct VikTrackpoint {
+  gchar* name;
+  VikCoord coord;
+  gboolean newsegment;
+  gboolean has_timestamp;
+  time_t timestamp;
+  gdouble altitude; /* VIK_DEFAULT_ALTITUDE if data unavailable */
+  gdouble speed;  	/* NAN if data unavailable */
+  gdouble course;   /* NAN if data unavailable */
+  guint nsats;      /* number of satellites used. 0 if data unavailable */
+#define VIK_GPS_MODE_NOT_SEEN 0	/* mode update not seen yet */
+#define VIK_GPS_MODE_NO_FIX 1	/* none */
+#define VIK_GPS_MODE_2D  	2 /* good for latitude/longitude */
+#define VIK_GPS_MODE_3D  	3 /* good for altitude/climb too */
+#define VIK_GPS_MODE_DGPS 4
+#define VIK_GPS_MODE_PPS 	5 /* military signal used */
+  gint fix_mode;    /* VIK_GPS_MODE_NOT_SEEN if data unavailable */
+  gdouble hdop;     /* VIK_DEFAULT_DOP if data unavailable */
+  gdouble vdop;     /* VIK_DEFAULT_DOP if data unavailable */
+  gdouble pdop;     /* VIK_DEFAULT_DOP if data unavailable */
+};
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikTrackDrawnameType"></a><h3>enum VikTrackDrawnameType</h3>
+<div class="refsect3">
+<a name="id-1.2.138.7.3.3"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="TRACK-DRAWNAME-NO:CAPS"></a>TRACK_DRAWNAME_NO</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TRACK-DRAWNAME-CENTRE:CAPS"></a>TRACK_DRAWNAME_CENTRE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TRACK-DRAWNAME-START:CAPS"></a>TRACK_DRAWNAME_START</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TRACK-DRAWNAME-END:CAPS"></a>TRACK_DRAWNAME_END</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TRACK-DRAWNAME-START-END:CAPS"></a>TRACK_DRAWNAME_START_END</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TRACK-DRAWNAME-START-END-CENTRE:CAPS"></a>TRACK_DRAWNAME_START_END_CENTRE</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="NUM-TRACK-DRAWNAMES:CAPS"></a>NUM_TRACK_DRAWNAMES</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikTrack"></a><h3>struct VikTrack</h3>
+<pre class="programlisting">struct VikTrack {
+  GList *trackpoints;
+  gboolean visible;
+  gboolean is_route;
+  VikTrackDrawnameType draw_name_mode;
+  guint8 max_number_dist_labels;
+  gchar *comment;
+  gchar *description;
+  guint8 ref_count;
+  gchar *name;
+  GtkWidget *property_dialog;
+  gboolean has_color;
+  GdkColor color;
+  LatLonBBox bbox;
+};
+</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

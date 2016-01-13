@@ -23,7 +23,7 @@
 /*
  * This uses EXIF information from images to create waypoints at those positions
  *
- * The intial implementation uses libexif, which keeps Viking a pure C program.
+ * The initial implementation uses libexif, which keeps Viking a pure C program.
  * Now libgexiv2 is available (in C as a wrapper around the more powerful libexiv2 [C++]) so this is the preferred build.
  *  The attentative reader will notice the use of gexiv2 is a lot simpler as well.
  * For the time being the libexif code + build is still made available.
@@ -35,7 +35,9 @@
 #include "file.h"
 
 #include <sys/stat.h>
+#ifdef HAVE_UTIME_H
 #include <utime.h>
+#endif
 #include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
@@ -735,7 +737,8 @@ gint a_geotag_write_exif_gps ( const gchar *filename, VikCoord coord, gdouble al
 	// Save mtime for later use
 	struct stat stat_save;
 	if ( no_change_mtime )
-		stat ( filename, &stat_save );
+		if ( stat ( filename, &stat_save ) != 0 )
+			g_warning ( "%s couldn't read: %s", __FUNCTION__, filename );
 
 #ifdef HAVE_LIBGEXIV2
 	GExiv2Metadata *gemd = gexiv2_metadata_new ();
@@ -843,10 +846,13 @@ gint a_geotag_write_exif_gps ( const gchar *filename, VikCoord coord, gdouble al
 		// Restore mtime, using the saved value
 		struct stat stat_tmp;
 		struct utimbuf utb;
-		stat ( filename, &stat_tmp );
+		(void)stat ( filename, &stat_tmp );
 		utb.actime = stat_tmp.st_atime;
 		utb.modtime = stat_save.st_mtime;
-		utime ( filename, &utb );
+		// Not security critical, thus potential Time of Check Time of Use race condition is not bad
+		// coverity[toctou]
+		if ( g_utime ( filename, &utb ) != 0 )
+			g_warning ( "%s couldn't set time on: %s", __FUNCTION__, filename );
 	}
 
 	return result;

@@ -148,12 +148,22 @@ static void list_add_entry ( gchar *key )
   queue_count++;
 }
 
+/**
+ * Function increments reference counter of pixbuf.
+ * Caller may (and should) decrease it's reference.
+ */
 void a_mapcache_add ( GdkPixbuf *pixbuf, mapcache_extra_t extra, gint x, gint y, gint z, guint16 type, gint zoom, guint8 alpha, gdouble xshrinkfactor, gdouble yshrinkfactor, const gchar* name )
 {
+  if ( ! GDK_IS_PIXBUF(pixbuf) ) {
+    g_debug ( "Not caching corrupt pixbuf for maptype %d at %d %d %d %d", type, x, y, z, zoom );
+    return;
+  }
+
   guint nn = name ? g_str_hash ( name ) : 0;
   gchar *key = g_strdup_printf ( HASHKEY_FORMAT_STRING, type, x, y, z, zoom, nn, alpha, xshrinkfactor, yshrinkfactor );
 
   g_mutex_lock(mc_mutex);
+  g_object_ref(pixbuf);
   cache_add(key, pixbuf, extra);
 
   // TODO: that should be done on preference change only...
@@ -181,16 +191,25 @@ void a_mapcache_add ( GdkPixbuf *pixbuf, mapcache_extra_t extra, gint x, gint y,
   if ( (++tmp == 100 )) { g_debug("DEBUG: cache count=%d size=%u list count=%d\n", g_hash_table_size(cache), cache_size, queue_count ); tmp=0; }
 }
 
+/**
+ * Function increases reference counter of pixels buffer in behalf of caller.
+ * Caller have to decrease references counter, when buffer is no longer needed.
+ */
 GdkPixbuf *a_mapcache_get ( gint x, gint y, gint z, guint16 type, gint zoom, guint8 alpha, gdouble xshrinkfactor, gdouble yshrinkfactor, const gchar* name )
 {
   static char key[MC_KEY_SIZE];
   guint nn = name ? g_str_hash ( name ) : 0;
   g_snprintf ( key, sizeof(key), HASHKEY_FORMAT_STRING, type, x, y, z, zoom, nn, alpha, xshrinkfactor, yshrinkfactor );
+  g_mutex_lock(mc_mutex); /* prevent returning pixbuf when cache is being cleared */
   cache_item_t *ci = g_hash_table_lookup ( cache, key );
-  if ( ci )
+  if ( ci ) {
+    g_object_ref(ci->pixbuf);
+    g_mutex_unlock(mc_mutex);
     return ci->pixbuf;
-  else
+  } else {
+    g_mutex_unlock(mc_mutex);
     return NULL;
+  }
 }
 
 mapcache_extra_t a_mapcache_get_extra ( gint x, gint y, gint z, guint16 type, gint zoom, guint8 alpha, gdouble xshrinkfactor, gdouble yshrinkfactor, const gchar* name )
@@ -210,14 +229,19 @@ mapcache_extra_t a_mapcache_get_extra ( gint x, gint y, gint z, guint16 type, gi
  */
 static void flush_matching ( gchar *str )
 {
-  if ( queue_tail == NULL )
-    return;
+  g_mutex_lock(mc_mutex);
 
+  if ( queue_tail == NULL ) {
+    g_mutex_unlock(mc_mutex);
+    return;
+  }
+
+  // The 'loop' variable must be assigned within the mutex lock section,
+  //  otherwise where it points to might not be valid anymore when the actual processing occurs
   List *loop = queue_tail;
   List *tmp;
   gint len = strlen(str);
 
-  g_mutex_lock(mc_mutex);
   do {
     tmp = loop->next;
     if ( tmp ) {
@@ -259,14 +283,13 @@ void a_mapcache_remove_all_shrinkfactors ( gint x, gint y, gint z, guint16 type,
 
 void a_mapcache_flush ()
 {
+  // Everything happens within the mutex lock section
+  g_mutex_lock(mc_mutex);
+
   List *loop = queue_tail;
   List *tmp;
 
-  if ( queue_tail == NULL )
-    return;
-
-  g_mutex_lock(mc_mutex);
-  do {
+  while ( loop ) {
     tmp = loop->next;
     cache_remove(tmp->key);
     if ( tmp == queue_tail ) /* we deleted the last thing in the queue */
@@ -275,7 +298,7 @@ void a_mapcache_flush ()
       loop->next = tmp->next;
     g_free ( tmp );
     tmp = NULL;
-  } while ( loop );
+  }
 
   g_mutex_unlock(mc_mutex);
 }

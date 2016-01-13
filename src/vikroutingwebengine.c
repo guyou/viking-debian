@@ -43,7 +43,7 @@
 static void vik_routing_web_engine_finalize ( GObject *gob );
 
 static gboolean vik_routing_web_engine_find ( VikRoutingEngine *self, VikTrwLayer *vtl, struct LatLon start, struct LatLon end );
-static gchar *vik_routing_web_engine_get_cmd_from_directions(VikRoutingEngine *self, const gchar *start, const gchar *end);
+static gchar *vik_routing_web_engine_get_url_from_directions(VikRoutingEngine *self, const gchar *start, const gchar *end);
 static gboolean vik_routing_web_engine_supports_direction(VikRoutingEngine *self);
 static gboolean vik_routing_web_engine_refine ( VikRoutingEngine *self, VikTrwLayer *vtl, VikTrack *vt );
 static gboolean vik_routing_web_engine_supports_refine ( VikRoutingEngine *self );
@@ -210,7 +210,7 @@ static void vik_routing_web_engine_class_init ( VikRoutingWebEngineClass *klass 
 
   parent_class->find = vik_routing_web_engine_find;
   parent_class->supports_direction = vik_routing_web_engine_supports_direction;
-  parent_class->get_cmd_from_directions = vik_routing_web_engine_get_cmd_from_directions;
+  parent_class->get_url_from_directions = vik_routing_web_engine_get_url_from_directions;
   parent_class->refine = vik_routing_web_engine_refine;
   parent_class->supports_refine = vik_routing_web_engine_supports_refine;
 
@@ -425,7 +425,8 @@ vik_routing_web_engine_find ( VikRoutingEngine *self, VikTrwLayer *vtl, struct L
   DownloadMapOptions *options = vik_routing_web_engine_get_download_options(self);
   
   gchar *format = vik_routing_engine_get_format ( self );
-  gboolean ret = a_babel_convert_from_url ( vtl, uri, format, NULL, NULL, options );
+  ProcessOptions po = { NULL, NULL, format, uri, NULL, NULL };
+  gboolean ret = a_babel_convert_from ( vtl, &po, NULL, NULL, options );
 
   g_free(uri);
 
@@ -433,7 +434,7 @@ vik_routing_web_engine_find ( VikRoutingEngine *self, VikTrwLayer *vtl, struct L
 }
 
 static gchar *
-vik_routing_web_engine_get_cmd_from_directions ( VikRoutingEngine *self, const gchar *start, const gchar *end )
+vik_routing_web_engine_get_url_from_directions ( VikRoutingEngine *self, const gchar *start, const gchar *end )
 {
   g_return_val_if_fail ( VIK_IS_ROUTING_WEB_ENGINE (self), NULL);
 
@@ -559,7 +560,8 @@ vik_routing_web_engine_refine ( VikRoutingEngine *self, VikTrwLayer *vtl, VikTra
 
   /* Convert and insert data in model */
   gchar *format = vik_routing_engine_get_format ( self );
-  gboolean ret = a_babel_convert_from_url ( vtl, uri, format, NULL, NULL, options );
+  ProcessOptions po = { NULL, NULL, format, uri, NULL, NULL };
+  gboolean ret = a_babel_convert_from ( vtl, &po, NULL, NULL, options );
 
   g_free(uri);
 

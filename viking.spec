@@ -3,7 +3,7 @@
 #%% May be redistributed without this notice.
 
 Name:		viking
-Version:	1.6
+Version:	1.6.1
 Release:	1
 
 Summary:	GPS data editor and analyzer

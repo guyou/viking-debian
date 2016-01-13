@@ -61,10 +61,12 @@ static gboolean check_file_first_line(FILE* f, gchar *patterns[])
   size_t nr;
 
   memset(buf, 0, sizeof(buf));
-  fgetpos(f, &pos);
+  if ( !fgetpos(f, &pos) )
+    return FALSE;
   rewind(f);
   nr = fread(buf, 1, sizeof(buf) - 1, f);
-  fsetpos(f, &pos);
+  if ( !fgetpos(f, &pos) )
+    return FALSE;
   for (bp = buf; (bp < (buf + sizeof(buf) - 1)) && (nr > (bp - buf)); bp++) {
     if (!(isspace(*bp)))
       break;
@@ -165,7 +167,9 @@ static void unlock_file(const char *fn)
 	g_mutex_unlock(file_list_mutex);
 }
 
-
+/**
+ * Unzip a file - replacing the file with the unzipped contents of the self
+ */
 static void uncompress_zip ( gchar *name )
 {
 	GError *error = NULL;
@@ -186,7 +190,7 @@ static void uncompress_zip ( gchar *name )
 		return;
 	}
 
-	// This overwrires any previous file contents
+	// This overwrites any previous file contents
 	if ( ! g_file_set_contents ( name, unzip_mem, ucsize, &error ) ) {
 		g_critical ( "Couldn't write file '%s', because of %s", name, error->message );
 		g_error_free ( error );
@@ -202,6 +206,11 @@ static void uncompress_zip ( gchar *name )
 void a_try_decompress_file (gchar *name)
 {
 #ifdef HAVE_MAGIC_H
+#ifdef MAGIC_VERSION
+	// Or magic_version() if available - probably need libmagic 5.18 or so
+	//  (can't determine exactly which version the versioning became available)
+	g_debug ("%s: magic version: %d", __FUNCTION__, MAGIC_VERSION );
+#endif
 	magic_t myt = magic_open ( MAGIC_CONTINUE|MAGIC_ERROR|MAGIC_MIME );
 	gboolean zip = FALSE;
 	gboolean bzip2 = FALSE;
@@ -209,19 +218,24 @@ void a_try_decompress_file (gchar *name)
 #ifdef WINDOWS
 		// We have to 'package' the magic database ourselves :(
 		//  --> %PROGRAM FILES%\Viking\magic.mgc
-		magic_load ( myt, "magic.mgc" );
+		int ml = magic_load ( myt, ".\\magic.mgc" );
 #else
 		// Use system default
-		magic_load ( myt, NULL );
+		int ml = magic_load ( myt, NULL );
 #endif
-		const char* magic = magic_file (myt, name);
-		g_debug ("%s: magic output: %s", __FUNCTION__, magic );
+		if ( ml == 0 ) {
+			const char* magic = magic_file (myt, name);
+			g_debug ("%s: magic output: %s", __FUNCTION__, magic );
 
-		if ( g_strcmp0 (magic, "application/zip; charset=binary") == 0 )
-			zip = TRUE;
+			if ( g_strcmp0 (magic, "application/zip; charset=binary") == 0 )
+				zip = TRUE;
 
-		if ( g_strcmp0 (magic, "application/x-bzip2; charset=binary") == 0 )
-			bzip2 = TRUE;
+			if ( g_strcmp0 (magic, "application/x-bzip2; charset=binary") == 0 )
+				bzip2 = TRUE;
+		}
+		else {
+			g_critical ("%s: magic load database failure", __FUNCTION__ );
+		}
 
 		magic_close ( myt );
 	}
@@ -234,8 +248,12 @@ void a_try_decompress_file (gchar *name)
 	}
 	else if ( bzip2 ) {
 		gchar* bz2_name = uncompress_bzip2 ( name );
-		g_remove ( name );
-		g_rename ( bz2_name, name );
+		if ( bz2_name ) {
+			if ( g_remove ( name ) )
+				g_critical ("%s: remove file failed [%s]", __FUNCTION__, name );
+			if ( g_rename (bz2_name, name) )
+				g_critical ("%s: file rename failed [%s] to [%s]", __FUNCTION__, bz2_name, name );
+		}
 	}
 
 	return;
@@ -262,17 +280,17 @@ static DownloadResult_t download( const char *hostname, const char *uri, const c
     time_t tile_age = a_preferences_get(VIKING_PREFERENCES_NAMESPACE "download_tile_age")->u;
     /* Get the modified time of this file */
     struct stat buf;
-    g_stat ( fn, &buf );
+    (void)g_stat ( fn, &buf );
     time_t file_time = buf.st_mtime;
     if ( (time(NULL) - file_time) < tile_age ) {
       /* File cache is too recent, so return */
       return DOWNLOAD_NOT_REQUIRED;
     }
 
-    if (options->check_file_server_time) {
+    if (options != NULL && options->check_file_server_time) {
       file_options.time_condition = file_time;
     }
-    if (options->use_etag) {
+    if (options != NULL && options->use_etag) {
       gchar *etag_filename = g_strdup_printf("%s.etag", fn);
       gsize etag_length = 0;
       g_file_get_contents (etag_filename, &(file_options.etag), &etag_length, NULL);
@@ -290,7 +308,8 @@ static DownloadResult_t download( const char *hostname, const char *uri, const c
 
   } else {
     gchar *dir = g_path_get_dirname ( fn );
-    g_mkdir_with_parents ( dir , 0777 );
+    if ( g_mkdir_with_parents ( dir , 0777 ) != 0)
+      g_warning ("%s: Failed to mkdir %s", __FUNCTION__, dir );
     g_free ( dir );
   }
 
@@ -335,20 +354,21 @@ static DownloadResult_t download( const char *hostname, const char *uri, const c
   if (failure)
   {
     g_warning(_("Download error: %s"), fn);
-    g_remove ( tmpfilename );
+    if ( g_remove ( tmpfilename ) != 0 )
+      g_warning( ("Failed to remove: %s"), tmpfilename);
     unlock_file ( tmpfilename );
     g_free ( tmpfilename );
-    if (options->use_etag) {
+    if ( options != NULL && options->use_etag ) {
       g_free ( file_options.etag );
       g_free ( file_options.new_etag );
     }
     return result;
   }
 
-  if ( options->convert_file )
-	  options->convert_file ( tmpfilename );
+  if ( options != NULL && options->convert_file )
+    options->convert_file ( tmpfilename );
 
-  if (options->use_etag) {
+  if ( options != NULL && options->use_etag ) {
     if (file_options.new_etag) {
       /* server returned an etag value */
       gchar *etag_filename = g_strdup_printf("%s.etag", fn);
@@ -359,12 +379,12 @@ static DownloadResult_t download( const char *hostname, const char *uri, const c
   }
 
   if (ret == CURL_DOWNLOAD_NO_NEWER_FILE)  {
-    g_remove ( tmpfilename );
-#if GLIB_CHECK_VERSION(2,18,0)
-    g_utime ( fn, NULL ); /* update mtime of local copy */
-#else
-    utimes ( fn, NULL ); /* update mtime of local copy */
-#endif
+    (void)g_remove ( tmpfilename );
+     // update mtime of local copy
+     // Not security critical, thus potential Time of Check Time of Use race condition is not bad
+     // coverity[toctou]
+     if ( g_utime ( fn, NULL ) != 0 )
+       g_warning ( "%s couldn't set time on: %s", __FUNCTION__, fn );
   } else {
      /* move completely-downloaded file to permanent location */
      if ( g_rename ( tmpfilename, fn ) )
@@ -373,7 +393,7 @@ static DownloadResult_t download( const char *hostname, const char *uri, const c
   unlock_file ( tmpfilename );
   g_free ( tmpfilename );
 
-  if (options->use_etag) {
+  if ( options != NULL && options->use_etag ) {
     g_free ( file_options.etag );
     g_free ( file_options.new_etag );
   }
@@ -425,11 +445,13 @@ gchar *a_download_uri_to_tmp_file ( const gchar *uri, DownloadMapOptions *option
   }
 
   tmp_file = fdopen(tmp_fd, "r+");
+  if ( !tmp_file )
+    return NULL;
 
   if ( curl_download_uri ( uri, tmp_file, options, NULL, NULL ) ) {
     // error
     fclose ( tmp_file );
-    g_remove ( tmpname );
+    (void)g_remove ( tmpname );
     g_free ( tmpname );
     return NULL;
   }

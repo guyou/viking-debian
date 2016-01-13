@@ -36,15 +36,25 @@
 
 void google_init () {
   // Webtools
-  VikWebtoolCenter *webtool = vik_webtool_center_new_with_members ( _("Google"), "http://maps.google.com/maps?f=q&geocode=&ie=UTF8&ll=%s,%s&z=%d&iwloc=addr" );
+  VikWebtoolCenter *webtool = vik_webtool_center_new_with_members ( _("Google"), "http://maps.google.com/maps/@%s,%s,%dz" );
   vik_ext_tools_register ( VIK_EXT_TOOL ( webtool ) );
   g_object_unref ( webtool );
 
   // Goto
+  /*
+   * Google no longer supports the API we used
+   *
   GoogleGotoTool *gototool = google_goto_tool_new (  );
   vik_goto_register ( VIK_GOTO_TOOL ( gototool ) );
   g_object_unref ( gototool );
+  */
+}
 
+/**
+ * Delayed initialization part as the check for gpsbabel availability needs to have been performed
+ */
+void google_post_init ()
+{
   // Routing
   /* Google Directions service as routing engine.
    * 
@@ -53,6 +63,9 @@ void google_init () {
    *
    * gpsbabel supports this format.
    */
+  /*
+   * Google no longer supports the API we used
+   *
   if ( a_babel_available() ) {
     VikRoutingEngine *routing = g_object_new ( VIK_ROUTING_WEB_ENGINE_TYPE,
       "id", "google",
@@ -68,4 +81,5 @@ void google_init () {
     vik_routing_register ( VIK_ROUTING_ENGINE ( routing ) );
     g_object_unref ( routing );
   }
+  */
 }

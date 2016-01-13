@@ -1,0 +1,586 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikMapSource: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-vikmapslayer-pixmap.html" title="vikmapslayer_pixmap">
+<link rel="next" href="VikMapSourceDefault.html" title="VikMapSourceDefault">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikMapSource.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikMapSource.object-hierarchy" class="shortcut">Object Hierarchy</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-vikmapslayer-pixmap.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="VikMapSourceDefault.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikMapSource"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikMapSource.top_of_page"></a>VikMapSource</span></h2>
+<p>VikMapSource — the base class to describe map source</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikMapSource.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-copyright" title="vik_map_source_get_copyright ()">vik_map_source_get_copyright</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-license" title="vik_map_source_get_license ()">vik_map_source_get_license</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-license-url" title="vik_map_source_get_license_url ()">vik_map_source_get_license_url</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <span class="returnvalue">GdkPixbuf</span> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-logo" title="vik_map_source_get_logo ()">vik_map_source_get_logo</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-name" title="vik_map_source_get_name ()">vik_map_source_get_name</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-uniq-id" title="vik_map_source_get_uniq_id ()">vik_map_source_get_uniq_id</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-label" title="vik_map_source_get_label ()">vik_map_source_get_label</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-tilesize-x" title="vik_map_source_get_tilesize_x ()">vik_map_source_get_tilesize_x</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-tilesize-y" title="vik_map_source_get_tilesize_y ()">vik_map_source_get_tilesize_y</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode"><span class="returnvalue">VikViewportDrawMode</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-drawmode" title="vik_map_source_get_drawmode ()">vik_map_source_get_drawmode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-is-direct-file-access" title="vik_map_source_is_direct_file_access ()">vik_map_source_is_direct_file_access</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-is-mbtiles" title="vik_map_source_is_mbtiles ()">vik_map_source_is_mbtiles</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-is-osm-meta-tiles" title="vik_map_source_is_osm_meta_tiles ()">vik_map_source_is_osm_meta_tiles</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-supports-download-only-new" title="vik_map_source_supports_download_only_new ()">vik_map_source_supports_download_only_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-zoom-min" title="vik_map_source_get_zoom_min ()">vik_map_source_get_zoom_min</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-zoom-max" title="vik_map_source_get_zoom_max ()">vik_map_source_get_zoom_max</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-lat-min" title="vik_map_source_get_lat_min ()">vik_map_source_get_lat_min</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-lat-max" title="vik_map_source_get_lat_max ()">vik_map_source_get_lat_max</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-lon-min" title="vik_map_source_get_lon_min ()">vik_map_source_get_lon_min</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-lon-max" title="vik_map_source_get_lon_max ()">vik_map_source_get_lon_max</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-get-file-extension" title="vik_map_source_get_file_extension ()">vik_map_source_get_file_extension</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-coord-to-mapcoord" title="vik_map_source_coord_to_mapcoord ()">vik_map_source_coord_to_mapcoord</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-mapcoord-to-center-coord" title="vik_map_source_mapcoord_to_center_coord ()">vik_map_source_mapcoord_to_center_coord</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-download" title="vik_map_source_download ()">vik_map_source_download</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span> *
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-download-handle-init" title="vik_map_source_download_handle_init ()">vik_map_source_download_handle_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikMapSource.html#vik-map-source-download-handle-cleanup" title="vik_map_source_download_handle_cleanup ()">vik_map_source_download_handle_cleanup</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikMapSource.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> VikMapSource
+        <span class="lineart">├──</span> <a class="link" href="VikMapSourceDefault.html" title="VikMapSourceDefault">VikMapSourceDefault</a>
+        <span class="lineart">╰──</span> <a class="link" href="VikMapType.html" title="VikMapType">VikMapType</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikMapSource.description"></a><h2>Description</h2>
+<p>The <a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> class is both the interface and the base class
+for the hierarchie of map source.</p>
+</div>
+<div class="refsect1">
+<a name="VikMapSource.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="vik-map-source-get-copyright"></a><h3>vik_map_source_get_copyright ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_map_source_get_copyright (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>,
+                              <em class="parameter"><code><a class="link" href="viking-bbox.html#LatLonBBox" title="LatLonBBox"><span class="type">LatLonBBox</span></a> bbox</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> zoom</code></em>,
+                              <em class="parameter"><code><span class="type">void</span> (*fct) (VikViewport*,const gchar*)</code></em>,
+                              <em class="parameter"><code><span class="type">void</span> *data</code></em>);</pre>
+<p>Retrieve copyright(s) for the corresponding bounding box and zoom level.</p>
+<div class="refsect3">
+<a name="id-1.2.128.6.2.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the VikMapSource of interest.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>bbox</p></td>
+<td class="parameter_description"><p>bounding box of interest.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>zoom</p></td>
+<td class="parameter_description"><p>the zoom level of interest.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>fct</p></td>
+<td class="parameter_description"><p>the callback function to use to return matching copyrights.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>data</p></td>
+<td class="parameter_description"><p>the user data to use to call the callbaack function.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-license"></a><h3>vik_map_source_get_license ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_map_source_get_license (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-license-url"></a><h3>vik_map_source_get_license_url ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_map_source_get_license_url (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-logo"></a><h3>vik_map_source_get_logo ()</h3>
+<pre class="programlisting">const <span class="returnvalue">GdkPixbuf</span> *
+vik_map_source_get_logo (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-name"></a><h3>vik_map_source_get_name ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_map_source_get_name (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-uniq-id"></a><h3>vik_map_source_get_uniq_id ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+vik_map_source_get_uniq_id (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-label"></a><h3>vik_map_source_get_label ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_map_source_get_label (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-tilesize-x"></a><h3>vik_map_source_get_tilesize_x ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+vik_map_source_get_tilesize_x (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-tilesize-y"></a><h3>vik_map_source_get_tilesize_y ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="returnvalue">guint16</span></a>
+vik_map_source_get_tilesize_y (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-drawmode"></a><h3>vik_map_source_get_drawmode ()</h3>
+<pre class="programlisting"><a class="link" href="VikViewport.html#VikViewportDrawMode" title="enum VikViewportDrawMode"><span class="returnvalue">VikViewportDrawMode</span></a>
+vik_map_source_get_drawmode (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-is-direct-file-access"></a><h3>vik_map_source_is_direct_file_access ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_map_source_is_direct_file_access (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+<p>Return true when we can bypass all this download malarky
+  Treat the files as a pre generated data set in OSM tile server layout: tiledir/<code class="literal">d</code>/<code class="literal">d</code>/<code class="literal">d</code>.png</p>
+<div class="refsect3">
+<a name="id-1.2.128.6.12.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the VikMapSource of interest.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-is-mbtiles"></a><h3>vik_map_source_is_mbtiles ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_map_source_is_mbtiles (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+<p>Return true when the map is in an MB Tiles format.
+  See http://github.com/mapbox/mbtiles-spec
+  (Read Only ATM)</p>
+<div class="refsect3">
+<a name="id-1.2.128.6.13.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the VikMapSource of interest.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-is-osm-meta-tiles"></a><h3>vik_map_source_is_osm_meta_tiles ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_map_source_is_osm_meta_tiles (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+<p>Treat the files as a pre generated data set directly by tirex or renderd
+    tiledir/Z/[xxxxyyyy]/[xxxxyyyy]/[xxxxyyyy]/[xxxxyyyy]/[xxxxyyyy].meta</p>
+<div class="refsect3">
+<a name="id-1.2.128.6.14.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the VikMapSource of interest.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-supports-download-only-new"></a><h3>vik_map_source_supports_download_only_new ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_map_source_supports_download_only_new
+                               (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-zoom-min"></a><h3>vik_map_source_get_zoom_min ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a>
+vik_map_source_get_zoom_min (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-zoom-max"></a><h3>vik_map_source_get_zoom_max ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a>
+vik_map_source_get_zoom_max (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-lat-min"></a><h3>vik_map_source_get_lat_min ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_map_source_get_lat_min (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-lat-max"></a><h3>vik_map_source_get_lat_max ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_map_source_get_lat_max (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-lon-min"></a><h3>vik_map_source_get_lon_min ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_map_source_get_lon_min (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-lon-max"></a><h3>vik_map_source_get_lon_max ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a>
+vik_map_source_get_lon_max (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-get-file-extension"></a><h3>vik_map_source_get_file_extension ()</h3>
+<pre class="programlisting">const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+vik_map_source_get_file_extension (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+<p>Returns the file extension of files held on disk.
+ Typically .png but may be .jpg or whatever the user defines</p>
+<div class="refsect3">
+<a name="id-1.2.128.6.22.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the VikMapSource of interest.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-coord-to-mapcoord"></a><h3>vik_map_source_coord_to_mapcoord ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_map_source_coord_to_mapcoord (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>,
+                                  <em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *src</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> xzoom</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> yzoom</code></em>,
+                                  <em class="parameter"><code><a class="link" href="viking-mapcoord.html#MapCoord" title="MapCoord"><span class="type">MapCoord</span></a> *dest</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-mapcoord-to-center-coord"></a><h3>vik_map_source_mapcoord_to_center_coord ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_map_source_mapcoord_to_center_coord
+                               (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-mapcoord.html#MapCoord" title="MapCoord"><span class="type">MapCoord</span></a> *src</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *dest</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-download"></a><h3>vik_map_source_download ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+vik_map_source_download (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>,
+                         <em class="parameter"><code><a class="link" href="viking-mapcoord.html#MapCoord" title="MapCoord"><span class="type">MapCoord</span></a> *src</code></em>,
+                         <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *dest_fn</code></em>,
+                         <em class="parameter"><code><span class="type">void</span> *handle</code></em>);</pre>
+<div class="refsect3">
+<a name="id-1.2.128.6.25.4"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The VikMapSource of interest.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>src</p></td>
+<td class="parameter_description"><p>The map location to download</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>dest_fn</p></td>
+<td class="parameter_description"><p>The filename to save the result in</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>handle</p></td>
+<td class="parameter_description"><p>Potential reusable Curl Handle (may be NULL)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.128.6.25.5"></a><h4>Returns</h4>
+<p> How successful the download was as per the type <a class="link" href="viking-download.html#DownloadResult-t" title="enum DownloadResult_t"><span class="type">DownloadResult_t</span></a></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-download-handle-init"></a><h3>vik_map_source_download_handle_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span> *
+vik_map_source_download_handle_init (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-map-source-download-handle-cleanup"></a><h3>vik_map_source_download_handle_cleanup ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_map_source_download_handle_cleanup
+                               (<em class="parameter"><code><a class="link" href="VikMapSource.html" title="VikMapSource"><span class="type">VikMapSource</span></a> *self</code></em>,
+                                <em class="parameter"><code><span class="type">void</span> *handle</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikMapSource.other_details"></a><h2>Types and Values</h2>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

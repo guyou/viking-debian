@@ -1,0 +1,974 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VikTrwLayer: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="VikTreeview.html" title="VikTreeview">
+<link rel="next" href="viking-viktrwlayer-analysis.html" title="viktrwlayer_analysis">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#VikTrwLayer.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#VikTrwLayer.object-hierarchy" class="shortcut">Object Hierarchy</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="VikTreeview.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-viktrwlayer-analysis.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="VikTrwLayer"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="VikTrwLayer.top_of_page"></a>VikTrwLayer</span></h2>
+<p>VikTrwLayer</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="VikTrwLayer.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="VikTrwLayer.html#VIK-TRW-LAYER-TYPE:CAPS" title="VIK_TRW_LAYER_TYPE">VIK_TRW_LAYER_TYPE</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikTrwLayer.html#VikTRWMetadata" title="VikTRWMetadata"><span class="returnvalue">VikTRWMetadata</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-metadata-new" title="vik_trw_metadata_new ()">vik_trw_metadata_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-metadata-free" title="vik_trw_metadata_free ()">vik_trw_metadata_free</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="VikTrwLayer.html#VikTRWMetadata" title="VikTRWMetadata"><span class="returnvalue">VikTRWMetadata</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-metadata" title="vik_trw_layer_get_metadata ()">vik_trw_layer_get_metadata</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-set-metadata" title="vik_trw_layer_set_metadata ()">vik_trw_layer_set_metadata</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-find-date" title="vik_trw_layer_find_date ()">vik_trw_layer_find_date</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-filein-add-waypoint" title="vik_trw_layer_filein_add_waypoint ()">vik_trw_layer_filein_add_waypoint</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-filein-add-track" title="vik_trw_layer_filein_add_track ()">vik_trw_layer_filein_add_track</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-property-tracks-line-thickness" title="vik_trw_layer_get_property_tracks_line_thickness ()">vik_trw_layer_get_property_tracks_line_thickness</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-add-waypoint" title="vik_trw_layer_add_waypoint ()">vik_trw_layer_add_waypoint</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-add-track" title="vik_trw_layer_add_track ()">vik_trw_layer_add_track</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-add-route" title="vik_trw_layer_add_route ()">vik_trw_layer_add_route</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-vikwaypoint.html#VikWaypoint" title="struct VikWaypoint"><span class="returnvalue">VikWaypoint</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-waypoint" title="vik_trw_layer_get_waypoint ()">vik_trw_layer_get_waypoint</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-track" title="vik_trw_layer_get_track ()">vik_trw_layer_get_track</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-delete-track" title="vik_trw_layer_delete_track ()">vik_trw_layer_delete_track</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-delete-route" title="vik_trw_layer_delete_route ()">vik_trw_layer_delete_route</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-auto-set-view" title="vik_trw_layer_auto_set_view ()">vik_trw_layer_auto_set_view</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-find-center" title="vik_trw_layer_find_center ()">vik_trw_layer_find_center</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-tracks" title="vik_trw_layer_get_tracks ()">vik_trw_layer_get_tracks</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-routes" title="vik_trw_layer_get_routes ()">vik_trw_layer_get_routes</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-waypoints" title="vik_trw_layer_get_waypoints ()">vik_trw_layer_get_waypoints</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-is-empty" title="vik_trw_layer_is_empty ()">vik_trw_layer_is_empty</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-new-waypoint" title="vik_trw_layer_new_waypoint ()">vik_trw_layer_new_waypoint</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="returnvalue">VikCoordMode</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-coord-mode" title="vik_trw_layer_get_coord_mode ()">vik_trw_layer_get_coord_mode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-uniquify" title="vik_trw_layer_uniquify ()">vik_trw_layer_uniquify</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-delete-all-waypoints" title="vik_trw_layer_delete_all_waypoints ()">vik_trw_layer_delete_all_waypoints</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-delete-all-tracks" title="vik_trw_layer_delete_all_tracks ()">vik_trw_layer_delete_all_tracks</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-delete-all-routes" title="vik_trw_layer_delete_all_routes ()">vik_trw_layer_delete_all_routes</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-cancel-tps-of-track" title="trw_layer_cancel_tps_of_track ()">trw_layer_cancel_tps_of_track</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-reset-waypoints" title="vik_trw_layer_reset_waypoints ()">vik_trw_layer_reset_waypoints</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-draw-highlight" title="vik_trw_layer_draw_highlight ()">vik_trw_layer_draw_highlight</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-draw-highlight-item" title="vik_trw_layer_draw_highlight_item ()">vik_trw_layer_draw_highlight_item</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-draw-highlight-items" title="vik_trw_layer_draw_highlight_items ()">vik_trw_layer_draw_highlight_items</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikTrwLayer.html#VikTrwlayerGetTracksAndLayersFunc" title="VikTrwlayerGetTracksAndLayersFunc ()">*VikTrwlayerGetTracksAndLayersFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-build-track-list-t" title="vik_trw_layer_build_track_list_t ()">vik_trw_layer_build_track_list_t</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="VikTrwLayer.html#VikTrwlayerGetWaypointsAndLayersFunc" title="VikTrwlayerGetWaypointsAndLayersFunc ()">*VikTrwlayerGetWaypointsAndLayersFunc</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-build-waypoint-list-t" title="vik_trw_layer_build_waypoint_list_t ()">vik_trw_layer_build_waypoint_list_t</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">GdkPixbuf</span> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#get-wp-sym-small" title="get_wp_sym_small ()">get_wp_sym_small</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-verify-thumbnails" title="trw_layer_verify_thumbnails ()">trw_layer_verify_thumbnails</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-new-unique-sublayer-name" title="trw_layer_new_unique_sublayer_name ()">trw_layer_new_unique_sublayer_name</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-waypoint-rename" title="trw_layer_waypoint_rename ()">trw_layer_waypoint_rename</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-waypoint-reset-icon" title="trw_layer_waypoint_reset_icon ()">trw_layer_waypoint_reset_icon</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-calculate-bounds-waypoints" title="trw_layer_calculate_bounds_waypoints ()">trw_layer_calculate_bounds_waypoints</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-tracks-visibility" title="vik_trw_layer_get_tracks_visibility ()">vik_trw_layer_get_tracks_visibility</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-routes-visibility" title="vik_trw_layer_get_routes_visibility ()">vik_trw_layer_get_routes_visibility</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-waypoints-visibility" title="vik_trw_layer_get_waypoints_visibility ()">vik_trw_layer_get_waypoints_visibility</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-update-treeview" title="trw_layer_update_treeview ()">trw_layer_update_treeview</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-dialog-shift" title="trw_layer_dialog_shift ()">trw_layer_dialog_shift</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-track-find-uuid" title="trw_layer_track_find_uuid ()">trw_layer_track_find_uuid</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-waypoint-find-uuid" title="trw_layer_waypoint_find_uuid ()">trw_layer_waypoint_find_uuid</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#trw-layer-zoom-to-show-latlons" title="trw_layer_zoom_to_show_latlons ()">trw_layer_zoom_to_show_latlons</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-tracks-iters" title="vik_trw_layer_get_tracks_iters ()">vik_trw_layer_get_tracks_iters</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-routes-iters" title="vik_trw_layer_get_routes_iters ()">vik_trw_layer_get_routes_iters</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="VikTrwLayer.html#vik-trw-layer-get-waypoints-iters" title="vik_trw_layer_get_waypoints_iters ()">vik_trw_layer_get_waypoints_iters</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikTrwLayer.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="VikTrwLayer.html#VikTRWMetadata" title="VikTRWMetadata">VikTRWMetadata</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="VikTrwLayer.html#vik-trw-track-list-t" title="vik_trw_track_list_t">vik_trw_track_list_t</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="VikTrwLayer.html#vik-trw-waypoint-list-t" title="vik_trw_waypoint_list_t">vik_trw_waypoint_list_t</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="VikTrwLayer.html#trku-udata" title="trku_udata">trku_udata</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="VikTrwLayer.html#wpu-udata" title="wpu_udata">wpu_udata</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="VikTrwLayer.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> <a class="link" href="VikLayer.html" title="VikLayer">VikLayer</a>
+        <span class="lineart">╰──</span> VikTrwLayer
+</pre>
+</div>
+<div class="refsect1">
+<a name="VikTrwLayer.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="VikTrwLayer.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="VIK-TRW-LAYER-TYPE:CAPS"></a><h3>VIK_TRW_LAYER_TYPE</h3>
+<pre class="programlisting">#define VIK_TRW_LAYER_TYPE            (vik_trw_layer_get_type ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-metadata-new"></a><h3>vik_trw_metadata_new ()</h3>
+<pre class="programlisting"><a class="link" href="VikTrwLayer.html#VikTRWMetadata" title="VikTRWMetadata"><span class="returnvalue">VikTRWMetadata</span></a> *
+vik_trw_metadata_new ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-metadata-free"></a><h3>vik_trw_metadata_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_metadata_free (<em class="parameter"><code><a class="link" href="VikTrwLayer.html#VikTRWMetadata" title="VikTRWMetadata"><span class="type">VikTRWMetadata</span></a> *metadata</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-metadata"></a><h3>vik_trw_layer_get_metadata ()</h3>
+<pre class="programlisting"><a class="link" href="VikTrwLayer.html#VikTRWMetadata" title="VikTRWMetadata"><span class="returnvalue">VikTRWMetadata</span></a> *
+vik_trw_layer_get_metadata (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-set-metadata"></a><h3>vik_trw_layer_set_metadata ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_set_metadata (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                            <em class="parameter"><code><a class="link" href="VikTrwLayer.html#VikTRWMetadata" title="VikTRWMetadata"><span class="type">VikTRWMetadata</span></a> *metadata</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-find-date"></a><h3>vik_trw_layer_find_date ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_find_date (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                         <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *date_str</code></em>,
+                         <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *position</code></em>,
+                         <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> do_tracks</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> select</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-filein-add-waypoint"></a><h3>vik_trw_layer_filein_add_waypoint ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_filein_add_waypoint (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                                   <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                   <em class="parameter"><code><a class="link" href="viking-vikwaypoint.html#VikWaypoint" title="struct VikWaypoint"><span class="type">VikWaypoint</span></a> *wp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-filein-add-track"></a><h3>vik_trw_layer_filein_add_track ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_filein_add_track (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *tr</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-property-tracks-line-thickness"></a><h3>vik_trw_layer_get_property_tracks_line_thickness ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+vik_trw_layer_get_property_tracks_line_thickness
+                               (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-add-waypoint"></a><h3>vik_trw_layer_add_waypoint ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_add_waypoint (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                            <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                            <em class="parameter"><code><a class="link" href="viking-vikwaypoint.html#VikWaypoint" title="struct VikWaypoint"><span class="type">VikWaypoint</span></a> *wp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-add-track"></a><h3>vik_trw_layer_add_track ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_add_track (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                         <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *t</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-add-route"></a><h3>vik_trw_layer_add_route ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_add_route (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                         <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *t</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-waypoint"></a><h3>vik_trw_layer_get_waypoint ()</h3>
+<pre class="programlisting"><a class="link" href="viking-vikwaypoint.html#VikWaypoint" title="struct VikWaypoint"><span class="returnvalue">VikWaypoint</span></a> *
+vik_trw_layer_get_waypoint (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                            <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-track"></a><h3>vik_trw_layer_get_track ()</h3>
+<pre class="programlisting"><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="returnvalue">VikTrack</span></a> *
+vik_trw_layer_get_track (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                         <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-delete-track"></a><h3>vik_trw_layer_delete_track ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_delete_track (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                            <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-delete-route"></a><h3>vik_trw_layer_delete_route ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_delete_route (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                            <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-auto-set-view"></a><h3>vik_trw_layer_auto_set_view ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_auto_set_view (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                             <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-find-center"></a><h3>vik_trw_layer_find_center ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_find_center (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                           <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *dest</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-tracks"></a><h3>vik_trw_layer_get_tracks ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+vik_trw_layer_get_tracks (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *l</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-routes"></a><h3>vik_trw_layer_get_routes ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+vik_trw_layer_get_routes (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *l</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-waypoints"></a><h3>vik_trw_layer_get_waypoints ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+vik_trw_layer_get_waypoints (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *l</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-is-empty"></a><h3>vik_trw_layer_is_empty ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_is_empty (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-new-waypoint"></a><h3>vik_trw_layer_new_waypoint ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_new_waypoint (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                            <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWindow.html"><span class="type">GtkWindow</span></a> *w</code></em>,
+                            <em class="parameter"><code>const <a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *def_coord</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-coord-mode"></a><h3>vik_trw_layer_get_coord_mode ()</h3>
+<pre class="programlisting"><a class="link" href="viking-vikcoord.html#VikCoordMode" title="VikCoordMode"><span class="returnvalue">VikCoordMode</span></a>
+vik_trw_layer_get_coord_mode (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-uniquify"></a><h3>vik_trw_layer_uniquify ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_uniquify (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                        <em class="parameter"><code><a class="link" href="VikLayersPanel.html" title="VikLayersPanel"><span class="type">VikLayersPanel</span></a> *vlp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-delete-all-waypoints"></a><h3>vik_trw_layer_delete_all_waypoints ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_delete_all_waypoints (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-delete-all-tracks"></a><h3>vik_trw_layer_delete_all_tracks ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_delete_all_tracks (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-delete-all-routes"></a><h3>vik_trw_layer_delete_all_routes ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_delete_all_routes (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-cancel-tps-of-track"></a><h3>trw_layer_cancel_tps_of_track ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+trw_layer_cancel_tps_of_track (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                               <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-reset-waypoints"></a><h3>vik_trw_layer_reset_waypoints ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_reset_waypoints (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-draw-highlight"></a><h3>vik_trw_layer_draw_highlight ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_draw_highlight (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                              <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-draw-highlight-item"></a><h3>vik_trw_layer_draw_highlight_item ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_draw_highlight_item (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                                   <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>,
+                                   <em class="parameter"><code><a class="link" href="viking-vikwaypoint.html#VikWaypoint" title="struct VikWaypoint"><span class="type">VikWaypoint</span></a> *wpt</code></em>,
+                                   <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+<p>Generally for drawing all tracks or routes or waypoints
+trks may be actually routes
+It assumes they belong to the TRW Layer (it doesn't check this is the case)</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-draw-highlight-items"></a><h3>vik_trw_layer_draw_highlight_items ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_trw_layer_draw_highlight_items (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="type">GHashTable</span></a> *trks</code></em>,
+                                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="type">GHashTable</span></a> *wpts</code></em>,
+                                    <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikTrwlayerGetTracksAndLayersFunc"></a><h3>VikTrwlayerGetTracksAndLayersFunc ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+<span class="c_punctuation">(</span>*VikTrwlayerGetTracksAndLayersFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-build-track-list-t"></a><h3>vik_trw_layer_build_track_list_t ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+vik_trw_layer_build_track_list_t (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *tracks</code></em>);</pre>
+<p>Helper function to construct a list of <a class="link" href="VikTrwLayer.html#vik-trw-track-list-t" title="vik_trw_track_list_t"><span class="type">vik_trw_track_list_t</span></a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="VikTrwlayerGetWaypointsAndLayersFunc"></a><h3>VikTrwlayerGetWaypointsAndLayersFunc ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+<span class="c_punctuation">(</span>*VikTrwlayerGetWaypointsAndLayersFunc<span class="c_punctuation">)</span>
+                               (<em class="parameter"><code><a class="link" href="VikLayer.html" title="VikLayer"><span class="type">VikLayer</span></a> *Param1</code></em>,
+                                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> Param2</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-build-waypoint-list-t"></a><h3>vik_trw_layer_build_waypoint_list_t ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *
+vik_trw_layer_build_waypoint_list_t (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *waypoints</code></em>);</pre>
+<p>Helper function to construct a list of <a class="link" href="VikTrwLayer.html#vik-trw-waypoint-list-t" title="vik_trw_waypoint_list_t"><span class="type">vik_trw_waypoint_list_t</span></a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="get-wp-sym-small"></a><h3>get_wp_sym_small ()</h3>
+<pre class="programlisting"><span class="returnvalue">GdkPixbuf</span> *
+get_wp_sym_small (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *symbol</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-verify-thumbnails"></a><h3>trw_layer_verify_thumbnails ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+trw_layer_verify_thumbnails (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                             <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWidget.html"><span class="type">GtkWidget</span></a> *vp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-new-unique-sublayer-name"></a><h3>trw_layer_new_unique_sublayer_name ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+trw_layer_new_unique_sublayer_name (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                                    <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> sublayer_type</code></em>,
+                                    <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+<p>Allocates a unique new name</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-waypoint-rename"></a><h3>trw_layer_waypoint_rename ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+trw_layer_waypoint_rename (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                           <em class="parameter"><code><a class="link" href="viking-vikwaypoint.html#VikWaypoint" title="struct VikWaypoint"><span class="type">VikWaypoint</span></a> *wp</code></em>,
+                           <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *new_name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-waypoint-reset-icon"></a><h3>trw_layer_waypoint_reset_icon ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+trw_layer_waypoint_reset_icon (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                               <em class="parameter"><code><a class="link" href="viking-vikwaypoint.html#VikWaypoint" title="struct VikWaypoint"><span class="type">VikWaypoint</span></a> *wp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-calculate-bounds-waypoints"></a><h3>trw_layer_calculate_bounds_waypoints ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+trw_layer_calculate_bounds_waypoints (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-tracks-visibility"></a><h3>vik_trw_layer_get_tracks_visibility ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_get_tracks_visibility (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-routes-visibility"></a><h3>vik_trw_layer_get_routes_visibility ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_get_routes_visibility (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-waypoints-visibility"></a><h3>vik_trw_layer_get_waypoints_visibility ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+vik_trw_layer_get_waypoints_visibility
+                               (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-update-treeview"></a><h3>trw_layer_update_treeview ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+trw_layer_update_treeview (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                           <em class="parameter"><code><a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-dialog-shift"></a><h3>trw_layer_dialog_shift ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+trw_layer_dialog_shift (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                        <em class="parameter"><code><a href="http://developer.gnome.org/gtk2/GtkWindow.html"><span class="type">GtkWindow</span></a> *dialog</code></em>,
+                        <em class="parameter"><code><a class="link" href="viking-vikcoord.html#VikCoord" title="VikCoord"><span class="type">VikCoord</span></a> *coord</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> vertical</code></em>);</pre>
+<p>Try to reposition a dialog if it's over the specified coord
+ so to not obscure the item of interest</p>
+<div class="refsect3">
+<a name="id-1.2.140.7.49.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>vertical</p></td>
+<td class="parameter_description"><p>The reposition strategy. If Vertical moves dialog vertically, otherwise moves it horizontally</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-track-find-uuid"></a><h3>trw_layer_track_find_uuid ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+trw_layer_track_find_uuid (<em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> id</code></em>,
+                           <em class="parameter"><code>const <a class="link" href="viking-viktrack.html#VikTrack" title="struct VikTrack"><span class="type">VikTrack</span></a> *trk</code></em>,
+                           <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> udata</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-waypoint-find-uuid"></a><h3>trw_layer_waypoint_find_uuid ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+trw_layer_waypoint_find_uuid (<em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> id</code></em>,
+                              <em class="parameter"><code>const <a class="link" href="viking-vikwaypoint.html#VikWaypoint" title="struct VikWaypoint"><span class="type">VikWaypoint</span></a> *wp</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> udata</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trw-layer-zoom-to-show-latlons"></a><h3>trw_layer_zoom_to_show_latlons ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+trw_layer_zoom_to_show_latlons (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>,
+                                <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                                <em class="parameter"><code><span class="type">struct LatLon</span> maxmin[2]</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-tracks-iters"></a><h3>vik_trw_layer_get_tracks_iters ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+vik_trw_layer_get_tracks_iters (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-routes-iters"></a><h3>vik_trw_layer_get_routes_iters ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+vik_trw_layer_get_routes_iters (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-layer-get-waypoints-iters"></a><h3>vik_trw_layer_get_waypoints_iters ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Hash-Tables.html#GHashTable"><span class="returnvalue">GHashTable</span></a> *
+vik_trw_layer_get_waypoints_iters (<em class="parameter"><code><a class="link" href="VikTrwLayer.html" title="VikTrwLayer"><span class="type">VikTrwLayer</span></a> *vtl</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="VikTrwLayer.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="VikTRWMetadata"></a><h3>VikTRWMetadata</h3>
+<pre class="programlisting">typedef struct {
+  gchar *description;
+  gchar *author;
+  //gboolean has_time;
+  gchar *timestamp; // TODO: Consider storing as proper time_t.
+  gchar *keywords; // TODO: handling/storing a GList of individual tags?
+} VikTRWMetadata;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-track-list-t"></a><h3>vik_trw_track_list_t</h3>
+<pre class="programlisting">typedef struct {
+  VikTrack *trk;
+  VikTrwLayer *vtl;
+} vik_trw_track_list_t;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-trw-waypoint-list-t"></a><h3>vik_trw_waypoint_list_t</h3>
+<pre class="programlisting">typedef struct {
+  VikWaypoint *wpt;
+  VikTrwLayer *vtl;
+} vik_trw_waypoint_list_t;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="trku-udata"></a><h3>trku_udata</h3>
+<pre class="programlisting">typedef struct {
+  VikTrack *trk; // input
+  gpointer uuid; // output
+} trku_udata;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="wpu-udata"></a><h3>wpu_udata</h3>
+<pre class="programlisting">typedef struct {
+  VikWaypoint *wp; // input
+  gpointer uuid;   // output
+} wpu_udata;
+</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

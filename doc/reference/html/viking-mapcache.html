@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>mapcache: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="viking-map-ids.html" title="map_ids">
+<link rel="next" href="viking-mapcoord.html" title="mapcoord">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-mapcache.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="viking-map-ids.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="viking-mapcoord.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-mapcache"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-mapcache.top_of_page"></a>mapcache</span></h2>
+<p>mapcache</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-mapcache.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-init" title="a_mapcache_init ()">a_mapcache_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-add" title="a_mapcache_add ()">a_mapcache_add</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">GdkPixbuf</span> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-get" title="a_mapcache_get ()">a_mapcache_get</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="viking-mapcache.html#mapcache-extra-t" title="mapcache_extra_t"><span class="returnvalue">mapcache_extra_t</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-get-extra" title="a_mapcache_get_extra ()">a_mapcache_get_extra</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-remove-all-shrinkfactors" title="a_mapcache_remove_all_shrinkfactors ()">a_mapcache_remove_all_shrinkfactors</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-flush" title="a_mapcache_flush ()">a_mapcache_flush</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-flush-type" title="a_mapcache_flush_type ()">a_mapcache_flush_type</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-uninit" title="a_mapcache_uninit ()">a_mapcache_uninit</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-get-size" title="a_mapcache_get_size ()">a_mapcache_get_size</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-mapcache.html#a-mapcache-get-count" title="a_mapcache_get_count ()">a_mapcache_get_count</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-mapcache.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody><tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="viking-mapcache.html#mapcache-extra-t" title="mapcache_extra_t">mapcache_extra_t</a></td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-mapcache.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-mapcache.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="a-mapcache-init"></a><h3>a_mapcache_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_mapcache_init ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-mapcache-add"></a><h3>a_mapcache_add ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_mapcache_add (<em class="parameter"><code><span class="type">GdkPixbuf</span> *pixbuf</code></em>,
+                <em class="parameter"><code><a class="link" href="viking-mapcache.html#mapcache-extra-t" title="mapcache_extra_t"><span class="type">mapcache_extra_t</span></a> extra</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> z</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> type</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> zoom</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> alpha</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> xshrinkfactor</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> yshrinkfactor</code></em>,
+                <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-mapcache-get"></a><h3>a_mapcache_get ()</h3>
+<pre class="programlisting"><span class="returnvalue">GdkPixbuf</span> *
+a_mapcache_get (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> z</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> type</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> zoom</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> alpha</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> xshrinkfactor</code></em>,
+                <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> yshrinkfactor</code></em>,
+                <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-mapcache-get-extra"></a><h3>a_mapcache_get_extra ()</h3>
+<pre class="programlisting"><a class="link" href="viking-mapcache.html#mapcache-extra-t" title="mapcache_extra_t"><span class="returnvalue">mapcache_extra_t</span></a>
+a_mapcache_get_extra (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> z</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> type</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> zoom</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> alpha</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> xshrinkfactor</code></em>,
+                      <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> yshrinkfactor</code></em>,
+                      <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-mapcache-remove-all-shrinkfactors"></a><h3>a_mapcache_remove_all_shrinkfactors ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_mapcache_remove_all_shrinkfactors (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> x</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> y</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> z</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> type</code></em>,
+                                     <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> zoom</code></em>,
+                                     <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-mapcache-flush"></a><h3>a_mapcache_flush ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_mapcache_flush ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-mapcache-flush-type"></a><h3>a_mapcache_flush_type ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_mapcache_flush_type (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> type</code></em>);</pre>
+<p>Just remove cache items for the specified map type
+ i.e. all related xyz+zoom+alpha+etc...</p>
+<div class="refsect3">
+<a name="id-1.2.67.6.8.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>type</p></td>
+<td class="parameter_description"><p>Specified map type</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-mapcache-uninit"></a><h3>a_mapcache_uninit ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_mapcache_uninit ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-mapcache-get-size"></a><h3>a_mapcache_get_size ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+a_mapcache_get_size ();</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-mapcache-get-count"></a><h3>a_mapcache_get_count ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+a_mapcache_get_count ();</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-mapcache.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="mapcache-extra-t"></a><h3>mapcache_extra_t</h3>
+<pre class="programlisting">typedef struct {
+  gdouble duration; // Mostly for Mapnik Rendering duration - negative values indicate not rendered (i.e. read from disk)
+} mapcache_extra_t;
+</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>

@@ -58,6 +58,9 @@
 /* Define to 1 if you have the `gps' library (-lgps). */
 #undef HAVE_LIBGPS
 
+/* Define to 1 if you have the `icuuc' library (-licuuc). */
+#undef HAVE_LIBICUUC
+
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
@@ -284,15 +287,6 @@
 
 /* REALTIME GPS TRACKING STUFF */
 #undef VIK_CONFIG_REALTIME_GPS_TRACKING
-
-/* Method for the search */
-#undef VIK_CONFIG_SEARCH
-
-/* Id. for searching via GEONAMES */
-#undef VIK_CONFIG_SEARCH_GEONAMES
-
-/* Id. for searching via GOOGLE */
-#undef VIK_CONFIG_SEARCH_GOOGLE
 
 /* TERRASERVER STUFF */
 #undef VIK_CONFIG_TERRASERVER

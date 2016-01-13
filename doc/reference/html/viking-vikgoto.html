@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>vikgoto: viking Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="viking Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="VikGobjectBuilder.html" title="VikGobjectBuilder">
+<link rel="next" href="VikGotoTool.html" title="VikGotoTool">
+<meta name="generator" content="GTK-Doc V1.24 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#viking-vikgoto.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="VikGobjectBuilder.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="VikGotoTool.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="viking-vikgoto"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="viking-vikgoto.top_of_page"></a>vikgoto</span></h2>
+<p>vikgoto</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="viking-vikgoto.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikgoto.html#vik-goto-register" title="vik_goto_register ()">vik_goto_register</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikgoto.html#vik-goto-unregister-all" title="vik_goto_unregister_all ()">vik_goto_unregister_all</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikgoto.html#a-vik-goto-where-am-i" title="a_vik_goto_where_am_i ()">a_vik_goto_where_am_i</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikgoto.html#a-vik-goto" title="a_vik_goto ()">a_vik_goto</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="viking-vikgoto.html#a-vik-goto-get-search-string-for-this-place" title="a_vik_goto_get_search_string_for_this_place ()">a_vik_goto_get_search_string_for_this_place</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="viking-vikgoto.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="viking-vikgoto.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="vik-goto-register"></a><h3>vik_goto_register ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_goto_register (<em class="parameter"><code><a class="link" href="VikGotoTool.html" title="VikGotoTool"><span class="type">VikGotoTool</span></a> *tool</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="vik-goto-unregister-all"></a><h3>vik_goto_unregister_all ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+vik_goto_unregister_all (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-vik-goto-where-am-i"></a><h3>a_vik_goto_where_am_i ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+a_vik_goto_where_am_i (<em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>,
+                       <em class="parameter"><code><span class="type">struct LatLon</span> *ll</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **name</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-vik-goto"></a><h3>a_vik_goto ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+a_vik_goto (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>,
+            <em class="parameter"><code><a class="link" href="VikViewport.html" title="VikViewport"><span class="type">VikViewport</span></a> *vvp</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="a-vik-goto-get-search-string-for-this-place"></a><h3>a_vik_goto_get_search_string_for_this_place ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+a_vik_goto_get_search_string_for_this_place
+                               (<em class="parameter"><code><a class="link" href="VikWindow.html" title="VikWindow"><span class="type">VikWindow</span></a> *vw</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="viking-vikgoto.other_details"></a><h2>Types and Values</h2>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.24</div>
+</body>
+</html>
