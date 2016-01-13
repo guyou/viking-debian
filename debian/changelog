@@ -1,3 +1,10 @@
+viking (1.6.2-1) unstable; urgency=medium
+
+  * Imported Upstream version 1.6.2
+    - Closes: #792457
+
+ -- Guilhem Bonnefille <guilhem.bonnefille@gmail.com>  Wed, 13 Jan 2016 21:41:00 +0200
+
 viking (1.6-1) unstable; urgency=medium
 
   * [11136d29] Imported Upstream version 1.6
