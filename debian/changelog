@@ -1,9 +1,16 @@
-viking (1.6.2-1) unstable; urgency=medium
+viking (1.6.2-1) UNRELEASED; urgency=medium
 
-  * Imported Upstream version 1.6.2
+  * [12d5f5eb] Imported Upstream version 1.6.1
     - Closes: #792457
+  * [518cce43] Imported Upstream version 1.6.2
+  * [7e79dfdd] Updating changelog after bug triaging
+  * [69ae5747] Activate mapnik support (and add new dependency)
+  * [a9dcc499] Remove obsolete patch
+  * [65cc52dc] Declare need to gtk-doc-tools
+  * [8bb6e1fa] Update project description
+  * [f4f758b3] Replace menu entry file by desktop file
 
- -- Guilhem Bonnefille <guilhem.bonnefille@gmail.com>  Wed, 13 Jan 2016 21:41:00 +0200
+ -- Guilhem Bonnefille <guilhem.bonnefille@gmail.com>  Tue, 19 Jan 2016 23:41:10 +0100
 
 viking (1.6-1) unstable; urgency=medium
 
