@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Viking
+Comment=GPS data editor, analyzer and viewer
+TryExec=viking
+Exec=viking %F
+Icon=viking

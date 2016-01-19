@@ -1,6 +1,0 @@
-?package(viking):\
-needs="X11"\
-section="Applications/Science/Geoscience"\
-title="Viking"\
-command="/usr/bin/viking"\
-icon="/usr/share/pixmaps/viking.xpm"
